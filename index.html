@@ -266,9 +266,6 @@
     .nav-btn .nav-icon{font-size:1.1rem}
     .nav-btn.active{background:rgba(232,101,10,0.3);opacity:1}
   </style>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-  <meta http-equiv="Pragma" content="no-cache"/>
-  <meta http-equiv="Expires" content="0"/>
 </head>
 <body>
 <div class="container">
@@ -287,12 +284,9 @@
       <input class="auth-input" type="password" id="auth-password" placeholder="Password" autocomplete="current-password"/>
       <input class="auth-input" type="text" id="auth-name" placeholder="Your name" style="display:none" autocomplete="name"/>
       <button class="btn btn-primary" id="auth-btn" onclick="submitAuth()">Sign In</button>
-      <div class="auth-toggle" onclick="toggleAuthMode()" role="button" tabindex="0" style="cursor:pointer;user-select:none;-webkit-tap-highlight-color:rgba(232,101,10,0.2);padding:8px;margin:-8px;border-radius:8px">
-        Don't have an account? <span id="auth-toggle-label" style="color:#e8650a;font-weight:700;text-decoration:underline">Sign up</span>
+      <div class="auth-toggle" onclick="toggleAuthMode()">
+        Don't have an account? <span id="auth-toggle-label">Sign up</span>
       </div>
-    </div>
-    <div style="margin-top:8px;text-align:center">
-      <button class="btn" style="background:transparent;border:2px solid rgba(232,101,10,0.4);color:#e8650a;font-size:0.85rem;padding:10px;width:100%;border-radius:12px;cursor:pointer" onclick="toggleAuthMode()">New here? <b>Create a free account</b></button>
     </div>
     <div class="app-footer">
       <p>© 2026 The Paw Report — All Rights Reserved.</p>
@@ -1229,7 +1223,7 @@ function updatePawUI(d) {
   updateDynamicColors(d.rating);
   if (['Danger','Fry Zone','Extreme Cold'].includes(d.rating)) sendDangerNotification(`⚠️ ${d.rating}: ${d.message}`);
 }
-async async function fetchPawAndUpdate(lat, lon) {
+async function fetchPawAndUpdate(lat, lon) {
   try { const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) updatePawUI(await res.json()); } } catch(_) {}
 }
 function updateCrimeUI(d) {
@@ -1326,7 +1320,7 @@ function showFetchError(msg) {
   document.getElementById('error-msg').textContent='⚠️ '+msg;
 }
 
-async async function fetchAll(lat, lon) {
+async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
@@ -1352,7 +1346,7 @@ function getLocation() {
   });
 }
 
-async async function startTracking() {
+async function startTracking() {
   if(isTracking){stopTracking();return;}
   const btn=document.getElementById('main-btn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Getting location…';
@@ -1386,35 +1380,6 @@ function stopTracking() {
 })();
 
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('screen-auth').classList.contains('active'))submitAuth();});
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    // Unregister any old service workers first, then re-register fresh
-    navigator.serviceWorker.getRegistrations().then(function(regs) {
-      var unregPromises = regs.map(function(r) { return r.unregister(); });
-      return Promise.all(unregPromises);
-    }).then(function() {
-      return navigator.serviceWorker.register('./sw.js?v=5');
-    }).then(function(reg) {
-      if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-    }).catch(function() {});
-  });
-}
-
-  function toggleTips() {
-    var body = document.getElementById('tips-body');
-    var chevron = document.getElementById('tips-chevron');
-    if (body.style.display === 'none') {
-      body.style.display = 'block';
-      chevron.style.transform = 'rotate(180deg)';
-    } else {
-      body.style.display = 'none';
-      chevron.style.transform = 'rotate(0deg)';
-    }
-  }
-
 
 // Safe API helper — guards against non-JSON responses
 async function safeApiCall(url, body) {
@@ -1431,30 +1396,46 @@ async function safeApiCall(url, body) {
   } catch(_) { return null; }
 }
 
-// 🐶 Bark alert sound using Web Audio API
+function toggleTips() {
+  const body = document.getElementById('tips-body');
+  const chevron = document.getElementById('tips-chevron');
+  if (body.style.display === 'none') {
+    body.style.display = 'block';
+    chevron.style.transform = 'rotate(180deg)';
+  } else {
+    body.style.display = 'none';
+    chevron.style.transform = 'rotate(0deg)';
+  }
+}
+
 function playBarkSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     function bark(startTime) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
+      osc.connect(gain); gain.connect(ctx.destination);
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(220, startTime);
       osc.frequency.exponentialRampToValueAtTime(440, startTime + 0.06);
       osc.frequency.exponentialRampToValueAtTime(180, startTime + 0.15);
       gain.gain.setValueAtTime(0.6, startTime);
       gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
-      osc.start(startTime);
-      osc.stop(startTime + 0.2);
+      osc.start(startTime); osc.stop(startTime + 0.2);
     }
-    bark(ctx.currentTime);
-    bark(ctx.currentTime + 0.28);
-    bark(ctx.currentTime + 0.52);
-  } catch(e) { }
+    bark(ctx.currentTime); bark(ctx.currentTime + 0.28); bark(ctx.currentTime + 0.52);
+  } catch(e) {}
 }
+</script>
 
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js?v=5').then(function(reg) {
+      if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    }).catch(function() {});
+  });
+}
 </script>
 </body>
 </html>
