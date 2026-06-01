@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🐾 The Paw Report</title>
+  <meta name="description" content="Ground temp & walk safety for every dog. Check before every walk."/>
+  <link rel="apple-touch-icon" href="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/03da2223b_icon-512.png"/>
+  <link rel="icon" type="image/png" href="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/18986cbf5_icon-192.png"/>
+  <link rel="manifest" href="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/servePawReport?serve=manifest"/>
+  <meta name="theme-color" content="#1a0a00"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#1a0a00 0%,#2d1200 50%,#4a1800 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:white}
+    .container{max-width:440px;width:100%;text-align:center}
+    .header{margin-bottom:14px}
+    .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
+    .header p{font-size:0.82rem;opacity:0.55}
+
+    /* Cards */
+    .card{background:rgba(255,255,255,0.07);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left}
+    .card-title{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:0.45;margin-bottom:12px}
+    .divider{height:1px;background:rgba(255,255,255,0.1);margin:12px 0}
+
+    /* Screens */
+    .screen{display:none}
+    .screen.active{display:block}
+
+    /* Auth */
+    .auth-card{text-align:center;padding:32px 24px}
+    .auth-icon{font-size:3.5rem;margin-bottom:12px;display:block}
+    .auth-title{font-size:1.3rem;font-weight:800;margin-bottom:6px}
+    .auth-sub{font-size:0.85rem;opacity:0.6;margin-bottom:24px;line-height:1.5}
+    .auth-input{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 14px;color:white;font-size:0.95rem;margin-bottom:10px;outline:none;transition:border 0.2s}
+    .auth-input:focus{border-color:rgba(249,115,22,0.6)}
+    .auth-input::placeholder{opacity:0.4}
+    .auth-toggle{font-size:0.8rem;opacity:0.6;margin-top:12px;cursor:pointer}
+    .auth-toggle span{color:#fb923c;text-decoration:underline}
+    .auth-error{background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);border-radius:10px;padding:10px;font-size:0.82rem;color:#fca5a5;margin-bottom:10px;display:none}
+
+    /* Buttons */
+    .btn{display:block;width:100%;padding:14px;border:none;border-radius:15px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s}
+    .btn-primary{background:linear-gradient(135deg,#f97316,#dc2626);color:white;box-shadow:0 8px 24px rgba(249,115,22,0.4)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(249,115,22,0.5)}
+    .btn-primary:active{transform:translateY(0)}
+    .btn-secondary{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:white}
+    .btn-secondary:hover{background:rgba(255,255,255,0.13)}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .btn-sm{padding:9px 16px;font-size:0.82rem;border-radius:10px;width:auto;display:inline-block}
+
+    /* User bar */
+    .user-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.05);border-radius:14px;padding:10px 14px;margin-bottom:12px}
+    .user-info{display:flex;align-items:center;gap:8px}
+    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f97316,#dc2626);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700}
+    .user-name{font-size:0.85rem;font-weight:600}
+    .user-email{font-size:0.68rem;opacity:0.45}
+    .user-right{display:flex;align-items:center;gap:8px}
+    .tier-badge{font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px}
+    .tier-bronze{background:rgba(205,127,50,0.3);color:#cd7f32;border:1px solid rgba(205,127,50,0.4)}
+    .tier-silver{background:rgba(192,192,192,0.2);color:#c0c0c0;border:1px solid rgba(192,192,192,0.3)}
+    .tier-gold{background:rgba(255,215,0,0.2);color:#ffd700;border:1px solid rgba(255,215,0,0.3)}
+    .tier-free{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15)}
+    .logout-btn{font-size:0.72rem;opacity:0.5;cursor:pointer;padding:4px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:none;color:white}
+
+    /* Setup */
+    .setup-card{text-align:center;padding:24px}
+    .setup-icon{font-size:2.8rem;margin-bottom:10px;display:block}
+    .setup-title{font-size:1.1rem;font-weight:700;margin-bottom:4px}
+    .setup-sub{font-size:0.82rem;opacity:0.6;margin-bottom:20px}
+    .form-group{margin-bottom:14px;text-align:left}
+    .form-label{font-size:0.7rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;display:block}
+    .form-input{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:11px 13px;color:white;font-size:0.9rem;outline:none}
+    .form-input::placeholder{opacity:0.4}
+    .size-selector{display:flex;gap:8px}
+    .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:white;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
+    .size-btn.active{background:rgba(249,115,22,0.4);border-color:#f97316}
+
+    /* Paywall */
+    .paywall-hero{text-align:center;padding:20px 10px 10px}
+    .paywall-hero-icon{font-size:3rem;display:block;margin-bottom:8px}
+    .paywall-hero-title{font-size:1.25rem;font-weight:800;margin-bottom:6px}
+    .paywall-hero-sub{font-size:0.84rem;opacity:0.65;line-height:1.5;margin-bottom:16px}
+    .countdown-banner{background:linear-gradient(135deg,rgba(251,146,60,0.2),rgba(239,68,68,0.2));border:1px solid rgba(251,146,60,0.35);border-radius:14px;padding:12px 16px;margin-bottom:16px;text-align:center}
+    .countdown-title{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;opacity:0.7;margin-bottom:6px}
+    .countdown-timer{display:flex;justify-content:center;gap:12px}
+    .countdown-unit{text-align:center}
+    .countdown-num{font-size:1.6rem;font-weight:900;color:#fb923c;line-height:1}
+    .countdown-label{font-size:0.58rem;opacity:0.55;text-transform:uppercase;letter-spacing:0.5px}
+
+    .tier-tabs{display:flex;gap:6px;margin-bottom:16px;background:rgba(255,255,255,0.05);border-radius:12px;padding:4px}
+    .tier-tab{flex:1;padding:8px 4px;border-radius:9px;border:none;background:none;color:white;font-size:0.78rem;font-weight:600;cursor:pointer;opacity:0.5;transition:all 0.2s}
+    .tier-tab.active{opacity:1}
+    .tier-tab.t-bronze.active{background:rgba(205,127,50,0.35)}
+    .tier-tab.t-silver.active{background:rgba(192,192,192,0.2)}
+    .tier-tab.t-gold.active{background:rgba(255,215,0,0.2)}
+
+    .billing-toggle{display:flex;gap:5px;margin-bottom:14px;background:rgba(255,255,255,0.05);border-radius:10px;padding:3px}
+    .billing-btn{flex:1;padding:7px 4px;border-radius:8px;border:none;background:none;color:white;font-size:0.72rem;font-weight:600;cursor:pointer;opacity:0.5;transition:all 0.2s}
+    .billing-btn.active{background:rgba(249,115,22,0.4);opacity:1}
+
+    .tier-card{border-radius:16px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden}
+    .tier-card-bronze{background:linear-gradient(135deg,rgba(205,127,50,0.15),rgba(205,127,50,0.05));border:1px solid rgba(205,127,50,0.3)}
+    .tier-card-silver{background:linear-gradient(135deg,rgba(192,192,192,0.12),rgba(192,192,192,0.04));border:1px solid rgba(192,192,192,0.25)}
+    .tier-card-gold{background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.05));border:1px solid rgba(255,215,0,0.3)}
+    .tier-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .tier-card-name{font-size:1rem;font-weight:800}
+    .tier-card-price{text-align:right}
+    .tier-price-main{font-size:1.4rem;font-weight:900}
+    .tier-price-orig{font-size:0.72rem;text-decoration:line-through;opacity:0.45;margin-right:4px}
+    .tier-price-period{font-size:0.68rem;opacity:0.55}
+    .tier-savings{font-size:0.65rem;background:rgba(74,222,128,0.2);color:#4ade80;padding:2px 7px;border-radius:20px;font-weight:700;margin-top:3px;display:inline-block}
+    .tier-features{list-style:none;margin-bottom:14px}
+    .tier-features li{font-size:0.82rem;padding:4px 0;display:flex;align-items:flex-start;gap:7px;opacity:0.85}
+    .tier-features li .fi{flex-shrink:0;font-size:0.85rem}
+    .tier-features li.locked{opacity:0.35}
+    .popular-badge{position:absolute;top:12px;right:12px;font-size:0.6rem;background:linear-gradient(135deg,#f97316,#dc2626);padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:0.5px}
+
+    .referral-section{margin-top:10px;padding:14px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);border-radius:14px;text-align:center}
+    .referral-title{font-size:0.82rem;font-weight:700;margin-bottom:4px}
+    .referral-sub{font-size:0.75rem;opacity:0.6;margin-bottom:10px}
+    .referral-input-row{display:flex;gap:7px}
+    .referral-input{flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 12px;color:white;font-size:0.85rem;outline:none}
+    .referral-input::placeholder{opacity:0.4}
+    .referral-apply-btn{padding:9px 14px;border-radius:10px;border:none;background:rgba(249,115,22,0.5);color:white;font-size:0.82rem;font-weight:700;cursor:pointer}
+    .referral-success{font-size:0.78rem;color:#4ade80;margin-top:6px;display:none}
+
+    /* Main dashboard */
+    .status-bar{display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.78rem;opacity:0.55;margin-bottom:10px}
+    .pulse{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse-anim 2s infinite}
+    .pulse.inactive{background:#9ca3af;animation:none}
+    @keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
+
+    .rating-display{text-align:center;margin-bottom:10px}
+    .rating-emoji{font-size:3.8rem;line-height:1;margin-bottom:8px;display:block}
+    .rating-label{font-size:1.7rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px;text-align:center}
+    .rating-message{font-size:0.86rem;opacity:0.8;line-height:1.5;text-align:center}
+
+    .paw-scale{display:flex;gap:3px;margin-top:10px}
+    .scale-item{flex:1;padding:4px 2px;border-radius:6px;font-size:0.52rem;text-align:center;opacity:0.25;transition:opacity 0.3s;font-weight:600}
+    .scale-item.active{opacity:1}
+    .scale-safe{background:rgba(74,222,128,0.2);color:#4ade80}
+    .scale-warm{background:rgba(251,191,36,0.2);color:#fbbf24}
+    .scale-caution{background:rgba(251,146,60,0.2);color:#fb923c}
+    .scale-danger{background:rgba(248,113,113,0.2);color:#f87171}
+    .scale-fry{background:rgba(255,69,0,0.2);color:#ff4500}
+    .scale-cold{background:rgba(147,197,253,0.2);color:#93c5fd}
+    .scale-toocold{background:rgba(129,140,248,0.2);color:#fb923c}
+
+    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .stat-box{background:rgba(255,255,255,0.05);border-radius:12px;padding:11px 9px;text-align:center}
+    .stat-value{font-size:1.25rem;font-weight:800;margin-bottom:2px}
+    .stat-label{font-size:0.65rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.3px}
+    .ground-temp-box{grid-column:span 2;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.15)}
+    .ground-temp-box .stat-value{font-size:1.9rem}
+
+    .alert-banner{border-radius:12px;padding:10px 13px;font-size:0.82rem;line-height:1.5;margin-top:10px}
+    .alert-cold{background:rgba(147,197,253,0.15);border:1px solid rgba(147,197,253,0.3);color:#bfdbfe}
+    .alert-hydration{background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#7dd3fc}
+
+    /* Crime */
+    .crime-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .crime-emoji-big{font-size:2rem}
+    .crime-info{flex:1}
+    .crime-rating-label{font-size:1.15rem;font-weight:800;margin-bottom:2px}
+    .crime-location{font-size:0.72rem;opacity:0.5}
+    .crime-message{font-size:0.83rem;opacity:0.8;line-height:1.5;margin-bottom:10px;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,0.05)}
+    .crime-scale{display:flex;gap:3px;margin-bottom:9px}
+    .crime-scale-item{flex:1;height:5px;border-radius:3px;opacity:0.2;transition:opacity 0.3s}
+    .crime-scale-item.active{opacity:1}
+    .crime-stats-row{display:flex;gap:7px}
+    .crime-stat{flex:1;background:rgba(255,255,255,0.05);border-radius:10px;padding:9px;text-align:center}
+    .crime-stat-val{font-size:0.92rem;font-weight:700}
+    .crime-stat-label{font-size:0.6rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px}
+    .crime-source{font-size:0.6rem;opacity:0.28;text-align:center;margin-top:7px}
+
+    /* Wash stations */
+    .stations-list{display:flex;flex-direction:column;gap:9px}
+    .station-item{background:rgba(255,255,255,0.05);border-radius:13px;padding:11px 13px;display:flex;align-items:flex-start;gap:11px}
+    .station-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px}
+    .station-info{flex:1;min-width:0}
+    .station-name{font-size:0.88rem;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .station-type{font-size:0.68rem;opacity:0.5;margin-bottom:3px}
+    .station-meta{display:flex;flex-wrap:wrap;gap:4px}
+    .station-tag{font-size:0.65rem;opacity:0.7;background:rgba(255,255,255,0.08);padding:2px 7px;border-radius:20px}
+    .station-dist{font-size:0.72rem;font-weight:600;opacity:0.65;flex-shrink:0}
+    .station-links{display:flex;gap:7px;margin-top:5px}
+    .station-link{font-size:0.68rem;color:#fb923c;text-decoration:none}
+
+    /* Walk time */
+    .best-time-hero{text-align:center;margin-bottom:14px}
+    .best-time-icon{font-size:2.8rem;display:block;margin-bottom:6px}
+    .best-time-window{font-size:1.55rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:#fed7aa}
+    .best-time-rec{font-size:0.86rem;opacity:0.8;line-height:1.5;max-width:300px;margin:0 auto}
+    .hourly-chart{margin-top:14px;overflow-x:auto;padding-bottom:4px}
+    .hourly-bars{display:flex;gap:3px;align-items:flex-end;height:65px;min-width:max-content}
+    .hourly-col{display:flex;flex-direction:column;align-items:center;gap:2px}
+    .hourly-bar-wrap{height:50px;display:flex;align-items:flex-end}
+    .hourly-bar{width:19px;border-radius:4px 4px 0 0;transition:opacity 0.2s;min-height:4px}
+    .hourly-bar.past{opacity:0.22}
+    .hourly-bar.best-bar{outline:2px solid #fb923c;outline-offset:2px}
+    .hourly-label{font-size:0.53rem;opacity:0.45;white-space:nowrap}
+    .hourly-label.best-label{opacity:1;color:#fed7aa;font-weight:700}
+    .chart-legend{display:flex;gap:10px;margin-top:9px;justify-content:center}
+    .legend-item{display:flex;align-items:center;gap:4px;font-size:0.65rem;opacity:0.55}
+    .legend-dot{width:8px;height:8px;border-radius:2px}
+
+    /* Share */
+    .share-card{background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);border-radius:22px;padding:18px;margin-bottom:10px;text-align:center}
+    .share-title{font-size:0.85rem;font-weight:700;margin-bottom:10px;opacity:0.9}
+    .share-btns{display:flex;gap:8px}
+    .share-btn{flex:1;padding:9px;border-radius:10px;border:none;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s}
+    .share-btn-copy{background:rgba(249,115,22,0.5);color:white}
+    .share-btn-tiktok{background:rgba(0,0,0,0.6);color:white;border:1px solid rgba(255,255,255,0.15)}
+
+    /* Referral share */
+    .referral-share-card{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:16px;padding:16px;margin-bottom:10px;text-align:center}
+    .referral-code-display{font-size:1.5rem;font-weight:900;letter-spacing:3px;color:#4ade80;margin:8px 0}
+    .referral-share-sub{font-size:0.75rem;opacity:0.6;margin-bottom:10px}
+
+    /* Push notification */
+    .notif-banner{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:14px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+    .notif-icon{font-size:1.5rem;flex-shrink:0}
+    .notif-text{flex:1;font-size:0.8rem;opacity:0.85;line-height:1.4}
+    .notif-btn{padding:7px 13px;border-radius:9px;border:none;background:rgba(251,191,36,0.4);color:white;font-size:0.75rem;font-weight:700;cursor:pointer;flex-shrink:0}
+
+    /* Locked feature */
+    .locked-feature{background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.12);border-radius:14px;padding:16px;text-align:center;margin-bottom:10px}
+    .locked-icon{font-size:1.8rem;margin-bottom:6px}
+    .locked-title{font-size:0.88rem;font-weight:700;margin-bottom:4px;opacity:0.7}
+    .locked-sub{font-size:0.75rem;opacity:0.45;margin-bottom:10px}
+
+    /* Profile */
+    .profile-section{background:rgba(255,255,255,0.04);border-radius:14px;padding:14px;margin-bottom:10px}
+    .profile-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.07)}
+    .profile-row:last-child{border-bottom:none}
+    .profile-label{font-size:0.75rem;opacity:0.5}
+    .profile-val{font-size:0.85rem;font-weight:600}
+
+    .location-info{font-size:0.7rem;opacity:0.3;margin-top:7px}
+    .last-updated{font-size:0.65rem;opacity:0.28;margin-top:5px;text-align:center}
+    .loading-inline{opacity:0.4;font-size:0.83rem;text-align:center;padding:10px 0}
+    .error-msg{background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:13px;font-size:0.86rem;color:#fca5a5}
+
+    .app-footer{text-align:center;font-size:0.65rem;opacity:0.25;margin-top:14px;line-height:1.8}
+    .app-footer a{color:#fb923c;text-decoration:none}
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:5px}
+
+    /* Nav tabs */
+    .bottom-nav{display:flex;gap:4px;margin-bottom:12px;background:rgba(255,255,255,0.05);border-radius:14px;padding:4px}
+    .nav-btn{flex:1;padding:8px 4px;border-radius:10px;border:none;background:none;color:white;font-size:0.7rem;font-weight:600;cursor:pointer;opacity:0.45;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px}
+    .nav-btn .nav-icon{font-size:1.1rem}
+    .nav-btn.active{background:rgba(249,115,22,0.35);opacity:1}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🐾 The Paw Report</h1>
+    <p id="header-sub">Ground temp & walk safety for every dog</p>
+  </div>
+
+  <!-- ── AUTH ── -->
+  <div id="screen-auth" class="screen active">
+    <div class="card auth-card">
+      <span class="auth-icon" id="auth-icon">🔐</span>
+      <div class="auth-title" id="auth-title">Welcome back</div>
+      <div class="auth-sub" id="auth-sub">Sign in to check ground temps, walk safety, and keep your dog's paws protected.</div>
+      <div class="auth-error" id="auth-error"></div>
+      <input class="auth-input" type="email" id="auth-email" placeholder="Email address" autocomplete="email"/>
+      <input class="auth-input" type="password" id="auth-password" placeholder="Password" autocomplete="current-password"/>
+      <input class="auth-input" type="text" id="auth-name" placeholder="Your name" style="display:none" autocomplete="name"/>
+      <button class="btn btn-primary" id="auth-btn" onclick="submitAuth()">Sign In</button>
+      <div class="auth-toggle" onclick="toggleAuthMode()">
+        Don't have an account? <span id="auth-toggle-label">Sign up</span>
+      </div>
+    </div>
+    <div class="app-footer">
+      <p>© 2026 The Paw Report — All Rights Reserved.</p>
+      <p><a href="legal.html">Terms of Service & Privacy Policy</a></p>
+    </div>
+  </div>
+
+  <!-- ── SETUP ── -->
+  <div id="screen-setup" class="screen">
+    <div class="card setup-card">
+      <span class="setup-icon">🐕</span>
+      <div class="setup-title">Tell us about your pup</div>
+      <div class="setup-sub">We'll personalise ground temp alerts based on your dog's size.</div>
+      <div class="form-group">
+        <label class="form-label">Pet Name</label>
+        <input class="form-input" id="setup-name" type="text" placeholder="e.g. Buddy"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Breed (optional)</label>
+        <input class="form-input" id="setup-breed" type="text" placeholder="e.g. Golden Retriever"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Size</label>
+        <div class="size-selector">
+          <button class="size-btn" data-size="small" onclick="selectSetupSize('small',this)">🐩 Small<br><span style="font-size:0.62rem;opacity:0.6">under 20 lbs</span></button>
+          <button class="size-btn active" data-size="medium" onclick="selectSetupSize('medium',this)">🐕 Medium<br><span style="font-size:0.62rem;opacity:0.6">20–60 lbs</span></button>
+          <button class="size-btn" data-size="large" onclick="selectSetupSize('large',this)">🦮 Large<br><span style="font-size:0.62rem;opacity:0.6">over 60 lbs</span></button>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="saveProfile()" style="margin-top:8px">Let's Go 🐾</button>
+    </div>
+    <div class="card" style="text-align:center;padding:16px 18px;">
+      <div style="font-size:0.75rem;opacity:0.5;margin-bottom:10px;">Have a referral code? Enter it for a free week!</div>
+      <div class="referral-input-row" style="justify-content:center">
+        <input class="referral-input" id="setup-referral" placeholder="Referral code (optional)" style="max-width:200px"/>
+        <button class="referral-apply-btn" onclick="applyReferral('setup-referral')">Apply</button>
+      </div>
+      <div class="referral-success" id="setup-referral-success">✅ Free week applied!</div>
+    </div>
+  </div>
+
+  <!-- ── PAYWALL ── -->
+  <div id="screen-paywall" class="screen">
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="paywall-hero">
+        <span class="paywall-hero-icon">🐾</span>
+        <div class="paywall-hero-title">Unlock The Full Paw Report</div>
+        <div class="paywall-hero-sub">Real-time ground temps, area safety, walk timing & more — all in one report for your dog.</div>
+        <div class="countdown-banner">
+          <div class="countdown-title">🔥 Launch Week Pricing Ends In</div>
+          <div class="countdown-timer">
+            <div class="countdown-unit"><div class="countdown-num" id="cd-days">07</div><div class="countdown-label">Days</div></div>
+            <div class="countdown-unit"><div class="countdown-num" id="cd-hours">00</div><div class="countdown-label">Hours</div></div>
+            <div class="countdown-unit"><div class="countdown-num" id="cd-mins">00</div><div class="countdown-label">Mins</div></div>
+            <div class="countdown-unit"><div class="countdown-num" id="cd-secs">00</div><div class="countdown-label">Secs</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 16px 16px;">
+        <div class="tier-tabs">
+          <button class="tier-tab t-bronze active" onclick="selectTierTab('bronze',this)">🥉 Bronze</button>
+          <button class="tier-tab t-silver" onclick="selectTierTab('silver',this)">🥈 Silver</button>
+          <button class="tier-tab t-gold" onclick="selectTierTab('gold',this)">🥇 Gold</button>
+        </div>
+        <div class="billing-toggle">
+          <button class="billing-btn active" onclick="selectBilling('weekly',this)">Weekly</button>
+          <button class="billing-btn" onclick="selectBilling('monthly',this)">Monthly</button>
+          <button class="billing-btn" onclick="selectBilling('yearly',this)">Yearly</button>
+          <button class="billing-btn" id="lifetime-btn" onclick="selectBilling('lifetime',this)" style="display:none">Lifetime</button>
+        </div>
+        <div id="tier-display"></div>
+        <div class="referral-section">
+          <div class="referral-title">🎁 Got a referral code?</div>
+          <div class="referral-sub">Enter a friend's code for one free week on us.</div>
+          <div class="referral-input-row">
+            <input class="referral-input" id="paywall-referral" placeholder="Enter referral code"/>
+            <button class="referral-apply-btn" onclick="applyReferral('paywall-referral')">Apply</button>
+          </div>
+          <div class="referral-success" id="paywall-referral-success">✅ Free week applied! Discount will be applied at checkout.</div>
+        </div>
+        <button class="btn btn-secondary" onclick="startFree()" style="margin-top:10px;font-size:0.82rem;padding:10px">Continue with free preview (limited)</button>
+      </div>
+    </div>
+    <div class="app-footer">
+      <p>© 2026 The Paw Report — All Rights Reserved.</p>
+      <p><a href="legal.html">Terms of Service & Privacy Policy</a> · <a href="mailto:mypawreport@gmail.com">mypawreport@gmail.com</a></p>
+    </div>
+  </div>
+
+  <!-- ── MAIN ── -->
+  <div id="screen-main" class="screen">
+    <div class="user-bar">
+      <div class="user-info">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div>
+          <div class="user-name" id="user-name-display">--</div>
+          <div class="user-email" id="user-email-display">--</div>
+        </div>
+      </div>
+      <div class="user-right">
+        <div class="tier-badge tier-free" id="tier-badge-display">Free</div>
+        <button class="logout-btn" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <button class="nav-btn active" id="nav-report" onclick="showTab('report')"><span class="nav-icon">🐾</span>Report</button>
+      <button class="nav-btn" id="nav-safety" onclick="showTab('safety')"><span class="nav-icon">🚨</span>Safety</button>
+      <button class="nav-btn" id="nav-wash" onclick="showTab('wash')"><span class="nav-icon">🛁</span>Wash</button>
+      <button class="nav-btn" id="nav-profile" onclick="showTab('profile')"><span class="nav-icon">👤</span>Profile</button>
+    </div>
+
+    <!-- REPORT TAB -->
+    <div id="tab-report">
+      <div class="card" id="initial-card" style="text-align:center;">
+        <div style="font-size:3rem;margin-bottom:10px;">🐕</div>
+        <div style="font-size:1rem;font-weight:600;margin-bottom:5px;" id="pet-welcome-msg">Ready to check conditions?</div>
+        <div style="font-size:0.83rem;opacity:0.6;margin-bottom:16px;">Ground temp, walk timing & safety — all in one report.</div>
+        <div style="font-size:0.7rem;opacity:0.5;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Dog size:</div>
+        <div class="size-selector" id="size-selector-initial">
+          <button class="size-btn" data-size="small" onclick="selectSize('small',this)">🐩 Small</button>
+          <button class="size-btn active" data-size="medium" onclick="selectSize('medium',this)">🐕 Medium</button>
+          <button class="size-btn" data-size="large" onclick="selectSize('large',this)">🦮 Large</button>
+        </div>
+      </div>
+      <div class="card" id="loading-card" style="display:none;text-align:center;">
+        <div style="font-size:2.3rem;margin-bottom:8px;">🔍</div>
+        <div style="opacity:0.6;font-size:0.88rem;margin:14px 0;">Getting your location and conditions…</div>
+      </div>
+      <div class="card" id="error-card" style="display:none;"><div class="error-msg" id="error-msg"></div></div>
+
+      <!-- Push notif prompt -->
+      <div class="notif-banner" id="notif-banner" style="display:none;">
+        <div class="notif-icon">🔔</div>
+        <div class="notif-text">Get alerts when ground temps become dangerous or weather turns extreme.</div>
+        <button class="notif-btn" onclick="requestNotifications()">Enable</button>
+      </div>
+
+      <!-- Walk time -->
+      <div class="card" id="walk-time-card" style="display:none;">
+        <div class="card-title">🕐 Best Time to Walk Today</div>
+        <div class="loading-inline" id="walk-time-loading">Analysing today's forecast…</div>
+        <div id="walk-time-content" style="display:none;">
+          <div class="best-time-hero">
+            <span class="best-time-icon" id="best-time-icon">🌟</span>
+            <div class="best-time-window" id="best-time-window">--</div>
+            <div class="best-time-rec" id="best-time-rec"></div>
+          </div>
+          <div class="hourly-chart"><div class="hourly-bars" id="hourly-bars"></div></div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>Great</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>OK</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>Avoid</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paw safety -->
+      <div class="card" id="paw-card" style="display:none;">
+        <div class="card-title">🌡️ Right Now — Ground Temperature</div>
+        <div class="size-selector" style="margin-bottom:12px;" id="size-selector-inline">
+          <button class="size-btn" data-size="small" onclick="selectSize('small',this)">🐩 Small</button>
+          <button class="size-btn active" data-size="medium" onclick="selectSize('medium',this)">🐕 Medium</button>
+          <button class="size-btn" data-size="large" onclick="selectSize('large',this)">🦮 Large</button>
+        </div>
+        <div class="status-bar"><div class="pulse inactive" id="pulse-dot"></div><span id="status-text">Ready</span></div>
+        <div class="rating-display">
+          <span class="rating-emoji" id="rating-emoji">🟢</span>
+          <div class="rating-label" id="rating-label">--</div>
+          <div class="rating-message" id="rating-message"></div>
+        </div>
+        <div class="paw-scale">
+          <div class="scale-item scale-toocold" id="scale-extremecold">🥶 Extreme</div>
+          <div class="scale-item scale-cold" id="scale-chilly">🌨️ Chilly</div>
+          <div class="scale-item scale-safe" id="scale-safe">🟢 Safe</div>
+          <div class="scale-item scale-warm" id="scale-warm">🟡 Warm</div>
+          <div class="scale-item scale-caution" id="scale-caution">🟠 Hot</div>
+          <div class="scale-item scale-danger" id="scale-danger">🔴 Danger</div>
+          <div class="scale-item scale-fry" id="scale-fry">🔥 Fry</div>
+        </div>
+        <div id="cold-alert" class="alert-banner alert-cold" style="display:none;"></div>
+        <div id="hydration-alert" class="alert-banner alert-hydration" style="display:none;"></div>
+        <div class="divider"></div>
+        <div class="stats-grid">
+          <div class="stat-box ground-temp-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div></div>
+          <div class="stat-box"><div class="stat-value" id="air-temp">--°F</div><div class="stat-label">Air Temp</div></div>
+          <div class="stat-box"><div class="stat-value" id="uv-index">--</div><div class="stat-label">UV Index</div></div>
+          <div class="stat-box"><div class="stat-value" id="wind-speed">--</div><div class="stat-label">Wind Speed</div></div>
+          <div class="stat-box"><div class="stat-value" id="cloud-cover">--%</div><div class="stat-label">Cloud Cover</div></div>
+        </div>
+        <div class="last-updated" id="last-updated"></div>
+      </div>
+
+      <!-- Share -->
+      <div id="share-card" class="share-card" style="display:none;">
+        <div class="share-title">📤 Share Today's Paw Report</div>
+        <div class="share-btns">
+          <button class="share-btn share-btn-copy" onclick="copyShareText()">📋 Copy Report</button>
+          <button class="share-btn share-btn-tiktok" onclick="shareTikTok()">🎵 TikTok</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="main-btn" onclick="startTracking()" style="margin-top:2px">📍 Run My Paw Report</button>
+      <div class="location-info" id="location-info">Location access required</div>
+    </div>
+
+    <!-- SAFETY TAB -->
+    <div id="tab-safety" style="display:none;">
+      <div class="card" id="crime-card-main">
+        <div class="card-title">🚨 Area Safety</div>
+        <div class="loading-inline" id="crime-loading">Run your report first to see area safety.</div>
+        <div id="crime-content" style="display:none;">
+          <div class="crime-header">
+            <div class="crime-emoji-big" id="crime-emoji">⚪</div>
+            <div class="crime-info">
+              <div class="crime-rating-label" id="crime-rating">--</div>
+              <div class="crime-location" id="crime-location"></div>
+            </div>
+          </div>
+          <div class="crime-message" id="crime-message"></div>
+          <div class="crime-scale">
+            <div class="crime-scale-item" style="background:#4ade80" id="cs-1"></div>
+            <div class="crime-scale-item" style="background:#86efac" id="cs-2"></div>
+            <div class="crime-scale-item" style="background:#fbbf24" id="cs-3"></div>
+            <div class="crime-scale-item" style="background:#f97316" id="cs-4"></div>
+            <div class="crime-scale-item" style="background:#ef4444" id="cs-5"></div>
+          </div>
+          <div class="crime-stats-row">
+            <div class="crime-stat"><div class="crime-stat-val" id="crime-violent-rate">--</div><div class="crime-stat-label">Violent Rate</div></div>
+            <div class="crime-stat"><div class="crime-stat-val" id="crime-property-rate">--</div><div class="crime-stat-label">Property Rate</div></div>
+            <div class="crime-stat"><div class="crime-stat-val" id="crime-score-val">--</div><div class="crime-stat-label">Safety Score</div></div>
+          </div>
+          <div class="crime-source" id="crime-source"></div>
+        </div>
+      </div>
+      <!-- Silver+ feature gate -->
+      <div id="safety-lock" class="locked-feature" style="display:none;">
+        <div class="locked-icon">🔒</div>
+        <div class="locked-title">Detailed Safety Reports</div>
+        <div class="locked-sub">Unlock crime breakdowns, trend data & safe route suggestions with Silver or Gold.</div>
+        <button class="btn btn-primary btn-sm" onclick="showScreen('paywall')">Upgrade Now</button>
+      </div>
+    </div>
+
+    <!-- WASH TAB -->
+    <div id="tab-wash" style="display:none;">
+      <div class="card">
+        <div class="card-title">🛁 Nearby Pet Wash Stations</div>
+        <div class="loading-inline" id="wash-loading">Run your report first to find nearby stations.</div>
+        <div id="wash-content" style="display:none;"><div class="stations-list" id="stations-list"></div></div>
+      </div>
+      <!-- Gold feature gate -->
+      <div id="wash-lock" class="locked-feature" style="display:none;">
+        <div class="locked-icon">🔒</div>
+        <div class="locked-title">Favourite & Save Stations</div>
+        <div class="locked-sub">Save your favourite grooming spots and get walking directions with Gold.</div>
+        <button class="btn btn-primary btn-sm" onclick="showScreen('paywall')">Upgrade to Gold</button>
+      </div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div id="tab-profile" style="display:none;">
+      <div class="card">
+        <div class="card-title">👤 Your Profile</div>
+        <div class="profile-section" id="profile-display"></div>
+        <button class="btn btn-secondary" onclick="showEditProfile()" style="margin-top:10px;font-size:0.82rem;padding:10px">✏️ Edit Profile</button>
+      </div>
+
+      <!-- Referral code -->
+      <div class="referral-share-card">
+        <div class="referral-title" style="font-weight:700;margin-bottom:4px;">🎁 Share & Earn</div>
+        <div class="referral-share-sub">Give a friend a free week — when they sign up you both win!</div>
+        <div class="referral-code-display" id="my-referral-code">PAW-XXXX</div>
+        <div class="referral-share-sub" style="margin-bottom:10px;">Share your code and they get 1 free week.</div>
+        <div class="share-btns">
+          <button class="share-btn share-btn-copy" onclick="copyReferralCode()">📋 Copy Code</button>
+          <button class="share-btn share-btn-tiktok" onclick="shareReferralTikTok()">🎵 TikTok</button>
+        </div>
+      </div>
+
+      <!-- Subscription -->
+      <div class="card">
+        <div class="card-title">💳 Subscription</div>
+        <div id="sub-status-display"></div>
+        <button class="btn btn-primary" onclick="showScreen('paywall')" style="margin-top:10px;font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
+      </div>
+
+      <!-- Notifications -->
+      <div class="card">
+        <div class="card-title">🔔 Notifications</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:0.85rem;font-weight:600;margin-bottom:2px;">Dangerous condition alerts</div>
+            <div style="font-size:0.72rem;opacity:0.5;">When ground temps or weather turn extreme</div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="notif-toggle-btn" onclick="toggleNotifications()">Enable</button>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="logout()" style="margin-top:4px;font-size:0.85rem;padding:11px">Sign Out</button>
+    </div>
+
+    <div class="app-footer">
+      <p>© 2026 The Paw Report — All Rights Reserved.</p>
+      <p><a href="legal.html">Terms & Privacy</a> · <a href="mailto:mypawreport@gmail.com">mypawreport@gmail.com</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const APP_ID = '6a1c6fbdd48b351a9eb7455e';
+let base44Client = null, currentUser = null, userPrefs = null;
+let isTracking = false, trackingInterval = null;
+let currentPetSize = 'medium', currentTier = 'free';
+let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, lastCrimeScore = null;
+let isSignUp = false, setupSize = 'medium', activeBilling = 'weekly', activeTierTab = 'bronze';
+let notificationsEnabled = false;
+
+// Launch end date: 7 days from now stored in localStorage
+const LAUNCH_KEY = 'paw_launch_end';
+function getLaunchEnd() {
+  let d = localStorage.getItem(LAUNCH_KEY);
+  if (!d) { d = new Date(Date.now() + 7*24*60*60*1000).toISOString(); localStorage.setItem(LAUNCH_KEY, d); }
+  return new Date(d);
+}
+function startCountdown() {
+  const end = getLaunchEnd();
+  function tick() {
+    const diff = end - Date.now();
+    if (diff <= 0) { ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id => document.getElementById(id).textContent = '00'); return; }
+    const days = Math.floor(diff/86400000), hrs = Math.floor((diff%86400000)/3600000), mins = Math.floor((diff%3600000)/60000), secs = Math.floor((diff%60000)/1000);
+    document.getElementById('cd-days').textContent = String(days).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(hrs).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 1000);
+}
+
+// Pricing data
+const PRICES = {
+  bronze: { weekly:{launch:'$0.99',regular:'$1.99',period:'/wk'}, monthly:{launch:'$2.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$24.99',regular:'$39.99',period:'/yr'} },
+  silver: { weekly:{launch:'$1.99',regular:'$3.99',period:'/wk'}, monthly:{launch:'$3.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$29.99',regular:'$49.99',period:'/yr'} },
+  gold:   { weekly:{launch:'$3.99',regular:'$6.99',period:'/wk'}, monthly:{launch:'$6.99',regular:'$12.99',period:'/mo'}, yearly:{launch:'$59.99',regular:'$99.99',period:'/yr'}, lifetime:{launch:'$129',regular:'$199',period:' one-time'} }
+};
+const FEATURES = {
+  bronze: ['✅ Ground temperature checker','✅ Basic paw safety rating','✅ Area safety overview','✅ Best time to walk (today)','✅ Nearby pet wash stations','🔒 Walk history (7 days)','🔒 Multiple pet profiles','🔒 Detailed safety reports'],
+  silver: ['✅ Everything in Bronze','✅ Walk history (30 days)','✅ Multiple pet profiles (up to 3)','✅ Detailed safety reports','✅ Route safety scanner','🔒 Unlimited pet profiles','🔒 Pro walker dashboard','🔒 Priority support'],
+  gold:   ['✅ Everything in Silver','✅ Unlimited pet profiles','✅ Pro walker dashboard','✅ Walk sharing & client reports','✅ Priority support','✅ Save favourite wash stations','✅ Lifetime access option','✅ Early access to new features']
+};
+
+function renderTierDisplay() {
+  const p = PRICES[activeTierTab][activeBilling];
+  if (!p) return;
+  const feats = FEATURES[activeTierTab];
+  const isLaunch = getLaunchEnd() > new Date();
+  const tierColors = {bronze:'#cd7f32',silver:'#c0c0c0',gold:'#ffd700'};
+  const tierEmojis = {bronze:'🥉',silver:'🥈',gold:'🥇'};
+  const color = tierColors[activeTierTab];
+  const savings = activeBilling==='yearly' ? '<span class="tier-savings">Save up to 40%</span>' : '';
+  const popular = activeTierTab==='silver' ? '<div class="popular-badge">Most Popular</div>' : '';
+  document.getElementById('tier-display').innerHTML = `
+    <div class="tier-card tier-card-${activeTierTab}">
+      ${popular}
+      <div class="tier-card-header">
+        <div class="tier-card-name" style="color:${color}">${tierEmojis[activeTierTab]} ${activeTierTab.charAt(0).toUpperCase()+activeTierTab.slice(1)}</div>
+        <div class="tier-card-price">
+          ${isLaunch && p.regular ? `<span class="tier-price-orig">${p.regular}</span>` : ''}
+          <span class="tier-price-main" style="color:${color}">${isLaunch && p.launch ? p.launch : p.regular}</span>
+          <span class="tier-price-period">${p.period}</span>
+          ${savings}
+        </div>
+      </div>
+      <ul class="tier-features">
+        ${feats.map(f => `<li class="${f.startsWith('🔒')?'locked':''}"><span class="fi">${f.charAt(0)==='✅'?'✅':'🔒'}</span>${f.slice(2)}</li>`).join('')}
+      </ul>
+      <button class="btn btn-primary" onclick="handleSubscribe('${activeTierTab}','${activeBilling}')">
+        ${activeBilling==='lifetime'?'Get Lifetime Access ♾️':`Start ${activeTierTab.charAt(0).toUpperCase()+activeTierTab.slice(1)} — ${isLaunch&&p.launch?p.launch:p.regular}${p.period}`}
+      </button>
+    </div>`;
+}
+
+function selectTierTab(tier, el) {
+  activeTierTab = tier;
+  document.querySelectorAll('.tier-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('lifetime-btn').style.display = tier==='gold' ? 'block' : 'none';
+  if (activeBilling==='lifetime' && tier!=='gold') { activeBilling='monthly'; document.querySelectorAll('.billing-btn').forEach((b,i)=>b.classList.toggle('active',i===1)); }
+  renderTierDisplay();
+}
+function selectBilling(b, el) {
+  activeBilling = b;
+  document.querySelectorAll('.billing-btn').forEach(btn => btn.classList.remove('active'));
+  el.classList.add('active');
+  renderTierDisplay();
+}
+async function handleSubscribe(tier, billing) {
+  const btn = event.target.closest('button');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Opening checkout…'; }
+  try {
+    const referralCode = (document.getElementById('paywall-referral')?.value || document.getElementById('setup-referral')?.value || '').trim().toUpperCase();
+    const referralApplied = referralCode.startsWith('PAW-') && referralCode.length >= 8;
+    const res = await fetch('/functions/getPetWashStations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'stripe_checkout',
+        tier: tier,
+        period: billing,
+        userId: currentUser?.id || '',
+        userEmail: currentUser?.email || '',
+        referralApplied: referralApplied
+      })
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Could not start checkout.');
+    }
+  } catch(e) {
+    alert('⚠️ ' + (e.message || 'Could not open checkout. Please try again.'));
+    if (btn) { btn.disabled = false; btn.textContent = 'Subscribe'; }
+  }
+}
+
+function handleCheckoutReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const checkout = params.get('checkout');
+  const tier = params.get('tier');
+  const period = params.get('period');
+  if (checkout === 'success' && tier) {
+    const activate = async () => {
+      try {
+        const client = getClient();
+        currentUser = await client.auth.me();
+        const prefs = await client.entities.UserPreferences.filter({created_by: currentUser.id});
+        userPrefs = prefs && prefs.length > 0 ? prefs[0] : null;
+        const data = {
+          subscription_tier: tier,
+          subscription_period: period || 'monthly',
+          subscription_start: new Date().toISOString(),
+          pet_name: userPrefs?.pet_name || 'My Dog',
+          pet_size: userPrefs?.pet_size || 'medium',
+          pet_breed: userPrefs?.pet_breed || '',
+          notifications_enabled: false
+        };
+        if (userPrefs) userPrefs = await client.entities.UserPreferences.update(userPrefs.id, data);
+        else userPrefs = await client.entities.UserPreferences.create(data);
+        userTier = tier;
+        currentPetSize = userPrefs.pet_size || 'medium';
+        updateUserBar();
+        window.history.replaceState({}, '', window.location.pathname);
+        const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+        if (!userPrefs.pet_name || userPrefs.pet_name === 'My Dog') showScreen('setup');
+        else loadMainScreen();
+        setTimeout(() => alert('🎉 Welcome to ' + tierName + '! Your Paw Report is ready.'), 600);
+      } catch(e) { showScreen('auth'); }
+    };
+    activate();
+  } else if (checkout === 'cancelled') {
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+}
+function startFree() { loadMainScreen(); }
+
+function applyReferral(inputId) {
+  const val = document.getElementById(inputId).value.trim().toUpperCase();
+  const successId = inputId === 'paywall-referral' ? 'paywall-referral-success' : 'setup-referral-success';
+  if (val.startsWith('PAW-') && val.length >= 8) {
+    document.getElementById(successId).style.display = 'block';
+    localStorage.setItem('paw_referral_applied', val);
+  } else { alert('Invalid referral code. Codes look like PAW-XXXX.'); }
+}
+
+function getClient() {
+  if (!base44Client) base44Client = Base44SDK.createClient({ appId: APP_ID });
+  return base44Client;
+}
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  if (id==='paywall') { renderTierDisplay(); startCountdown(); }
+}
+function showTab(tab) {
+  ['report','safety','wash','profile'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+    document.getElementById('nav-'+t).classList.toggle('active', t===tab);
+  });
+}
+
+let isSignUpMode = false;
+function toggleAuthMode() {
+  isSignUpMode = !isSignUpMode;
+  document.getElementById('auth-title').textContent = isSignUpMode ? 'Create account' : 'Welcome back';
+  document.getElementById('auth-sub').textContent = isSignUpMode ? 'Sign up to get your personalised Paw Report.' : 'Sign in to check ground temps, walk safety, and keep your dog\'s paws protected.';
+  document.getElementById('auth-btn').textContent = isSignUpMode ? 'Create Account' : 'Sign In';
+  document.getElementById('auth-toggle-label').textContent = isSignUpMode ? 'Sign in' : 'Sign up';
+  document.getElementById('auth-name').style.display = isSignUpMode ? 'block' : 'none';
+  document.getElementById('auth-icon').textContent = isSignUpMode ? '🐾' : '🔐';
+  document.getElementById('auth-error').style.display = 'none';
+}
+async function submitAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const name = document.getElementById('auth-name').value.trim();
+  if (!email || !password) { showAuthError('Please enter your email and password.'); return; }
+  if (isSignUpMode && !name) { showAuthError('Please enter your name.'); return; }
+  const btn = document.getElementById('auth-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>' + (isSignUpMode ? 'Creating…' : 'Signing in…');
+  document.getElementById('auth-error').style.display = 'none';
+  try {
+    const client = getClient();
+    if (isSignUpMode) await client.auth.register({ email, password, full_name: name });
+    await client.auth.login({ email, password });
+    currentUser = await client.auth.me();
+    await onLoggedIn();
+  } catch(e) { showAuthError(e.message || 'Something went wrong.'); }
+  finally { btn.disabled = false; btn.textContent = isSignUpMode ? 'Create Account' : 'Sign In'; }
+}
+function showAuthError(msg) { const el = document.getElementById('auth-error'); el.textContent = msg; el.style.display = 'block'; }
+
+async function onLoggedIn() {
+  try {
+    const prefs = await getClient().entities.UserPreferences.filter({created_by: currentUser.id});
+    userPrefs = prefs && prefs.length > 0 ? prefs[0] : null;
+  } catch(_) { userPrefs = null; }
+  updateUserBar();
+  if (!userPrefs) showScreen('setup');
+  else { currentPetSize = userPrefs.pet_size || 'medium'; syncSizeSelectors(currentPetSize); showScreen('paywall'); renderTierDisplay(); startCountdown(); }
+}
+
+function updateUserBar() {
+  if (!currentUser) return;
+  const name = currentUser.full_name || currentUser.email.split('@')[0];
+  document.getElementById('user-name-display').textContent = name;
+  document.getElementById('user-email-display').textContent = currentUser.email;
+  document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
+  const tierEl = document.getElementById('tier-badge-display');
+  tierEl.textContent = currentTier.charAt(0).toUpperCase()+currentTier.slice(1);
+  tierEl.className = 'tier-badge tier-'+currentTier;
+  // Referral code: PAW- + first 4 chars of user id
+  const code = 'PAW-' + (currentUser.id || 'USER').slice(0,4).toUpperCase();
+  document.getElementById('my-referral-code').textContent = code;
+  renderProfileDisplay();
+  renderSubStatus();
+}
+
+function renderProfileDisplay() {
+  if (!userPrefs && !currentUser) return;
+  const petName = userPrefs?.pet_name || '—';
+  const petBreed = userPrefs?.pet_breed || '—';
+  const petSize = userPrefs?.pet_size ? userPrefs.pet_size.charAt(0).toUpperCase()+userPrefs.pet_size.slice(1) : '—';
+  document.getElementById('profile-display').innerHTML = `
+    <div class="profile-row"><span class="profile-label">Name</span><span class="profile-val">${currentUser?.full_name||'—'}</span></div>
+    <div class="profile-row"><span class="profile-label">Email</span><span class="profile-val">${currentUser?.email||'—'}</span></div>
+    <div class="profile-row"><span class="profile-label">Pet Name</span><span class="profile-val">${petName}</span></div>
+    <div class="profile-row"><span class="profile-label">Breed</span><span class="profile-val">${petBreed}</span></div>
+    <div class="profile-row"><span class="profile-label">Size</span><span class="profile-val">${petSize}</span></div>
+  `;
+}
+function renderSubStatus() {
+  const tierColors = {free:'rgba(255,255,255,0.15)',bronze:'rgba(205,127,50,0.2)',silver:'rgba(192,192,192,0.15)',gold:'rgba(255,215,0,0.15)'};
+  document.getElementById('sub-status-display').innerHTML = `
+    <div style="background:${tierColors[currentTier]||tierColors.free};border-radius:10px;padding:12px;text-align:center;">
+      <div style="font-size:1rem;font-weight:800;margin-bottom:3px;">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
+      <div style="font-size:0.75rem;opacity:0.6;">${currentTier==='free'?'Upgrade to unlock all features':'Active subscription'}</div>
+    </div>`;
+  document.getElementById('upgrade-btn').style.display = currentTier==='gold' ? 'none' : 'block';
+}
+
+function showEditProfile() {
+  const petName = userPrefs?.pet_name || '';
+  const breed = userPrefs?.pet_breed || '';
+  const size = userPrefs?.pet_size || 'medium';
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;';
+  modal.innerHTML = `<div style="background:#16213e;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px;max-width:360px;width:100%;color:white;">
+    <div style="font-size:1rem;font-weight:800;margin-bottom:16px;">✏️ Edit Profile</div>
+    <div class="form-group"><label class="form-label">Pet Name</label><input class="form-input" id="edit-pet-name" value="${petName}" placeholder="Pet name"/></div>
+    <div class="form-group"><label class="form-label">Breed</label><input class="form-input" id="edit-breed" value="${breed}" placeholder="Breed"/></div>
+    <div class="form-group"><label class="form-label">Size</label>
+      <div class="size-selector">
+        <button class="size-btn ${size==='small'?'active':''}" data-size="small" onclick="editSelectSize('small',this)">🐩 Small</button>
+        <button class="size-btn ${size==='medium'?'active':''}" data-size="medium" onclick="editSelectSize('medium',this)">🐕 Medium</button>
+        <button class="size-btn ${size==='large'?'active':''}" data-size="large" onclick="editSelectSize('large',this)">🦮 Large</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-secondary" style="padding:10px" onclick="this.closest('div[style]').remove()">Cancel</button>
+      <button class="btn btn-primary" style="padding:10px" onclick="saveEditProfile(this.closest('div[style]'))">Save</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+}
+let editSize = null;
+function editSelectSize(s, el) { editSize = s; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===s)); }
+async function saveEditProfile(modal) {
+  const petName = document.getElementById('edit-pet-name').value.trim();
+  const breed = document.getElementById('edit-breed').value.trim();
+  const size = editSize || userPrefs?.pet_size || 'medium';
+  try {
+    const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
+    if (userPrefs) userPrefs = await getClient().entities.UserPreferences.update(userPrefs.id, data);
+    else userPrefs = await getClient().entities.UserPreferences.create(data);
+    currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); modal.remove();
+  } catch(e) { alert('Could not save. Try again.'); }
+}
+
+async function logout() {
+  try { await getClient().auth.logout(); } catch(_) {}
+  currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
+}
+
+function selectSetupSize(size, el) { setupSize = size; document.querySelectorAll('#screen-setup .size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+async function saveProfile() {
+  const name = document.getElementById('setup-name').value.trim();
+  const breed = document.getElementById('setup-breed').value.trim();
+  try {
+    const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
+    if (userPrefs) userPrefs = await getClient().entities.UserPreferences.update(userPrefs.id, data);
+    else userPrefs = await getClient().entities.UserPreferences.create(data);
+    currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
+    showScreen('paywall'); renderTierDisplay(); startCountdown();
+  } catch(e) { alert('Could not save profile.'); }
+}
+function loadMainScreen() {
+  showScreen('main'); showTab('report');
+  const petName = userPrefs?.pet_name || 'your pup';
+  document.getElementById('pet-welcome-msg').textContent = `Ready to run ${petName}'s report?`;
+  document.getElementById('header-sub').textContent = `Ground temp & walk safety for ${petName}`;
+  syncSizeSelectors(currentPetSize); updateUserBar();
+  // Show notif prompt if not asked yet
+  if (!localStorage.getItem('paw_notif_asked') && 'Notification' in window) {
+    document.getElementById('notif-banner').style.display = 'flex';
+  }
+}
+
+// Notifications
+async function requestNotifications() {
+  localStorage.setItem('paw_notif_asked', '1');
+  document.getElementById('notif-banner').style.display = 'none';
+  if (!('Notification' in window)) { alert('Push notifications are not supported on this browser.'); return; }
+  const perm = await Notification.requestPermission();
+  notificationsEnabled = perm === 'granted';
+  document.getElementById('notif-toggle-btn').textContent = notificationsEnabled ? 'Enabled ✅' : 'Denied';
+  if (notificationsEnabled) new Notification('🐾 The Paw Report', { body: 'You\'ll now get alerts when conditions turn dangerous!', icon: '' });
+}
+function toggleNotifications() {
+  if (notificationsEnabled) { notificationsEnabled = false; document.getElementById('notif-toggle-btn').textContent = 'Enable'; }
+  else requestNotifications();
+}
+function sendDangerNotification(msg) {
+  if (notificationsEnabled && Notification.permission === 'granted') new Notification('🐾 Paw Report Alert', { body: msg });
+}
+
+function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b.dataset.size === size)); }
+function selectSize(size, el) {
+  currentPetSize = size; syncSizeSelectors(size);
+  if (lastLat && lastPawData) fetchPawAndUpdate(lastLat, lastLon);
+  if (userPrefs) { try { getClient().entities.UserPreferences.update(userPrefs.id, { pet_size: size }); } catch(_) {} }
+}
+
+const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Too Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Caution':'caution','Danger':'danger','Fry Zone':'fry'};
+function updatePawScale(rating) {
+  ['extremecold','chilly','safe','warm','caution','danger','fry'].forEach(s => { const el=document.getElementById('scale-'+s); if(el) el.classList.remove('active'); });
+  const k = PAW_SCALE_MAP[rating]; if(k){ const el=document.getElementById('scale-'+k); if(el) el.classList.add('active'); }
+}
+function getRatingColor(rating) {
+  const map = {
+    'Extreme Cold': '#818cf8',
+    'Too Cold':     '#93c5fd',
+    'Chilly':       '#7dd3fc',
+    'Safe':         '#4ade80',
+    'Warm':         '#fbbf24',
+    'Caution':      '#fb923c',
+    'Danger':       '#f87171',
+    'Fry Zone':     '#ff4500'
+  };
+  return map[rating] || '#fb923c';
+}
+
+function updateDynamicColors(rating) {
+  const color = getRatingColor(rating);
+  // Pulse dot
+  const pulse = document.getElementById('pulse-dot');
+  if (pulse && !pulse.classList.contains('inactive')) {
+    pulse.style.background = color;
+    pulse.style.boxShadow = '0 0 8px ' + color;
+  }
+  // Status text
+  const statusText = document.getElementById('status-text');
+  if (statusText) statusText.style.color = color;
+  // Notif bell icon glow
+  const notifIcon = document.querySelector('#notif-banner .notif-icon');
+  if (notifIcon) notifIcon.style.filter = 'drop-shadow(0 0 8px ' + color + ')';
+  // Header title glow
+  const h1 = document.querySelector('.header h1');
+  if (h1) h1.style.textShadow = '0 0 24px ' + color + '99';
+  // Main button border glow
+  const btn = document.getElementById('main-btn');
+  if (btn) btn.style.boxShadow = '0 8px 24px ' + color + '60';
+  // Rating emoji glow
+  const emoji = document.getElementById('rating-emoji');
+  if (emoji) emoji.style.filter = 'drop-shadow(0 0 12px ' + color + ')';
+}
+
+function updatePawUI(d) {
+  lastPawData = d;
+  document.getElementById('rating-emoji').textContent = d.emoji;
+  const lbl = document.getElementById('rating-label'); lbl.textContent = d.rating; lbl.style.color = d.color || 'white';
+  document.getElementById('rating-message').textContent = d.message;
+  document.getElementById('ground-temp').textContent = d.groundTempF + '°F';
+  document.getElementById('air-temp').textContent = d.airTempF + '°F';
+  document.getElementById('uv-index').textContent = d.uvIndex != null ? d.uvIndex.toFixed(1) : '--';
+  document.getElementById('wind-speed').textContent = d.windSpeedMph + ' mph';
+  document.getElementById('cloud-cover').textContent = d.cloudCover + '%';
+  updatePawScale(d.rating);
+  const ca = document.getElementById('cold-alert');
+  if(d.coldTip){ ca.textContent=d.coldTip; ca.style.display='block'; } else ca.style.display='none';
+  const ha = document.getElementById('hydration-alert');
+  if(d.hydrationMsg){ ha.textContent=d.hydrationMsg; ha.style.display='block'; } else ha.style.display='none';
+  document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  // Danger notification
+  updateDynamicColors(d.rating);
+  if (['Danger','Fry Zone','Extreme Cold'].includes(d.rating)) sendDangerNotification(`⚠️ ${d.rating}: ${d.message}`);
+}
+async function fetchPawAndUpdate(lat, lon) {
+  try { const res = await fetch('/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok) updatePawUI(await res.json()); } catch(_) {}
+}
+function updateCrimeUI(d) {
+  document.getElementById('crime-loading').style.display = 'none';
+  document.getElementById('crime-content').style.display = 'block';
+  document.getElementById('crime-emoji').textContent = d.crimeEmoji;
+  const rl = document.getElementById('crime-rating'); rl.textContent = d.crimeRating; rl.style.color = d.crimeColor||'white';
+  document.getElementById('crime-message').textContent = d.crimeMessage;
+  const loc = [d.city, d.stateAbbr||d.state||d.country].filter(Boolean).join(', ');
+  document.getElementById('crime-location').textContent = loc ? '📍 '+loc : '';
+  document.getElementById('crime-violent-rate').textContent = d.violentOffenseRate ?? '--';
+  document.getElementById('crime-property-rate').textContent = d.propertyOffenseRate ?? '--';
+  document.getElementById('crime-score-val').textContent = d.crimeScore != null ? (100-d.crimeScore)+'/100' : '--';
+  document.getElementById('crime-source').textContent = d.dataSource||'';
+  if(d.crimeScore != null){
+    const s=d.crimeScore;
+    document.getElementById('cs-1').classList.toggle('active',s<25);
+    document.getElementById('cs-2').classList.toggle('active',s>=25&&s<42);
+    document.getElementById('cs-3').classList.toggle('active',s>=42&&s<58);
+    document.getElementById('cs-4').classList.toggle('active',s>=58&&s<75);
+    document.getElementById('cs-5').classList.toggle('active',s>=75);
+    lastCrimeScore=s; lastCrimeData=d;
+  }
+}
+function scoreToColor(s){ if(s<10)return'#4ade80'; if(s<25)return'#86efac'; if(s<45)return'#fbbf24'; if(s<65)return'#f97316'; return'#f87171'; }
+function updateWalkTimeUI(d) {
+  document.getElementById('walk-time-loading').style.display='none';
+  document.getElementById('walk-time-content').style.display='block';
+  document.getElementById('best-time-icon').textContent=d.icon;
+  document.getElementById('best-time-window').textContent=d.windowLabel||d.bestHour?.timeLabel||'--';
+  document.getElementById('best-time-rec').textContent=d.recommendation||'';
+  const bars=document.getElementById('hourly-bars');
+  const hours=(d.hours||[]).filter(h=>h.hour%2===0);
+  const bestHour=d.bestHour?.hour;
+  const scores=hours.map(h=>h.totalScore);
+  const minS=Math.min(...scores),maxS=Math.max(...scores),range=Math.max(maxS-minS,1);
+  bars.innerHTML=hours.map(h=>{
+    const norm=(h.totalScore-minS)/range,barH=Math.max(6,Math.round(norm*42)+6);
+    const color=h.isPast?'rgba(255,255,255,0.15)':scoreToColor(h.totalScore);
+    const isBest=h.hour===bestHour;
+    return `<div class="hourly-col"><div class="hourly-bar-wrap"><div class="hourly-bar ${h.isPast?'past':''} ${isBest?'best-bar':''}" style="height:${barH}px;background:${color}"></div></div><div class="hourly-label ${isBest?'best-label':''}">${h.timeLabel.replace(' AM','a').replace(' PM','p')}</div></div>`;
+  }).join('');
+}
+function updateWashUI(d) {
+  document.getElementById('wash-loading').style.display='none';
+  document.getElementById('wash-content').style.display='block';
+  const list=document.getElementById('stations-list');
+  if(!d.stations||d.stations.length===0){ list.innerHTML='<div class="no-stations" style="text-align:center;opacity:0.5;font-size:0.84rem;padding:10px">No pet wash stations found within 3 miles.</div>'; return; }
+  list.innerHTML=d.stations.map(s=>{
+    const mapsUrl=`https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lon}`;
+    const tags=[s.distanceMiles!=null?s.distanceMiles+' mi':null,s.hours?'⏰ '+s.hours:null].filter(Boolean);
+    const links=[s.website?`<a class="station-link" href="${s.website}" target="_blank">🌐 Website</a>`:'',s.phone?`<a class="station-link" href="tel:${s.phone}">📞 ${s.phone}</a>`:'',`<a class="station-link" href="${mapsUrl}" target="_blank">🗺 Directions</a>`].filter(Boolean).join('');
+    const icon=s.type==='Self-Service Dog Wash'?'🚿':s.type==='Pet Grooming'?'✂️':'🛁';
+    return `<div class="station-item"><div class="station-icon">${icon}</div><div class="station-info"><div class="station-name">${s.name}</div><div class="station-type">${s.type}</div>${s.address?`<div class="station-type" style="opacity:0.38">${s.address}</div>`:''}<div class="station-meta">${tags.map(t=>`<span class="station-tag">${t}</span>`).join('')}</div>${links?`<div class="station-links">${links}</div>`:''}</div><div class="station-dist">${s.distanceMiles!=null?s.distanceMiles+' mi':''}</div></div>`;
+  }).join('');
+}
+
+function buildShareText() {
+  const paw=lastPawData, crime=lastCrimeData;
+  const parts=['🐾 The Paw Report'];
+  if(paw) parts.push(`🌡️ Ground: ${paw.rating} (${paw.groundTempF}°F)`);
+  if(crime) parts.push(`🚨 Safety: ${crime.crimeRating}`);
+  if(lastLat) parts.push(`📍 ${lastLat.toFixed(4)}, ${lastLon.toFixed(4)}`);
+  parts.push('Check before every walk 🐾');
+  return parts.join('\
+');
+}
+function copyShareText() { navigator.clipboard.writeText(buildShareText()).then(()=>{ const btn=document.querySelector('.share-btn-copy'); btn.textContent='✅ Copied!'; setTimeout(()=>btn.textContent='📋 Copy Report',2000); }); }
+function shareTikTok() { navigator.clipboard.writeText(buildShareText()).then(()=>{ window.open('https://www.tiktok.com/', '_blank'); }); }
+function copyReferralCode() {
+  const code = document.getElementById('my-referral-code').textContent;
+  navigator.clipboard.writeText(code).then(()=>{ const el=document.getElementById('my-referral-code'); const orig=el.textContent; el.textContent='Copied! ✅'; setTimeout(()=>el.textContent=orig,2000); });
+}
+function shareReferralTikTok() {
+  const code = document.getElementById('my-referral-code').textContent;
+  const msg = `🐾 Try The Paw Report — check ground temps before every walk to keep your dog safe!\
+\
+Use my referral code for a FREE week: ${code}\
+\
+Check it out!`;
+  navigator.clipboard.writeText(msg).then(()=>{ window.open('https://www.tiktok.com/', '_blank'); });
+}
+
+const ALL_CARDS = ['walk-time-card','paw-card'];
+function showResultCards(v) {
+  document.getElementById('initial-card').style.display=v?'none':'block';
+  document.getElementById('loading-card').style.display='none';
+  document.getElementById('error-card').style.display='none';
+  ALL_CARDS.forEach(id=>document.getElementById(id).style.display=v?'block':'none');
+  document.getElementById('share-card').style.display=v?'block':'none';
+}
+function showLoading() {
+  ['initial-card','error-card',...ALL_CARDS,'share-card'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('loading-card').style.display='block';
+}
+function showFetchError(msg) {
+  ['initial-card','loading-card',...ALL_CARDS,'share-card'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('error-card').style.display='block';
+  document.getElementById('error-msg').textContent='⚠️ '+msg;
+}
+
+async function fetchAll(lat, lon) {
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
+  const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
+    fetch('/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
+    fetch('/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
+    fetch('/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
+    fetch('/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore})}),
+  ]);
+  showResultCards(true);
+  if(pawRes.status==='fulfilled'&&pawRes.value.ok) updatePawUI(await pawRes.value.json());
+  if(crimeRes.status==='fulfilled'&&crimeRes.value.ok) updateCrimeUI(await crimeRes.value.json());
+  else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.';
+  if(washRes.status==='fulfilled'&&washRes.value.ok) updateWashUI(await washRes.value.json());
+  else document.getElementById('wash-loading').textContent='Could not load wash stations.';
+  if(walkRes.status==='fulfilled'&&walkRes.value.ok) updateWalkTimeUI(await walkRes.value.json());
+  else document.getElementById('walk-time-loading').textContent='Could not load forecast.';
+}
+
+function getLocation() {
+  return new Promise((resolve,reject)=>{
+    if(!navigator.geolocation){reject(new Error('Geolocation not supported.')); return;}
+    navigator.geolocation.getCurrentPosition(p=>resolve({lat:p.coords.latitude,lon:p.coords.longitude}),e=>reject(new Error(e.code===1?'Location access denied. Please allow and retry.':'Could not get your location.')),{timeout:10000,enableHighAccuracy:true});
+  });
+}
+
+async function startTracking() {
+  if(isTracking){stopTracking();return;}
+  const btn=document.getElementById('main-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Getting location…';
+  showLoading();
+  try {
+    const {lat,lon}=await getLocation(); lastLat=lat; lastLon=lon;
+    document.getElementById('location-info').textContent=`📍 ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+    await fetchAll(lat,lon);
+    isTracking=true; btn.disabled=false; btn.textContent='⏹ Stop Report';
+    document.getElementById('pulse-dot').classList.remove('inactive');
+    trackingInterval=setInterval(async()=>{
+      try{const{lat:nl,lon:no}=await getLocation();lastLat=nl;lastLon=no;document.getElementById('location-info').textContent=`📍 ${nl.toFixed(4)}, ${no.toFixed(4)}`;await fetchAll(nl,no);}catch(_){}
+    },2*60*1000);
+  } catch(err) { showFetchError(err.message); btn.disabled=false; btn.textContent='📍 Run My Paw Report'; }
+}
+function stopTracking() {
+  isTracking=false; clearInterval(trackingInterval); trackingInterval=null;
+  document.getElementById('main-btn').textContent='📍 Run My Paw Report';
+  document.getElementById('pulse-dot').classList.add('inactive');
+  document.getElementById('status-text').textContent='Report stopped';
+}
+
+(async function init() {
+  handleCheckoutReturn();
+  handleCheckoutReturn();
+  try {
+    const client=getClient(); currentUser=await client.auth.me();
+    if(currentUser) await onLoggedIn(); else showScreen('auth');
+  } catch(_) { showScreen('auth'); }
+})();
+
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('screen-auth').classList.contains('active'))submitAuth();});
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+      console.log('SW registered:', reg.scope);
+    }).catch(function(err) {
+      console.log('SW failed:', err);
+    });
+  });
+}
+</script>
+</body>
+</html>
