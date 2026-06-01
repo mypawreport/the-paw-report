@@ -1,4 +1,4 @@
-const CACHE_NAME = 'paw-report-v4';
+const CACHE_NAME = 'paw-report-v5';
 const ASSETS = [
   '/',
   '/index.html',
@@ -9,38 +9,43 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
   self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS).catch(() => {}))
+  );
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
+});
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('fetch', event => {
+  // Never cache API calls — always network
+  if (event.request.url.includes('base44.app') || event.request.url.includes('api/')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
   );
 });
 
-// Push notifications
 self.addEventListener('push', event => {
   const data = event.data ? event.data.json() : {};
-  const title = data.title || 'The Paw Report';
-  const options = {
+  event.waitUntil(self.registration.showNotification(data.title || 'The Paw Report', {
     body: data.body || 'Check your walk safety now!',
     icon: '/icon-192.png',
     badge: '/icon-192.png',
     data: { url: data.url || '/' }
-  };
-  event.waitUntil(self.registration.showNotification(title, options));
+  }));
 });
 
 self.addEventListener('notificationclick', event => {
