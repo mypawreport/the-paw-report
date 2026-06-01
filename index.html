@@ -694,7 +694,7 @@
 
 <script>
 const APP_ID = '6a1c6fbdd48b351a9eb7455e';
-let base44Client = null, currentUser = null, userPrefs = null;
+let currentUser = null, userPrefs = null;
 let isTracking = false, trackingInterval = null;
 let currentPetSize = 'medium', currentTier = 'free';
 let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, lastCrimeScore = null;
@@ -815,34 +815,23 @@ function handleCheckoutReturn() {
   const tier = params.get('tier');
   const period = params.get('period');
   if (checkout === 'success' && tier) {
-    const activate = async () => {
-      try {
-        
-        currentUser = await authMe();
-        const prefs = await entities.UserPreferences.filter({created_by: currentUser.id});
-        userPrefs = prefs && prefs.length > 0 ? prefs[0] : null;
-        const data = {
-          subscription_tier: tier,
-          subscription_period: period || 'monthly',
-          subscription_start: new Date().toISOString(),
-          pet_name: userPrefs?.pet_name || 'My Dog',
-          pet_size: userPrefs?.pet_size || 'medium',
-          pet_breed: userPrefs?.pet_breed || '',
-          notifications_enabled: false
-        };
-        if (userPrefs) userPrefs = await entities.UserPreferences.update(userPrefs.id, data);
-        else userPrefs = await entities.UserPreferences.create(data);
-        userTier = tier;
-        currentPetSize = userPrefs.pet_size || 'medium';
-        updateUserBar();
-        window.history.replaceState({}, '', window.location.pathname);
-        const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
-        if (!userPrefs.pet_name || userPrefs.pet_name === 'My Dog') showScreen('setup');
-        else loadMainScreen();
-        setTimeout(() => alert('🎉 Welcome to ' + tierName + '! Your Paw Report is ready.'), 600);
-      } catch(e) { showScreen('auth'); }
-    };
-    activate();
+    // Save subscription to localStorage
+    localStorage.setItem('paw_sub_tier', tier);
+    localStorage.setItem('paw_sub_period', period || 'monthly');
+    localStorage.setItem('paw_sub_start', new Date().toISOString());
+    currentTier = tier;
+    window.history.replaceState({}, '', window.location.pathname);
+    const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
+    // Update prefs if user is logged in
+    if (currentUser) {
+      const existing = getPrefs(currentUser.id) || {};
+      userPrefs = savePrefs(currentUser.id, { ...existing, subscription_tier: tier, subscription_period: period || 'monthly', subscription_start: new Date().toISOString() });
+      currentPetSize = userPrefs.pet_size || 'medium';
+      updateUserBar();
+      if (!userPrefs.pet_name || userPrefs.pet_name === 'My Dog') showScreen('setup');
+      else loadMainScreen();
+    }
+    setTimeout(() => alert('🎉 Welcome to ' + tierName + '! Your Paw Report is ready.'), 600);
   } else if (checkout === 'cancelled') {
     window.history.replaceState({}, '', window.location.pathname);
   }
@@ -858,38 +847,51 @@ function applyReferral(inputId) {
   } else { alert('Invalid referral code. Codes look like PAW-XXXX.'); }
 }
 
-const BASE_URL = 'https://base44.app/api/apps/' + APP_ID;
-
-async function apiCall(method, path, body=null) {
-  const token = localStorage.getItem('base44_access_token');
-  const headers = {'Content-Type': 'application/json'};
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-  const opts = { method, headers };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(BASE_URL + path, opts);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.message || data.error || 'Request failed');
-  return data;
+// ---- Local auth (no server needed) ----
+function generateId() {
+  return 'usr_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
 }
 
 async function authRegister(email, password, full_name) {
-  const data = await apiCall('POST', '/auth/register', {email, password, full_name});
-  if (data.access_token) localStorage.setItem('base44_access_token', data.access_token);
-  return data;
+  const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+  if (users[email]) throw new Error('An account with this email already exists.');
+  const id = generateId();
+  const user = { id, email, full_name, password: btoa(password), created: Date.now() };
+  users[email] = user;
+  localStorage.setItem('paw_users', JSON.stringify(users));
+  localStorage.setItem('paw_current_user', JSON.stringify({id, email, full_name}));
+  return user;
 }
 
 async function authLogin(email, password) {
-  const data = await apiCall('POST', '/auth/login', {email, password});
-  if (data.access_token) localStorage.setItem('base44_access_token', data.access_token);
-  return data;
+  const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+  const user = users[email];
+  if (!user) throw new Error('No account found with that email. Please sign up first.');
+  if (user.password !== btoa(password)) throw new Error('Incorrect password. Please try again.');
+  localStorage.setItem('paw_current_user', JSON.stringify({id: user.id, email: user.email, full_name: user.full_name}));
+  return user;
 }
 
 async function authMe() {
-  return await apiCall('GET', '/auth/me');
+  const u = localStorage.getItem('paw_current_user');
+  if (!u) throw new Error('Not logged in');
+  return JSON.parse(u);
 }
 
 async function authLogout() {
-  localStorage.removeItem('base44_access_token');
+  localStorage.removeItem('paw_current_user');
+}
+
+// Local entity storage (replaces API calls)
+function getPrefs(userId) {
+  const all = JSON.parse(localStorage.getItem('paw_prefs') || '{}');
+  return all[userId] || null;
+}
+function savePrefs(userId, data) {
+  const all = JSON.parse(localStorage.getItem('paw_prefs') || '{}');
+  all[userId] = { ...( all[userId] || {}), ...data, id: userId };
+  localStorage.setItem('paw_prefs', JSON.stringify(all));
+  return all[userId];
 }
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -936,8 +938,7 @@ function showAuthError(msg) { const el = document.getElementById('auth-error'); 
 
 async function onLoggedIn() {
   try {
-    const prefs = await apiCall('GET', '/entities/UserPreferences?created_by=' + currentUser.id);
-    userPrefs = prefs && prefs.length > 0 ? prefs[0] : null;
+    userPrefs = getPrefs(currentUser.id);
   } catch(_) { userPrefs = null; }
   updateUserBar();
   if (!userPrefs) showScreen('setup');
@@ -1015,14 +1016,13 @@ async function saveEditProfile(modal) {
   const size = editSize || userPrefs?.pet_size || 'medium';
   try {
     const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
-    if (userPrefs) userPrefs = await apiCall('PUT', '/entities/UserPreferences/' + userPrefs.id, data);
-    else userPrefs = await apiCall('POST', '/entities/UserPreferences', data);
+    userPrefs = savePrefs(currentUser.id, data);
     currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); modal.remove();
   } catch(e) { alert('Could not save. Try again.'); }
 }
 
 async function logout() {
-  try { await authLogout(); } catch(_) {}
+  try { await authLogout(); } catch(_) {} currentUser = null; userPrefs = null;
   currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
 }
 
@@ -1032,8 +1032,7 @@ async function saveProfile() {
   const breed = document.getElementById('setup-breed').value.trim();
   try {
     const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
-    if (userPrefs) userPrefs = await apiCall('PUT', '/entities/UserPreferences/' + userPrefs.id, data);
-    else userPrefs = await apiCall('POST', '/entities/UserPreferences', data);
+    userPrefs = savePrefs(currentUser.id, data);
     currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
     showScreen('paywall'); renderTierDisplay(); startCountdown();
   } catch(e) { alert('Could not save profile.'); }
@@ -1072,7 +1071,7 @@ function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEac
 function selectSize(size, el) {
   currentPetSize = size; syncSizeSelectors(size);
   if (lastLat && lastPawData) fetchPawAndUpdate(lastLat, lastLon);
-  if (userPrefs) { try { apiCall('PUT', '/entities/UserPreferences/' + userPrefs.id, { pet_size: size }); } catch(_) {} }
+  if (currentUser) { try { savePrefs(currentUser.id, { pet_size: size }); } catch(_) {} }
 }
 
 const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Too Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Caution':'caution','Danger':'danger','Fry Zone':'fry'};
@@ -1285,11 +1284,16 @@ function stopTracking() {
 }
 
 (async function init() {
+  // Restore subscription tier from localStorage (works without login)
+  const savedTier = localStorage.getItem('paw_sub_tier');
+  if (savedTier) currentTier = savedTier;
+  
   handleCheckoutReturn();
-  handleCheckoutReturn();
+  
   try {
     currentUser = await authMe();
-    if(currentUser) await onLoggedIn(); else showScreen('auth');
+    if (currentUser) await onLoggedIn();
+    else showScreen('auth');
   } catch(_) { showScreen('auth'); }
 })();
 
@@ -1299,7 +1303,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementB
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
       console.log('SW registered:', reg.scope);
     }).catch(function(err) {
       console.log('SW failed:', err);
