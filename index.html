@@ -1149,52 +1149,52 @@ function getRatingColor(rating) {
 // Each rating has: dawn, day, dusk, night
 const BG_GRADIENTS = {
   'Extreme Cold': {
-    dawn:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    day:   'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    dusk:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    night: 'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
+    dawn:  'linear-gradient(160deg,#080d1a 0%,#0d1530 50%,#0a1228 100%)',
+    day:   'linear-gradient(160deg,#080f20 0%,#0d1a38 50%,#0a1530 100%)',
+    dusk:  'linear-gradient(160deg,#060c18 0%,#0a1228 50%,#080f20 100%)',
+    night: 'linear-gradient(160deg,#05080f 0%,#080d1a 50%,#060c18 100%)',
   },
   'Too Cold': {
-    dawn:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    day:   'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    dusk:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    night: 'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
+    dawn:  'linear-gradient(160deg,#0a0f1f 0%,#101828 50%,#0d1a30 100%)',
+    day:   'linear-gradient(160deg,#0a1225 0%,#121e38 50%,#0f1a30 100%)',
+    dusk:  'linear-gradient(160deg,#080d1c 0%,#0e1530 50%,#0a1228 100%)',
+    night: 'linear-gradient(160deg,#060810 0%,#0a0f1e 50%,#080c18 100%)',
   },
   'Chilly': {
-    dawn:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    day:   'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    dusk:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    night: 'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
+    dawn:  'linear-gradient(160deg,#0a1018 0%,#111c20 50%,#0d1a1c 100%)',
+    day:   'linear-gradient(160deg,#0c1418 0%,#142028 50%,#101c22 100%)',
+    dusk:  'linear-gradient(160deg,#080e14 0%,#0f1820 50%,#0c151c 100%)',
+    night: 'linear-gradient(160deg,#060a0e 0%,#0a1018 50%,#080d14 100%)',
   },
   'Safe': {
-    dawn:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    day:   'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    dusk:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    night: 'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
+    dawn:  'linear-gradient(160deg,#0a1410 0%,#111e14 50%,#0d1c12 100%)',
+    day:   'linear-gradient(160deg,#0c1812 0%,#142218 50%,#101e14 100%)',
+    dusk:  'linear-gradient(160deg,#08100c 0%,#0f1a10 50%,#0c160e 100%)',
+    night: 'linear-gradient(160deg,#060c08 0%,#0a120c 50%,#080e0a 100%)',
   },
   'Warm': {
-    dawn:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    day:   'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    dusk:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    night: 'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
+    dawn:  'linear-gradient(160deg,#1a1208 0%,#251a08 50%,#1e1508 100%)',
+    day:   'linear-gradient(160deg,#1e1608 0%,#2a1e0a 50%,#221808 100%)',
+    dusk:  'linear-gradient(160deg,#180e06 0%,#221406 50%,#1c1006 100%)',
+    night: 'linear-gradient(160deg,#100a04 0%,#180e04 50%,#140c04 100%)',
   },
   'Caution': {
-    dawn:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    day:   'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    dusk:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    night: 'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
+    dawn:  'linear-gradient(160deg,#1e1008 0%,#2a1608 50%,#221208 100%)',
+    day:   'linear-gradient(160deg,#221208 0%,#301808 50%,#281408 100%)',
+    dusk:  'linear-gradient(160deg,#180c06 0%,#221006 50%,#1c0e06 100%)',
+    night: 'linear-gradient(160deg,#100804 0%,#180c04 50%,#140a04 100%)',
   },
   'Danger': {
-    dawn:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    day:   'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    dusk:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    night: 'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
+    dawn:  'linear-gradient(160deg,#200a08 0%,#2e0c08 50%,#260a08 100%)',
+    day:   'linear-gradient(160deg,#240c08 0%,#340e08 50%,#2c0a08 100%)',
+    dusk:  'linear-gradient(160deg,#1c0806 0%,#280a06 50%,#200806 100%)',
+    night: 'linear-gradient(160deg,#120604 0%,#1c0804 50%,#160604 100%)',
   },
   'Fry Zone': {
-    dawn:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    day:   'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    dusk:  'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
-    night: 'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)',
+    dawn:  'linear-gradient(160deg,#280a06 0%,#380c06 50%,#2e0a06 100%)',
+    day:   'linear-gradient(160deg,#2c0c06 0%,#3e0e06 50%,#340c06 100%)',
+    dusk:  'linear-gradient(160deg,#220806 0%,#300a06 50%,#280806 100%)',
+    night: 'linear-gradient(160deg,#180604 0%,#240604 50%,#1e0604 100%)',
   },
 };
 
@@ -1222,10 +1222,10 @@ function updateDynamicColors(rating) {
   const tod = getTimeOfDay();
   const bgMap = BG_GRADIENTS[rating] || BG_GRADIENTS['Safe'];
   const bg = bgMap[tod] || bgMap['day'];
-  document.body.style.background = 'linear-gradient(160deg,#0f0f1a 0%,#1a1a2e 50%,#16213e 100%)';
+  document.body.style.background = bg;
   const textMap = TEXT_COLORS[rating] || TEXT_COLORS['Safe'];
   const textColor = textMap[tod] || textMap['day'];
-  // document.body.style.color = textColor;
+  // text color stays light always
 
   // Pulse dot
   const pulse = document.getElementById('pulse-dot');
