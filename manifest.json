@@ -42,18 +42,32 @@
   ],
   "screenshots": [
     {
-      "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/screenshot1.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
+      "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot1.jpg",
+      "sizes": "523x1024",
+      "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Ground temperature safety check"
     },
     {
-      "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/screenshot2.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
+      "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot2.jpg",
+      "sizes": "523x1024",
+      "type": "image/jpeg",
       "form_factor": "narrow",
-      "label": "Area safety ratings"
+      "label": "Area safety and walk conditions"
+    },
+    {
+      "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot3.jpg",
+      "sizes": "523x1024",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Pet wash station finder"
+    },
+    {
+      "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot4.jpg",
+      "sizes": "523x1024",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Best walk time recommendations"
     }
   ],
   "prefer_related_applications": false,
