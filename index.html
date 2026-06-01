@@ -785,11 +785,10 @@ async function handleSubscribe(tier, billing) {
   try {
     const referralCode = (document.getElementById('paywall-referral')?.value || document.getElementById('setup-referral')?.value || '').trim().toUpperCase();
     const referralApplied = referralCode.startsWith('PAW-') && referralCode.length >= 8;
-    const res = await fetch('/functions/getPetWashStations', {
+    const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/createCheckoutSession', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        action: 'stripe_checkout',
         tier: tier,
         period: billing,
         userId: currentUser?.id || '',
