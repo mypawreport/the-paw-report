@@ -296,7 +296,7 @@
 
   <div id="screen-setup" class="screen">
     <div class="card setup-card">
-      <span class="setup-icon"><img src="https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/7d6e9862a_generated_image.png" alt="Rottweiler" style="width:90px;height:90px;object-fit:contain;margin-bottom:4px;"></span>
+      <span class="setup-icon">🐾</span>
       <div class="setup-title">Tell us about your pup</div>
       <div class="setup-sub">We'll personalise ground temp alerts based on your dog's size.</div>
       <div class="form-group">
@@ -398,7 +398,7 @@
 
     <div id="tab-report">
       <div class="card" id="initial-card" style="text-align:center;">
-        <div style="margin-bottom:10px;"><img src="https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/7d6e9862a_generated_image.png" alt="Rottweiler" style="width:90px;height:90px;object-fit:contain;margin-bottom:4px;"></div>
+        <div style="margin-bottom:10px;">🐾</div>
         <div style="font-size:1rem;font-weight:600;margin-bottom:5px;" id="pet-welcome-msg">Ready to check conditions?</div>
         <div style="font-size:0.83rem;opacity:0.6;margin-bottom:16px;">Ground temp, walk timing & safety — all in one report.</div>
         <div style="font-size:0.7rem;opacity:0.5;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Dog size:</div>
@@ -770,6 +770,13 @@ async function handleSubscribe(tier, billing) {
         referralApplied: referralApplied
       })
     });
+    if (!res.ok) {
+      let errMsg = 'Could not start checkout. Please try again.';
+      try { const ct = res.headers.get('content-type')||''; if(ct.includes('json')){ const e=await res.json(); errMsg=e.error||errMsg; } } catch(_) {}
+      throw new Error(errMsg);
+    }
+    const ct = res.headers.get('content-type')||'';
+    if (!ct.includes('json')) throw new Error('Unexpected response from checkout. Please try again.');
     const data = await res.json();
     if (data.url) {
       window.location.href = data.url;
@@ -1216,8 +1223,8 @@ function updatePawUI(d) {
   updateDynamicColors(d.rating);
   if (['Danger','Fry Zone','Extreme Cold'].includes(d.rating)) sendDangerNotification(`⚠️ ${d.rating}: ${d.message}`);
 }
-async function fetchPawAndUpdate(lat, lon) {
-  try { const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok) updatePawUI(await res.json()); } catch(_) {}
+async async function fetchPawAndUpdate(lat, lon) {
+  try { const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) updatePawUI(await res.json()); } } catch(_) {}
 }
 function updateCrimeUI(d) {
   document.getElementById('crime-loading').style.display = 'none';
@@ -1313,7 +1320,7 @@ function showFetchError(msg) {
   document.getElementById('error-msg').textContent='⚠️ '+msg;
 }
 
-async function fetchAll(lat, lon) {
+async async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
@@ -1322,12 +1329,13 @@ async function fetchAll(lat, lon) {
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore})}),
   ]);
   showResultCards(true);
-  if(pawRes.status==='fulfilled'&&pawRes.value.ok) updatePawUI(await pawRes.value.json());
-  if(crimeRes.status==='fulfilled'&&crimeRes.value.ok) updateCrimeUI(await crimeRes.value.json());
+  async function safeJson(r) { try { const ct=r.headers.get('content-type')||''; if(!ct.includes('json')) return null; return await r.json(); } catch(_) { return null; } }
+  if(pawRes.status==='fulfilled'&&pawRes.value.ok){ const d=await safeJson(pawRes.value); if(d) updatePawUI(d); }
+  if(crimeRes.status==='fulfilled'&&crimeRes.value.ok){ const d=await safeJson(crimeRes.value); if(d) updateCrimeUI(d); else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.'; }
   else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.';
-  if(washRes.status==='fulfilled'&&washRes.value.ok) updateWashUI(await washRes.value.json());
+  if(washRes.status==='fulfilled'&&washRes.value.ok){ const d=await safeJson(washRes.value); if(d) updateWashUI(d); else document.getElementById('wash-loading').textContent='Could not load wash stations.'; }
   else document.getElementById('wash-loading').textContent='Could not load wash stations.';
-  if(walkRes.status==='fulfilled'&&walkRes.value.ok) updateWalkTimeUI(await walkRes.value.json());
+  if(walkRes.status==='fulfilled'&&walkRes.value.ok){ const d=await safeJson(walkRes.value); if(d) updateWalkTimeUI(d); else document.getElementById('walk-time-loading').textContent='Could not load forecast.'; }
   else document.getElementById('walk-time-loading').textContent='Could not load forecast.';
 }
 
@@ -1338,7 +1346,7 @@ function getLocation() {
   });
 }
 
-async function startTracking() {
+async async function startTracking() {
   if(isTracking){stopTracking();return;}
   const btn=document.getElementById('main-btn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Getting location…';
@@ -1386,6 +1394,22 @@ if ('serviceWorker' in navigator) {
       chevron.style.transform = 'rotate(0deg)';
     }
   }
+
+
+// Safe API helper — guards against non-JSON responses
+async function safeApiCall(url, body) {
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) return null;
+    const ct = res.headers.get('content-type') || '';
+    if (!ct.includes('json')) return null;
+    return await res.json();
+  } catch(_) { return null; }
+}
 
 // 🐶 Bark alert sound using Web Audio API
 function playBarkSound() {
