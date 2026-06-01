@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.thepawreport.app",
+      "sha256_cert_fingerprints": [
+        "72:4F:7F:B6:54:93:77:15:2E:45:13:8B:C3:FC:24:22:08:CB:FA:FA:98:01:BF:83:66:A1:EB:B7:59:53:4C:2C"
+      ]
+    }
+  }
+]
