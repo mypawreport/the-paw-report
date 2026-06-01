@@ -1075,7 +1075,9 @@ async function requestNotifications() {
   notificationsEnabled = perm === 'granted';
   updateNotifBtn();
   if (notificationsEnabled) {
-    new Notification('🐾 The Paw Report', { body: 'You\'ll now get alerts when conditions turn dangerous!', icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png' });
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 The Paw Report', { body: "You'll now get alerts when conditions turn dangerous!", icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/icon-192.png' }));
+    }
   } else if (perm === 'denied') {
     alert('🔕 Notifications blocked.\n\nTo enable:\n1. Tap the lock/info icon in your browser address bar\n2. Find "Notifications" and set to Allow\n3. Reload the page and try again');
   }
@@ -1097,7 +1099,7 @@ function toggleNotifications() {
   }
 }
 function sendDangerNotification(msg) {
-  if (notificationsEnabled && Notification.permission === 'granted') { playBarkSound(); new Notification('🐾 Paw Report Alert', { body: msg }); };
+  if (notificationsEnabled && Notification.permission === 'granted') { playBarkSound(); navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 Paw Report Alert', { body: msg, icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/icon-192.png', vibrate: [200, 100, 200] })); };
 }
 
 function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b.dataset.size === size)); }
