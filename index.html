@@ -1369,7 +1369,15 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 
-(async ();
+(async () => {
+  handleCheckoutReturn();
+  try {
+    currentUser = await authMe();
+    await onLoggedIn();
+  } catch(_) {
+    showScreen('auth');
+  }
+})();
 
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('screen-auth').classList.contains('active'))submitAuth();});
 </script>
