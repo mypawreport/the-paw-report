@@ -675,6 +675,14 @@ let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, la
 let isSignUp = false, setupSize = 'medium', activeBilling = 'weekly', activeTierTab = 'bronze';
 let notificationsEnabled = false;
 
+// Restore subscription state from localStorage
+(function restoreSubState() {
+  const savedTier = localStorage.getItem('paw_sub_tier');
+  if (savedTier && ['bronze','silver','gold'].includes(savedTier)) {
+    currentTier = savedTier;
+  }
+})();
+
 // Launch end date: 7 days from now stored in localStorage
 const LAUNCH_KEY = 'paw_launch_end';
 function getLaunchEnd() {
@@ -811,6 +819,8 @@ function handleCheckoutReturn() {
       if (!userPrefs.pet_name || userPrefs.pet_name === 'My Dog') showScreen('setup');
       else loadMainScreen();
     }
+    // If no pet name set yet, send to setup; otherwise go to main
+    if (!currentUser) loadMainScreen();
     setTimeout(() => alert('🎉 Welcome to ' + tierName + '! Your Paw Report is ready.'), 600);
   } else if (checkout === 'cancelled') {
     window.history.replaceState({}, '', window.location.pathname);
@@ -920,9 +930,27 @@ async function onLoggedIn() {
   try {
     userPrefs = getPrefs(currentUser.id);
   } catch(_) { userPrefs = null; }
+  // Sync tier from userPrefs if available
+  if (userPrefs?.subscription_tier && ['bronze','silver','gold'].includes(userPrefs.subscription_tier)) {
+    currentTier = userPrefs.subscription_tier;
+    localStorage.setItem('paw_sub_tier', currentTier);
+  }
   updateUserBar();
-  if (!userPrefs) showScreen('setup');
-  else { currentPetSize = userPrefs.pet_size || 'medium'; syncSizeSelectors(currentPetSize); showScreen('paywall'); renderTierDisplay(); startCountdown(); }
+  if (!userPrefs) {
+    showScreen('setup');
+  } else if (currentTier !== 'free') {
+    // Already subscribed — go straight to the app
+    currentPetSize = userPrefs.pet_size || 'medium';
+    syncSizeSelectors(currentPetSize);
+    loadMainScreen();
+  } else {
+    // No subscription — show paywall
+    currentPetSize = userPrefs.pet_size || 'medium';
+    syncSizeSelectors(currentPetSize);
+    showScreen('paywall');
+    renderTierDisplay();
+    startCountdown();
+  }
 }
 
 function updateUserBar() {
