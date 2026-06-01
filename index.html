@@ -867,7 +867,7 @@ function toggleAuthMode() {
   document.getElementById('auth-toggle-label').textContent = isSignUpMode ? 'Sign in' : 'Sign up';
   document.getElementById('auth-name').style.display = isSignUpMode ? 'block' : 'none';
   document.getElementById('auth-icon').textContent = isSignUpMode ? '🐾' : '🔐';
-  document.getElementById('auth-error').style.display = 'none';
+  const errEl = document.getElementById('auth-error'); errEl.style.display = 'none'; errEl.style.background = ''; errEl.style.color = '';
 }
 async function submitAuth() {
   const email = document.getElementById('auth-email').value.trim();
@@ -877,17 +877,36 @@ async function submitAuth() {
   if (isSignUpMode && !name) { showAuthError('Please enter your name.'); return; }
   const btn = document.getElementById('auth-btn');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>' + (isSignUpMode ? 'Creating…' : 'Signing in…');
-  document.getElementById('auth-error').style.display = 'none';
+  const errEl = document.getElementById('auth-error'); errEl.style.display = 'none'; errEl.style.background = ''; errEl.style.color = '';
   try {
     const client = getClient();
-    if (isSignUpMode) await client.auth.register({ email, password, full_name: name });
+    if (isSignUpMode) {
+      const regResult = await client.auth.register({ email, password, full_name: name });
+      // Handle pending approval mode
+      if (regResult && (regResult.status === 'pending' || regResult.access_request_created)) {
+        showAuthError('✅ Account created! Sign in below with your email and password.', true);
+        toggleAuthMode(); // Switch back to sign-in mode
+        document.getElementById('auth-email').value = email;
+        return;
+      }
+    }
     await client.auth.login({ email, password });
     currentUser = await client.auth.me();
     await onLoggedIn();
-  } catch(e) { showAuthError(e.message || 'Something went wrong.'); }
+  } catch(e) {
+    const msg = e.message || 'Something went wrong.';
+    // If it's an invalid credentials error and we just registered, show helpful message
+    if (msg.toLowerCase().includes('invalid') && isSignUpMode) {
+      showAuthError('Account created! Please sign in below.', true);
+      toggleAuthMode();
+      document.getElementById('auth-email').value = email;
+    } else {
+      showAuthError(msg);
+    }
+  }
   finally { btn.disabled = false; btn.textContent = isSignUpMode ? 'Create Account' : 'Sign In'; }
 }
-function showAuthError(msg) { const el = document.getElementById('auth-error'); el.textContent = msg; el.style.display = 'block'; }
+function showAuthError(msg, isSuccess=false) { const el = document.getElementById('auth-error'); el.textContent = msg; el.style.display = 'block'; if(isSuccess){ el.style.background='rgba(22,163,74,0.25)'; el.style.color='#86efac'; el.style.borderColor='rgba(22,163,74,0.4)'; } else { el.style.background=''; el.style.color=''; el.style.borderColor=''; } }
 
 async function onLoggedIn() {
   try {
