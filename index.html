@@ -767,7 +767,7 @@ async function handleSubscribe(tier, billing) {
   try {
     const referralCode = (document.getElementById('paywall-referral')?.value || document.getElementById('setup-referral')?.value || '').trim().toUpperCase();
     const referralApplied = referralCode.startsWith('PAW-') && referralCode.length >= 8;
-    const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/createCheckoutSession', {
+    const res = await fetch('https://superagent-9eb7455e.base44.app/functions/createCheckoutSession', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1252,7 +1252,7 @@ function updatePawUI(d) {
   if (['Danger','Fry Zone','Extreme Cold'].includes(d.rating)) sendDangerNotification(`⚠️ ${d.rating}: ${d.message}`);
 }
 async function fetchPawAndUpdate(lat, lon) {
-  try { const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) updatePawUI(await res.json()); } } catch(_) {}
+  try { const res = await fetch('https://superagent-9eb7455e.base44.app/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) updatePawUI(await res.json()); } } catch(_) {}
 }
 function updateCrimeUI(d) {
   document.getElementById('crime-loading').style.display = 'none';
@@ -1351,10 +1351,10 @@ function showFetchError(msg) {
 async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore})}),
+    fetch('https://superagent-9eb7455e.base44.app/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
+    fetch('https://superagent-9eb7455e.base44.app/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
+    fetch('https://superagent-9eb7455e.base44.app/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
+    fetch('https://superagent-9eb7455e.base44.app/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore})}),
   ]);
   showResultCards(true);
   async function safeJson(r) { try { const ct=r.headers.get('content-type')||''; if(!ct.includes('json')) return null; return await r.json(); } catch(_) { return null; } }
