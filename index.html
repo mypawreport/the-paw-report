@@ -366,6 +366,9 @@
           <div class="referral-success" id="paywall-referral-success">✅ Free week applied! Discount will be applied at checkout.</div>
         </div>
         <button class="btn btn-secondary" onclick="startFree()" style="margin-top:10px;font-size:0.82rem;padding:10px">Continue with free preview (limited)</button>
+        <div style="text-align:center;margin-top:14px;">
+          <button onclick="showRecoveryModal()" style="background:none;border:none;color:#E8650A;font-size:0.82rem;cursor:pointer;text-decoration:underline;">🔑 Already subscribed? Recover your access</button>
+        </div>
       </div>
     </div>
     <div class="app-footer">
@@ -1481,5 +1484,20 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+  <!-- Subscription Recovery Modal -->
+  <div id="recovery-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:#fff8f3;border-radius:18px;padding:28px 22px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+      <div style="text-align:center;margin-bottom:16px;">
+        <span style="font-size:2rem;">🔑</span>
+        <div style="font-size:1.1rem;font-weight:800;color:#1a1a1a;margin-top:6px;">Recover Your Access</div>
+        <div style="font-size:0.83rem;color:#666;margin-top:4px;">Enter the email you used when you subscribed and we'll restore your account instantly — no payment needed.</div>
+      </div>
+      <input id="recovery-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid #E8650A;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
+      <div id="recovery-msg" style="font-size:0.82rem;color:#c00;margin-bottom:8px;min-height:18px;text-align:center;"></div>
+      <button onclick="recoverAccess()" style="width:100%;background:#E8650A;color:#fff;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Restore My Subscription</button>
+      <button onclick="closeRecoveryModal()" style="width:100%;background:none;border:none;color:#999;margin-top:10px;cursor:pointer;font-size:0.85rem;">Cancel</button>
+    </div>
+  </div>
 </body>
 </html>
