@@ -1076,7 +1076,7 @@ async function requestNotifications() {
   updateNotifBtn();
   if (notificationsEnabled) {
     if (navigator.serviceWorker.controller) {
-      navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 The Paw Report', { body: "You'll now get alerts when conditions turn dangerous!", icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/icon-192.png', silent: false, data: { color: '#E8650A' } }));
+      navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 The Paw Report', { body: "You'll now get alerts when conditions turn dangerous!", icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png', silent: false, data: { color: '#E8650A' } }));
     }
   } else if (perm === 'denied') {
     alert('🔕 Notifications blocked.\n\nTo enable:\n1. Tap the lock/info icon in your browser address bar\n2. Find "Notifications" and set to Allow\n3. Reload the page and try again');
@@ -1113,7 +1113,7 @@ function getStatusColor(status) {
   return map[status] || '#E8650A';
 }
 function sendDangerNotification(msg) {
-  if (notificationsEnabled && Notification.permission === 'granted') { playBarkSound(); const notifColor = lastPawData ? getStatusColor(lastPawData.status) : '#E8650A'; navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 Paw Report Alert', { body: msg, icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/icon-192.png', vibrate: [200, 100, 200], data: { color: notifColor } })); };
+  if (notificationsEnabled && Notification.permission === 'granted') { playBarkSound(); const notifColor = lastPawData ? getStatusColor(lastPawData.status) : '#E8650A'; navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 Paw Report Alert', { body: msg, icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png', vibrate: [200, 100, 200], data: { color: notifColor } })); };
 }
 
 function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b.dataset.size === size)); }
