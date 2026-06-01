@@ -275,6 +275,9 @@
       <div class="auth-toggle" onclick="toggleAuthMode()">
         Don't have an account? <span id="auth-toggle-label">Sign up</span>
       </div>
+      <div style="text-align:center;margin-top:10px;">
+        <button onclick="skipAuthAndContinue()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:0.78rem;cursor:pointer;text-decoration:underline;">Use without account →</button>
+      </div>
     </div>
     <div class="app-footer">
       <p>© 2026 The Paw Report — All Rights Reserved.</p>
@@ -356,11 +359,38 @@
           <div class="referral-success" id="paywall-referral-success">✅ Free week applied! Discount will be applied at checkout.</div>
         </div>
         <button class="btn btn-secondary" onclick="startFree()" style="margin-top:10px;font-size:0.82rem;padding:10px">Continue with free preview (limited)</button>
+        <div style="text-align:center;margin-top:16px;">
+          <button onclick="showRestoreModal()" style="background:none;border:none;color:rgba(255,255,255,0.45);font-size:0.8rem;cursor:pointer;text-decoration:underline;">📧 Already subscribed? Restore access →</button>
+        </div>
       </div>
     </div>
     <div class="app-footer">
       <p>© 2026 The Paw Report — All Rights Reserved.</p>
       <p><a href="legal.html">Terms of Service & Privacy Policy</a> · <a href="mailto:mypawreport@gmail.com">mypawreport@gmail.com</a></p>
+    </div>
+  </div>
+
+  <!-- ── RESTORE MODAL ── -->
+  <div id="restore-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#1a1a2e;border:1px solid rgba(232,101,10,0.4);border-radius:20px;padding:28px;max-width:380px;width:100%;text-align:center;">
+      <div style="font-size:2rem;margin-bottom:10px;">📧</div>
+      <div style="font-size:1.2rem;font-weight:700;color:#f97316;margin-bottom:6px;">Restore Your Access</div>
+      <div style="font-size:0.85rem;color:rgba(255,255,255,0.65);margin-bottom:18px;">Enter the email you used when you subscribed via Stripe. We'll look up your plan and restore it.</div>
+      <input id="restore-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-size:0.95rem;box-sizing:border-box;margin-bottom:12px;" />
+      <div id="restore-msg" style="font-size:0.82rem;min-height:20px;margin-bottom:10px;color:#f97316;"></div>
+      <button onclick="restoreSubscription()" style="width:100%;padding:13px;background:linear-gradient(135deg,#f97316,#e8650a);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:0.95rem;cursor:pointer;margin-bottom:10px;">🔍 Find My Subscription</button>
+      <button onclick="hideRestoreModal()" style="width:100%;padding:11px;background:none;border:1px solid rgba(255,255,255,0.2);border-radius:12px;color:rgba(255,255,255,0.5);font-size:0.85rem;cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ── ACCOUNT NUDGE MODAL (post-checkout) ── -->
+  <div id="nudge-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#1a1a2e;border:1px solid rgba(232,101,10,0.4);border-radius:20px;padding:28px;max-width:380px;width:100%;text-align:center;">
+      <div style="font-size:2rem;margin-bottom:10px;">🎉</div>
+      <div style="font-size:1.2rem;font-weight:700;color:#f97316;margin-bottom:6px;">Subscription Activated!</div>
+      <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);margin-bottom:18px;">Create a free account so you can access your subscription on <b>any device</b> — phone, tablet, or computer.</div>
+      <button onclick="hideNudge();showScreen('auth');" style="width:100%;padding:13px;background:linear-gradient(135deg,#f97316,#e8650a);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:0.95rem;cursor:pointer;margin-bottom:10px;">✅ Create Free Account</button>
+      <button onclick="hideNudge()" style="width:100%;padding:11px;background:none;border:1px solid rgba(255,255,255,0.2);border-radius:12px;color:rgba(255,255,255,0.5);font-size:0.85rem;cursor:pointer;">No thanks, stay on this device</button>
     </div>
   </div>
 
@@ -801,10 +831,10 @@ function handleCheckoutReturn() {
   if (checkout === 'success' && tier) {
     const activate = async () => {
       try {
-        const client = getClient();
-        currentUser = await client.auth.me();
-        const prefs = await client.entities.UserPreferences.filter({created_by: currentUser.id});
-        userPrefs = prefs && prefs.length > 0 ? prefs[0] : null;
+        // Restore from localStorage (no auth needed)
+        try { const s = localStorage.getItem('pawreport_prefs'); if(s) userPrefs = JSON.parse(s); } catch(_) {}
+        // Try auth silently
+        try { const client = getClient(); currentUser = await client.auth.me(); } catch(_) {}
         const data = {
           subscription_tier: tier,
           subscription_period: period || 'monthly',
@@ -814,8 +844,7 @@ function handleCheckoutReturn() {
           pet_breed: userPrefs?.pet_breed || '',
           notifications_enabled: false
         };
-        if (userPrefs) userPrefs = await client.entities.UserPreferences.update(userPrefs.id, data);
-        else userPrefs = await client.entities.UserPreferences.create(data);
+        userPrefs = {...(userPrefs||{}), ...data}; localStorage.setItem('pawreport_prefs', JSON.stringify(userPrefs)); if(currentUser){try{if(userPrefs.id) await getClient().entities.UserPreferences.update(userPrefs.id,data).catch(()=>{}); else{const r=await getClient().entities.UserPreferences.create(data).catch(()=>null);if(r&&r.id)userPrefs=r;}}catch(_){}}
         userTier = tier;
         currentPetSize = userPrefs.pet_size || 'medium';
         updateUserBar();
@@ -823,8 +852,15 @@ function handleCheckoutReturn() {
         const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
         if (!userPrefs.pet_name || userPrefs.pet_name === 'My Dog') showScreen('setup');
         else loadMainScreen();
-        setTimeout(() => alert('🎉 Welcome to ' + tierName + '! Your Paw Report is ready.'), 600);
-      } catch(e) { showScreen('auth'); }
+        // Show account nudge if not already logged in
+        setTimeout(() => { if (!currentUser) showNudge(); }, 800);
+      } catch(e) {
+        // Even on error, restore from localStorage and continue
+        const s = localStorage.getItem('pawreport_prefs');
+        if(s) { try { userPrefs=JSON.parse(s); } catch(_){} }
+        if (!userPrefs || !userPrefs.pet_name) showScreen('setup');
+        else loadMainScreen();
+      }
     };
     activate();
   } else if (checkout === 'cancelled') {
@@ -989,8 +1025,7 @@ async function saveEditProfile(modal) {
   const size = editSize || userPrefs?.pet_size || 'medium';
   try {
     const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
-    if (userPrefs) userPrefs = await getClient().entities.UserPreferences.update(userPrefs.id, data);
-    else userPrefs = await getClient().entities.UserPreferences.create(data);
+    userPrefs = {...(userPrefs||{}), ...data}; localStorage.setItem('pawreport_prefs', JSON.stringify(userPrefs)); if(currentUser){try{if(userPrefs.id) await getClient().entities.UserPreferences.update(userPrefs.id,data).catch(()=>{}); else{const r=await getClient().entities.UserPreferences.create(data).catch(()=>null);if(r&&r.id)userPrefs=r;}}catch(_){}}
     currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); modal.remove();
   } catch(e) { alert('Could not save. Try again.'); }
 }
@@ -1006,8 +1041,7 @@ async function saveProfile() {
   const breed = document.getElementById('setup-breed').value.trim();
   try {
     const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
-    if (userPrefs) userPrefs = await getClient().entities.UserPreferences.update(userPrefs.id, data);
-    else userPrefs = await getClient().entities.UserPreferences.create(data);
+    userPrefs = {...(userPrefs||{}), ...data}; localStorage.setItem('pawreport_prefs', JSON.stringify(userPrefs)); if(currentUser){try{if(userPrefs.id) await getClient().entities.UserPreferences.update(userPrefs.id,data).catch(()=>{}); else{const r=await getClient().entities.UserPreferences.create(data).catch(()=>null);if(r&&r.id)userPrefs=r;}}catch(_){}}
     currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
     showScreen('paywall'); renderTierDisplay(); startCountdown();
   } catch(e) { alert('Could not save profile.'); }
@@ -1046,7 +1080,7 @@ function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEac
 function selectSize(size, el) {
   currentPetSize = size; syncSizeSelectors(size);
   if (lastLat && lastPawData) fetchPawAndUpdate(lastLat, lastLon);
-  if (userPrefs) { try { getClient().entities.UserPreferences.update(userPrefs.id, { pet_size: size }); } catch(_) {} }
+  if (userPrefs) { try { userPrefs={...(userPrefs||{}),pet_size:size}; localStorage.setItem('pawreport_prefs',JSON.stringify(userPrefs)); if(currentUser&&userPrefs.id) getClient().entities.UserPreferences.update(userPrefs.id,{pet_size:size}).catch(()=>{}); } catch(_) {} }
 }
 
 const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Too Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Caution':'caution','Danger':'danger','Fry Zone':'fry'};
@@ -1265,14 +1299,102 @@ function stopTracking() {
 
 (async function init() {
   handleCheckoutReturn();
-  handleCheckoutReturn();
+  // Load prefs from localStorage — no login required
   try {
-    const client=getClient(); currentUser=await client.auth.me();
-    if(currentUser) await onLoggedIn(); else showScreen('auth');
-  } catch(_) { showScreen('auth'); }
+    const saved = localStorage.getItem('pawreport_prefs');
+    if (saved) { userPrefs = JSON.parse(saved); currentPetSize = userPrefs.pet_size || 'medium'; syncSizeSelectors(currentPetSize); }
+  } catch(_) {}
+  // Try to restore session silently if token exists
+  try {
+    const token = localStorage.getItem('base44_access_token');
+    if (token) {
+      const client = getClient(); currentUser = await client.auth.me();
+      if (currentUser) {
+        const prefs = await client.entities.UserPreferences.filter({created_by: currentUser.id}).catch(()=>[]);
+        if (prefs && prefs.length > 0) {
+          userPrefs = prefs[0]; currentPetSize = userPrefs.pet_size || 'medium';
+          syncSizeSelectors(currentPetSize);
+          localStorage.setItem('pawreport_prefs', JSON.stringify(userPrefs));
+        }
+        updateUserBar();
+      }
+    }
+  } catch(_) { currentUser = null; }
+  // Route user
+  if (!userPrefs || !userPrefs.pet_name) { showScreen('setup'); }
+  else { showScreen('paywall'); renderTierDisplay(); startCountdown(); }
 })();
 
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('screen-auth').classList.contains('active'))submitAuth();});
+
+// ── RESTORE SUBSCRIPTION ──────────────────────────────────────
+function showRestoreModal() {
+  const m = document.getElementById('restore-modal');
+  m.style.display = 'flex';
+  setTimeout(() => document.getElementById('restore-email').focus(), 100);
+}
+function hideRestoreModal() {
+  document.getElementById('restore-modal').style.display = 'none';
+  document.getElementById('restore-msg').textContent = '';
+  document.getElementById('restore-email').value = '';
+}
+async function restoreSubscription() {
+  const email = (document.getElementById('restore-email').value || '').trim().toLowerCase();
+  const msgEl = document.getElementById('restore-msg');
+  if (!email || !email.includes('@')) { msgEl.style.color='#f87171'; msgEl.textContent = 'Please enter a valid email address.'; return; }
+  msgEl.style.color = '#f97316'; msgEl.textContent = '🔍 Looking up your subscription...';
+  try {
+    const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/restoreSubscription', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (data.found && data.tier) {
+      // Restore to localStorage
+      userPrefs = {
+        ...(userPrefs || {}),
+        pet_name: userPrefs?.pet_name || 'My Dog',
+        pet_size: userPrefs?.pet_size || 'medium',
+        subscription_tier: data.tier,
+        subscription_period: data.period || 'monthly',
+        subscription_start: data.start || new Date().toISOString(),
+        restored_email: email
+      };
+      localStorage.setItem('pawreport_prefs', JSON.stringify(userPrefs));
+      userTier = data.tier;
+      currentPetSize = userPrefs.pet_size || 'medium';
+      msgEl.style.color = '#4ade80';
+      msgEl.textContent = '✅ Found! Restoring your ' + data.tier.charAt(0).toUpperCase() + data.tier.slice(1) + ' subscription...';
+      setTimeout(() => {
+        hideRestoreModal();
+        if (!userPrefs.pet_name || userPrefs.pet_name === 'My Dog') { showScreen('setup'); }
+        else { showScreen('main'); startTracking(); }
+      }, 1500);
+    } else {
+      msgEl.style.color = '#f87171';
+      msgEl.textContent = data.message || 'No active subscription found for that email. Check your Stripe receipt and try again, or email mypawreport@gmail.com for help.';
+    }
+  } catch(e) {
+    msgEl.style.color = '#f87171';
+    msgEl.textContent = 'Connection error — please try again.';
+  }
+}
+
+// ── ACCOUNT NUDGE (post-checkout) ──────────────────────────────
+function showNudge() {
+  document.getElementById('nudge-modal').style.display = 'flex';
+}
+function hideNudge() {
+  document.getElementById('nudge-modal').style.display = 'none';
+}
+
+// ── SKIP AUTH ──────────────────────────────────────────────────
+function skipAuthAndContinue() {
+  currentUser = null;
+  if (!userPrefs || !userPrefs.pet_name) { showScreen('setup'); }
+  else { showScreen('paywall'); renderTierDisplay(); startCountdown(); }
+}
+
 </script>
 
 <script>
