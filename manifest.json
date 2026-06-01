@@ -1,0 +1,30 @@
+{
+  "name": "The Paw Report",
+  "short_name": "Paw Report",
+  "description": "Ground temp & walk safety for every dog. Check before every walk.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1a0a00",
+  "theme_color": "#E8650A",
+  "orientation": "portrait-primary",
+  "categories": [
+    "lifestyle",
+    "health",
+    "pets"
+  ],
+  "icons": [
+    {
+      "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/18986cbf5_icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/03da2223b_icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
