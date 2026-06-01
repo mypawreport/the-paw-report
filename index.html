@@ -692,7 +692,6 @@
   </div>
 </div>
 
-<script src="https://cdn.base44.com/sdk/base44-sdk.min.js"></script>
 <script>
 const APP_ID = '6a1c6fbdd48b351a9eb7455e';
 let base44Client = null, currentUser = null, userPrefs = null;
@@ -818,9 +817,9 @@ function handleCheckoutReturn() {
   if (checkout === 'success' && tier) {
     const activate = async () => {
       try {
-        const client = getClient();
-        currentUser = await client.auth.me();
-        const prefs = await client.entities.UserPreferences.filter({created_by: currentUser.id});
+        
+        currentUser = await authMe();
+        const prefs = await entities.UserPreferences.filter({created_by: currentUser.id});
         userPrefs = prefs && prefs.length > 0 ? prefs[0] : null;
         const data = {
           subscription_tier: tier,
@@ -831,8 +830,8 @@ function handleCheckoutReturn() {
           pet_breed: userPrefs?.pet_breed || '',
           notifications_enabled: false
         };
-        if (userPrefs) userPrefs = await client.entities.UserPreferences.update(userPrefs.id, data);
-        else userPrefs = await client.entities.UserPreferences.create(data);
+        if (userPrefs) userPrefs = await entities.UserPreferences.update(userPrefs.id, data);
+        else userPrefs = await entities.UserPreferences.create(data);
         userTier = tier;
         currentPetSize = userPrefs.pet_size || 'medium';
         updateUserBar();
@@ -859,9 +858,38 @@ function applyReferral(inputId) {
   } else { alert('Invalid referral code. Codes look like PAW-XXXX.'); }
 }
 
-function getClient() {
-  if (!base44Client) base44Client = Base44SDK.createClient({ appId: APP_ID });
-  return base44Client;
+const BASE_URL = 'https://base44.app/api/apps/' + APP_ID;
+
+async function apiCall(method, path, body=null) {
+  const token = localStorage.getItem('base44_access_token');
+  const headers = {'Content-Type': 'application/json'};
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(BASE_URL + path, opts);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || data.error || 'Request failed');
+  return data;
+}
+
+async function authRegister(email, password, full_name) {
+  const data = await apiCall('POST', '/auth/register', {email, password, full_name});
+  if (data.access_token) localStorage.setItem('base44_access_token', data.access_token);
+  return data;
+}
+
+async function authLogin(email, password) {
+  const data = await apiCall('POST', '/auth/login', {email, password});
+  if (data.access_token) localStorage.setItem('base44_access_token', data.access_token);
+  return data;
+}
+
+async function authMe() {
+  return await apiCall('GET', '/auth/me');
+}
+
+async function authLogout() {
+  localStorage.removeItem('base44_access_token');
 }
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -896,10 +924,10 @@ async function submitAuth() {
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>' + (isSignUpMode ? 'Creating…' : 'Signing in…');
   document.getElementById('auth-error').style.display = 'none';
   try {
-    const client = getClient();
-    if (isSignUpMode) await client.auth.register({ email, password, full_name: name });
-    await client.auth.login({ email, password });
-    currentUser = await client.auth.me();
+    
+    if (isSignUpMode) await authRegister(email, password, name);
+    else await authLogin(email, password);
+    currentUser = await authMe();
     await onLoggedIn();
   } catch(e) { showAuthError(e.message || 'Something went wrong.'); }
   finally { btn.disabled = false; btn.textContent = isSignUpMode ? 'Create Account' : 'Sign In'; }
@@ -908,7 +936,7 @@ function showAuthError(msg) { const el = document.getElementById('auth-error'); 
 
 async function onLoggedIn() {
   try {
-    const prefs = await getClient().entities.UserPreferences.filter({created_by: currentUser.id});
+    const prefs = await apiCall('GET', '/entities/UserPreferences?created_by=' + currentUser.id);
     userPrefs = prefs && prefs.length > 0 ? prefs[0] : null;
   } catch(_) { userPrefs = null; }
   updateUserBar();
@@ -987,14 +1015,14 @@ async function saveEditProfile(modal) {
   const size = editSize || userPrefs?.pet_size || 'medium';
   try {
     const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
-    if (userPrefs) userPrefs = await getClient().entities.UserPreferences.update(userPrefs.id, data);
-    else userPrefs = await getClient().entities.UserPreferences.create(data);
+    if (userPrefs) userPrefs = await apiCall('PUT', '/entities/UserPreferences/' + userPrefs.id, data);
+    else userPrefs = await apiCall('POST', '/entities/UserPreferences', data);
     currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); modal.remove();
   } catch(e) { alert('Could not save. Try again.'); }
 }
 
 async function logout() {
-  try { await getClient().auth.logout(); } catch(_) {}
+  try { await authLogout(); } catch(_) {}
   currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
 }
 
@@ -1004,8 +1032,8 @@ async function saveProfile() {
   const breed = document.getElementById('setup-breed').value.trim();
   try {
     const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
-    if (userPrefs) userPrefs = await getClient().entities.UserPreferences.update(userPrefs.id, data);
-    else userPrefs = await getClient().entities.UserPreferences.create(data);
+    if (userPrefs) userPrefs = await apiCall('PUT', '/entities/UserPreferences/' + userPrefs.id, data);
+    else userPrefs = await apiCall('POST', '/entities/UserPreferences', data);
     currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
     showScreen('paywall'); renderTierDisplay(); startCountdown();
   } catch(e) { alert('Could not save profile.'); }
@@ -1044,7 +1072,7 @@ function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEac
 function selectSize(size, el) {
   currentPetSize = size; syncSizeSelectors(size);
   if (lastLat && lastPawData) fetchPawAndUpdate(lastLat, lastLon);
-  if (userPrefs) { try { getClient().entities.UserPreferences.update(userPrefs.id, { pet_size: size }); } catch(_) {} }
+  if (userPrefs) { try { apiCall('PUT', '/entities/UserPreferences/' + userPrefs.id, { pet_size: size }); } catch(_) {} }
 }
 
 const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Too Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Caution':'caution','Danger':'danger','Fry Zone':'fry'};
@@ -1260,7 +1288,7 @@ function stopTracking() {
   handleCheckoutReturn();
   handleCheckoutReturn();
   try {
-    const client=getClient(); currentUser=await client.auth.me();
+    currentUser = await authMe();
     if(currentUser) await onLoggedIn(); else showScreen('auth');
   } catch(_) { showScreen('auth'); }
 })();
