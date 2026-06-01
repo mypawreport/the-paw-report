@@ -1041,7 +1041,7 @@ function loadMainScreen() {
   const petName = userPrefs?.pet_name || 'your pup';
   document.getElementById('pet-welcome-msg').textContent = `Ready to run ${petName}'s report?`;
   document.getElementById('header-sub').textContent = `Ground temp & walk safety for ${petName}`;
-  syncSizeSelectors(currentPetSize); updateUserBar();
+  syncSizeSelectors(currentPetSize); updateUserBar(); updateNotifBtn();
   // Show notif prompt if not asked yet
   if (!localStorage.getItem('paw_notif_asked') && 'Notification' in window) {
     document.getElementById('notif-banner').style.display = 'flex';
@@ -1052,15 +1052,40 @@ function loadMainScreen() {
 async function requestNotifications() {
   localStorage.setItem('paw_notif_asked', '1');
   document.getElementById('notif-banner').style.display = 'none';
-  if (!('Notification' in window)) { alert('Push notifications are not supported on this browser.'); return; }
+  if (!('Notification' in window)) {
+    alert('Push notifications are not supported on this browser. Try adding the app to your home screen first.');
+    return;
+  }
+  // Already denied — browser won't show prompt again, guide user to settings
+  if (Notification.permission === 'denied') {
+    alert('🔕 Notifications are blocked.\n\nTo enable:\n1. Tap the lock/info icon in your browser address bar\n2. Find "Notifications" and set to Allow\n3. Reload the page and try again');
+    updateNotifBtn();
+    return;
+  }
   const perm = await Notification.requestPermission();
   notificationsEnabled = perm === 'granted';
-  document.getElementById('notif-toggle-btn').textContent = notificationsEnabled ? 'Enabled ✅' : 'Denied';
-  if (notificationsEnabled) new Notification('🐾 The Paw Report', { body: 'You\'ll now get alerts when conditions turn dangerous!', icon: '' });
+  updateNotifBtn();
+  if (notificationsEnabled) {
+    new Notification('🐾 The Paw Report', { body: 'You\'ll now get alerts when conditions turn dangerous!', icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png' });
+  } else if (perm === 'denied') {
+    alert('🔕 Notifications blocked.\n\nTo enable:\n1. Tap the lock/info icon in your browser address bar\n2. Find "Notifications" and set to Allow\n3. Reload the page and try again');
+  }
+}
+function updateNotifBtn() {
+  const btn = document.getElementById('notif-toggle-btn');
+  if (!btn) return;
+  if (!('Notification' in window)) { btn.textContent = 'Not supported'; btn.disabled = true; return; }
+  if (Notification.permission === 'granted') { btn.textContent = 'Enabled ✅'; notificationsEnabled = true; }
+  else if (Notification.permission === 'denied') { btn.textContent = '🔕 Blocked — tap to fix'; }
+  else { btn.textContent = 'Enable'; }
 }
 function toggleNotifications() {
-  if (notificationsEnabled) { notificationsEnabled = false; document.getElementById('notif-toggle-btn').textContent = 'Enable'; }
-  else requestNotifications();
+  if (Notification.permission === 'granted' && notificationsEnabled) {
+    notificationsEnabled = false;
+    document.getElementById('notif-toggle-btn').textContent = 'Enable';
+  } else {
+    requestNotifications();
+  }
 }
 function sendDangerNotification(msg) {
   if (notificationsEnabled && Notification.permission === 'granted') new Notification('🐾 Paw Report Alert', { body: msg });
