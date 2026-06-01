@@ -585,9 +585,104 @@
   </div>
 </div>
 
-<script src="https://cdn.base44.com/base44-sdk.js"></script>
+<script>
+
+// ── Inline Base44 SDK (minimal) ──────────────────────────────────────────────
+const Base44SDK = {
+  createClient({ appId }) {
+    const BASE = 'https://base44.app/api';
+    function getToken() {
+      return localStorage.getItem('base44_access_token') || localStorage.getItem('token') || '';
+    }
+    function authHeaders(extra = {}) {
+      const t = getToken();
+      return { 'Content-Type': 'application/json', ...(t ? { 'Authorization': 'Bearer ' + t } : {}), ...extra };
+    }
+    async function apiFetch(method, path, body) {
+      const opts = { method, headers: authHeaders() };
+      if (body !== undefined) opts.body = JSON.stringify(body);
+      const r = await fetch(BASE + path, opts);
+      const data = await r.json();
+      if (!r.ok) throw Object.assign(new Error(data?.message || data?.error || 'Request failed'), { response: r, data });
+      return data;
+    }
+    function saveToken(token) {
+      localStorage.setItem('base44_access_token', token);
+      localStorage.setItem('token', token);
+    }
+    function clearToken() {
+      localStorage.removeItem('base44_access_token');
+      localStorage.removeItem('token');
+    }
+
+    const auth = {
+      async login(emailOrObj, password) {
+        const body = (typeof emailOrObj === 'object') ? emailOrObj : { email: emailOrObj, password };
+        const data = await apiFetch('POST', `/apps/${appId}/auth/login`, body);
+        if (data.access_token) saveToken(data.access_token);
+        return data;
+      },
+      async register(payload) {
+        const data = await apiFetch('POST', `/apps/${appId}/auth/register`, payload);
+        if (data && data.access_token) saveToken(data.access_token);
+        return data;
+      },
+      async me() {
+        const data = await apiFetch('GET', `/apps/${appId}/entities/User/me`);
+        // API may return {user: {...}} or the user object directly
+        return (data && data.id) ? data : (data && data.user ? data.user : data);
+      },
+      logout() {
+        clearToken();
+      }
+    };
+
+    function entityModule(name) {
+      return {
+        async filter(query = {}) {
+          const qs = '?q=' + encodeURIComponent(JSON.stringify(query));
+          const data = await apiFetch('GET', `/apps/${appId}/entities/${name}` + qs);
+          return Array.isArray(data) ? data : (data.items || []);
+        },
+        async create(body) {
+          return apiFetch('POST', `/apps/${appId}/entities/${name}`, body);
+        },
+        async update(id, body) {
+          return apiFetch('PUT', `/apps/${appId}/entities/${name}/${id}`, body);
+        },
+        async get(id) {
+          return apiFetch('GET', `/apps/${appId}/entities/${name}/${id}`);
+        },
+        async delete(id) {
+          return apiFetch('DELETE', `/apps/${appId}/entities/${name}/${id}`);
+        }
+      };
+    }
+
+    const entities = new Proxy({}, {
+      get(_, name) { return entityModule(name); }
+    });
+
+    return { auth, entities };
+  }
+};
+// ── End inline SDK ───────────────────────────────────────────────────────────
+
+</script>
 <script>
 const APP_ID = '6a1c6fbdd48b351a9eb7455e';
+
+function getAuthHeaders() {
+  const token = localStorage.getItem('base44_access_token') || localStorage.getItem('token') || '';
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? {'Authorization': 'Bearer ' + token} : {})
+  };
+}
+function authFetch(url, body) {
+  return fetch(url, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(body) });
+}
+
 let base44Client = null, currentUser = null, userPrefs = null;
 let isTracking = false, trackingInterval = null;
 let currentPetSize = 'medium', currentTier = 'free';
@@ -679,17 +774,13 @@ async function handleSubscribe(tier, billing) {
   try {
     const referralCode = (document.getElementById('paywall-referral')?.value || document.getElementById('setup-referral')?.value || '').trim().toUpperCase();
     const referralApplied = referralCode.startsWith('PAW-') && referralCode.length >= 8;
-    const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/createCheckoutSession', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    const res = await authFetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/createCheckoutSession', {
         tier: tier,
         period: billing,
         userId: currentUser?.id || '',
         userEmail: currentUser?.email || '',
         referralApplied: referralApplied
-      })
-    });
+      });
     const data = await res.json();
     if (data.url) {
       window.location.href = data.url;
@@ -1004,7 +1095,7 @@ function updatePawUI(d) {
   if (['Danger','Fry Zone','Extreme Cold'].includes(d.rating)) sendDangerNotification(`⚠️ ${d.rating}: ${d.message}`);
 }
 async function fetchPawAndUpdate(lat, lon) {
-  try { const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok) updatePawUI(await res.json()); } catch(_) {}
+  try { const res = await authFetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{latitude:lat,longitude:lon,petSize:currentPetSize}); if(res.ok) updatePawUI(await res.json()); } catch(_) {}
 }
 function updateCrimeUI(d) {
   document.getElementById('crime-loading').style.display = 'none';
@@ -1108,10 +1199,10 @@ function showFetchError(msg) {
 async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore})}),
+    authFetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{latitude:lat,longitude:lon,petSize:currentPetSize}),
+    authFetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{latitude:lat,longitude:lon}),
+    authFetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{latitude:lat,longitude:lon,radius:5000}),
+    authFetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore}),
   ]);
   showResultCards(true);
   if(pawRes.status==='fulfilled'&&pawRes.value.ok) updatePawUI(await pawRes.value.json());
