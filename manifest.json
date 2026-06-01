@@ -14,12 +14,35 @@
   "theme_color": "#E8650A",
   "orientation": "portrait-primary",
   "lang": "en-US",
+  "dir": "ltr",
   "categories": [
     "lifestyle",
     "health",
     "pets"
   ],
   "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.thepawreport.app",
+      "url": "https://play.google.com/store/apps/details?id=com.thepawreport.app"
+    }
+  ],
+  "scope_extensions": [
+    {
+      "origin": "https://mypawreport.github.io"
+    }
+  ],
+  "share_target": {
+    "action": "./?share",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
   "icons": [
     {
       "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/18986cbf5_icon-192.png",
@@ -68,9 +91,15 @@
       "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Best walk time recommendations"
+    },
+    {
+      "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot-wide.jpg",
+      "sizes": "1024x523",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "The Paw Report \u2014 desktop view"
     }
   ],
-  "prefer_related_applications": false,
   "shortcuts": [
     {
       "name": "Check Paw Safety",
@@ -83,6 +112,24 @@
           "sizes": "192x192"
         }
       ]
+    },
+    {
+      "name": "Find Pet Wash",
+      "short_name": "Pet Wash",
+      "description": "Find nearby pet wash stations",
+      "url": "./?shortcut=wash",
+      "icons": [
+        {
+          "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/18986cbf5_icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+pawreport",
+      "url": "./?protocol=%s"
     }
   ]
 }
