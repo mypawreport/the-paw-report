@@ -1146,6 +1146,7 @@ function showEditProfile() {
   const breed = userPrefs?.pet_breed || '';
   const size = userPrefs?.pet_size || 'medium';
   const modal = document.createElement('div');
+  modal.id = 'edit-profile-modal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-start;justify-content:center;z-index:999;padding:20px;overflow-y:auto;';
   modal.innerHTML = `<div style="background:#16213e;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px;max-width:360px;width:100%;color:white;margin:auto;">
     <div style="font-size:1rem;font-weight:800;margin-bottom:16px;">✏️ Edit Profile</div>
@@ -1160,7 +1161,7 @@ function showEditProfile() {
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:16px;">
-      <button class="btn btn-secondary" style="padding:10px" onclick="this.closest('div[style]').remove()">Cancel</button>
+      <button class="btn btn-secondary" style="padding:10px" onclick="document.getElementById('edit-profile-modal').remove()">Cancel</button>
       <button class="btn btn-primary" style="padding:10px" onclick="saveEditProfile(this.closest('div[style]'))">Save</button>
     </div>
   </div>`;
@@ -1179,7 +1180,7 @@ async function saveEditProfile(modal) {
     userPrefs = savePrefs(currentUser.id, data);
     // Persist updated user object
     localStorage.setItem('paw_current_user', JSON.stringify(currentUser));
-    currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); updateUserBar(); modal.remove();
+    currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); updateUserBar(); const m = document.getElementById('edit-profile-modal'); if(m) m.remove();
   } catch(e) { alert('Could not save. Try again.'); }
 }
 
@@ -1729,7 +1730,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=35').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=36').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
