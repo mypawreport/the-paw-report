@@ -1157,7 +1157,15 @@ async function saveProfile() {
     const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
     userPrefs = savePrefs(currentUser.id, data);
     currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
-    showScreen('paywall'); renderTierDisplay(); startCountdown();
+    // If a lifetime/referral code was already applied, skip paywall entirely
+    const profile = JSON.parse(localStorage.getItem('paw_current_user') || '{}');
+    if (profile.lifetimeAccess || profile.subscriptionActive) {
+      currentUser = profile;
+      currentTier = profile.tier || 'bronze';
+      loadMainScreen();
+    } else {
+      showScreen('paywall'); renderTierDisplay(); startCountdown();
+    }
   } catch(e) { alert('Could not save profile.'); }
 }
 function loadMainScreen() {
@@ -1605,7 +1613,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=27').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=28').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
