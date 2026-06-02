@@ -901,6 +901,7 @@ function applyReferral(inputId) {
   const LIFETIME_CODES = {
     'PAW-MOM-6RX1Z2': { name: 'Mom', tier: 'silver' },
     'PAW-HUB-8K3M2X': { name: 'Husband', tier: 'silver' },
+    'PAW-GAB-OKTDVE': { name: 'Gabe', tier: 'silver' },
     'PAW-KID-9T5W4R': { name: 'Daughter', tier: 'silver' },
     'PAW-SLV-K01O57': { name: 'Silver Lifetime', tier: 'silver' },
     'PAW-SLV-MCU4GC': { name: 'Mom Silver', tier: 'silver' },
@@ -1607,7 +1608,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=25').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=26').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
