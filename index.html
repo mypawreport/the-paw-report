@@ -1547,27 +1547,27 @@ if ('serviceWorker' in navigator) {
 
 // ── Edge Glow System ──────────────────────────────────────────
 const EDGE_COLORS = {
-  'Extreme Cold': { color: '#1a3a8f', shadow: '0 0 0 6px #1a3a8f, 0 0 0 12px rgba(26,58,143,0.4), inset 0 0 0 6px #1a3a8f, inset 0 0 0 12px rgba(26,58,143,0.3)' },
-  'Too Cold':     { color: '#1a5faf', shadow: '0 0 0 6px #1a5faf, 0 0 0 12px rgba(26,95,175,0.4), inset 0 0 0 6px #1a5faf, inset 0 0 0 12px rgba(26,95,175,0.3)' },
-  'Chilly':       { color: '#0f8a6e', shadow: '0 0 0 6px #0f8a6e, 0 0 0 12px rgba(15,138,110,0.4), inset 0 0 0 6px #0f8a6e, inset 0 0 0 12px rgba(15,138,110,0.3)' },
-  'Safe':         { color: '#1aaf4f', shadow: '0 0 0 6px #1aaf4f, 0 0 0 12px rgba(26,175,79,0.4), inset 0 0 0 6px #1aaf4f, inset 0 0 0 12px rgba(26,175,79,0.3)' },
-  'Warm':         { color: '#c97a10', shadow: '0 0 0 6px #c97a10, 0 0 0 12px rgba(201,122,16,0.4), inset 0 0 0 6px #c97a10, inset 0 0 0 12px rgba(201,122,16,0.3)' },
-  'Caution':      { color: '#d45a10', shadow: '0 0 0 6px #d45a10, 0 0 0 12px rgba(212,90,16,0.45), inset 0 0 0 6px #d45a10, inset 0 0 0 12px rgba(212,90,16,0.35)' },
-  'Danger':       { color: '#c01a0a', shadow: '0 0 0 6px #c01a0a, 0 0 0 14px rgba(192,26,10,0.5), inset 0 0 0 6px #c01a0a, inset 0 0 0 14px rgba(192,26,10,0.4)' },
-  'Fry Zone':     { color: '#8b0000', shadow: '0 0 0 8px #8b0000, 0 0 0 16px rgba(139,0,0,0.6), inset 0 0 0 8px #8b0000, inset 0 0 0 16px rgba(139,0,0,0.5)' },
+  'Extreme Cold': { color: '#003366', shadow: '0 0 0 6px #003366, 0 0 0 14px rgba(0,51,102,0.5), inset 0 0 0 6px #003366, inset 0 0 0 14px rgba(0,51,102,0.35)' },
+  'Too Cold':     { color: '#4A90E2', shadow: '0 0 0 6px #4A90E2, 0 0 0 14px rgba(74,144,226,0.5), inset 0 0 0 6px #4A90E2, inset 0 0 0 14px rgba(74,144,226,0.35)' },
+  'Chilly':       { color: '#58E3C2', shadow: '0 0 0 6px #58E3C2, 0 0 0 14px rgba(88,227,194,0.5), inset 0 0 0 6px #58E3C2, inset 0 0 0 14px rgba(88,227,194,0.35)' },
+  'Safe':         { color: '#7ED321', shadow: '0 0 0 6px #7ED321, 0 0 0 14px rgba(126,211,33,0.5), inset 0 0 0 6px #7ED321, inset 0 0 0 14px rgba(126,211,33,0.35)' },
+  'Warm':         { color: '#F8E71C', shadow: '0 0 0 6px #F8E71C, 0 0 0 14px rgba(248,231,28,0.5), inset 0 0 0 6px #F8E71C, inset 0 0 0 14px rgba(248,231,28,0.35)' },
+  'Caution':      { color: '#F5A623', shadow: '0 0 0 6px #F5A623, 0 0 0 14px rgba(245,166,35,0.55), inset 0 0 0 6px #F5A623, inset 0 0 0 14px rgba(245,166,35,0.4)' },
+  'Danger':       { color: '#D0021B', shadow: '0 0 0 7px #D0021B, 0 0 0 16px rgba(208,2,27,0.55), inset 0 0 0 7px #D0021B, inset 0 0 0 16px rgba(208,2,27,0.4)' },
+  'Fry Zone':     { color: '#D0021B', shadow: '0 0 0 9px #D0021B, 0 0 0 20px rgba(208,2,27,0.65), inset 0 0 0 9px #D0021B, inset 0 0 0 20px rgba(208,2,27,0.55)' },
 };
 
 // Temp wheel angles (degrees, 0=top, clockwise)
 // Cold=blue side (~210°), Warm=red/orange side (~30°)
 const WHEEL_ANGLES = {
-  'Extreme Cold': 220,
-  'Too Cold':     200,
-  'Chilly':       170,
-  'Safe':         130,
-  'Warm':         50,
-  'Caution':      30,
-  'Danger':       10,
-  'Fry Zone':     350,
+  'Extreme Cold': 225,  // Deep Arctic Blue - far cool side
+  'Too Cold':     200,  // Sky Blue
+  'Chilly':       175,  // Teal/Aquamarine
+  'Safe':         140,  // Fresh Green
+  'Warm':         60,   // Golden Yellow - crossing to warm side
+  'Caution':      35,   // Safety Orange
+  'Danger':       15,   // Crimson Red
+  'Fry Zone':     355,  // Crimson Red max
 };
 
 function updateEdgeGlow(status) {
