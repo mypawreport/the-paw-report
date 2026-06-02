@@ -1175,10 +1175,17 @@ async function saveEditProfile(modal) {
   const breed = document.getElementById('edit-breed').value.trim();
   const size = editSize || userPrefs?.pet_size || 'medium';
   try {
-    if (fullName && currentUser) currentUser.full_name = fullName;
+    if (fullName && currentUser) {
+      currentUser.full_name = fullName;
+      // Also update paw_users master store so name persists across logins
+      const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+      if (users[currentUser.email]) {
+        users[currentUser.email].full_name = fullName;
+        localStorage.setItem('paw_users', JSON.stringify(users));
+      }
+    }
     const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
     userPrefs = savePrefs(currentUser.id, data);
-    // Persist updated user object
     localStorage.setItem('paw_current_user', JSON.stringify(currentUser));
     currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); updateUserBar(); const m = document.getElementById('edit-profile-modal'); if(m) m.remove();
   } catch(e) { alert('Could not save. Try again.'); }
@@ -1730,7 +1737,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=36').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=37').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
