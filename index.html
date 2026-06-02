@@ -24,7 +24,7 @@
   <meta name="theme-color" content="#f8fafc"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#f0f4f0 0%,#e8f0e8 50%,#f1f5f1 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#f0f0f5;transition:background 1.2s ease}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#eaf0e8 0%,#e2ece0 50%,#e8ede5 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#f0f0f5;transition:background 1.2s ease}
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
@@ -33,7 +33,7 @@
     /* Cards */
     .card{background:#ffffff;backdrop-filter:blur(20px);border:1px solid #e2e8f0;border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
     .card-title{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:0.45;margin-bottom:12px}
-    .divider{height:1px;background:#f1f5f9;margin:12px 0}
+    .divider{height:1px;background:#edf1eb;margin:12px 0}
 
     /* Screens */
     .screen{display:none}
@@ -44,7 +44,7 @@
     .auth-icon{font-size:3.5rem;margin-bottom:12px;display:block}
     .auth-title{font-size:1.3rem;font-weight:800;margin-bottom:6px}
     .auth-sub{font-size:0.85rem;opacity:0.6;margin-bottom:24px;line-height:1.5}
-    .auth-input{width:100%;background:#f8fafc;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 14px;color:#f0f0f5;font-size:0.95rem;margin-bottom:10px;outline:none;transition:border 0.2s}
+    .auth-input{width:100%;background:#f4f7f2;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 14px;color:#f0f0f5;font-size:0.95rem;margin-bottom:10px;outline:none;transition:border 0.2s}
     .auth-input:focus{border-color:rgba(13,148,136,0.9)}
     .auth-input::placeholder{opacity:0.4}
     .auth-toggle{font-size:0.8rem;opacity:0.6;margin-top:12px;cursor:pointer}
@@ -56,13 +56,13 @@
     .btn-primary{background:linear-gradient(135deg,#0d9488,#4a7c59);color:#1e293b;box-shadow:0 8px 24px rgba(13,148,136,0.4)}
     .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(13,148,136,0.5)}
     .btn-primary:active{transform:translateY(0)}
-    .btn-secondary{background:#f1f5f9;border:1.5px solid #e2e8f0;color:#1e293b}
-    .btn-secondary:hover{background:#f1f5f9}
+    .btn-secondary{background:#edf1eb;border:1.5px solid #e2e8f0;color:#1e293b}
+    .btn-secondary:hover{background:#edf1eb}
     .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
     .btn-sm{padding:9px 16px;font-size:0.82rem;border-radius:10px;width:auto;display:inline-block}
 
     /* User bar */
-    .user-bar{display:flex;align-items:center;justify-content:space-between;background:#ffffff;border-radius:14px;padding:10px 14px;margin-bottom:12px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+    .user-bar{display:flex;align-items:center;justify-content:space-between;background:#ffffff;border-radius:14px;padding:10px 14px;margin-bottom:12px;border:1px solid #d8e4d4;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
     .user-info{display:flex;align-items:center;gap:8px}
     .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#059669);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:#1e293b}
     .user-name{font-size:0.85rem;font-weight:600}
@@ -72,7 +72,7 @@
     .tier-bronze{background:rgba(205,127,50,0.3);color:#cd7f32;border:1px solid rgba(205,127,50,0.4)}
     .tier-silver{background:rgba(192,192,192,0.2);color:#c0c0c0;border:1px solid rgba(192,192,192,0.3)}
     .tier-gold{background:rgba(255,215,0,0.2);color:#ffd700;border:1px solid rgba(255,215,0,0.3)}
-    .tier-free{background:#f1f5f9;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15)}
+    .tier-free{background:#edf1eb;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15)}
     .whats-new-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#e2e8f0,#dbeafe);border:1px solid rgba(150,120,255,0.4);color:#1e293b;border-radius:14px;padding:12px 18px;font-size:0.82rem;max-width:320px;width:90%;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);opacity:0;transition:opacity 0.4s ease,transform 0.4s ease;pointer-events:none;text-align:left;}
 .whats-new-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .whats-new-toast .toast-title{font-weight:700;font-size:0.88rem;margin-bottom:4px;color:#b09aff;}
@@ -86,10 +86,10 @@
     .setup-sub{font-size:0.82rem;opacity:0.6;margin-bottom:20px}
     .form-group{margin-bottom:14px;text-align:left}
     .form-label{font-size:0.7rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;display:block}
-    .form-input{width:100%;background:#f8fafc;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:11px 13px;color:#f0f0f5;font-size:0.9rem;outline:none}
+    .form-input{width:100%;background:#f4f7f2;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:11px 13px;color:#f0f0f5;font-size:0.9rem;outline:none}
     .form-input::placeholder{opacity:0.4}
     .size-selector{display:flex;gap:8px}
-    .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.15);background:#f8fafc;color:#1e293b;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
+    .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.15);background:#f4f7f2;color:#1e293b;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
     .size-btn.active{background:rgba(13,148,136,0.2);border-color:#0d9488}
 
     /* Paywall */
@@ -104,14 +104,14 @@
     .countdown-num{font-size:1.6rem;font-weight:900;color:#0d9488;line-height:1}
     .countdown-label{font-size:0.58rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px}
 
-    .tier-tabs{display:flex;gap:6px;margin-bottom:16px;background:#f1f5f9;border-radius:12px;padding:4px;border:1px solid #e2e8f0}
+    .tier-tabs{display:flex;gap:6px;margin-bottom:16px;background:#edf1eb;border-radius:12px;padding:4px;border:1px solid #e2e8f0}
     .tier-tab{flex:1;padding:8px 4px;border-radius:9px;border:none;background:none;color:#64748b;font-size:0.78rem;font-weight:600;cursor:pointer;opacity:0.7;transition:all 0.2s}
     .tier-tab.active{opacity:1;color:#1e293b}
     .tier-tab.t-bronze.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#64748b}
     .tier-tab.t-silver.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#64748b}
     .tier-tab.t-gold.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#64748b}
 
-    .billing-toggle{display:flex;gap:5px;margin-bottom:14px;background:#f1f5f9;border-radius:10px;padding:3px;border:1px solid #e2e8f0}
+    .billing-toggle{display:flex;gap:5px;margin-bottom:14px;background:#edf1eb;border-radius:10px;padding:3px;border:1px solid #e2e8f0}
     .billing-btn{flex:1;padding:7px 4px;border-radius:8px;border:none;background:none;color:#64748b;font-size:0.72rem;font-weight:600;cursor:pointer;opacity:0.8;transition:all 0.2s}
     .billing-btn.active{background:#0d9488;color:#1e293b;opacity:1;box-shadow:0 2px 6px rgba(234,88,12,0.3)}
 
@@ -164,10 +164,10 @@
     .scale-toocold{background:rgba(129,140,248,0.2);color:#c4b5fd}
 
     .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .stat-box{background:#f8fafc;border-radius:12px;padding:11px 9px;text-align:center}
+    .stat-box{background:#f4f7f2;border-radius:12px;padding:11px 9px;text-align:center}
     .stat-value{font-size:1.25rem;font-weight:800;margin-bottom:2px}
     .stat-label{font-size:0.65rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.3px}
-    .ground-temp-box{grid-column:span 2;background:#f8fafc;border:1px solid rgba(255,255,255,0.15)}
+    .ground-temp-box{grid-column:span 2;background:#f4f7f2;border:1px solid rgba(255,255,255,0.15)}
     .ground-temp-box .stat-value{font-size:1.9rem}
 
     .alert-banner{border-radius:12px;padding:10px 13px;font-size:0.82rem;line-height:1.5;margin-top:10px}
@@ -180,25 +180,25 @@
     .crime-info{flex:1}
     .crime-rating-label{font-size:1.15rem;font-weight:800;margin-bottom:2px}
     .crime-location{font-size:0.72rem;opacity:0.5}
-    .crime-message{font-size:0.83rem;opacity:0.8;line-height:1.5;margin-bottom:10px;padding:9px 12px;border-radius:10px;background:#f8fafc}
+    .crime-message{font-size:0.83rem;opacity:0.8;line-height:1.5;margin-bottom:10px;padding:9px 12px;border-radius:10px;background:#f4f7f2}
     .crime-scale{display:flex;gap:3px;margin-bottom:9px}
     .crime-scale-item{flex:1;height:5px;border-radius:3px;opacity:0.2;transition:opacity 0.3s}
     .crime-scale-item.active{opacity:1}
     .crime-stats-row{display:flex;gap:7px}
-    .crime-stat{flex:1;background:#f8fafc;border-radius:10px;padding:9px;text-align:center}
+    .crime-stat{flex:1;background:#f4f7f2;border-radius:10px;padding:9px;text-align:center}
     .crime-stat-val{font-size:0.92rem;font-weight:700}
     .crime-stat-label{font-size:0.6rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px}
     .crime-source{font-size:0.6rem;opacity:0.28;text-align:center;margin-top:7px}
 
     /* Wash stations */
     .stations-list{display:flex;flex-direction:column;gap:9px}
-    .station-item{background:#f8fafc;border-radius:13px;padding:11px 13px;display:flex;align-items:flex-start;gap:11px}
+    .station-item{background:#f4f7f2;border-radius:13px;padding:11px 13px;display:flex;align-items:flex-start;gap:11px}
     .station-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px}
     .station-info{flex:1;min-width:0}
     .station-name{font-size:0.88rem;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .station-type{font-size:0.68rem;opacity:0.5;margin-bottom:3px}
     .station-meta{display:flex;flex-wrap:wrap;gap:4px}
-    .station-tag{font-size:0.65rem;opacity:0.7;background:#f8fafc;padding:2px 7px;border-radius:20px}
+    .station-tag{font-size:0.65rem;opacity:0.7;background:#f4f7f2;padding:2px 7px;border-radius:20px}
     .station-dist{font-size:0.72rem;font-weight:600;opacity:0.65;flex-shrink:0}
     .station-links{display:flex;gap:7px;margin-top:5px}
     .station-link{font-size:0.68rem;color:#c4b5fd;text-decoration:none}
@@ -241,13 +241,13 @@
     .notif-btn{padding:7px 13px;border-radius:9px;border:none;background:rgba(251,191,36,0.4);color:#1e293b;font-size:0.75rem;font-weight:700;cursor:pointer;flex-shrink:0}
 
     /* Locked feature */
-    .locked-feature{background:#f8fafc;border:1px dashed rgba(255,255,255,0.12);border-radius:14px;padding:16px;text-align:center;margin-bottom:10px}
+    .locked-feature{background:#f4f7f2;border:1px dashed rgba(255,255,255,0.12);border-radius:14px;padding:16px;text-align:center;margin-bottom:10px}
     .locked-icon{font-size:1.8rem;margin-bottom:6px}
     .locked-title{font-size:0.88rem;font-weight:700;margin-bottom:4px;opacity:0.7}
     .locked-sub{font-size:0.75rem;opacity:0.45;margin-bottom:10px}
 
     /* Profile */
-    .profile-section{background:#f8fafc;border-radius:14px;padding:14px;margin-bottom:10px}
+    .profile-section{background:#f4f7f2;border-radius:14px;padding:14px;margin-bottom:10px}
     .profile-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.07)}
     .profile-row:last-child{border-bottom:none}
     .profile-label{font-size:0.75rem;opacity:0.5}
@@ -265,7 +265,7 @@
     .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:5px}
 
     /* Nav tabs */
-    .bottom-nav{display:flex;gap:4px;margin-bottom:12px;background:#f8fafc;border-radius:14px;padding:4px}
+    .bottom-nav{display:flex;gap:4px;margin-bottom:12px;background:#f4f7f2;border-radius:14px;padding:4px}
     .nav-btn{flex:1;padding:8px 4px;border-radius:10px;border:none;background:none;color:#1e293b;font-size:0.7rem;font-weight:600;cursor:pointer;opacity:0.45;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px}
     .nav-btn .nav-icon{font-size:1.1rem}
     .nav-btn.active{background:rgba(13,148,136,0.3);opacity:1}
@@ -418,7 +418,7 @@
     </div>
   </div>
 
-  <div id="screen-paywall" class="screen" style="background:#f1f5f9;">
+  <div id="screen-paywall" class="screen" style="background:#e8ede5;">
     <div class="card" style="padding:0;overflow:hidden;background:#ffffff;border-radius:20px;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
       <div class="paywall-hero">
         <span class="paywall-hero-icon">🐾</span>
@@ -456,7 +456,7 @@
           </div>
           <div class="referral-success" id="paywall-referral-success">✅ Code applied! Discount will be applied at checkout.</div>
         </div>
-        <button onclick="startFree()" style="margin-top:10px;font-size:0.82rem;padding:10px 20px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;color:#475569;font-weight:600;width:100%;cursor:pointer;">Continue with free preview (limited)</button>
+        <button onclick="startFree()" style="margin-top:10px;font-size:0.82rem;padding:10px 20px;background:#f4f7f2;border:1.5px solid #e2e8f0;border-radius:12px;color:#475569;font-weight:600;width:100%;cursor:pointer;">Continue with free preview (limited)</button>
         <div style="text-align:center;margin-top:14px;">
           <button onclick="showRecoveryModal()" style="background:none;border:none;color:#64748b;font-size:0.82rem;cursor:pointer;text-decoration:underline;">🔑 Already subscribed? Recover your access</button>
         </div>
@@ -600,7 +600,7 @@
           <span id="tips-chevron" style="font-size:1rem;opacity:0.5;transition:transform 0.3s;">▼</span>
         </button>
         <div id="tips-body" style="display:none;padding:0 18px 18px;">
-          <div style="height:1px;background:#f1f5f9;margin-bottom:14px;"></div>
+          <div style="height:1px;background:#edf1eb;margin-bottom:14px;"></div>
 
           <div style="display:flex;gap:12px;margin-bottom:16px;">
             <span style="font-size:1.4rem;flex-shrink:0;">🌡️</span>
@@ -642,7 +642,7 @@
             </div>
           </div>
 
-          <div style="height:1px;background:#f8fafc;margin:16px 0;"></div>
+          <div style="height:1px;background:#f4f7f2;margin:16px 0;"></div>
           <div style="display:flex;gap:12px;">
             <span style="font-size:1.4rem;flex-shrink:0;">🐕</span>
             <div>
@@ -1178,7 +1178,7 @@ function showEditProfile() {
   const modal = document.createElement('div');
   modal.id = 'edit-profile-modal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-start;justify-content:center;z-index:999;padding:20px;overflow-y:auto;';
-  modal.innerHTML = `<div style="background:#f1f5f9;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px;max-width:360px;width:100%;color:#1e293b;margin:auto;">
+  modal.innerHTML = `<div style="background:#edf1eb;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px;max-width:360px;width:100%;color:#1e293b;margin:auto;">
     <div style="font-size:1rem;font-weight:800;margin-bottom:16px;">✏️ Edit Profile</div>
     <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" id="edit-full-name" value="${currentUser?.full_name||''}" placeholder="Your name"/></div>
     <div class="form-group"><label class="form-label">Pet Name</label><input class="form-input" id="edit-pet-name" value="${petName}" placeholder="Pet name"/></div>
@@ -1954,7 +1954,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=44').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=45').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
