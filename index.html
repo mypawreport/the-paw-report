@@ -323,7 +323,32 @@
       box-shadow: 0 0 4px rgba(0,0,0,0.8);
     }
 
-    </style>
+    
+  /* ===== THEMES ===== */
+  .theme-btn {
+    border-radius: 12px;
+    padding: 10px 6px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #fff;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .theme-btn.active { border-color: #fff; transform: scale(1.06); }
+  .theme-btn span { display:block; font-size:1.2rem; margin-bottom:4px; }
+  .theme-btn.locked { opacity:0.45; cursor:not-allowed; }
+
+  /* Theme variables */
+  body[data-theme="midnight"] { --accent: #E8650A; --accent2: #ff8c42; --glow: 232,101,10; }
+  body[data-theme="violet"]   { --accent: #7c3aed; --accent2: #a78bfa; --glow: 124,58,237; }
+  body[data-theme="ocean"]    { --accent: #0891b2; --accent2: #22d3ee; --glow: 8,145,178; }
+  body[data-theme="forest"]   { --accent: #16a34a; --accent2: #4ade80; --glow: 22,163,74; }
+  body[data-theme="blush"]    { --accent: #db2777; --accent2: #f472b6; --glow: 219,39,119; }
+  body[data-theme="frost"]    { --accent: #2563eb; --accent2: #60a5fa; --glow: 37,99,235; background:#0f172a; }
+
+  </style>
 </head>
 <body>
 <div class="edge-glow" id="edgeGlow"></div>
@@ -721,6 +746,13 @@
         </div>
       </div>
 
+
+      <div class="card" id="theme-card">
+        <div class="card-title">🎨 App Theme</div>
+        <div style="font-size:0.75rem;opacity:0.5;margin-bottom:12px;">Personalise your Paw Report look</div>
+        <div id="theme-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;"></div>
+        <div id="theme-locked-msg" style="display:none;font-size:0.72rem;opacity:0.5;margin-top:10px;text-align:center;">🔒 Upgrade to Silver or Gold to unlock more themes</div>
+      </div>
       <button class="btn btn-secondary" onclick="logout()" style="margin-top:4px;font-size:0.85rem;padding:11px">Sign Out</button>
     </div>
 
@@ -1005,6 +1037,7 @@ function showScreen(id) {
   if (id==='paywall') { renderTierDisplay(); startCountdown(); }
 }
 function showTab(tab) {
+    if (tab === 'profile') { setTimeout(renderThemeGrid, 50); }
   ['report','safety','wash','profile'].forEach(t => {
     document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
     document.getElementById('nav-'+t).classList.toggle('active', t===tab);
@@ -1622,12 +1655,68 @@ function playBarkSound() {
     }
   }
 
+  
+  // ===== THEME SYSTEM =====
+  const THEMES = [
+    { id: 'midnight', label: 'Midnight', emoji: '🌑', tier: 'bronze', colors: ['#1A1A1E','#E8650A'] },
+    { id: 'violet',   label: 'Violet',   emoji: '💜', tier: 'silver', colors: ['#1A1A1E','#7c3aed'] },
+    { id: 'ocean',    label: 'Ocean',    emoji: '🌊', tier: 'silver', colors: ['#0c1a2e','#0891b2'] },
+    { id: 'forest',   label: 'Forest',   emoji: '🌿', tier: 'gold',   colors: ['#0a1a0f','#16a34a'] },
+    { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#1a0a12','#db2777'] },
+    { id: 'frost',    label: 'Frost',    emoji: '❄️',  tier: 'gold',   colors: ['#0f172a','#2563eb'] },
+  ];
+
+  const TIER_RANK = { bronze: 1, silver: 2, gold: 3 };
+
+  function applyTheme(themeId) {
+    document.body.setAttribute('data-theme', themeId);
+    localStorage.setItem('paw_theme', themeId);
+    // Update all btn-primary background colors dynamically
+    const r = document.documentElement;
+    const t = THEMES.find(x => x.id === themeId);
+    if (t) {
+      r.style.setProperty('--accent', t.colors[1]);
+      document.querySelectorAll('.btn-primary').forEach(b => b.style.background = `linear-gradient(135deg, ${t.colors[1]}, ${THEMES.find(x=>x.id===themeId).colors[1]}cc)`);
+      document.querySelectorAll('.theme-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.theme === themeId);
+      });
+    }
+  }
+
+  function renderThemeGrid() {
+    const grid = document.getElementById('theme-grid');
+    const lockedMsg = document.getElementById('theme-locked-msg');
+    if (!grid) return;
+    const userTier = (currentUser?.tier || currentTier || 'bronze').toLowerCase();
+    const userRank = TIER_RANK[userTier] || 1;
+    const savedTheme = localStorage.getItem('paw_theme') || 'midnight';
+    let hasLocked = false;
+    grid.innerHTML = THEMES.map(t => {
+      const requiredRank = TIER_RANK[t.tier] || 1;
+      const isLocked = userRank < requiredRank;
+      if (isLocked) hasLocked = true;
+      const isActive = savedTheme === t.id;
+      return `<button class="theme-btn${isActive?' active':''}${isLocked?' locked':''}" 
+        data-theme="${t.id}"
+        style="background:linear-gradient(135deg,${t.colors[0]},${t.colors[1]})"
+        onclick="${isLocked ? `alert('🔒 ${t.label} is a ${t.tier.charAt(0).toUpperCase()+t.tier.slice(1)} theme — upgrade to unlock!')` : `applyTheme('${t.id}')`}">
+        <span>${t.emoji}</span>${t.label}${isLocked?' 🔒':''}
+      </button>`;
+    }).join('');
+    lockedMsg.style.display = hasLocked ? 'block' : 'none';
+  }
+
+  function initTheme() {
+    const saved = localStorage.getItem('paw_theme') || 'midnight';
+    applyTheme(saved);
+  }
+
   </script>
 
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=30').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=31').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
