@@ -975,10 +975,20 @@ function applyReferral(inputId) {
     profile.referralCode = val;
     profile.referralName = codeInfo.name;
     localStorage.setItem('paw_current_user', JSON.stringify(profile));
+    // Also persist to paw_users store so it survives across sessions
+    if (profile.email) {
+      try {
+        const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+        users[profile.email] = profile;
+        localStorage.setItem('paw_users', JSON.stringify(users));
+      } catch(_) {}
+    }
     usedCodes.push(val);
     localStorage.setItem('paw_used_codes', JSON.stringify(usedCodes));
     currentUser = profile;
     currentTier = grantedTier;
+    localStorage.setItem('paw_sub_tier', grantedTier);
+    localStorage.setItem('paw_session_active', '1');
 
     const tierLabel = grantedTier.charAt(0).toUpperCase() + grantedTier.slice(1);
     const el = document.getElementById(successId);
@@ -1944,7 +1954,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=40').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=41').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
