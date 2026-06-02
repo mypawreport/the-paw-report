@@ -998,6 +998,7 @@ async function authRegister(email, password, full_name) {
   users[email] = user;
   localStorage.setItem('paw_users', JSON.stringify(users));
   localStorage.setItem('paw_current_user', JSON.stringify({id, email, full_name}));
+  localStorage.setItem('paw_last_email', email);
   return user;
 }
 
@@ -1007,6 +1008,7 @@ async function authLogin(email, password) {
   if (!user) throw new Error('No account found with that email. Please sign up first.');
   if (user.password !== btoa(password)) throw new Error('Incorrect password. Please try again.');
   localStorage.setItem('paw_current_user', JSON.stringify({id: user.id, email: user.email, full_name: user.full_name}));
+  localStorage.setItem('paw_last_email', email);
   return user;
 }
 
@@ -1605,10 +1607,24 @@ function stopTracking() {
   } catch(e) { console.warn('theme init error:', e); }
   try {
     currentUser = await authMe();
+    // Verify the user still exists in paw_users (not wiped)
+    const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+    if (currentUser && !users[currentUser.email]) {
+      // Session token exists but user store is gone — try to restore from last email
+      throw new Error('User store missing');
+    }
     await onLoggedIn();
   } catch(e) {
     console.warn('Auth error (expected if not logged in):', e);
-    try { showScreen('auth'); } catch(e2) { console.error('showScreen auth failed:', e2); }
+    try { 
+      showScreen('auth');
+      // Auto-fill last used email
+      const lastEmail = localStorage.getItem('paw_last_email');
+      if (lastEmail) {
+        const emailField = document.getElementById('auth-email');
+        if (emailField) emailField.value = lastEmail;
+      }
+    } catch(e2) { console.error('showScreen auth failed:', e2); }
   }
 })();
 
@@ -1737,7 +1753,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=37').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=38').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
