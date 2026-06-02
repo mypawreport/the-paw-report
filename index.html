@@ -21,19 +21,19 @@
   <link rel="apple-touch-icon" href="https://mypawreport.github.io/the-paw-report/icon-512.png"/>
   <link rel="icon" type="image/png" href="https://mypawreport.github.io/the-paw-report/icon-192.png"/>
   <link rel="manifest" href="https://mypawreport.github.io/the-paw-report/manifest.json"/>
-  <meta name="theme-color" content="#1a1a2e"/>
+  <meta name="theme-color" content="#f8fafc"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#111114 0%,#1a1a1e 50%,#1e1e22 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#f0f0f5;transition:background 1.2s ease}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#f0f4f0 0%,#e8f0e8 50%,#f1f5f1 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#f0f0f5;transition:background 1.2s ease}
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
     .header p{font-size:0.82rem;opacity:0.55}
 
     /* Cards */
-    .card{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
+    .card{background:#ffffff;backdrop-filter:blur(20px);border:1px solid #e2e8f0;border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
     .card-title{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:0.45;margin-bottom:12px}
-    .divider{height:1px;background:rgba(255,255,255,0.1);margin:12px 0}
+    .divider{height:1px;background:#f1f5f9;margin:12px 0}
 
     /* Screens */
     .screen{display:none}
@@ -44,8 +44,8 @@
     .auth-icon{font-size:3.5rem;margin-bottom:12px;display:block}
     .auth-title{font-size:1.3rem;font-weight:800;margin-bottom:6px}
     .auth-sub{font-size:0.85rem;opacity:0.6;margin-bottom:24px;line-height:1.5}
-    .auth-input{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 14px;color:#f0f0f5;font-size:0.95rem;margin-bottom:10px;outline:none;transition:border 0.2s}
-    .auth-input:focus{border-color:rgba(232,101,10,0.9)}
+    .auth-input{width:100%;background:#f8fafc;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 14px;color:#f0f0f5;font-size:0.95rem;margin-bottom:10px;outline:none;transition:border 0.2s}
+    .auth-input:focus{border-color:rgba(13,148,136,0.9)}
     .auth-input::placeholder{opacity:0.4}
     .auth-toggle{font-size:0.8rem;opacity:0.6;margin-top:12px;cursor:pointer}
     .auth-toggle span{color:#c4b5fd;text-decoration:underline}
@@ -53,18 +53,18 @@
 
     /* Buttons */
     .btn{display:block;width:100%;padding:14px;border:none;border-radius:15px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s}
-    .btn-primary{background:linear-gradient(135deg,#0d9488,#4a7c59);color:white;box-shadow:0 8px 24px rgba(232,101,10,0.4)}
+    .btn-primary{background:linear-gradient(135deg,#0d9488,#4a7c59);color:#1e293b;box-shadow:0 8px 24px rgba(13,148,136,0.4)}
     .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(13,148,136,0.5)}
     .btn-primary:active{transform:translateY(0)}
-    .btn-secondary{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:white}
-    .btn-secondary:hover{background:rgba(255,255,255,0.13)}
+    .btn-secondary{background:#f1f5f9;border:1.5px solid #e2e8f0;color:#1e293b}
+    .btn-secondary:hover{background:#f1f5f9}
     .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
     .btn-sm{padding:9px 16px;font-size:0.82rem;border-radius:10px;width:auto;display:inline-block}
 
     /* User bar */
-    .user-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);border-radius:14px;padding:10px 14px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.1)}
+    .user-bar{display:flex;align-items:center;justify-content:space-between;background:#ffffff;border-radius:14px;padding:10px 14px;margin-bottom:12px;border:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
     .user-info{display:flex;align-items:center;gap:8px}
-    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#e8650a,#c94f00);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:white}
+    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#059669);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:#1e293b}
     .user-name{font-size:0.85rem;font-weight:600}
     .user-email{font-size:0.68rem;opacity:0.45}
     .user-right{display:flex;align-items:center;gap:8px}
@@ -72,12 +72,12 @@
     .tier-bronze{background:rgba(205,127,50,0.3);color:#cd7f32;border:1px solid rgba(205,127,50,0.4)}
     .tier-silver{background:rgba(192,192,192,0.2);color:#c0c0c0;border:1px solid rgba(192,192,192,0.3)}
     .tier-gold{background:rgba(255,215,0,0.2);color:#ffd700;border:1px solid rgba(255,215,0,0.3)}
-    .tier-free{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15)}
-    .whats-new-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#2a2a4a,#3a2a5a);border:1px solid rgba(150,120,255,0.4);color:#fff;border-radius:14px;padding:12px 18px;font-size:0.82rem;max-width:320px;width:90%;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);opacity:0;transition:opacity 0.4s ease,transform 0.4s ease;pointer-events:none;text-align:left;}
+    .tier-free{background:#f1f5f9;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15)}
+    .whats-new-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#e2e8f0,#dbeafe);border:1px solid rgba(150,120,255,0.4);color:#1e293b;border-radius:14px;padding:12px 18px;font-size:0.82rem;max-width:320px;width:90%;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);opacity:0;transition:opacity 0.4s ease,transform 0.4s ease;pointer-events:none;text-align:left;}
 .whats-new-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .whats-new-toast .toast-title{font-weight:700;font-size:0.88rem;margin-bottom:4px;color:#b09aff;}
 .whats-new-toast .toast-close{position:absolute;top:8px;right:12px;cursor:pointer;font-size:1rem;opacity:0.6;pointer-events:all;}
-.logout-btn{font-size:0.72rem;opacity:0.5;cursor:pointer;padding:4px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:none;color:white}
+.logout-btn{font-size:0.72rem;opacity:0.5;cursor:pointer;padding:4px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:none;color:#1e293b}
 
     /* Setup */
     .setup-card{text-align:center;padding:24px}
@@ -86,37 +86,37 @@
     .setup-sub{font-size:0.82rem;opacity:0.6;margin-bottom:20px}
     .form-group{margin-bottom:14px;text-align:left}
     .form-label{font-size:0.7rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;display:block}
-    .form-input{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:11px 13px;color:#f0f0f5;font-size:0.9rem;outline:none}
+    .form-input{width:100%;background:#f8fafc;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:11px 13px;color:#f0f0f5;font-size:0.9rem;outline:none}
     .form-input::placeholder{opacity:0.4}
     .size-selector{display:flex;gap:8px}
-    .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:white;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
-    .size-btn.active{background:rgba(232,101,10,0.2);border-color:#e8650a}
+    .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.15);background:#f8fafc;color:#1e293b;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
+    .size-btn.active{background:rgba(13,148,136,0.2);border-color:#0d9488}
 
     /* Paywall */
     .paywall-hero{text-align:center;padding:20px 10px 10px;background:#fff}
     .paywall-hero-icon{font-size:3rem;display:block;margin-bottom:8px}
     .paywall-hero-title{font-size:1.25rem;font-weight:800;margin-bottom:6px;color:#0f172a}
     .paywall-hero-sub{font-size:0.84rem;color:#475569;line-height:1.5;margin-bottom:16px}
-    .countdown-banner{background:linear-gradient(135deg,#fff8f3,#fff3ec);border:1px solid #f97316;border-radius:14px;padding:12px 16px;margin-bottom:16px;text-align:center;box-shadow:0 2px 12px rgba(249,115,22,0.12)}
+    .countdown-banner{background:linear-gradient(135deg,#f0fdf9,#f0fdfa);border:1px solid #14b8a6;border-radius:14px;padding:12px 16px;margin-bottom:16px;text-align:center;box-shadow:0 2px 12px rgba(249,115,22,0.12)}
     .countdown-title{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#374151;font-weight:700;margin-bottom:6px}
     .countdown-timer{display:flex;justify-content:center;gap:12px}
     .countdown-unit{text-align:center}
-    .countdown-num{font-size:1.6rem;font-weight:900;color:#ea580c;line-height:1}
+    .countdown-num{font-size:1.6rem;font-weight:900;color:#0d9488;line-height:1}
     .countdown-label{font-size:0.58rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px}
 
     .tier-tabs{display:flex;gap:6px;margin-bottom:16px;background:#f1f5f9;border-radius:12px;padding:4px;border:1px solid #e2e8f0}
     .tier-tab{flex:1;padding:8px 4px;border-radius:9px;border:none;background:none;color:#64748b;font-size:0.78rem;font-weight:600;cursor:pointer;opacity:0.7;transition:all 0.2s}
     .tier-tab.active{opacity:1;color:#1e293b}
-    .tier-tab.t-bronze.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#92400e}
-    .tier-tab.t-silver.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#1e40af}
-    .tier-tab.t-gold.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#b45309}
+    .tier-tab.t-bronze.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#64748b}
+    .tier-tab.t-silver.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#64748b}
+    .tier-tab.t-gold.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#64748b}
 
     .billing-toggle{display:flex;gap:5px;margin-bottom:14px;background:#f1f5f9;border-radius:10px;padding:3px;border:1px solid #e2e8f0}
     .billing-btn{flex:1;padding:7px 4px;border-radius:8px;border:none;background:none;color:#64748b;font-size:0.72rem;font-weight:600;cursor:pointer;opacity:0.8;transition:all 0.2s}
-    .billing-btn.active{background:#ea580c;color:#fff;opacity:1;box-shadow:0 2px 6px rgba(234,88,12,0.3)}
+    .billing-btn.active{background:#0d9488;color:#1e293b;opacity:1;box-shadow:0 2px 6px rgba(234,88,12,0.3)}
 
     .tier-card{border-radius:16px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden}
-    .tier-card-bronze{background:linear-gradient(135deg,#fffbf5,#fff8ee);border:2px solid #f97316;box-shadow:0 4px 16px rgba(249,115,22,0.1)}
+    .tier-card-bronze{background:linear-gradient(135deg,#f8fafb,#f0fdf9);border:2px solid #14b8a6;box-shadow:0 4px 16px rgba(249,115,22,0.1)}
     .tier-card-silver{background:linear-gradient(135deg,#f8faff,#f0f4ff);border:2px solid #3b82f6;box-shadow:0 4px 16px rgba(59,130,246,0.1)}
     .tier-card-gold{background:linear-gradient(135deg,#fffdf0,#fff8dc);border:2px solid #eab308;box-shadow:0 4px 16px rgba(234,179,8,0.1)}
     .tier-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -130,15 +130,15 @@
     .tier-features li{font-size:0.82rem;padding:4px 0;display:flex;align-items:flex-start;gap:7px;color:#1e293b}
     .tier-features li .fi{flex-shrink:0;font-size:0.85rem}
     .tier-features li.locked{opacity:0.3;color:#9ca3af}
-    .popular-badge{position:absolute;top:12px;right:12px;font-size:0.6rem;background:linear-gradient(135deg,#ea580c,#dc2626);color:#fff;padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:0.5px;box-shadow:0 2px 6px rgba(234,88,12,0.3)}
+    .popular-badge{position:absolute;top:12px;right:12px;font-size:0.6rem;background:linear-gradient(135deg,#0d9488,#dc2626);color:#1e293b;padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:0.5px;box-shadow:0 2px 6px rgba(234,88,12,0.3)}
 
-    .referral-section{margin-top:10px;padding:14px;background:#fff8f3;border:1px solid #fdba74;border-radius:14px;text-align:center;box-shadow:0 2px 8px rgba(249,115,22,0.08)}
+    .referral-section{margin-top:10px;padding:14px;background:#f0fdf9;border:1px solid #99f6e4;border-radius:14px;text-align:center;box-shadow:0 2px 8px rgba(249,115,22,0.08)}
     .referral-title{font-size:0.82rem;font-weight:700;margin-bottom:4px;color:#1e293b}
     .referral-sub{font-size:0.75rem;color:#6b7280;margin-bottom:10px}
     .referral-input-row{display:flex;gap:7px}
     .referral-input{flex:1;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:9px 12px;color:#1e293b;font-size:0.85rem;outline:none}
     .referral-input::placeholder{opacity:0.4}
-    .referral-apply-btn{padding:9px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,#ea580c,#dc2626);color:white;font-size:0.82rem;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(234,88,12,0.25)}
+    .referral-apply-btn{padding:9px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,#0d9488,#dc2626);color:#1e293b;font-size:0.82rem;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(234,88,12,0.25)}
     .referral-success{font-size:0.78rem;color:#4ade80;margin-top:6px;display:none}
 
     /* Main dashboard */
@@ -164,10 +164,10 @@
     .scale-toocold{background:rgba(129,140,248,0.2);color:#c4b5fd}
 
     .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .stat-box{background:rgba(255,255,255,0.05);border-radius:12px;padding:11px 9px;text-align:center}
+    .stat-box{background:#f8fafc;border-radius:12px;padding:11px 9px;text-align:center}
     .stat-value{font-size:1.25rem;font-weight:800;margin-bottom:2px}
     .stat-label{font-size:0.65rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.3px}
-    .ground-temp-box{grid-column:span 2;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.15)}
+    .ground-temp-box{grid-column:span 2;background:#f8fafc;border:1px solid rgba(255,255,255,0.15)}
     .ground-temp-box .stat-value{font-size:1.9rem}
 
     .alert-banner{border-radius:12px;padding:10px 13px;font-size:0.82rem;line-height:1.5;margin-top:10px}
@@ -180,25 +180,25 @@
     .crime-info{flex:1}
     .crime-rating-label{font-size:1.15rem;font-weight:800;margin-bottom:2px}
     .crime-location{font-size:0.72rem;opacity:0.5}
-    .crime-message{font-size:0.83rem;opacity:0.8;line-height:1.5;margin-bottom:10px;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,0.05)}
+    .crime-message{font-size:0.83rem;opacity:0.8;line-height:1.5;margin-bottom:10px;padding:9px 12px;border-radius:10px;background:#f8fafc}
     .crime-scale{display:flex;gap:3px;margin-bottom:9px}
     .crime-scale-item{flex:1;height:5px;border-radius:3px;opacity:0.2;transition:opacity 0.3s}
     .crime-scale-item.active{opacity:1}
     .crime-stats-row{display:flex;gap:7px}
-    .crime-stat{flex:1;background:rgba(255,255,255,0.05);border-radius:10px;padding:9px;text-align:center}
+    .crime-stat{flex:1;background:#f8fafc;border-radius:10px;padding:9px;text-align:center}
     .crime-stat-val{font-size:0.92rem;font-weight:700}
     .crime-stat-label{font-size:0.6rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px}
     .crime-source{font-size:0.6rem;opacity:0.28;text-align:center;margin-top:7px}
 
     /* Wash stations */
     .stations-list{display:flex;flex-direction:column;gap:9px}
-    .station-item{background:rgba(255,255,255,0.05);border-radius:13px;padding:11px 13px;display:flex;align-items:flex-start;gap:11px}
+    .station-item{background:#f8fafc;border-radius:13px;padding:11px 13px;display:flex;align-items:flex-start;gap:11px}
     .station-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px}
     .station-info{flex:1;min-width:0}
     .station-name{font-size:0.88rem;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .station-type{font-size:0.68rem;opacity:0.5;margin-bottom:3px}
     .station-meta{display:flex;flex-wrap:wrap;gap:4px}
-    .station-tag{font-size:0.65rem;opacity:0.7;background:rgba(255,255,255,0.08);padding:2px 7px;border-radius:20px}
+    .station-tag{font-size:0.65rem;opacity:0.7;background:#f8fafc;padding:2px 7px;border-radius:20px}
     .station-dist{font-size:0.72rem;font-weight:600;opacity:0.65;flex-shrink:0}
     .station-links{display:flex;gap:7px;margin-top:5px}
     .station-link{font-size:0.68rem;color:#c4b5fd;text-decoration:none}
@@ -206,7 +206,7 @@
     /* Walk time */
     .best-time-hero{text-align:center;margin-bottom:14px}
     .best-time-icon{font-size:2.8rem;display:block;margin-bottom:6px}
-    .best-time-window{font-size:1.55rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:#fed7aa}
+    .best-time-window{font-size:1.55rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:#ccfbf1}
     .best-time-rec{font-size:0.86rem;opacity:0.8;line-height:1.5;max-width:300px;margin:0 auto}
     .hourly-chart{margin-top:14px;overflow-x:auto;padding-bottom:4px}
     .hourly-bars{display:flex;gap:3px;align-items:flex-end;height:65px;min-width:max-content}
@@ -216,7 +216,7 @@
     .hourly-bar.past{opacity:0.22}
     .hourly-bar.best-bar{outline:2px solid #c4b5fd;outline-offset:2px}
     .hourly-label{font-size:0.53rem;opacity:0.45;white-space:nowrap}
-    .hourly-label.best-label{opacity:1;color:#fed7aa;font-weight:700}
+    .hourly-label.best-label{opacity:1;color:#ccfbf1;font-weight:700}
     .chart-legend{display:flex;gap:10px;margin-top:9px;justify-content:center}
     .legend-item{display:flex;align-items:center;gap:4px;font-size:0.65rem;opacity:0.55}
     .legend-dot{width:8px;height:8px;border-radius:2px}
@@ -226,8 +226,8 @@
     .share-title{font-size:0.85rem;font-weight:700;margin-bottom:10px;opacity:0.9}
     .share-btns{display:flex;gap:8px}
     .share-btn{flex:1;padding:9px;border-radius:10px;border:none;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s}
-    .share-btn-copy{background:linear-gradient(135deg,#e8650a,#c94f00);color:white}
-    .share-btn-tiktok{background:rgba(0,0,0,0.6);color:white;border:1px solid rgba(255,255,255,0.15)}
+    .share-btn-copy{background:linear-gradient(135deg,#0d9488,#059669);color:#1e293b}
+    .share-btn-tiktok{background:rgba(0,0,0,0.6);color:#1e293b;border:1px solid rgba(255,255,255,0.15)}
 
     /* Referral share */
     .referral-share-card{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:16px;padding:16px;margin-bottom:10px;text-align:center}
@@ -238,16 +238,16 @@
     .notif-banner{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:14px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
     .notif-icon{font-size:1.5rem;flex-shrink:0}
     .notif-text{flex:1;font-size:0.8rem;opacity:0.85;line-height:1.4}
-    .notif-btn{padding:7px 13px;border-radius:9px;border:none;background:rgba(251,191,36,0.4);color:white;font-size:0.75rem;font-weight:700;cursor:pointer;flex-shrink:0}
+    .notif-btn{padding:7px 13px;border-radius:9px;border:none;background:rgba(251,191,36,0.4);color:#1e293b;font-size:0.75rem;font-weight:700;cursor:pointer;flex-shrink:0}
 
     /* Locked feature */
-    .locked-feature{background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.12);border-radius:14px;padding:16px;text-align:center;margin-bottom:10px}
+    .locked-feature{background:#f8fafc;border:1px dashed rgba(255,255,255,0.12);border-radius:14px;padding:16px;text-align:center;margin-bottom:10px}
     .locked-icon{font-size:1.8rem;margin-bottom:6px}
     .locked-title{font-size:0.88rem;font-weight:700;margin-bottom:4px;opacity:0.7}
     .locked-sub{font-size:0.75rem;opacity:0.45;margin-bottom:10px}
 
     /* Profile */
-    .profile-section{background:rgba(255,255,255,0.04);border-radius:14px;padding:14px;margin-bottom:10px}
+    .profile-section{background:#f8fafc;border-radius:14px;padding:14px;margin-bottom:10px}
     .profile-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.07)}
     .profile-row:last-child{border-bottom:none}
     .profile-label{font-size:0.75rem;opacity:0.5}
@@ -265,10 +265,10 @@
     .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:5px}
 
     /* Nav tabs */
-    .bottom-nav{display:flex;gap:4px;margin-bottom:12px;background:rgba(255,255,255,0.05);border-radius:14px;padding:4px}
-    .nav-btn{flex:1;padding:8px 4px;border-radius:10px;border:none;background:none;color:white;font-size:0.7rem;font-weight:600;cursor:pointer;opacity:0.45;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px}
+    .bottom-nav{display:flex;gap:4px;margin-bottom:12px;background:#f8fafc;border-radius:14px;padding:4px}
+    .nav-btn{flex:1;padding:8px 4px;border-radius:10px;border:none;background:none;color:#1e293b;font-size:0.7rem;font-weight:600;cursor:pointer;opacity:0.45;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px}
     .nav-btn .nav-icon{font-size:1.1rem}
-    .nav-btn.active{background:rgba(232,101,10,0.3);opacity:1}
+    .nav-btn.active{background:rgba(13,148,136,0.3);opacity:1}
   
     /* Edge glow system */
     .edge-glow {
@@ -345,12 +345,12 @@
   .theme-btn.locked { opacity:0.45; cursor:not-allowed; }
 
   /* Theme variables */
-  body[data-theme="midnight"] { --accent: #E8650A; --accent2: #ff8c42; --glow: 232,101,10; }
+  body[data-theme="midnight"] { --accent: #0d9488; --accent2: #4a7c59; --glow: 13,148,136; }
   body[data-theme="violet"]   { --accent: #7c3aed; --accent2: #a78bfa; --glow: 124,58,237; }
   body[data-theme="ocean"]    { --accent: #0891b2; --accent2: #22d3ee; --glow: 8,145,178; }
   body[data-theme="forest"]   { --accent: #16a34a; --accent2: #4ade80; --glow: 22,163,74; }
   body[data-theme="blush"]    { --accent: #db2777; --accent2: #f472b6; --glow: 219,39,119; }
-  body[data-theme="frost"]    { --accent: #2563eb; --accent2: #60a5fa; --glow: 37,99,235; background:#0f172a; }
+  body[data-theme="frost"]    { --accent: #64748b; --accent2: #60a5fa; --glow: 37,99,235; background:#0f172a; }
 
   </style>
 </head>
@@ -458,7 +458,7 @@
         </div>
         <button onclick="startFree()" style="margin-top:10px;font-size:0.82rem;padding:10px 20px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;color:#475569;font-weight:600;width:100%;cursor:pointer;">Continue with free preview (limited)</button>
         <div style="text-align:center;margin-top:14px;">
-          <button onclick="showRecoveryModal()" style="background:none;border:none;color:#2563eb;font-size:0.82rem;cursor:pointer;text-decoration:underline;">🔑 Already subscribed? Recover your access</button>
+          <button onclick="showRecoveryModal()" style="background:none;border:none;color:#64748b;font-size:0.82rem;cursor:pointer;text-decoration:underline;">🔑 Already subscribed? Recover your access</button>
         </div>
       </div>
     </div>
@@ -589,7 +589,7 @@
       </div>
 
       <div class="card" id="safety-tips-card" style="padding:0;overflow:hidden;">
-        <button onclick="toggleTips()" style="width:100%;background:none;border:none;color:white;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+        <button onclick="toggleTips()" style="width:100%;background:none;border:none;color:#1e293b;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
           <div style="display:flex;align-items:center;gap:10px;">
             <span style="font-size:1.2rem;">💡</span>
             <div style="text-align:left;">
@@ -600,7 +600,7 @@
           <span id="tips-chevron" style="font-size:1rem;opacity:0.5;transition:transform 0.3s;">▼</span>
         </button>
         <div id="tips-body" style="display:none;padding:0 18px 18px;">
-          <div style="height:1px;background:rgba(255,255,255,0.1);margin-bottom:14px;"></div>
+          <div style="height:1px;background:#f1f5f9;margin-bottom:14px;"></div>
 
           <div style="display:flex;gap:12px;margin-bottom:16px;">
             <span style="font-size:1.4rem;flex-shrink:0;">🌡️</span>
@@ -642,7 +642,7 @@
             </div>
           </div>
 
-          <div style="height:1px;background:rgba(255,255,255,0.08);margin:16px 0;"></div>
+          <div style="height:1px;background:#f8fafc;margin:16px 0;"></div>
           <div style="display:flex;gap:12px;">
             <span style="font-size:1.4rem;flex-shrink:0;">🐕</span>
             <div>
@@ -689,7 +689,7 @@
             <div class="crime-scale-item" style="background:#4ade80" id="cs-1"></div>
             <div class="crime-scale-item" style="background:#86efac" id="cs-2"></div>
             <div class="crime-scale-item" style="background:#fbbf24" id="cs-3"></div>
-            <div class="crime-scale-item" style="background:#fb923c" id="cs-4"></div>
+            <div class="crime-scale-item" style="background:#34d399" id="cs-4"></div>
             <div class="crime-scale-item" style="background:#ef4444" id="cs-5"></div>
           </div>
           <div class="crime-stats-row">
@@ -1178,7 +1178,7 @@ function showEditProfile() {
   const modal = document.createElement('div');
   modal.id = 'edit-profile-modal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-start;justify-content:center;z-index:999;padding:20px;overflow-y:auto;';
-  modal.innerHTML = `<div style="background:#16213e;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px;max-width:360px;width:100%;color:white;margin:auto;">
+  modal.innerHTML = `<div style="background:#f1f5f9;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px;max-width:360px;width:100%;color:#1e293b;margin:auto;">
     <div style="font-size:1rem;font-weight:800;margin-bottom:16px;">✏️ Edit Profile</div>
     <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" id="edit-full-name" value="${currentUser?.full_name||''}" placeholder="Your name"/></div>
     <div class="form-group"><label class="form-label">Pet Name</label><input class="form-input" id="edit-pet-name" value="${petName}" placeholder="Pet name"/></div>
@@ -1291,7 +1291,7 @@ async function requestNotifications() {
   updateNotifBtn();
   if (notificationsEnabled) {
     if (navigator.serviceWorker.controller) {
-      navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 The Paw Report', { body: "You'll now get alerts when conditions turn dangerous!", icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png', silent: false, data: { color: '#E8650A' } }));
+      navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 The Paw Report', { body: "You'll now get alerts when conditions turn dangerous!", icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png', silent: false, data: { color: '#0d9488' } }));
     }
   } else if (perm === 'denied') {
     alert('🔕 Notifications blocked.\n\nTo enable:\n1. Tap the lock/info icon in your browser address bar\n2. Find "Notifications" and set to Allow\n3. Reload the page and try again');
@@ -1392,10 +1392,10 @@ function getStatusColor(status) {
     'Danger': '#ff5722',
     'Fry Zone': '#b71c1c'
   };
-  return map[status] || '#E8650A';
+  return map[status] || '#0d9488';
 }
 function sendDangerNotification(msg) {
-  if (notificationsEnabled && Notification.permission === 'granted') { playBarkSound(); const notifColor = lastPawData ? getStatusColor(lastPawData.status) : '#E8650A'; navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 Paw Report Alert', { body: msg, icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png', vibrate: [200, 100, 200], data: { color: notifColor } })); };
+  if (notificationsEnabled && Notification.permission === 'granted') { playBarkSound(); const notifColor = lastPawData ? getStatusColor(lastPawData.status) : '#0d9488'; navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 Paw Report Alert', { body: msg, icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png', vibrate: [200, 100, 200], data: { color: notifColor } })); };
 }
 
 function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b.dataset.size === size)); }
@@ -1472,7 +1472,7 @@ const PAW_RATING_INFO = {
   'Chilly':       { emoji: '❄️', color: '#5bc0de', message: 'Chilly — short walks OK, watch for ice.' },
   'Safe':         { emoji: '✅', color: '#5cb85c', message: 'Great walking conditions!' },
   'Warm':         { emoji: '🌡️', color: '#f0ad4e', message: 'Warm — keep walks short and bring water.' },
-  'Hot':          { emoji: '🟠', color: '#e8650a', message: 'Hot! Limit time on pavement.' },
+  'Hot':          { emoji: '🟠', color: '#0d9488', message: 'Hot! Limit time on pavement.' },
   'Danger':       { emoji: '🔴', color: '#d9534f', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
   'Fry Zone':     { emoji: '🔥', color: '#8b0000', message: 'Fry Zone! Stay off pavement entirely.' }
 };
@@ -1487,65 +1487,65 @@ function getRatingColor(rating) {
     'Extreme Cold': '#818cf8',
     'Too Cold':     '#93c5fd',
     'Chilly':       '#7dd3fc',
-    'Safe':         '#4ade80',
-    'Warm':         '#fbbf24',
-    'Caution':      '#c4b5fd',
-    'Danger':       '#f87171',
-    'Fry Zone':     '#ff4500'
+    'Safe':         '#0d9488',
+    'Warm':         '#f59e0b',
+    'Caution':      '#ea580c',
+    'Danger':       '#ef4444',
+    'Fry Zone':     '#dc2626'
   };
-  return map[rating] || '#c4b5fd';
+  return map[rating] || '#64748b';
 }
 
 // Background gradients per rating × time of day
 // Each rating has: dawn, day, dusk, night
 const BG_GRADIENTS = {
   'Extreme Cold': {
-    dawn:  'linear-gradient(160deg,#181818 0%,#1e1e24 50%,#1a1a22 100%)',
-    day:   'linear-gradient(160deg,#1a1a1a 0%,#202028 50%,#1c1c26 100%)',
-    dusk:  'linear-gradient(160deg,#161616 0%,#1c1c22 50%,#18181e 100%)',
-    night: 'linear-gradient(160deg,#131313 0%,#181818 50%,#151515 100%)',
+    dawn:  'linear-gradient(160deg,#e0f2fe 0%,#bfdbfe 50%,#dbeafe 100%)',
+    day:   'linear-gradient(160deg,#eff6ff 0%,#dbeafe 50%,#e0f2fe 100%)',
+    dusk:  'linear-gradient(160deg,#e0f2fe 0%,#c7d2fe 50%,#ddd6fe 100%)',
+    night: 'linear-gradient(160deg,#dbeafe 0%,#c7d2fe 50%,#ede9fe 100%)',
   },
   'Too Cold': {
-    dawn:  'linear-gradient(160deg,#191920 0%,#1f1f28 50%,#1c1c26 100%)',
-    day:   'linear-gradient(160deg,#1a1a22 0%,#20202a 50%,#1d1d28 100%)',
-    dusk:  'linear-gradient(160deg,#17171e 0%,#1d1d26 50%,#1a1a22 100%)',
-    night: 'linear-gradient(160deg,#141414 0%,#18181e 50%,#16161c 100%)',
+    dawn:  'linear-gradient(160deg,#e0f2fe 0%,#bae6fd 50%,#cffafe 100%)',
+    day:   'linear-gradient(160deg,#f0f9ff 0%,#e0f2fe 50%,#cffafe 100%)',
+    dusk:  'linear-gradient(160deg,#e0f2fe 0%,#bae6fd 50%,#c7d2fe 100%)',
+    night: 'linear-gradient(160deg,#dbeafe 0%,#bae6fd 50%,#cffafe 100%)',
   },
   'Chilly': {
-    dawn:  'linear-gradient(160deg,#0a1018 0%,#111c20 50%,#0d1a1c 100%)',
-    day:   'linear-gradient(160deg,#0c1418 0%,#142028 50%,#101c22 100%)',
-    dusk:  'linear-gradient(160deg,#080e14 0%,#0f1820 50%,#0c151c 100%)',
-    night: 'linear-gradient(160deg,#060a0e 0%,#0a1018 50%,#080d14 100%)',
+    dawn:  'linear-gradient(160deg,#ecfdf5 0%,#d1fae5 50%,#e0f2fe 100%)',
+    day:   'linear-gradient(160deg,#f0fdf4 0%,#dcfce7 50%,#e0f2fe 100%)',
+    dusk:  'linear-gradient(160deg,#f0fdf4 0%,#ccfbf1 50%,#cffafe 100%)',
+    night: 'linear-gradient(160deg,#ecfdf5 0%,#d1fae5 50%,#dbeafe 100%)',
   },
   'Safe': {
-    dawn:  'linear-gradient(160deg,#0a1410 0%,#111e14 50%,#0d1c12 100%)',
-    day:   'linear-gradient(160deg,#0c1812 0%,#142218 50%,#101e14 100%)',
-    dusk:  'linear-gradient(160deg,#08100c 0%,#0f1a10 50%,#0c160e 100%)',
-    night: 'linear-gradient(160deg,#060c08 0%,#0a120c 50%,#080e0a 100%)',
+    dawn:  'linear-gradient(160deg,#f0fdf4 0%,#dcfce7 50%,#ecfdf5 100%)',
+    day:   'linear-gradient(160deg,#f0fdf9 0%,#ccfbf1 50%,#f0fdf4 100%)',
+    dusk:  'linear-gradient(160deg,#ecfdf5 0%,#d1fae5 50%,#fef9c3 100%)',
+    night: 'linear-gradient(160deg,#f0fdf4 0%,#dcfce7 50%,#f0f9ff 100%)',
   },
   'Warm': {
-    dawn:  'linear-gradient(160deg,#1a1208 0%,#251a08 50%,#1e1508 100%)',
-    day:   'linear-gradient(160deg,#1e1608 0%,#2a1e0a 50%,#221808 100%)',
-    dusk:  'linear-gradient(160deg,#180e06 0%,#221406 50%,#1c1006 100%)',
-    night: 'linear-gradient(160deg,#100a04 0%,#180e04 50%,#140c04 100%)',
+    dawn:  'linear-gradient(160deg,#fffbeb 0%,#fef3c7 50%,#fef9c3 100%)',
+    day:   'linear-gradient(160deg,#fffbeb 0%,#fde68a 50%,#fef3c7 100%)',
+    dusk:  'linear-gradient(160deg,#fff7ed 0%,#fed7aa 50%,#fef3c7 100%)',
+    night: 'linear-gradient(160deg,#fffbeb 0%,#fef3c7 50%,#fef9c3 100%)',
   },
   'Caution': {
-    dawn:  'linear-gradient(160deg,#1e1008 0%,#2a1608 50%,#221208 100%)',
-    day:   'linear-gradient(160deg,#221208 0%,#301808 50%,#281408 100%)',
-    dusk:  'linear-gradient(160deg,#180c06 0%,#221006 50%,#1c0e06 100%)',
-    night: 'linear-gradient(160deg,#100804 0%,#180c04 50%,#140a04 100%)',
+    dawn:  'linear-gradient(160deg,#fff7ed 0%,#ffedd5 50%,#fef3c7 100%)',
+    day:   'linear-gradient(160deg,#fff7ed 0%,#fed7aa 50%,#ffedd5 100%)',
+    dusk:  'linear-gradient(160deg,#fff7ed 0%,#fecaca 50%,#ffedd5 100%)',
+    night: 'linear-gradient(160deg,#fff7ed 0%,#ffedd5 50%,#fde8d8 100%)',
   },
   'Danger': {
-    dawn:  'linear-gradient(160deg,#200a08 0%,#2e0c08 50%,#260a08 100%)',
-    day:   'linear-gradient(160deg,#240c08 0%,#340e08 50%,#2c0a08 100%)',
-    dusk:  'linear-gradient(160deg,#1c0806 0%,#280a06 50%,#200806 100%)',
-    night: 'linear-gradient(160deg,#120604 0%,#1c0804 50%,#160604 100%)',
+    dawn:  'linear-gradient(160deg,#fef2f2 0%,#fecaca 50%,#fee2e2 100%)',
+    day:   'linear-gradient(160deg,#fff1f2 0%,#fecdd3 50%,#fee2e2 100%)',
+    dusk:  'linear-gradient(160deg,#fef2f2 0%,#fca5a5 50%,#fecaca 100%)',
+    night: 'linear-gradient(160deg,#fef2f2 0%,#fecaca 50%,#fde8d8 100%)',
   },
   'Fry Zone': {
-    dawn:  'linear-gradient(160deg,#280a06 0%,#380c06 50%,#2e0a06 100%)',
-    day:   'linear-gradient(160deg,#2c0c06 0%,#3e0e06 50%,#340c06 100%)',
-    dusk:  'linear-gradient(160deg,#220806 0%,#300a06 50%,#280806 100%)',
-    night: 'linear-gradient(160deg,#180604 0%,#240604 50%,#1e0604 100%)',
+    dawn:  'linear-gradient(160deg,#fff1f2 0%,#fecdd3 50%,#ffedd5 100%)',
+    day:   'linear-gradient(160deg,#fff1f2 0%,#fca5a5 50%,#fecdd3 100%)',
+    dusk:  'linear-gradient(160deg,#fef2f2 0%,#f87171 50%,#fca5a5 100%)',
+    night: 'linear-gradient(160deg,#fff1f2 0%,#fecdd3 50%,#ffedd5 100%)',
   },
 };
 
@@ -1575,7 +1575,7 @@ function updateDynamicColors(rating) {
   const tod = getTimeOfDay();
   const bgMap = BG_GRADIENTS[rating] || BG_GRADIENTS['Safe'];
   const bg = bgMap[tod] || bgMap['day'];
-  document.body.style.background = 'linear-gradient(160deg,#111114 0%,#1a1a1e 50%,#1e1e22 100%)';
+  document.body.style.background = 'linear-gradient(160deg,#f8fafc 0%,#f1f5f9 50%,#f0f4f0 100%)';
   const textMap = TEXT_COLORS[rating] || TEXT_COLORS['Safe'];
   const textColor = textMap[tod] || textMap['day'];
   // text color stays light always
@@ -1648,7 +1648,7 @@ function updateCrimeUI(d) {
     lastCrimeScore=s; lastCrimeData=d;
   }
 }
-function scoreToColor(s){ if(s<10)return'#4ade80'; if(s<25)return'#86efac'; if(s<45)return'#fbbf24'; if(s<65)return'#f97316'; return'#f87171'; }
+function scoreToColor(s){ if(s<10)return'#4ade80'; if(s<25)return'#86efac'; if(s<45)return'#fbbf24'; if(s<65)return'#14b8a6'; return'#f87171'; }
 function updateWalkTimeUI(d) {
   document.getElementById('walk-time-loading').style.display='none';
   document.getElementById('walk-time-content').style.display='block';
@@ -1892,12 +1892,12 @@ function playBarkSound() {
   
   // ===== THEME SYSTEM =====
   const THEMES = [
-    { id: 'midnight', label: 'Midnight', emoji: '🌑', tier: 'bronze', colors: ['#1A1A1E','#E8650A'] },
-    { id: 'violet',   label: 'Violet',   emoji: '💜', tier: 'silver', colors: ['#1A1A1E','#7c3aed'] },
-    { id: 'ocean',    label: 'Ocean',    emoji: '🌊', tier: 'silver', colors: ['#0c1a2e','#0891b2'] },
-    { id: 'forest',   label: 'Forest',   emoji: '🌿', tier: 'gold',   colors: ['#0a1a0f','#16a34a'] },
-    { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#1a0a12','#db2777'] },
-    { id: 'frost',    label: 'Frost',    emoji: '❄️',  tier: 'gold',   colors: ['#0f172a','#2563eb'] },
+    { id: 'midnight', label: 'Midnight', emoji: '🌑', tier: 'bronze', colors: ['#F1F5F9','#0d9488'] },
+    { id: 'violet',   label: 'Violet',   emoji: '💜', tier: 'silver', colors: ['#F1F5F9','#7c3aed'] },
+    { id: 'ocean',    label: 'Ocean',    emoji: '🌊', tier: 'silver', colors: ['#e8f0e8','#0891b2'] },
+    { id: 'forest',   label: 'Forest',   emoji: '🌿', tier: 'gold',   colors: ['#f0fdf4','#16a34a'] },
+    { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#fdf2f8','#db2777'] },
+    { id: 'frost',    label: 'Frost',    emoji: '❄️',  tier: 'gold',   colors: ['#0f172a','#64748b'] },
   ];
 
   const TIER_RANK = { bronze: 1, silver: 2, gold: 3 };
@@ -1954,7 +1954,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=43').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=44').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2023,7 +2023,7 @@ function drawTempWheel(canvasEl) {
   // Dark center circle
   ctx.beginPath();
   ctx.arc(cx, cy, r * 0.35, 0, Math.PI * 2);
-  ctx.fillStyle = '#1a1a2e';
+  ctx.fillStyle = '#f8fafc';
   ctx.fill();
 }
 
@@ -2125,16 +2125,16 @@ async function recoverAccess() {
 
   <!-- Subscription Recovery Modal -->
   <div id="recovery-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
-    <div style="background:#fff8f3;border-radius:18px;padding:28px 22px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+    <div style="background:#f0fdf9;border-radius:18px;padding:28px 22px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
       <div style="text-align:center;margin-bottom:16px;">
         <span style="font-size:2rem;">🔑</span>
         <div style="font-size:1.1rem;font-weight:800;color:#1a1a1a;margin-top:6px;">Recover Your Access</div>
         <div style="font-size:0.83rem;color:#666;margin-top:4px;">Enter the email you used when you subscribed and we'll restore your account instantly — no payment needed.</div>
       </div>
-      <input id="recovery-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid #E8650A;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
+      <input id="recovery-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid #0d9488;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
       <div id="recovery-msg" style="font-size:0.82rem;color:#c00;margin-bottom:8px;min-height:18px;text-align:center;"></div>
-      <button onclick="recoverAccess()" style="width:100%;background:#E8650A;color:#fff;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Restore My Subscription</button>
-      <button onclick="closeRecoveryModal()" style="width:100%;background:none;border:none;color:#999;margin-top:10px;cursor:pointer;font-size:0.85rem;">Cancel</button>
+      <button onclick="recoverAccess()" style="width:100%;background:#0d9488;color:#1e293b;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Restore My Subscription</button>
+      <button onclick="hideRecoveryModal()" style="width:100%;background:none;border:none;color:#999;margin-top:10px;cursor:pointer;font-size:0.85rem;">Cancel</button>
     </div>
   </div>
   <div class="whats-new-toast" id="whats-new-toast">
