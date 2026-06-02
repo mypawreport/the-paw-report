@@ -118,7 +118,7 @@
     .tier-card{border-radius:16px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden}
     .tier-card-bronze{background:linear-gradient(135deg,#f8fafb,#f0fdf9);border:2px solid #14b8a6;box-shadow:0 4px 16px rgba(249,115,22,0.1)}
     .tier-card-silver{background:linear-gradient(135deg,#f8faff,#f0f4ff);border:2px solid #3b82f6;box-shadow:0 4px 16px rgba(59,130,246,0.1)}
-    .tier-card-gold{background:linear-gradient(135deg,#fffdf0,#fff8dc);border:2px solid #eab308;box-shadow:0 4px 16px rgba(234,179,8,0.1)}
+    .tier-card-gold{background:linear-gradient(135deg,#f8fafc,#f8fafc);border:2px solid #eab308;box-shadow:0 4px 16px rgba(234,179,8,0.1)}
     .tier-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
     .tier-card-name{font-size:1rem;font-weight:800;color:#1e293b}
     .tier-card-price{text-align:right}
@@ -346,7 +346,7 @@
 
   /* Theme variables */
   body[data-theme="midnight"] { --accent: #0d9488; --accent2: #4a7c59; --glow: 13,148,136; }
-  body[data-theme="violet"]   { --accent: #7c3aed; --accent2: #a78bfa; --glow: 124,58,237; }
+  body[data-theme="violet"]   { --accent: #0d9488; --accent2: #4a7c59; --glow: 124,58,237; }
   body[data-theme="ocean"]    { --accent: #0891b2; --accent2: #22d3ee; --glow: 8,145,178; }
   body[data-theme="forest"]   { --accent: #16a34a; --accent2: #4ade80; --glow: 22,163,74; }
   body[data-theme="blush"]    { --accent: #db2777; --accent2: #f472b6; --glow: 219,39,119; }
@@ -401,15 +401,15 @@
       <div class="form-group">
         <label class="form-label">Size</label>
         <div class="size-selector">
-          <button class="size-btn" data-size="small" onclick="selectSetupSize('small',this)">🐩 Small<br><span style="font-size:0.62rem;opacity:0.6">under 20 lbs</span></button>
-          <button class="size-btn active" data-size="medium" onclick="selectSetupSize('medium',this)">🐕 Medium<br><span style="font-size:0.62rem;opacity:0.6">20–60 lbs</span></button>
-          <button class="size-btn" data-size="large" onclick="selectSetupSize('large',this)">🦮 Large<br><span style="font-size:0.62rem;opacity:0.6">over 60 lbs</span></button>
+          <button class="size-btn" data-size="small" onclick="selectSetupSize('small',this)">🐩 Small<br><span style="font-size:0.62rem;color:#64748b">under 20 lbs</span></button>
+          <button class="size-btn active" data-size="medium" onclick="selectSetupSize('medium',this)">🐕 Medium<br><span style="font-size:0.62rem;color:#64748b">20–60 lbs</span></button>
+          <button class="size-btn" data-size="large" onclick="selectSetupSize('large',this)">🦮 Large<br><span style="font-size:0.62rem;color:#64748b">over 60 lbs</span></button>
         </div>
       </div>
       <button class="btn btn-primary" onclick="saveProfile()" style="margin-top:8px">Let's Go 🐾</button>
     </div>
     <div class="card" style="text-align:center;padding:16px 18px;">
-      <div style="font-size:0.75rem;opacity:0.5;margin-bottom:10px;">Have a referral code? Enter it for a free week!</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:10px;">Have a referral code? Enter it for a free week!</div>
       <div class="referral-input-row" style="justify-content:center">
         <input class="referral-input" id="setup-referral" placeholder="Referral code (optional)" style="max-width:200px"/>
         <button class="referral-apply-btn" onclick="applyReferral('setup-referral')">Apply</button>
@@ -494,14 +494,14 @@
       <div class="card" id="initial-card" style="text-align:center;">
         <div style="margin-bottom:10px;">🐾</div>
         <div style="font-size:1rem;font-weight:600;margin-bottom:5px;" id="pet-welcome-msg">Ready to check conditions?</div>
-        <div style="font-size:0.83rem;opacity:0.6;margin-bottom:16px;">Ground temp, walk timing & safety — all in one report.</div>
-        <div style="font-size:0.7rem;opacity:0.5;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Dog size:</div>
+        <div style="font-size:0.83rem;color:#64748b;margin-bottom:16px;">Ground temp, walk timing & safety — all in one report.</div>
+        <div style="font-size:0.7rem;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Dog size:</div>
         <div class="size-selector" id="size-selector-initial">
           <button class="size-btn" data-size="small" onclick="selectSize('small',this)">🐩 Small</button>
           <button class="size-btn active" data-size="medium" onclick="selectSize('medium',this)">🐕 Medium</button>
           <button class="size-btn" data-size="large" onclick="selectSize('large',this)">🦮 Large</button>
         </div>
-        <div style="font-size:0.7rem;opacity:0.5;margin:10px 0 6px;text-transform:uppercase;letter-spacing:1px;">Walking surface:</div>
+        <div style="font-size:0.7rem;color:#64748b;margin:10px 0 6px;text-transform:uppercase;letter-spacing:1px;">Walking surface:</div>
         <div class="size-selector" id="surface-selector" style="flex-wrap:wrap;">
           <button class="size-btn active" data-surface="asphalt" onclick="selectSurface('asphalt',this)">🖤 Asphalt</button>
           <button class="size-btn" data-surface="concrete" onclick="selectSurface('concrete',this)">⬜ Concrete</button>
@@ -511,7 +511,7 @@
       </div>
       <div class="card" id="loading-card" style="display:none;text-align:center;">
         <div style="font-size:2.3rem;margin-bottom:8px;">🔍</div>
-        <div style="opacity:0.6;font-size:0.88rem;margin:14px 0;">Getting your location and conditions…</div>
+        <div style="color:#64748b;font-size:0.88rem;margin:14px 0;">Getting your location and conditions…</div>
       </div>
       <div class="card" id="error-card" style="display:none;"><div class="error-msg" id="error-msg"></div></div>
 
@@ -565,7 +565,7 @@
         <div id="hydration-alert" class="alert-banner alert-hydration" style="display:none;"></div>
         <div class="divider"></div>
         <div class="stats-grid">
-          <div class="stat-box ground-temp-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.6rem;opacity:0.5;margin-top:2px;">Asphalt</div></div>
+          <div class="stat-box ground-temp-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.6rem;color:#64748b;margin-top:2px;">Asphalt</div></div>
           <div class="stat-box"><div class="stat-value" id="air-temp">--°F</div><div class="stat-label">Air Temp</div></div>
           <div class="stat-box"><div class="stat-value" id="uv-index">--</div><div class="stat-label">UV Index</div></div>
           <div class="stat-box"><div class="stat-value" id="wind-speed">--</div><div class="stat-label">Wind Speed</div></div>
@@ -578,13 +578,13 @@
             <span style="font-size:1.5rem;">🖐️</span>
             <div>
               <div style="font-size:0.78rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:1px;">The 7-Second Rule</div>
-              <div style="font-size:0.68rem;opacity:0.45;margin-top:1px;">Always do the manual check</div>
+              <div style="font-size:0.68rem;color:#94a3b8;margin-top:1px;">Always do the manual check</div>
             </div>
           </div>
           <div style="font-size:0.82rem;line-height:1.6;opacity:0.85;">
             Place the <strong>back of your hand</strong> flat on the pavement. If you can't comfortably hold it there for <strong>7 seconds</strong> — it's too hot for your dog to walk on.
           </div>
-          <div style="font-size:0.72rem;opacity:0.45;margin-top:8px;font-style:italic;">Ground temp estimates are a guide. The hand test is always the final word. 🐾</div>
+          <div style="font-size:0.72rem;color:#94a3b8;margin-top:8px;font-style:italic;">Ground temp estimates are a guide. The hand test is always the final word. 🐾</div>
         </div>
       </div>
 
@@ -593,11 +593,11 @@
           <div style="display:flex;align-items:center;gap:10px;">
             <span style="font-size:1.2rem;">💡</span>
             <div style="text-align:left;">
-              <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;opacity:0.5;">Paw Report Field Guide</div>
+              <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#64748b;">Paw Report Field Guide</div>
               <div style="font-size:0.82rem;font-weight:600;margin-top:1px;">8 essential tips every dog owner should know</div>
             </div>
           </div>
-          <span id="tips-chevron" style="font-size:1rem;opacity:0.5;transition:transform 0.3s;">▼</span>
+          <span id="tips-chevron" style="font-size:1rem;color:#64748b;transition:transform 0.3s;">▼</span>
         </button>
         <div id="tips-body" style="display:none;padding:0 18px 18px;">
           <div style="height:1px;background:#edf1eb;margin-bottom:14px;"></div>
@@ -629,7 +629,7 @@
           <div style="display:flex;gap:12px;margin-bottom:16px;">
             <span style="font-size:1.4rem;flex-shrink:0;">⏰</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:700;color:#a78bfa;margin-bottom:3px;">Timing is everything in summer</div>
+              <div style="font-size:0.78rem;font-weight:700;color:#4a7c59;margin-bottom:3px;">Timing is everything in summer</div>
               <div style="font-size:0.8rem;line-height:1.55;opacity:0.8;">Walk <strong>before 8am or after 7pm</strong> during summer months. Pavement holds heat for hours after the sun goes down — dusk doesn't mean cool.</div>
             </div>
           </div>
@@ -723,14 +723,24 @@
     </div>
 
     <div id="tab-profile" style="display:none;">
+
+      <!-- 👤 Profile -->
       <div class="card">
         <div class="card-title">👤 Your Profile</div>
         <div class="profile-section" id="profile-display"></div>
         <button class="btn btn-secondary" onclick="showEditProfile()" style="margin-top:10px;font-size:0.82rem;padding:10px">✏️ Edit Profile</button>
       </div>
 
+      <!-- 💳 Subscription -->
+      <div class="card">
+        <div class="card-title">💳 My Subscription</div>
+        <div id="sub-status-display"></div>
+        <button class="btn btn-primary" onclick="showScreen('paywall')" style="margin-top:10px;font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
+      </div>
+
+      <!-- 🎁 Referral -->
       <div class="referral-share-card">
-        <div class="referral-title" style="font-weight:700;margin-bottom:4px;">🎁 Share & Earn</div>
+        <div class="referral-title" style="font-weight:700;margin-bottom:4px;">🎁 Share &amp; Earn</div>
         <div class="referral-share-sub">Give a friend a free week — when they sign up you both win!</div>
         <div class="referral-code-display" id="my-referral-code">PAW-XXXX</div>
         <div class="referral-share-sub" style="margin-bottom:10px;">Share your code and they get 1 free week.</div>
@@ -740,38 +750,36 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-title">💳 Subscription</div>
-        <div id="sub-status-display"></div>
-        <button class="btn btn-primary" onclick="showScreen('paywall')" style="margin-top:10px;font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
-      </div>
-
+      <!-- 🔔 Notifications (single consolidated card) -->
       <div class="card">
         <div class="card-title">🔔 Notifications</div>
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div>
-            <div style="font-size:0.85rem;font-weight:600;margin-bottom:2px;">Dangerous condition alerts</div>
-            <div style="font-size:0.72rem;opacity:0.5;">When ground temps or weather turn extreme</div>
+            <div style="font-size:0.85rem;font-weight:600;color:#1e293b;margin-bottom:2px;">Dangerous condition alerts</div>
+            <div style="font-size:0.72rem;color:#64748b;">When ground temps or weather turn extreme</div>
           </div>
           <button class="btn btn-primary btn-sm" id="notif-toggle-btn" onclick="toggleNotifications()">Enable</button>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid #d1d5db;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid #e2e8f0;">
           <div>
-            <div style="font-size:0.85rem;font-weight:600;margin-bottom:2px;">📌 Tray widget</div>
-            <div style="font-size:0.72rem;opacity:0.5;">Pin current conditions to your notification tray</div>
+            <div style="font-size:0.85rem;font-weight:600;color:#1e293b;margin-bottom:2px;">📌 Tray widget</div>
+            <div style="font-size:0.72rem;color:#64748b;">Pin current conditions to your notification tray</div>
           </div>
           <button class="btn btn-primary btn-sm" id="tray-toggle-btn" onclick="toggleTrayWidget()">Enable</button>
         </div>
       </div>
 
-
+      <!-- 🎨 App Theme (single card) -->
       <div class="card" id="theme-card">
         <div class="card-title">🎨 App Theme</div>
-        <div style="font-size:0.75rem;opacity:0.5;margin-bottom:12px;">Personalise your Paw Report look</div>
+        <div style="font-size:0.75rem;color:#64748b;margin-bottom:12px;">Personalise your Paw Report look</div>
         <div id="theme-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;"></div>
-        <div id="theme-locked-msg" style="display:none;font-size:0.72rem;opacity:0.5;margin-top:10px;text-align:center;">🔒 Upgrade to Silver or Gold to unlock more themes</div>
+        <div id="theme-locked-msg" style="display:none;font-size:0.72rem;color:#64748b;margin-top:10px;text-align:center;">🔒 Upgrade to Silver or Gold to unlock more themes</div>
       </div>
-      <button class="btn btn-secondary" onclick="logout()" style="margin-top:4px;font-size:0.85rem;padding:11px">Sign Out</button>
+
+      <!-- Sign out -->
+      <button class="btn btn-secondary" onclick="logout()" style="margin-top:4px;font-size:0.85rem;padding:11px;color:#ef4444;border-color:#fecaca;">🚪 Sign Out</button>
+
     </div>
 
     <div class="app-footer">
@@ -1162,11 +1170,11 @@ function renderProfileDisplay() {
   `;
 }
 function renderSubStatus() {
-  const tierColors = {free:'rgba(255,255,255,0.15)',bronze:'rgba(205,127,50,0.2)',silver:'rgba(192,192,192,0.15)',gold:'rgba(255,215,0,0.15)'};
+  const tierColors = {free:'#f1f5f9',bronze:'#fef3c7',silver:'#f1f5f9',gold:'#fefce8'};
   document.getElementById('sub-status-display').innerHTML = `
     <div style="background:${tierColors[currentTier]||tierColors.free};border-radius:10px;padding:12px;text-align:center;">
       <div style="font-size:1rem;font-weight:800;margin-bottom:3px;">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
-      <div style="font-size:0.75rem;opacity:0.6;">${currentTier==='free'?'Upgrade to unlock all features':'Active subscription'}</div>
+      <div style="font-size:0.75rem;color:#64748b;">${currentTier==='free'?'Upgrade to unlock all features':'Active subscription'}</div>
     </div>`;
   document.getElementById('upgrade-btn').style.display = currentTier==='gold' ? 'none' : 'block';
 }
@@ -1502,8 +1510,8 @@ const BG_GRADIENTS = {
   'Extreme Cold': {
     dawn:  'linear-gradient(160deg,#e0f2fe 0%,#bfdbfe 50%,#dbeafe 100%)',
     day:   'linear-gradient(160deg,#eff6ff 0%,#dbeafe 50%,#e0f2fe 100%)',
-    dusk:  'linear-gradient(160deg,#e0f2fe 0%,#c7d2fe 50%,#ddd6fe 100%)',
-    night: 'linear-gradient(160deg,#dbeafe 0%,#c7d2fe 50%,#ede9fe 100%)',
+    dusk:  'linear-gradient(160deg,#e0f2fe 0%,#c7d2fe 50%,#ccfbf1 100%)',
+    night: 'linear-gradient(160deg,#dbeafe 0%,#c7d2fe 50%,#f0fdf4 100%)',
   },
   'Too Cold': {
     dawn:  'linear-gradient(160deg,#e0f2fe 0%,#bae6fd 50%,#cffafe 100%)',
@@ -1671,13 +1679,13 @@ function updateWashUI(d) {
   document.getElementById('wash-loading').style.display='none';
   document.getElementById('wash-content').style.display='block';
   const list=document.getElementById('stations-list');
-  if(!d.stations||d.stations.length===0){ list.innerHTML='<div class="no-stations" style="text-align:center;opacity:0.5;font-size:0.84rem;padding:10px">No pet wash stations found within 3 miles.</div>'; return; }
+  if(!d.stations||d.stations.length===0){ list.innerHTML='<div class="no-stations" style="text-align:center;color:#64748b;font-size:0.84rem;padding:10px">No pet wash stations found within 3 miles.</div>'; return; }
   list.innerHTML=d.stations.map(s=>{
     const mapsUrl=`https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lon}`;
     const tags=[s.distanceMiles!=null?s.distanceMiles+' mi':null,s.hours?'⏰ '+s.hours:null].filter(Boolean);
     const links=[s.website?`<a class="station-link" href="${s.website}" target="_blank">🌐 Website</a>`:'',s.phone?`<a class="station-link" href="tel:${s.phone}">📞 ${s.phone}</a>`:'',`<a class="station-link" href="${mapsUrl}" target="_blank">🗺 Directions</a>`].filter(Boolean).join('');
     const icon=s.type==='Self-Service Dog Wash'?'🚿':s.type==='Pet Grooming'?'✂️':'🛁';
-    return `<div class="station-item"><div class="station-icon">${icon}</div><div class="station-info"><div class="station-name">${s.name}</div><div class="station-type">${s.type}</div>${s.address?`<div class="station-type" style="opacity:0.38">${s.address}</div>`:''}<div class="station-meta">${tags.map(t=>`<span class="station-tag">${t}</span>`).join('')}</div>${links?`<div class="station-links">${links}</div>`:''}</div><div class="station-dist">${s.distanceMiles!=null?s.distanceMiles+' mi':''}</div></div>`;
+    return `<div class="station-item"><div class="station-icon">${icon}</div><div class="station-info"><div class="station-name">${s.name}</div><div class="station-type">${s.type}</div>${s.address?`<div class="station-type" style="color:#94a3b8">${s.address}</div>`:''}<div class="station-meta">${tags.map(t=>`<span class="station-tag">${t}</span>`).join('')}</div>${links?`<div class="station-links">${links}</div>`:''}</div><div class="station-dist">${s.distanceMiles!=null?s.distanceMiles+' mi':''}</div></div>`;
   }).join('');
 }
 
@@ -1893,7 +1901,7 @@ function playBarkSound() {
   // ===== THEME SYSTEM =====
   const THEMES = [
     { id: 'midnight', label: 'Midnight', emoji: '🌑', tier: 'bronze', colors: ['#F1F5F9','#0d9488'] },
-    { id: 'violet',   label: 'Violet',   emoji: '💜', tier: 'silver', colors: ['#F1F5F9','#7c3aed'] },
+    { id: 'violet',   label: 'Violet',   emoji: '💜', tier: 'silver', colors: ['#F1F5F9','#0d9488'] },
     { id: 'ocean',    label: 'Ocean',    emoji: '🌊', tier: 'silver', colors: ['#e8f0e8','#0891b2'] },
     { id: 'forest',   label: 'Forest',   emoji: '🌿', tier: 'gold',   colors: ['#f0fdf4','#16a34a'] },
     { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#fdf2f8','#db2777'] },
@@ -1954,7 +1962,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=46').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=47').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
