@@ -382,7 +382,7 @@
         <input class="referral-input" id="setup-referral" placeholder="Referral code (optional)" style="max-width:200px"/>
         <button class="referral-apply-btn" onclick="applyReferral('setup-referral')">Apply</button>
       </div>
-      <div class="referral-success" id="setup-referral-success">✅ Free week applied!</div>
+      <div class="referral-success" id="setup-referral-success">✅ Code applied!</div>
     </div>
   </div>
 
@@ -422,7 +422,7 @@
             <input class="referral-input" id="paywall-referral" placeholder="Enter referral code"/>
             <button class="referral-apply-btn" onclick="applyReferral('paywall-referral')">Apply</button>
           </div>
-          <div class="referral-success" id="paywall-referral-success">✅ Free week applied! Discount will be applied at checkout.</div>
+          <div class="referral-success" id="paywall-referral-success">✅ Code applied! Discount will be applied at checkout.</div>
         </div>
         <button class="btn btn-secondary" onclick="startFree()" style="margin-top:10px;font-size:0.82rem;padding:10px">Continue with free preview (limited)</button>
         <div style="text-align:center;margin-top:14px;">
@@ -893,10 +893,54 @@ function startFree() { loadMainScreen(); }
 function applyReferral(inputId) {
   const val = document.getElementById(inputId).value.trim().toUpperCase();
   const successId = inputId === 'paywall-referral' ? 'paywall-referral-success' : 'setup-referral-success';
-  if (val.startsWith('PAW-') && val.length >= 8) {
-    document.getElementById(successId).style.display = 'block';
+
+  // Family lifetime codes — grant lifetime Bronze access
+  const LIFETIME_CODES = {
+    'PAW-MOM-6RX1Z2': 'Mom',
+    'PAW-HUB-8K3M2X': 'Husband',
+    'PAW-KID-9T5W4R': 'Daughter'
+  };
+
+  const usedCodes = JSON.parse(localStorage.getItem('paw_used_codes') || '[]');
+
+  if (LIFETIME_CODES[val]) {
+    if (usedCodes.includes(val)) {
+      alert('This referral code has already been used.');
+      return;
+    }
+    // Grant lifetime Bronze access
+    const profile = JSON.parse(localStorage.getItem('paw_current_user') || '{}');
+    profile.tier = 'bronze';
+    profile.subscriptionActive = true;
+    profile.lifetimeAccess = true;
+    profile.referralCode = val;
+    profile.referralName = LIFETIME_CODES[val];
+    localStorage.setItem('paw_current_user', JSON.stringify(profile));
+    usedCodes.push(val);
+    localStorage.setItem('paw_used_codes', JSON.stringify(usedCodes));
+    currentUser = profile;
+    currentTier = 'bronze';
+
+    const el = document.getElementById(successId);
+    el.textContent = '🎉 Lifetime Bronze access unlocked!';
+    el.style.display = 'block';
     localStorage.setItem('paw_referral_applied', val);
-  } else { alert('Invalid referral code. Codes look like PAW-XXXX.'); }
+
+    setTimeout(() => {
+      hidePaywall();
+      showScreen('screen-main');
+      updateUserBar();
+    }, 1800);
+
+  } else if (val.startsWith('PAW-') && val.length >= 8) {
+    // Generic code — free week
+    const el = document.getElementById(successId);
+    el.textContent = '✅ Code applied!';
+    el.style.display = 'block';
+    localStorage.setItem('paw_referral_applied', val);
+  } else {
+    alert('Invalid referral code. Please check the code and try again.');
+  }
 }
 
 // ---- Local auth (no server needed) ----
@@ -1539,7 +1583,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=20').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=21').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
