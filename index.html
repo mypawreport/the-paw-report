@@ -24,14 +24,14 @@
   <meta name="theme-color" content="#1a1a2e"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#1c1c1c 0%,#242424 50%,#2a2a2a 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#f0f0f5;transition:background 1.2s ease}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#111114 0%,#1a1a1e 50%,#1e1e22 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#f0f0f5;transition:background 1.2s ease}
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
     .header p{font-size:0.82rem;opacity:0.55}
 
     /* Cards */
-    .card{background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 24px rgba(0,0,0,0.35)}
+    .card{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
     .card-title{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:0.45;margin-bottom:12px}
     .divider{height:1px;background:rgba(255,255,255,0.1);margin:12px 0}
 
@@ -1283,7 +1283,7 @@ function updateDynamicColors(rating) {
   const tod = getTimeOfDay();
   const bgMap = BG_GRADIENTS[rating] || BG_GRADIENTS['Safe'];
   const bg = bgMap[tod] || bgMap['day'];
-  document.body.style.background = 'linear-gradient(160deg,#1c1c1c 0%,#242424 50%,#2a2a2a 100%)';
+  document.body.style.background = 'linear-gradient(160deg,#111114 0%,#1a1a1e 50%,#1e1e22 100%)';
   const textMap = TEXT_COLORS[rating] || TEXT_COLORS['Safe'];
   const textColor = textMap[tod] || textMap['day'];
   // text color stays light always
@@ -1552,8 +1552,8 @@ const EDGE_COLORS = {
   'Chilly':       { color: '#58E3C2', shadow: '0 0 0 6px #58E3C2, 0 0 0 14px rgba(88,227,194,0.5), inset 0 0 0 6px #58E3C2, inset 0 0 0 14px rgba(88,227,194,0.35)' },
   'Safe':         { color: '#7ED321', shadow: '0 0 0 6px #7ED321, 0 0 0 14px rgba(126,211,33,0.5), inset 0 0 0 6px #7ED321, inset 0 0 0 14px rgba(126,211,33,0.35)' },
   'Warm':         { color: '#F8E71C', shadow: '0 0 0 6px #F8E71C, 0 0 0 14px rgba(248,231,28,0.5), inset 0 0 0 6px #F8E71C, inset 0 0 0 14px rgba(248,231,28,0.35)' },
-  'Caution':      { color: '#F5A623', shadow: '0 0 0 6px #F5A623, 0 0 0 14px rgba(245,166,35,0.55), inset 0 0 0 6px #F5A623, inset 0 0 0 14px rgba(245,166,35,0.4)' },
-  'Danger':       { color: '#D0021B', shadow: '0 0 0 7px #D0021B, 0 0 0 16px rgba(208,2,27,0.55), inset 0 0 0 7px #D0021B, inset 0 0 0 16px rgba(208,2,27,0.4)' },
+  'Caution':      { color: '#F5A623', shadow: '0 0 0 6px #F5A623, 0 0 0 16px rgba(245,166,35,0.55), 0 0 0 28px rgba(208,2,27,0.25), inset 0 0 0 6px #F5A623, inset 0 0 0 16px rgba(245,166,35,0.3)' },
+  'Danger':       { color: '#D0021B', shadow: '0 0 0 7px #D0021B, 0 0 0 18px rgba(208,2,27,0.6), 0 0 0 32px rgba(245,166,35,0.2), inset 0 0 0 7px #D0021B, inset 0 0 0 18px rgba(208,2,27,0.45)' },
   'Fry Zone':     { color: '#D0021B', shadow: '0 0 0 9px #D0021B, 0 0 0 20px rgba(208,2,27,0.65), inset 0 0 0 9px #D0021B, inset 0 0 0 20px rgba(208,2,27,0.55)' },
 };
 
