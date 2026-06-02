@@ -1043,7 +1043,16 @@ async function authLogin(email, password) {
   const user = users[email];
   if (!user) throw new Error('No account found with that email. Please sign up first.');
   if (user.password !== btoa(password)) throw new Error('Incorrect password. Please try again.');
-  localStorage.setItem('paw_current_user', JSON.stringify({id: user.id, email: user.email, full_name: user.full_name}));
+  // Restore full profile from paw_users (includes saved name, tier, subscription)
+  const profile = {
+    id: user.id,
+    email: user.email,
+    full_name: user.full_name || '',
+    tier: user.tier || 'free',
+    subscriptionActive: user.subscriptionActive || false,
+    lifetimeAccess: user.lifetimeAccess || false
+  };
+  localStorage.setItem('paw_current_user', JSON.stringify(profile));
   localStorage.setItem('paw_last_email', email);
   return user;
 }
@@ -1051,7 +1060,25 @@ async function authLogin(email, password) {
 async function authMe() {
   const u = localStorage.getItem('paw_current_user');
   if (!u) throw new Error('Not logged in');
-  return JSON.parse(u);
+  const current = JSON.parse(u);
+  // Always merge with paw_users to get latest saved data (name, tier, etc.)
+  try {
+    const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+    const master = users[current.email];
+    if (master) {
+      // Merge: master paw_users is source of truth for profile data
+      const merged = {
+        ...current,
+        full_name: master.full_name || current.full_name || '',
+        tier: master.tier || current.tier || 'free',
+        subscriptionActive: master.subscriptionActive || current.subscriptionActive || false,
+        lifetimeAccess: master.lifetimeAccess || current.lifetimeAccess || false
+      };
+      localStorage.setItem('paw_current_user', JSON.stringify(merged));
+      return merged;
+    }
+  } catch(_) {}
+  return current;
 }
 
 async function authLogout() {
@@ -1117,10 +1144,16 @@ async function onLoggedIn() {
   try {
     userPrefs = getPrefs(currentUser.id);
   } catch(_) { userPrefs = null; }
-  // Sync tier from userPrefs if available
-  if (userPrefs?.subscription_tier && ['bronze','silver','gold'].includes(userPrefs.subscription_tier)) {
-    currentTier = userPrefs.subscription_tier;
+  // Sync tier — check userPrefs first, then currentUser, then localStorage
+  const savedTier = userPrefs?.subscription_tier || currentUser?.tier || localStorage.getItem('paw_sub_tier');
+  if (savedTier && ['bronze','silver','gold'].includes(savedTier)) {
+    currentTier = savedTier;
     localStorage.setItem('paw_sub_tier', currentTier);
+  }
+  // Sync currentUser tier so userBar shows correctly
+  if (currentUser && currentTier !== 'free') {
+    currentUser.tier = currentTier;
+    localStorage.setItem('paw_current_user', JSON.stringify(currentUser));
   }
   updateUserBar();
   if (!userPrefs) {
@@ -1213,19 +1246,26 @@ async function saveEditProfile(modal) {
   const breed = document.getElementById('edit-breed').value.trim();
   const size = editSize || userPrefs?.pet_size || 'medium';
   try {
-    if (fullName && currentUser) {
-      currentUser.full_name = fullName;
-      // Also update paw_users master store so name persists across logins
+    if (currentUser) {
+      // Update in-memory user
+      if (fullName) currentUser.full_name = fullName;
+      // Always write to paw_users master store (source of truth)
       const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
       if (users[currentUser.email]) {
-        users[currentUser.email].full_name = fullName;
+        if (fullName) users[currentUser.email].full_name = fullName;
         localStorage.setItem('paw_users', JSON.stringify(users));
       }
+      // Sync paw_current_user from master store
+      localStorage.setItem('paw_current_user', JSON.stringify({
+        ...currentUser,
+        full_name: fullName || currentUser.full_name || ''
+      }));
     }
     const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
     userPrefs = savePrefs(currentUser.id, data);
-    localStorage.setItem('paw_current_user', JSON.stringify(currentUser));
-    currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); updateUserBar(); const m = document.getElementById('edit-profile-modal'); if(m) m.remove();
+    currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); updateUserBar();
+    const m = document.getElementById('edit-profile-modal'); if(m) m.remove();
+    showToast('✅ Profile saved!');
   } catch(e) { alert('Could not save. Try again.'); }
 }
 
@@ -1962,7 +2002,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=47').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=48').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
