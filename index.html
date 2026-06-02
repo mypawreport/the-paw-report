@@ -21,10 +21,10 @@
   <link rel="apple-touch-icon" href="https://mypawreport.github.io/the-paw-report/icon-512.png"/>
   <link rel="icon" type="image/png" href="https://mypawreport.github.io/the-paw-report/icon-192.png"/>
   <link rel="manifest" href="https://mypawreport.github.io/the-paw-report/manifest.json"/>
-  <meta name="theme-color" content="#f8fafc"/>
+  <meta name="theme-color" content="#0d9488"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#eaf0e8 0%,#e2ece0 50%,#e8ede5 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#f0f0f5;transition:background 1.2s ease}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#eaf0e8 0%,#e2ece0 50%,#e8ede5 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#1e293b;transition:background 1.2s ease}
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
@@ -44,11 +44,11 @@
     .auth-icon{font-size:3.5rem;margin-bottom:12px;display:block}
     .auth-title{font-size:1.3rem;font-weight:800;margin-bottom:6px}
     .auth-sub{font-size:0.85rem;opacity:0.6;margin-bottom:24px;line-height:1.5}
-    .auth-input{width:100%;background:#f4f7f2;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 14px;color:#f0f0f5;font-size:0.95rem;margin-bottom:10px;outline:none;transition:border 0.2s}
+    .auth-input{width:100%;background:#f4f7f2;border:1px solid #d1d5db;border-radius:12px;padding:12px 14px;color:#1e293b;font-size:0.95rem;margin-bottom:10px;outline:none;transition:border 0.2s}
     .auth-input:focus{border-color:rgba(13,148,136,0.9)}
     .auth-input::placeholder{opacity:0.4}
     .auth-toggle{font-size:0.8rem;opacity:0.6;margin-top:12px;cursor:pointer}
-    .auth-toggle span{color:#c4b5fd;text-decoration:underline}
+    .auth-toggle span{color:#0d9488;text-decoration:underline}
     .auth-error{background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);border-radius:10px;padding:10px;font-size:0.82rem;color:#fca5a5;margin-bottom:10px;display:none}
 
     /* Buttons */
@@ -72,12 +72,12 @@
     .tier-bronze{background:rgba(205,127,50,0.3);color:#cd7f32;border:1px solid rgba(205,127,50,0.4)}
     .tier-silver{background:rgba(192,192,192,0.2);color:#c0c0c0;border:1px solid rgba(192,192,192,0.3)}
     .tier-gold{background:rgba(255,215,0,0.2);color:#ffd700;border:1px solid rgba(255,215,0,0.3)}
-    .tier-free{background:#edf1eb;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15)}
+    .tier-free{background:#edf1eb;color:#94a3b8;border:1px solid #d1d5db}
     .whats-new-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#e2e8f0,#dbeafe);border:1px solid rgba(150,120,255,0.4);color:#1e293b;border-radius:14px;padding:12px 18px;font-size:0.82rem;max-width:320px;width:90%;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);opacity:0;transition:opacity 0.4s ease,transform 0.4s ease;pointer-events:none;text-align:left;}
 .whats-new-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.whats-new-toast .toast-title{font-weight:700;font-size:0.88rem;margin-bottom:4px;color:#b09aff;}
+.whats-new-toast .toast-title{font-weight:700;font-size:0.88rem;margin-bottom:4px;color:#64748b;}
 .whats-new-toast .toast-close{position:absolute;top:8px;right:12px;cursor:pointer;font-size:1rem;opacity:0.6;pointer-events:all;}
-.logout-btn{font-size:0.72rem;opacity:0.5;cursor:pointer;padding:4px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:none;color:#1e293b}
+.logout-btn{font-size:0.72rem;opacity:0.5;cursor:pointer;padding:4px 8px;border-radius:8px;border:1px solid #d1d5db;background:none;color:#1e293b}
 
     /* Setup */
     .setup-card{text-align:center;padding:24px}
@@ -86,10 +86,10 @@
     .setup-sub{font-size:0.82rem;opacity:0.6;margin-bottom:20px}
     .form-group{margin-bottom:14px;text-align:left}
     .form-label{font-size:0.7rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;display:block}
-    .form-input{width:100%;background:#f4f7f2;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:11px 13px;color:#f0f0f5;font-size:0.9rem;outline:none}
+    .form-input{width:100%;background:#f4f7f2;border:1px solid #d1d5db;border-radius:12px;padding:11px 13px;color:#1e293b;font-size:0.9rem;outline:none}
     .form-input::placeholder{opacity:0.4}
     .size-selector{display:flex;gap:8px}
-    .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.15);background:#f4f7f2;color:#1e293b;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
+    .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid #d1d5db;background:#f4f7f2;color:#1e293b;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
     .size-btn.active{background:rgba(13,148,136,0.2);border-color:#0d9488}
 
     /* Paywall */
@@ -142,7 +142,7 @@
     .referral-success{font-size:0.78rem;color:#4ade80;margin-top:6px;display:none}
 
     /* Main dashboard */
-    .status-bar{display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.78rem;opacity:0.55;margin-bottom:10px}
+    .status-bar{display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.78rem;margin-bottom:10px}
     .pulse{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse-anim 2s infinite}
     .pulse.inactive{background:#9ca3af;animation:none}
     @keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
@@ -157,17 +157,17 @@
     .scale-item.active{opacity:1}
     .scale-safe{background:rgba(74,222,128,0.2);color:#4ade80}
     .scale-warm{background:rgba(251,191,36,0.2);color:#fbbf24}
-    .scale-caution{background:rgba(167,139,250,0.2);color:#c4b5fd}
+    .scale-caution{background:rgba(245,158,11,0.15);color:#b45309}
     .scale-danger{background:rgba(248,113,113,0.2);color:#f87171}
     .scale-fry{background:rgba(255,69,0,0.2);color:#ff4500}
     .scale-cold{background:rgba(147,197,253,0.2);color:#93c5fd}
-    .scale-toocold{background:rgba(129,140,248,0.2);color:#c4b5fd}
+    .scale-toocold{background:rgba(147,197,253,0.2);color:#1e40af}
 
     .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .stat-box{background:#f4f7f2;border-radius:12px;padding:11px 9px;text-align:center}
     .stat-value{font-size:1.25rem;font-weight:800;margin-bottom:2px}
     .stat-label{font-size:0.65rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.3px}
-    .ground-temp-box{grid-column:span 2;background:#f4f7f2;border:1px solid rgba(255,255,255,0.15)}
+    .ground-temp-box{grid-column:span 2;background:#f4f7f2;border:1px solid #d1d5db}
     .ground-temp-box .stat-value{font-size:1.9rem}
 
     .alert-banner{border-radius:12px;padding:10px 13px;font-size:0.82rem;line-height:1.5;margin-top:10px}
@@ -201,12 +201,12 @@
     .station-tag{font-size:0.65rem;opacity:0.7;background:#f4f7f2;padding:2px 7px;border-radius:20px}
     .station-dist{font-size:0.72rem;font-weight:600;opacity:0.65;flex-shrink:0}
     .station-links{display:flex;gap:7px;margin-top:5px}
-    .station-link{font-size:0.68rem;color:#c4b5fd;text-decoration:none}
+    .station-link{font-size:0.68rem;color:#0d9488;text-decoration:none}
 
     /* Walk time */
     .best-time-hero{text-align:center;margin-bottom:14px}
     .best-time-icon{font-size:2.8rem;display:block;margin-bottom:6px}
-    .best-time-window{font-size:1.55rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:#ccfbf1}
+    .best-time-window{font-size:1.55rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:#0d9488}
     .best-time-rec{font-size:0.86rem;opacity:0.8;line-height:1.5;max-width:300px;margin:0 auto}
     .hourly-chart{margin-top:14px;overflow-x:auto;padding-bottom:4px}
     .hourly-bars{display:flex;gap:3px;align-items:flex-end;height:65px;min-width:max-content}
@@ -214,9 +214,9 @@
     .hourly-bar-wrap{height:50px;display:flex;align-items:flex-end}
     .hourly-bar{width:19px;border-radius:4px 4px 0 0;transition:opacity 0.2s;min-height:4px}
     .hourly-bar.past{opacity:0.22}
-    .hourly-bar.best-bar{outline:2px solid #c4b5fd;outline-offset:2px}
+    .hourly-bar.best-bar{outline:2px solid #0d9488;outline-offset:2px}
     .hourly-label{font-size:0.53rem;opacity:0.45;white-space:nowrap}
-    .hourly-label.best-label{opacity:1;color:#ccfbf1;font-weight:700}
+    .hourly-label.best-label{opacity:1;color:#0d9488;font-weight:700}
     .chart-legend{display:flex;gap:10px;margin-top:9px;justify-content:center}
     .legend-item{display:flex;align-items:center;gap:4px;font-size:0.65rem;opacity:0.55}
     .legend-dot{width:8px;height:8px;border-radius:2px}
@@ -227,7 +227,7 @@
     .share-btns{display:flex;gap:8px}
     .share-btn{flex:1;padding:9px;border-radius:10px;border:none;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s}
     .share-btn-copy{background:linear-gradient(135deg,#0d9488,#059669);color:#1e293b}
-    .share-btn-tiktok{background:rgba(0,0,0,0.6);color:#1e293b;border:1px solid rgba(255,255,255,0.15)}
+    .share-btn-tiktok{background:rgba(0,0,0,0.6);color:#1e293b;border:1px solid #d1d5db}
 
     /* Referral share */
     .referral-share-card{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:16px;padding:16px;margin-bottom:10px;text-align:center}
@@ -248,7 +248,7 @@
 
     /* Profile */
     .profile-section{background:#f4f7f2;border-radius:14px;padding:14px;margin-bottom:10px}
-    .profile-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.07)}
+    .profile-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #d1d5db}
     .profile-row:last-child{border-bottom:none}
     .profile-label{font-size:0.75rem;opacity:0.5}
     .profile-val{font-size:0.85rem;font-weight:600}
@@ -259,10 +259,10 @@
     .error-msg{background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:13px;font-size:0.86rem;color:#fca5a5}
 
     .app-footer{text-align:center;font-size:0.65rem;opacity:0.25;margin-top:14px;line-height:1.8}
-    .app-footer a{color:#c4b5fd;text-decoration:none}
+    .app-footer a{color:#0d9488;text-decoration:none}
 
     @keyframes spin{to{transform:rotate(360deg)}}
-    .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:5px}
+    .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(13,148,136,0.3);border-top-color:#0d9488;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:5px}
 
     /* Nav tabs */
     .bottom-nav{display:flex;gap:4px;margin-bottom:12px;background:#f4f7f2;border-radius:14px;padding:4px}
@@ -371,7 +371,7 @@
       <input class="auth-input" type="email" id="auth-email" placeholder="Email address" autocomplete="email"/>
       <div style="position:relative;">
         <input class="auth-input" type="password" id="auth-password" placeholder="Password" autocomplete="current-password" style="padding-right:44px;width:100%;box-sizing:border-box;"/>
-        <button type="button" onclick="togglePasswordVisibility()" id="toggle-pass-btn" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.45);font-size:1.1rem;padding:0;line-height:1;">👁️</button>
+        <button type="button" onclick="togglePasswordVisibility()" id="toggle-pass-btn" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:1.1rem;padding:0;line-height:1;">👁️</button>
       </div>
       <input class="auth-input" type="text" id="auth-name" placeholder="Your name" style="display:none" autocomplete="name"/>
       <button class="btn btn-primary" id="auth-btn" onclick="submitAuth()">Sign In</button>
@@ -577,7 +577,7 @@
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
             <span style="font-size:1.5rem;">🖐️</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:800;color:#c4b5fd;text-transform:uppercase;letter-spacing:1px;">The 7-Second Rule</div>
+              <div style="font-size:0.78rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:1px;">The 7-Second Rule</div>
               <div style="font-size:0.68rem;opacity:0.45;margin-top:1px;">Always do the manual check</div>
             </div>
           </div>
@@ -605,7 +605,7 @@
           <div style="display:flex;gap:12px;margin-bottom:16px;">
             <span style="font-size:1.4rem;flex-shrink:0;">🌡️</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:700;color:#c4b5fd;margin-bottom:3px;">Asphalt heats fast — and holds it</div>
+              <div style="font-size:0.78rem;font-weight:700;color:#374151;margin-bottom:3px;">Asphalt heats fast — and holds it</div>
               <div style="font-size:0.8rem;line-height:1.55;opacity:0.8;">On a sunny 77°F day, asphalt can reach <strong>125°F</strong>. Damage to paw pads can happen in under 60 seconds. Shaded paths and grass are always cooler alternatives.</div>
             </div>
           </div>
@@ -613,7 +613,7 @@
           <div style="display:flex;gap:12px;margin-bottom:16px;">
             <span style="font-size:1.4rem;flex-shrink:0;">🧊</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:700;color:#60a5fa;margin-bottom:3px;">Cold hurts paws too</div>
+              <div style="font-size:0.78rem;font-weight:700;color:#0d9488;margin-bottom:3px;">Cold hurts paws too</div>
               <div style="font-size:0.8rem;line-height:1.55;opacity:0.8;">Ice, snow, and especially <strong>road salt</strong> can crack and burn paws just like heat. Rinse your dog's paws after every winter walk — even if it doesn't look icy.</div>
             </div>
           </div>
@@ -621,7 +621,7 @@
           <div style="display:flex;gap:12px;margin-bottom:16px;">
             <span style="font-size:1.4rem;flex-shrink:0;">💧</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:700;color:#34d399;margin-bottom:3px;">Hydration matters more than you think</div>
+              <div style="font-size:0.78rem;font-weight:700;color:#0d9488;margin-bottom:3px;">Hydration matters more than you think</div>
               <div style="font-size:0.8rem;line-height:1.55;opacity:0.8;">Dogs cool themselves by panting — not sweating. Offer water <strong>every 15–20 minutes</strong> on hot days. Small dogs and flat-faced breeds (pugs, bulldogs) overheat faster.</div>
             </div>
           </div>
@@ -755,7 +755,7 @@
           </div>
           <button class="btn btn-primary btn-sm" id="notif-toggle-btn" onclick="toggleNotifications()">Enable</button>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid #d1d5db;">
           <div>
             <div style="font-size:0.85rem;font-weight:600;margin-bottom:2px;">📌 Tray widget</div>
             <div style="font-size:0.72rem;opacity:0.5;">Pin current conditions to your notification tray</div>
@@ -1178,7 +1178,7 @@ function showEditProfile() {
   const modal = document.createElement('div');
   modal.id = 'edit-profile-modal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-start;justify-content:center;z-index:999;padding:20px;overflow-y:auto;';
-  modal.innerHTML = `<div style="background:#edf1eb;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px;max-width:360px;width:100%;color:#1e293b;margin:auto;">
+  modal.innerHTML = `<div style="background:#edf1eb;border:1px solid #d1d5db;border-radius:20px;padding:24px;max-width:360px;width:100%;color:#1e293b;margin:auto;">
     <div style="font-size:1rem;font-weight:800;margin-bottom:16px;">✏️ Edit Profile</div>
     <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" id="edit-full-name" value="${currentUser?.full_name||''}" placeholder="Your name"/></div>
     <div class="form-group"><label class="form-label">Pet Name</label><input class="form-input" id="edit-pet-name" value="${petName}" placeholder="Pet name"/></div>
@@ -1550,14 +1550,14 @@ const BG_GRADIENTS = {
 };
 
 const TEXT_COLORS = {
-  'Extreme Cold': { dawn:'#0d2340', day:'#0d2340', dusk:'#d0d8f8', night:'#a0b8e8' },
-  'Too Cold':     { dawn:'#0d2340', day:'#0d2340', dusk:'#c8d0f0', night:'#98b0e0' },
-  'Chilly':       { dawn:'#0d2a18', day:'#0d2a18', dusk:'#c0d8c0', night:'#90c098' },
-  'Safe':         { dawn:'#0d2a18', day:'#0d2a18', dusk:'#b8d890', night:'#88c060' },
-  'Warm':         { dawn:'#2a1a00', day:'#2a1a00', dusk:'#f0c880', night:'#d4a050' },
-  'Caution':      { dawn:'#2a1000', day:'#2a1000', dusk:'#f0a850', night:'#c87830' },
-  'Danger':       { dawn:'#2a0800', day:'#2a0800', dusk:'#f8c0b0', night:'#f09080' },
-  'Fry Zone':     { dawn:'#ffffff', day:'#ffffff', dusk:'#ffd0c0', night:'#ffb0a0' },
+  'Extreme Cold': { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
+  'Too Cold':     { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
+  'Chilly':       { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
+  'Safe':         { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
+  'Warm':         { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
+  'Caution':      { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
+  'Danger':       { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
+  'Fry Zone':     { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
 };
 
 function getTimeOfDay() {
@@ -1954,7 +1954,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=45').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=46').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2082,7 +2082,7 @@ async function recoverAccess() {
   if (btn) btn.disabled = true;
 
   try {
-    const resp = await fetch('https://superagent-9eb7455e.base44.app/api/functions/recoverSubscription', {
+    const resp = await fetch('https://superagent-9eb7455e.base44.app/functions/recoverSubscription', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
