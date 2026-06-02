@@ -1675,7 +1675,7 @@ async function recoverAccess() {
 
     const data = await resp.json();
 
-    if (data.success && data.tier) {
+    if ((data.success || data.found) && data.tier) {
       // Restore their subscription in localStorage
       const profile = {
         email: email,
@@ -1696,7 +1696,7 @@ async function recoverAccess() {
         updateUserBar();
       }, 1500);
     } else {
-      if (msg) { msg.style.color = '#c00'; msg.textContent = data.message || 'No active subscription found for that email.'; }
+      if (msg) { msg.style.color = '#c00'; msg.textContent = data.message || data.error || 'No active subscription found for that email.'; }
     }
   } catch(e) {
     if (msg) { msg.style.color = '#c00'; msg.textContent = 'Connection error. Please try again.'; }
