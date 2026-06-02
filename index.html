@@ -1149,6 +1149,7 @@ function showEditProfile() {
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;';
   modal.innerHTML = `<div style="background:#16213e;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px;max-width:360px;width:100%;color:white;">
     <div style="font-size:1rem;font-weight:800;margin-bottom:16px;">✏️ Edit Profile</div>
+    <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" id="edit-full-name" value="${currentUser?.full_name||''}" placeholder="Your name"/></div>
     <div class="form-group"><label class="form-label">Pet Name</label><input class="form-input" id="edit-pet-name" value="${petName}" placeholder="Pet name"/></div>
     <div class="form-group"><label class="form-label">Breed</label><input class="form-input" id="edit-breed" value="${breed}" placeholder="Breed"/></div>
     <div class="form-group"><label class="form-label">Size</label>
@@ -1168,13 +1169,17 @@ function showEditProfile() {
 let editSize = null;
 function editSelectSize(s, el) { editSize = s; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===s)); }
 async function saveEditProfile(modal) {
+  const fullName = document.getElementById('edit-full-name').value.trim();
   const petName = document.getElementById('edit-pet-name').value.trim();
   const breed = document.getElementById('edit-breed').value.trim();
   const size = editSize || userPrefs?.pet_size || 'medium';
   try {
+    if (fullName && currentUser) currentUser.full_name = fullName;
     const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
     userPrefs = savePrefs(currentUser.id, data);
-    currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); modal.remove();
+    // Persist updated user object
+    localStorage.setItem('paw_current_user', JSON.stringify(currentUser));
+    currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); updateUserBar(); modal.remove();
   } catch(e) { alert('Could not save. Try again.'); }
 }
 
@@ -1724,7 +1729,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=33').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=34').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
