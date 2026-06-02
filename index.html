@@ -497,6 +497,13 @@
           <button class="size-btn active" data-size="medium" onclick="selectSize('medium',this)">🐕 Medium</button>
           <button class="size-btn" data-size="large" onclick="selectSize('large',this)">🦮 Large</button>
         </div>
+        <div style="font-size:0.7rem;opacity:0.5;margin:10px 0 6px;text-transform:uppercase;letter-spacing:1px;">Walking surface:</div>
+        <div class="size-selector" id="surface-selector" style="flex-wrap:wrap;">
+          <button class="size-btn active" data-surface="asphalt" onclick="selectSurface('asphalt',this)">🖤 Asphalt</button>
+          <button class="size-btn" data-surface="concrete" onclick="selectSurface('concrete',this)">⬜ Concrete</button>
+          <button class="size-btn" data-surface="dirt" onclick="selectSurface('dirt',this)">🟫 Dirt/Sand</button>
+          <button class="size-btn" data-surface="grass" onclick="selectSurface('grass',this)">🌿 Grass</button>
+        </div>
       </div>
       <div class="card" id="loading-card" style="display:none;text-align:center;">
         <div style="font-size:2.3rem;margin-bottom:8px;">🔍</div>
@@ -554,7 +561,7 @@
         <div id="hydration-alert" class="alert-banner alert-hydration" style="display:none;"></div>
         <div class="divider"></div>
         <div class="stats-grid">
-          <div class="stat-box ground-temp-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div></div>
+          <div class="stat-box ground-temp-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.6rem;opacity:0.5;margin-top:2px;">Asphalt</div></div>
           <div class="stat-box"><div class="stat-value" id="air-temp">--°F</div><div class="stat-label">Air Temp</div></div>
           <div class="stat-box"><div class="stat-value" id="uv-index">--</div><div class="stat-label">UV Index</div></div>
           <div class="stat-box"><div class="stat-value" id="wind-speed">--</div><div class="stat-label">Wind Speed</div></div>
@@ -1308,6 +1315,76 @@ function selectSize(size, el) {
   if (currentUser) { try { savePrefs(currentUser.id, { pet_size: size }); } catch(_) {} }
 }
 
+// Surface type adjustment
+let currentSurface = 'asphalt';
+const SURFACE_MULTIPLIERS = {
+  asphalt:  1.0,   // baseline — hottest
+  concrete: 0.88,  // ~12% cooler than asphalt
+  dirt:     0.78,  // ~22% cooler
+  grass:    0.68   // ~32% cooler, closest to air temp
+};
+const SURFACE_LABELS = {
+  asphalt: '🖤 Asphalt', concrete: '⬜ Concrete', dirt: '🟫 Dirt/Sand', grass: '🌿 Grass'
+};
+
+function selectSurface(surface, el) {
+  currentSurface = surface;
+  // Update button active states
+  document.querySelectorAll('#surface-selector .size-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  // Update surface label on stat box
+  const lbl = document.getElementById('surface-label');
+  if (lbl) lbl.textContent = SURFACE_LABELS[surface] || surface;
+  // Re-render with adjusted temp if we have data
+  if (lastPawData) applyPawUIWithSurface(lastPawData);
+}
+
+function applyPawUIWithSurface(d) {
+  const mult = SURFACE_MULTIPLIERS[currentSurface] || 1.0;
+  // Adjust ground temp based on surface (relative to air temp)
+  const airF = d.airTempF || 70;
+  const rawGround = d.groundTempF || airF;
+  // Interpolate: surface adjustment applied to how much hotter ground is vs air
+  const heatAboveAir = rawGround - airF;
+  const adjustedGround = Math.round(airF + (heatAboveAir * mult));
+  const adjusted = { ...d, groundTempF: adjustedGround };
+  // Recalculate rating based on adjusted temp
+  adjusted.rating = getRatingFromTemp(adjustedGround, currentPetSize);
+  const ratingInfo = PAW_RATING_INFO[adjusted.rating] || PAW_RATING_INFO['Safe'];
+  adjusted.emoji = ratingInfo.emoji;
+  adjusted.color = ratingInfo.color;
+  adjusted.message = ratingInfo.message;
+  updatePawUI(adjusted);
+  // Update surface label
+  const lbl = document.getElementById('surface-label');
+  if (lbl) lbl.textContent = SURFACE_LABELS[currentSurface] || currentSurface;
+}
+
+function getRatingFromTemp(tempF, size) {
+  const thresholds = size === 'small'
+    ? { extremecold: 25, chilly: 40, safe: 75, warm: 85, danger: 100, fry: 115 }
+    : size === 'large'
+    ? { extremecold: 20, chilly: 35, safe: 80, warm: 90, danger: 105, fry: 120 }
+    : { extremecold: 22, chilly: 38, safe: 77, warm: 87, danger: 103, fry: 118 };
+  if (tempF <= thresholds.extremecold) return 'Extreme Cold';
+  if (tempF <= thresholds.chilly) return 'Chilly';
+  if (tempF <= thresholds.safe) return 'Safe';
+  if (tempF <= thresholds.warm) return 'Warm';
+  if (tempF <= thresholds.danger) return 'Hot';
+  if (tempF <= thresholds.fry) return 'Danger';
+  return 'Fry Zone';
+}
+
+const PAW_RATING_INFO = {
+  'Extreme Cold': { emoji: '🥶', color: '#7b68ee', message: 'Too cold! Ice and salt can hurt paws.' },
+  'Chilly':       { emoji: '❄️', color: '#5bc0de', message: 'Chilly — short walks OK, watch for ice.' },
+  'Safe':         { emoji: '✅', color: '#5cb85c', message: 'Great walking conditions!' },
+  'Warm':         { emoji: '🌡️', color: '#f0ad4e', message: 'Warm — keep walks short and bring water.' },
+  'Hot':          { emoji: '🟠', color: '#e8650a', message: 'Hot! Limit time on pavement.' },
+  'Danger':       { emoji: '🔴', color: '#d9534f', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
+  'Fry Zone':     { emoji: '🔥', color: '#8b0000', message: 'Fry Zone! Stay off pavement entirely.' }
+};
+
 const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Too Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Caution':'caution','Danger':'danger','Fry Zone':'fry'};
 function updatePawScale(rating) {
   ['extremecold','chilly','safe','warm','caution','danger','fry'].forEach(s => { const el=document.getElementById('scale-'+s); if(el) el.classList.remove('active'); });
@@ -1455,7 +1532,7 @@ function updatePawUI(d) {
   if (['Danger','Fry Zone','Extreme Cold'].includes(d.rating)) sendDangerNotification(`⚠️ ${d.rating}: ${d.message}`);
 }
 async function fetchPawAndUpdate(lat, lon) {
-  try { const res = await fetch('https://superagent-9eb7455e.base44.app/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) updatePawUI(await res.json()); } } catch(_) {}
+  try { const res = await fetch('https://superagent-9eb7455e.base44.app/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) applyPawUIWithSurface(await res.json()); } } catch(_) {}
 }
 function updateCrimeUI(d) {
   document.getElementById('crime-loading').style.display = 'none';
@@ -1561,7 +1638,7 @@ async function fetchAll(lat, lon) {
   ]);
   showResultCards(true);
   async function safeJson(r) { try { const ct=r.headers.get('content-type')||''; if(!ct.includes('json')) return null; return await r.json(); } catch(_) { return null; } }
-  if(pawRes.status==='fulfilled'&&pawRes.value.ok){ const d=await safeJson(pawRes.value); if(d) updatePawUI(d); }
+  if(pawRes.status==='fulfilled'&&pawRes.value.ok){ const d=await safeJson(pawRes.value); if(d) applyPawUIWithSurface(d); }
   if(crimeRes.status==='fulfilled'&&crimeRes.value.ok){ const d=await safeJson(crimeRes.value); if(d) updateCrimeUI(d); else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.'; }
   else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.';
   if(washRes.status==='fulfilled'&&washRes.value.ok){ const d=await safeJson(washRes.value); if(d) updateWashUI(d); else document.getElementById('wash-loading').textContent='Could not load wash stations.'; }
@@ -1753,7 +1830,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=38').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=39').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
