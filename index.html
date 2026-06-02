@@ -1158,11 +1158,24 @@ async function saveProfile() {
     const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
     userPrefs = savePrefs(currentUser.id, data);
     currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
-    // If a lifetime/referral code was already applied, skip paywall entirely
+
+    // Check multiple sources for lifetime/referral access
     const profile = JSON.parse(localStorage.getItem('paw_current_user') || '{}');
-    if (profile.lifetimeAccess || profile.subscriptionActive) {
+    const referralApplied = localStorage.getItem('paw_referral_applied');
+    const LIFETIME_CODES = ['PAW-MOM-6RX1Z2','PAW-HUB-8K3M2X','PAW-GAB-OKTDVE','PAW-KID-9T5W4R',
+      'PAW-SLV-K01O57','PAW-SLV-MCU4GC','PAW-SLV-4OEZSZ','PAW-SLV-I6ZD9T','PAW-HUB-FREE1'];
+    const hasLifetime = profile.lifetimeAccess || profile.subscriptionActive || LIFETIME_CODES.includes(referralApplied);
+
+    if (hasLifetime) {
+      // Make sure profile is fully unlocked
+      if (LIFETIME_CODES.includes(referralApplied) && !profile.lifetimeAccess) {
+        profile.tier = 'silver';
+        profile.subscriptionActive = true;
+        profile.lifetimeAccess = true;
+        localStorage.setItem('paw_current_user', JSON.stringify(profile));
+      }
       currentUser = profile;
-      currentTier = profile.tier || 'bronze';
+      currentTier = profile.tier || 'silver';
       loadMainScreen();
     } else {
       showScreen('paywall'); renderTierDisplay(); startCountdown();
@@ -1614,7 +1627,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=29').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=30').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
