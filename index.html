@@ -965,7 +965,8 @@ function applyReferral(inputId) {
     'PAW-SLV-K01O57': { name: 'Silver Lifetime', tier: 'silver' },
     'PAW-SLV-MCU4GC': { name: 'Mom Silver', tier: 'silver' },
     'PAW-SLV-4OEZSZ': { name: 'Husband Silver', tier: 'silver' },
-    'PAW-SLV-I6ZD9T': { name: 'Daughter Silver', tier: 'silver' }
+    'PAW-SLV-I6ZD9T': { name: 'Daughter Silver', tier: 'silver' },
+    'PAW-GOLD-RSQ31G': { name: 'Gold Lifetime', tier: 'gold' }
   };
 
   const usedCodes = JSON.parse(localStorage.getItem('paw_used_codes') || '[]');
@@ -1287,7 +1288,8 @@ async function saveProfile() {
     const profile = JSON.parse(localStorage.getItem('paw_current_user') || '{}');
     const referralApplied = localStorage.getItem('paw_referral_applied');
     const LIFETIME_CODES = ['PAW-MOM-6RX1Z2','PAW-HUB-8K3M2X','PAW-GAB-OKTDVE','PAW-KID-9T5W4R',
-      'PAW-SLV-K01O57','PAW-SLV-MCU4GC','PAW-SLV-4OEZSZ','PAW-SLV-I6ZD9T','PAW-HUB-FREE1'];
+      'PAW-SLV-K01O57','PAW-SLV-MCU4GC','PAW-SLV-4OEZSZ','PAW-SLV-I6ZD9T','PAW-HUB-FREE1',
+      'PAW-GOLD-RSQ31G'];
     const hasLifetime = profile.lifetimeAccess || profile.subscriptionActive || LIFETIME_CODES.includes(referralApplied);
 
     if (hasLifetime) {
@@ -2002,7 +2004,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=48').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=49').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
