@@ -1634,6 +1634,78 @@ function initTempWheel() {
 }
 // ── End Edge Glow System ──────────────────────────────────────
 
+
+// ── Recovery Modal Functions ──────────────────────────────────
+function showRecoveryModal() {
+  const modal = document.getElementById('recovery-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    const msg = document.getElementById('recovery-msg');
+    if (msg) msg.textContent = '';
+    const emailInput = document.getElementById('recovery-email');
+    if (emailInput) emailInput.value = '';
+  }
+}
+
+function hideRecoveryModal() {
+  const modal = document.getElementById('recovery-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function recoverAccess() {
+  const emailInput = document.getElementById('recovery-email');
+  const msg = document.getElementById('recovery-msg');
+  const btn = document.querySelector('#recovery-modal button[onclick="recoverAccess()"]');
+
+  if (!emailInput || !emailInput.value.trim()) {
+    if (msg) { msg.style.color = '#c00'; msg.textContent = 'Please enter your email address.'; }
+    return;
+  }
+
+  const email = emailInput.value.trim().toLowerCase();
+  if (msg) { msg.style.color = '#888'; msg.textContent = 'Checking your subscription…'; }
+  if (btn) btn.disabled = true;
+
+  try {
+    const resp = await fetch('https://superagent-9eb7455e.base44.app/api/functions/recoverSubscription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await resp.json();
+
+    if (data.success && data.tier) {
+      // Restore their subscription in localStorage
+      const profile = {
+        email: email,
+        name: email.split('@')[0],
+        tier: data.tier,
+        subscriptionActive: true,
+        recoveredAt: Date.now()
+      };
+      localStorage.setItem('pawreport_user', JSON.stringify(profile));
+      currentUser = profile;
+      currentTier = data.tier;
+
+      if (msg) { msg.style.color = '#1aaf4f'; msg.textContent = `✅ ${data.tier.charAt(0).toUpperCase() + data.tier.slice(1)} access restored!`; }
+
+      setTimeout(() => {
+        hideRecoveryModal();
+        showScreen('screen-main');
+        updateUserBar();
+      }, 1500);
+    } else {
+      if (msg) { msg.style.color = '#c00'; msg.textContent = data.message || 'No active subscription found for that email.'; }
+    }
+  } catch(e) {
+    if (msg) { msg.style.color = '#c00'; msg.textContent = 'Connection error. Please try again.'; }
+  }
+
+  if (btn) btn.disabled = false;
+}
+// ── End Recovery Modal Functions ──────────────────────────────
+
 </script>
 
   <!-- Subscription Recovery Modal -->
