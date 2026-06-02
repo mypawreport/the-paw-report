@@ -53,8 +53,8 @@
 
     /* Buttons */
     .btn{display:block;width:100%;padding:14px;border:none;border-radius:15px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s}
-    .btn-primary{background:linear-gradient(135deg,#e8650a,#c94f00);color:white;box-shadow:0 8px 24px rgba(232,101,10,0.4)}
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(232,101,10,0.5)}
+    .btn-primary{background:linear-gradient(135deg,#0d9488,#4a7c59);color:white;box-shadow:0 8px 24px rgba(232,101,10,0.4)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(13,148,136,0.5)}
     .btn-primary:active{transform:translateY(0)}
     .btn-secondary{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:white}
     .btn-secondary:hover{background:rgba(255,255,255,0.13)}
@@ -1954,7 +1954,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=42').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=43').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
