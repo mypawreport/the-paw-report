@@ -73,7 +73,11 @@
     .tier-silver{background:rgba(192,192,192,0.2);color:#c0c0c0;border:1px solid rgba(192,192,192,0.3)}
     .tier-gold{background:rgba(255,215,0,0.2);color:#ffd700;border:1px solid rgba(255,215,0,0.3)}
     .tier-free{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15)}
-    .logout-btn{font-size:0.72rem;opacity:0.5;cursor:pointer;padding:4px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:none;color:white}
+    .whats-new-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#2a2a4a,#3a2a5a);border:1px solid rgba(150,120,255,0.4);color:#fff;border-radius:14px;padding:12px 18px;font-size:0.82rem;max-width:320px;width:90%;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);opacity:0;transition:opacity 0.4s ease,transform 0.4s ease;pointer-events:none;text-align:left;}
+.whats-new-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.whats-new-toast .toast-title{font-weight:700;font-size:0.88rem;margin-bottom:4px;color:#b09aff;}
+.whats-new-toast .toast-close{position:absolute;top:8px;right:12px;cursor:pointer;font-size:1rem;opacity:0.6;pointer-events:all;}
+.logout-btn{font-size:0.72rem;opacity:0.5;cursor:pointer;padding:4px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:none;color:white}
 
     /* Setup */
     .setup-card{text-align:center;padding:24px}
@@ -1238,6 +1242,7 @@ async function saveProfile() {
   } catch(e) { alert('Could not save profile.'); }
 }
 function loadMainScreen() {
+  showWhatsNewToast();
   showScreen('main'); showTab('report');
   const petName = userPrefs?.pet_name || 'your pup';
   document.getElementById('pet-welcome-msg').textContent = `Ready to run ${petName}'s report?`;
@@ -1677,6 +1682,38 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 
+
+// What's New toast
+const APP_VERSION = 'v39';
+const WHATS_NEW = {
+  'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
+  'v38': '🔐 Stay logged in — you won\'t need to sign in again unless you sign out.',
+  'v37': '💾 Your profile name now saves permanently across logins.'
+};
+
+function showWhatsNewToast() {
+  const seen = localStorage.getItem('paw_seen_version');
+  if (seen === APP_VERSION) return;
+  const msg = WHATS_NEW[APP_VERSION];
+  if (!msg) return;
+  const toast = document.getElementById('whats-new-toast');
+  const msgEl = document.getElementById('whats-new-msg');
+  if (!toast || !msgEl) return;
+  msgEl.textContent = msg;
+  setTimeout(() => {
+    toast.classList.add('show');
+    toast.style.pointerEvents = 'all';
+  }, 1500);
+  // Auto-dismiss after 8 seconds
+  setTimeout(() => dismissToast(), 9500);
+  localStorage.setItem('paw_seen_version', APP_VERSION);
+}
+
+function dismissToast() {
+  const toast = document.getElementById('whats-new-toast');
+  if (toast) { toast.classList.remove('show'); toast.style.pointerEvents = 'none'; }
+}
+
 (async () => {
   try { handleCheckoutReturn(); } catch(e) { console.warn('checkout return error:', e); }
   try {
@@ -2012,6 +2049,11 @@ async function recoverAccess() {
       <button onclick="recoverAccess()" style="width:100%;background:#E8650A;color:#fff;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Restore My Subscription</button>
       <button onclick="closeRecoveryModal()" style="width:100%;background:none;border:none;color:#999;margin-top:10px;cursor:pointer;font-size:0.85rem;">Cancel</button>
     </div>
+  </div>
+  <div class="whats-new-toast" id="whats-new-toast">
+    <span class="toast-close" onclick="dismissToast()">✕</span>
+    <div class="toast-title">🆕 What's New</div>
+    <div id="whats-new-msg"></div>
   </div>
 </body>
 </html>
