@@ -1146,8 +1146,8 @@ function showEditProfile() {
   const breed = userPrefs?.pet_breed || '';
   const size = userPrefs?.pet_size || 'medium';
   const modal = document.createElement('div');
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;';
-  modal.innerHTML = `<div style="background:#16213e;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px;max-width:360px;width:100%;color:white;">
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-start;justify-content:center;z-index:999;padding:20px;overflow-y:auto;';
+  modal.innerHTML = `<div style="background:#16213e;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:24px;max-width:360px;width:100%;color:white;margin:auto;">
     <div style="font-size:1rem;font-weight:800;margin-bottom:16px;">✏️ Edit Profile</div>
     <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" id="edit-full-name" value="${currentUser?.full_name||''}" placeholder="Your name"/></div>
     <div class="form-group"><label class="form-label">Pet Name</label><input class="form-input" id="edit-pet-name" value="${petName}" placeholder="Pet name"/></div>
@@ -1729,7 +1729,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=34').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=35').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
