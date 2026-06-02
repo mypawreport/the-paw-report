@@ -896,9 +896,10 @@ function applyReferral(inputId) {
 
   // Family lifetime codes — grant lifetime Bronze access
   const LIFETIME_CODES = {
-    'PAW-MOM-6RX1Z2': 'Mom',
-    'PAW-HUB-8K3M2X': 'Husband',
-    'PAW-KID-9T5W4R': 'Daughter'
+    'PAW-MOM-6RX1Z2': { name: 'Mom', tier: 'bronze' },
+    'PAW-HUB-8K3M2X': { name: 'Husband', tier: 'bronze' },
+    'PAW-KID-9T5W4R': { name: 'Daughter', tier: 'bronze' },
+    'PAW-SLV-K01O57': { name: 'Silver Lifetime', tier: 'silver' }
   };
 
   const usedCodes = JSON.parse(localStorage.getItem('paw_used_codes') || '[]');
@@ -908,21 +909,25 @@ function applyReferral(inputId) {
       alert('This referral code has already been used.');
       return;
     }
-    // Grant lifetime Bronze access
+    const codeInfo = LIFETIME_CODES[val];
+    const grantedTier = codeInfo.tier || 'bronze';
+
+    // Grant lifetime access at the specified tier
     const profile = JSON.parse(localStorage.getItem('paw_current_user') || '{}');
-    profile.tier = 'bronze';
+    profile.tier = grantedTier;
     profile.subscriptionActive = true;
     profile.lifetimeAccess = true;
     profile.referralCode = val;
-    profile.referralName = LIFETIME_CODES[val];
+    profile.referralName = codeInfo.name;
     localStorage.setItem('paw_current_user', JSON.stringify(profile));
     usedCodes.push(val);
     localStorage.setItem('paw_used_codes', JSON.stringify(usedCodes));
     currentUser = profile;
-    currentTier = 'bronze';
+    currentTier = grantedTier;
 
+    const tierLabel = grantedTier.charAt(0).toUpperCase() + grantedTier.slice(1);
     const el = document.getElementById(successId);
-    el.textContent = '🎉 Lifetime Bronze access unlocked!';
+    el.textContent = '🎉 Lifetime ' + tierLabel + ' access unlocked!';
     el.style.display = 'block';
     localStorage.setItem('paw_referral_applied', val);
 
@@ -1583,7 +1588,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=21').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=22').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
