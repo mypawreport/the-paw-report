@@ -970,7 +970,7 @@ function applyReferral(inputId) {
 
     setTimeout(() => {
       hidePaywall();
-      showScreen('screen-main');
+      showScreen('main');
       updateUserBar();
     }, 1800);
 
@@ -1586,12 +1586,16 @@ function stopTracking() {
 }
 
 (async () => {
-  handleCheckoutReturn();
+  try { handleCheckoutReturn(); } catch(e) { console.warn('checkout return error:', e); }
+  try {
+    initTheme();
+  } catch(e) { console.warn('theme init error:', e); }
   try {
     currentUser = await authMe();
     await onLoggedIn();
-  } catch(_) {
-    showScreen('auth');
+  } catch(e) {
+    console.warn('Auth error (expected if not logged in):', e);
+    try { showScreen('auth'); } catch(e2) { console.error('showScreen auth failed:', e2); }
   }
 })();
 
@@ -1720,7 +1724,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=32').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=33').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -1873,7 +1877,7 @@ async function recoverAccess() {
 
       setTimeout(() => {
         hideRecoveryModal();
-        showScreen('screen-main');
+        showScreen('main');
         updateUserBar();
       }, 1500);
     } else {
