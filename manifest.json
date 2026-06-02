@@ -2,166 +2,29 @@
   "name": "The Paw Report",
   "short_name": "Paw Report",
   "description": "Ground temp & walk safety for every dog. Check before every walk.",
-  "id": "com.thepawreport.app",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "https://mypawreport.github.io/the-paw-report/",
+  "scope": "https://mypawreport.github.io/the-paw-report/",
   "display": "standalone",
-  "display_override": [
-    "standalone",
-    "minimal-ui",
-    "window-controls-overlay",
-    "tabbed"
-  ],
-  "background_color": "#1a0a00",
-  "theme_color": "#E8650A",
-  "orientation": "portrait-primary",
-  "lang": "en-US",
-  "dir": "ltr",
+  "background_color": "#eaf0e8",
+  "theme_color": "#0d9488",
+  "orientation": "portrait",
   "categories": [
     "lifestyle",
     "health",
     "pets"
   ],
-  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
-  "prefer_related_applications": false,
-  "related_applications": [
-    {
-      "platform": "play",
-      "id": "com.thepawreport.app",
-      "url": "https://play.google.com/store/apps/details?id=com.thepawreport.app"
-    }
-  ],
-  "scope_extensions": [
-    {
-      "origin": "https://mypawreport.github.io"
-    }
-  ],
-  "share_target": {
-    "action": "./?share",
-    "method": "GET",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url"
-    }
-  },
   "icons": [
     {
       "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/18986cbf5_icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/03da2223b_icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/03da2223b_icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
-  ],
-  "screenshots": [
-    {
-      "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot1.jpg",
-      "sizes": "523x1024",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Ground temperature safety check"
-    },
-    {
-      "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot2.jpg",
-      "sizes": "523x1024",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Area safety and walk conditions"
-    },
-    {
-      "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot3.jpg",
-      "sizes": "523x1024",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Pet wash station finder"
-    },
-    {
-      "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot4.jpg",
-      "sizes": "523x1024",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Best walk time recommendations"
-    },
-    {
-      "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot-wide.jpg",
-      "sizes": "1024x523",
-      "type": "image/jpeg",
-      "form_factor": "wide",
-      "label": "The Paw Report \u2014 desktop view"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Check Paw Safety",
-      "short_name": "Paw Check",
-      "description": "Quick ground temperature safety check",
-      "url": "./?shortcut=report",
-      "icons": [
-        {
-          "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/18986cbf5_icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Find Pet Wash",
-      "short_name": "Pet Wash",
-      "description": "Find nearby pet wash stations",
-      "url": "./?shortcut=wash",
-      "icons": [
-        {
-          "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/18986cbf5_icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    }
-  ],
-  "protocol_handlers": [
-    {
-      "protocol": "web+pawreport",
-      "url": "./?protocol=%s"
-    }
-  ],
-  "widgets": [
-    {
-      "name": "Paw Safety Widget",
-      "short_name": "Paw Check",
-      "description": "Quick ground temperature safety check for your dog",
-      "tag": "paw-widget",
-      "ms_ac_template": "./?widget=paw",
-      "data": "./?widget-data",
-      "type": "application/json",
-      "screenshots": [
-        {
-          "src": "https://mypawreport.github.io/the-paw-report/screenshots/screenshot1.jpg",
-          "sizes": "523x1024",
-          "label": "Paw Safety Widget"
-        }
-      ],
-      "icons": [
-        {
-          "src": "https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/18986cbf5_icon-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ],
-      "auth": false,
-      "update": 3600
-    }
-  ],
-  "note_taking": {
-    "new_note_url": "./?new-note"
-  }
+  ]
 }
