@@ -1669,18 +1669,19 @@ function playBarkSound() {
   const TIER_RANK = { bronze: 1, silver: 2, gold: 3 };
 
   function applyTheme(themeId) {
-    document.body.setAttribute('data-theme', themeId);
-    localStorage.setItem('paw_theme', themeId);
-    // Update all btn-primary background colors dynamically
-    const r = document.documentElement;
-    const t = THEMES.find(x => x.id === themeId);
-    if (t) {
-      r.style.setProperty('--accent', t.colors[1]);
-      document.querySelectorAll('.btn-primary').forEach(b => b.style.background = `linear-gradient(135deg, ${t.colors[1]}, ${THEMES.find(x=>x.id===themeId).colors[1]}cc)`);
-      document.querySelectorAll('.theme-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.theme === themeId);
-      });
-    }
+    try {
+      document.body.setAttribute('data-theme', themeId);
+      localStorage.setItem('paw_theme', themeId);
+      const t = THEMES.find(x => x.id === themeId);
+      if (t) {
+        document.documentElement.style.setProperty('--accent', t.colors[1]);
+        // Only update DOM elements if they exist (not during early init)
+        const btns = document.querySelectorAll('.btn-primary');
+        if (btns.length) btns.forEach(b => b.style.background = `linear-gradient(135deg, ${t.colors[1]}, ${t.colors[1]}cc)`);
+        const themeBtns = document.querySelectorAll('.theme-btn');
+        if (themeBtns.length) themeBtns.forEach(b => b.classList.toggle('active', b.dataset.theme === themeId));
+      }
+    } catch(e) { console.warn('Theme apply error:', e); }
   }
 
   function renderThemeGrid() {
@@ -1707,8 +1708,11 @@ function playBarkSound() {
   }
 
   function initTheme() {
-    const saved = localStorage.getItem('paw_theme') || 'midnight';
-    applyTheme(saved);
+    try {
+      const saved = localStorage.getItem('paw_theme') || 'midnight';
+      // Defer slightly so DOM is ready
+      setTimeout(() => applyTheme(saved), 0);
+    } catch(e) { console.warn('initTheme error:', e); }
   }
 
   </script>
@@ -1716,7 +1720,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=31').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=32').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
