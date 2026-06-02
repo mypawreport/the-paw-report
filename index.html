@@ -755,6 +755,13 @@
           </div>
           <button class="btn btn-primary btn-sm" id="notif-toggle-btn" onclick="toggleNotifications()">Enable</button>
         </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);">
+          <div>
+            <div style="font-size:0.85rem;font-weight:600;margin-bottom:2px;">📌 Tray widget</div>
+            <div style="font-size:0.72rem;opacity:0.5;">Pin current conditions to your notification tray</div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="tray-toggle-btn" onclick="toggleTrayWidget()">Enable</button>
+        </div>
       </div>
 
 
@@ -1243,6 +1250,7 @@ async function saveProfile() {
 }
 function loadMainScreen() {
   showWhatsNewToast();
+  setTimeout(initTrayWidget, 500);
   showScreen('main'); showTab('report');
   const petName = userPrefs?.pet_name || 'your pup';
   document.getElementById('pet-welcome-msg').textContent = `Ready to run ${petName}'s report?`;
@@ -1287,6 +1295,73 @@ function updateNotifBtn() {
   else if (Notification.permission === 'denied') { btn.textContent = '🔕 Blocked — tap to fix'; }
   else { btn.textContent = 'Enable'; }
 }
+
+// Tray widget (persistent notification)
+let trayWidgetEnabled = localStorage.getItem('paw_tray_widget') === 'true';
+let trayIntervalId = null;
+
+function toggleTrayWidget() {
+  if (!('Notification' in window)) {
+    alert('Notifications not supported on this browser.');
+    return;
+  }
+  if (trayWidgetEnabled) {
+    // Turn off
+    trayWidgetEnabled = false;
+    localStorage.setItem('paw_tray_widget', 'false');
+    document.getElementById('tray-toggle-btn').textContent = 'Enable';
+    if (trayIntervalId) { clearInterval(trayIntervalId); trayIntervalId = null; }
+  } else {
+    // Request permission and turn on
+    Notification.requestPermission().then(perm => {
+      if (perm === 'granted') {
+        trayWidgetEnabled = true;
+        localStorage.setItem('paw_tray_widget', 'true');
+        document.getElementById('tray-toggle-btn').textContent = 'Disable';
+        showTrayNotification();
+        // Refresh tray every 30 minutes
+        trayIntervalId = setInterval(showTrayNotification, 30 * 60 * 1000);
+      } else {
+        alert('Please allow notifications to use the tray widget.');
+      }
+    });
+  }
+}
+
+function showTrayNotification() {
+  if (!trayWidgetEnabled || Notification.permission !== 'granted') return;
+  const data = lastPawData;
+  if (!data) return;
+  const emoji = data.emoji || '🐾';
+  const rating = data.rating || 'Unknown';
+  const temp = data.groundTempF ? data.groundTempF + '°F' : '--';
+  const surface = SURFACE_LABELS[currentSurface] || 'Asphalt';
+  const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  try {
+    const n = new Notification('🐾 The Paw Report', {
+      body: temp + ' · ' + rating + ' · ' + surface + '\nLast updated ' + time,
+      icon: '/the-paw-report/icons/icon-192.png',
+      tag: 'paw-tray',        // same tag = replaces previous, doesn't stack
+      renotify: false,
+      silent: true             // no sound for tray updates
+    });
+    // Auto-close after 10 seconds to keep it subtle
+    setTimeout(() => n.close(), 10000);
+  } catch(e) { console.warn('Tray notification error:', e); }
+}
+
+function initTrayWidget() {
+  const btn = document.getElementById('tray-toggle-btn');
+  if (!btn) return;
+  if (trayWidgetEnabled && Notification.permission === 'granted') {
+    btn.textContent = 'Disable';
+    trayIntervalId = setInterval(showTrayNotification, 30 * 60 * 1000);
+  } else {
+    trayWidgetEnabled = false;
+    localStorage.setItem('paw_tray_widget', 'false');
+  }
+}
+
 function toggleNotifications() {
   if (Notification.permission === 'granted' && notificationsEnabled) {
     notificationsEnabled = false;
@@ -1360,6 +1435,8 @@ function applyPawUIWithSurface(d) {
   adjusted.color = ratingInfo.color;
   adjusted.message = ratingInfo.message;
   updatePawUI(adjusted);
+  // Fire tray update if enabled
+  if (trayWidgetEnabled) showTrayNotification();
   // Update surface label
   const lbl = document.getElementById('surface-label');
   if (lbl) lbl.textContent = SURFACE_LABELS[currentSurface] || currentSurface;
@@ -1867,7 +1944,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=39').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=40').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
