@@ -540,7 +540,21 @@
         </div>
       </div>
 
-      <div class="card" id="paw-card" style="display:none;">
+      
+      <!-- 📍 Favorite Locations (Silver/Gold) -->
+      <div class="card" id="fav-locations-card">
+        <div class="card-title">📍 Saved Locations</div>
+        <div id="fav-locations-list" style="margin-bottom:10px;"></div>
+        <div id="fav-lock" class="locked-feature" style="display:none;">
+          <div class="locked-icon">🔒</div>
+          <div class="locked-title">Save Favourite Locations</div>
+          <div class="locked-sub">Upgrade to Silver or Gold to save up to 5 locations and skip re-detecting every time.</div>
+          <button class="btn btn-primary" onclick="showScreen('paywall')" style="margin-top:10px;font-size:0.82rem;padding:10px;">🚀 Upgrade</button>
+        </div>
+        <button id="fav-add-btn" onclick="saveCurrentLocationAsFav()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;display:none;">➕ Save Current Location</button>
+      </div>
+
+<div class="card" id="paw-card" style="display:none;">
         <div class="card-title">🌡️ Right Now — Ground Temperature</div>
         <div id="report-location-line" style="font-size:0.72rem;color:#64748b;text-align:center;margin:-4px 0 10px;display:none;">📍 <span id="report-location-text">Detecting…</span></div>
         <div class="size-selector" style="margin-bottom:12px;" id="size-selector-inline">
@@ -565,6 +579,7 @@
         </div>
         <div id="cold-alert" class="alert-banner alert-cold" style="display:none;"></div>
         <div id="hydration-alert" class="alert-banner alert-hydration" style="display:none;"></div>
+        <div id="humidity-alert" style="display:none;background:#e0f2fe;border:1px solid #38bdf8;border-radius:10px;padding:10px;font-size:0.8rem;color:#0369a1;margin-top:8px;"></div>
         <div class="divider"></div>
         <div class="stats-grid">
           <div class="stat-box ground-temp-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.6rem;color:#64748b;margin-top:2px;">Asphalt</div></div>
@@ -580,8 +595,13 @@
           <div class="stat-box"><div class="stat-value" id="uv-index">--</div><div class="stat-label">UV Index</div></div>
           <div class="stat-box"><div class="stat-value" id="wind-speed">--</div><div class="stat-label">Wind Speed</div></div>
           <div class="stat-box"><div class="stat-value" id="cloud-cover">--%</div><div class="stat-label">Cloud Cover</div></div>
+          <div class="stat-box"><div class="stat-value" id="humidity-display">--%</div><div class="stat-label">Humidity</div></div>
         </div>
         <div class="last-updated" id="last-updated"></div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button onclick="shareReport()" class="btn btn-secondary" style="flex:1;font-size:0.82rem;padding:10px;">📤 Share Report</button>
+          <button onclick="logCurrentWalk()" id="log-walk-report-btn" class="btn btn-secondary" style="flex:1;font-size:0.82rem;padding:10px;display:none;">📝 Log Walk</button>
+        </div>
         <div class="divider"></div>
         <div style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);border-radius:14px;padding:14px 16px;margin-top:4px;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
@@ -753,6 +773,7 @@
         <div class="referral-title" style="font-weight:700;margin-bottom:4px;">🎁 Share &amp; Earn</div>
         <div class="referral-share-sub">Give a friend a free week — when they sign up you both win!</div>
         <div class="referral-code-display" id="my-referral-code">PAW-XXXX</div>
+        <div id="referral-count-display" style="font-size:0.75rem;color:#64748b;margin-top:4px;"></div>
         <div class="referral-share-sub" style="margin-bottom:10px;">Share your code and they get 1 free week.</div>
         <div class="share-btns">
           <button class="share-btn share-btn-copy" onclick="copyReferralCode()">📋 Copy Code</button>
@@ -760,7 +781,23 @@
         </div>
       </div>
 
-      <!-- 🔔 Notifications (single consolidated card) -->
+      
+      <!-- 🦮 Walk History (Gold) -->
+      <div class="card" id="walk-history-card">
+        <div class="card-title">🦮 Walk History</div>
+        <div id="walk-history-lock" class="locked-feature" style="display:none;">
+          <div class="locked-icon">🔒</div>
+          <div class="locked-title">Walk History Log</div>
+          <div class="locked-sub">Gold members can track every walk with timestamp, temp, rating, and location.</div>
+          <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.82rem;padding:10px;margin-top:10px;">🚀 Upgrade to Gold</button>
+        </div>
+        <div id="walk-history-list" style="display:none;"></div>
+        <div id="walk-history-empty" style="display:none;font-size:0.82rem;color:#64748b;text-align:center;padding:12px;">No walks logged yet. Run a report and tap Log This Walk!</div>
+        <button id="log-walk-btn" onclick="logCurrentWalk()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;margin-top:10px;display:none;">📝 Log This Walk</button>
+        <button id="clear-history-btn" onclick="clearWalkHistory()" style="display:none;background:none;border:none;color:#ef4444;font-size:0.75rem;cursor:pointer;margin-top:6px;text-align:center;width:100%;">🗑️ Clear History</button>
+      </div>
+
+<!-- 🔔 Notifications (single consolidated card) -->
       <div class="card">
         <div class="card-title">🔔 Notifications</div>
         <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -1203,6 +1240,8 @@ function updateUserBar() {
   // Referral code: PAW- + first 4 chars of user id
   const code = 'PAW-' + (currentUser.id || 'USER').slice(0,4).toUpperCase();
   document.getElementById('my-referral-code').textContent = code;
+  var rcd2 = document.getElementById('referral-count-display');
+  if (rcd2) { var cnt2 = getReferralCount(); rcd2.textContent = cnt2 > 0 ? '🎁 ' + cnt2 + ' friend' + (cnt2===1?'':'s') + ' referred!' : ''; }
   renderProfileDisplay();
   renderSubStatus();
 }
@@ -1372,6 +1411,8 @@ function loadMainScreen() {
   showWhatsNewToast();
   setTimeout(showEdgeLightingNotice, 1200);
   setTimeout(initTrayWidget, 500);
+  renderFavLocations();
+  renderWalkHistory();
   showScreen('main'); showTab('report');
   const petName = userPrefs?.pet_name || 'your pup';
   document.getElementById('pet-welcome-msg').textContent = `Ready to run ${petName}'s report?`;
@@ -1766,11 +1807,17 @@ function updatePawUI(d) {
   const ha = document.getElementById('hydration-alert');
   if(d.hydrationMsg){ ha.textContent=d.hydrationMsg; ha.style.display='block'; } else ha.style.display='none';
   document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  // Humidity
+  var humEl = document.getElementById('humidity-display');
+  if (humEl) humEl.textContent = d.humidity != null ? d.humidity + '%' : '--%';
+  var humAlert = document.getElementById('humidity-alert');
+  if (humAlert) { if (d.humidityWarning) { humAlert.textContent = d.humidityWarning; humAlert.style.display = 'block'; } else humAlert.style.display = 'none'; }
   // Danger notification
   updateDynamicColors(d.rating);
   if (['Danger','Fry Zone','Extreme Cold'].includes(d.rating)) sendDangerNotification(`⚠️ ${d.rating}: ${d.message}`);
 }
 async function fetchPawAndUpdate(lat, lon) {
+  checkRateAppPrompt();
   try { const res = await fetch('https://superagent-9eb7455e.base44.app/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) applyPawUIWithSurface(await res.json()); } } catch(_) {}
 }
 function updateCrimeUI(d) {
@@ -1927,7 +1974,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v58';
+const APP_VERSION = 'v59';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2180,7 +2227,7 @@ function agreeDisclaimer() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=58').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=59').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2364,6 +2411,252 @@ function showToast(msg, duration) {
   clearTimeout(t._timer);
   t._timer = setTimeout(function() { t.style.opacity = '0'; }, duration);
 }
+
+// ═══════════════════════════════════════════════════════
+// ── FAVORITE LOCATIONS ──
+// ═══════════════════════════════════════════════════════
+var MAX_FAVS = 5;
+function getFavLocations() {
+  try { return JSON.parse(localStorage.getItem('paw_fav_locations') || '[]'); } catch(e) { return []; }
+}
+function saveFavLocations(favs) {
+  localStorage.setItem('paw_fav_locations', JSON.stringify(favs));
+}
+function saveCurrentLocationAsFav() {
+  if (!lastKnownLat || !lastKnownLon) { showToast('Run a report first to detect your location.'); return; }
+  var name = prompt('Name this location (e.g. Home, Dog Park, Trail):');
+  if (!name || !name.trim()) return;
+  var favs = getFavLocations();
+  if (favs.length >= MAX_FAVS) { showToast('Max 5 saved locations. Remove one first.'); return; }
+  favs.push({ name: name.trim(), lat: lastKnownLat, lon: lastKnownLon, added: new Date().toLocaleDateString() });
+  saveFavLocations(favs);
+  renderFavLocations();
+  showToast('📍 ' + name.trim() + ' saved!');
+}
+function removeFavLocation(idx) {
+  var favs = getFavLocations();
+  favs.splice(idx, 1);
+  saveFavLocations(favs);
+  renderFavLocations();
+  showToast('Location removed.');
+}
+function useFavLocation(lat, lon, name) {
+  lastKnownLat = lat; lastKnownLon = lon;
+  var locLine = document.getElementById('report-location-text');
+  if (locLine) locLine.textContent = name;
+  var locDiv = document.getElementById('report-location-line');
+  if (locDiv) locDiv.style.display = 'block';
+  showToast('📍 Using ' + name);
+  fetchAll(lat, lon);
+}
+function renderFavLocations() {
+  var tier = getUserTier();
+  var hasFavAccess = (tier === 'silver' || tier === 'gold');
+  var lockEl = document.getElementById('fav-lock');
+  var listEl = document.getElementById('fav-locations-list');
+  var addBtn = document.getElementById('fav-add-btn');
+  if (!lockEl || !listEl) return;
+  if (!hasFavAccess) {
+    lockEl.style.display = 'block';
+    listEl.innerHTML = '';
+    if (addBtn) addBtn.style.display = 'none';
+    return;
+  }
+  lockEl.style.display = 'none';
+  if (addBtn) addBtn.style.display = 'block';
+  var favs = getFavLocations();
+  if (favs.length === 0) {
+    listEl.innerHTML = '<div style="font-size:0.82rem;color:#64748b;text-align:center;padding:8px;">No saved locations yet. Run a report and tap Save.</div>';
+    return;
+  }
+  listEl.innerHTML = favs.map(function(f, i) {
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0;">' +
+      '<div onclick="useFavLocation(' + f.lat + ',' + f.lon + ','' + f.name.replace(/'/g,"\'") + '')" style="cursor:pointer;flex:1;">' +
+      '<div style="font-size:0.88rem;font-weight:600;color:#1e293b;">📍 ' + f.name + '</div>' +
+      '<div style="font-size:0.72rem;color:#94a3b8;">Added ' + f.added + ' · tap to run report</div></div>' +
+      '<button onclick="removeFavLocation(' + i + ')" style="background:none;border:none;color:#ef4444;font-size:1rem;cursor:pointer;padding:4px;">🗑️</button></div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// ── WALK HISTORY LOG ──
+// ═══════════════════════════════════════════════════════
+var MAX_HISTORY = 50;
+function getWalkHistory() {
+  try { return JSON.parse(localStorage.getItem('paw_walk_history') || '[]'); } catch(e) { return []; }
+}
+function saveWalkHistory(hist) {
+  localStorage.setItem('paw_walk_history', JSON.stringify(hist));
+}
+function logCurrentWalk() {
+  var tier = getUserTier();
+  if (tier !== 'gold') { showToast('Walk history is a Gold feature. Upgrade to track every walk!'); return; }
+  if (!lastPawData) { showToast('Run a report first to log a walk.'); return; }
+  var hist = getWalkHistory();
+  var entry = {
+    ts: new Date().toLocaleString(),
+    rating: lastPawData.rating,
+    groundTemp: lastPawData.groundTempF,
+    airTemp: lastPawData.airTempF,
+    surface: currentSurface || 'asphalt',
+    location: document.getElementById('report-location-text') ? document.getElementById('report-location-text').textContent : '',
+    petSize: currentPetSize
+  };
+  hist.unshift(entry);
+  if (hist.length > MAX_HISTORY) hist = hist.slice(0, MAX_HISTORY);
+  saveWalkHistory(hist);
+  renderWalkHistory();
+  showToast('📝 Walk logged!');
+}
+function clearWalkHistory() {
+  if (!confirm('Clear all walk history?')) return;
+  localStorage.removeItem('paw_walk_history');
+  renderWalkHistory();
+  showToast('History cleared.');
+}
+function renderWalkHistory() {
+  var tier = getUserTier();
+  var isGold = tier === 'gold';
+  var lockEl = document.getElementById('walk-history-lock');
+  var listEl = document.getElementById('walk-history-list');
+  var emptyEl = document.getElementById('walk-history-empty');
+  var logBtn = document.getElementById('log-walk-btn');
+  var clearBtn = document.getElementById('clear-history-btn');
+  var reportLogBtn = document.getElementById('log-walk-report-btn');
+  if (!lockEl || !listEl) return;
+  if (!isGold) {
+    lockEl.style.display = 'block';
+    listEl.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'none';
+    if (logBtn) logBtn.style.display = 'none';
+    if (clearBtn) clearBtn.style.display = 'none';
+    if (reportLogBtn) reportLogBtn.style.display = 'none';
+    return;
+  }
+  lockEl.style.display = 'none';
+  if (logBtn) logBtn.style.display = 'block';
+  if (reportLogBtn) reportLogBtn.style.display = 'block';
+  var hist = getWalkHistory();
+  if (hist.length === 0) {
+    listEl.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'block';
+    if (clearBtn) clearBtn.style.display = 'none';
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (clearBtn) clearBtn.style.display = 'block';
+  listEl.style.display = 'block';
+  var RATING_COLORS = {'Safe':'#4ade80','Warm':'#fbbf24','Hot':'#F5A623','Caution':'#fb923c','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Too Cold':'#60a5fa','Extreme Cold':'#818cf8'};
+  listEl.innerHTML = hist.slice(0,20).map(function(e) {
+    var col = RATING_COLORS[e.rating] || '#94a3b8';
+    return '<div style="padding:10px 0;border-bottom:1px solid #e2e8f0;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+      '<span style="font-size:0.82rem;font-weight:700;color:' + col + ';">' + e.rating + '</span>' +
+      '<span style="font-size:0.72rem;color:#94a3b8;">' + e.ts + '</span></div>' +
+      '<div style="font-size:0.78rem;color:#64748b;margin-top:3px;">🌡️ ' + e.groundTemp + '°F ground · ' + e.airTemp + '°F air · ' + e.surface + ' · ' + e.petSize + (e.location ? ' · 📍 ' + e.location : '') + '</div></div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// ── SHARE REPORT ──
+// ═══════════════════════════════════════════════════════
+function shareReport() {
+  if (!lastPawData) { showToast('Run a report first!'); return; }
+  var loc = document.getElementById('report-location-text') ? document.getElementById('report-location-text').textContent : 'your area';
+  var surface = currentSurface ? currentSurface.charAt(0).toUpperCase() + currentSurface.slice(1) : 'Asphalt';
+  var text = '🐾 The Paw Report — ' + loc + '\n' +
+    '🌡️ Ground Temp: ' + lastPawData.groundTempF + '°F (' + surface + ')\n' +
+    '🌤️ Air Temp: ' + lastPawData.airTempF + '°F\n' +
+    '⚠️ Rating: ' + lastPawData.rating + '\n' +
+    lastPawData.message + '\n\n' +
+    'Check conditions before every walk → https://mypawreport.github.io/the-paw-report/';
+  if (navigator.share) {
+    navigator.share({ title: '🐾 The Paw Report', text: text }).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('📋 Report copied to clipboard!');
+    }).catch(function() {
+      showToast('Could not share — copy the link manually.');
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// ── RATE THE APP PROMPT (after 5th report) ──
+// ═══════════════════════════════════════════════════════
+function checkRateAppPrompt() {
+  if (localStorage.getItem('paw_rate_dismissed')) return;
+  var count = parseInt(localStorage.getItem('paw_report_count') || '0') + 1;
+  localStorage.setItem('paw_report_count', count);
+  if (count === 5 || count === 20 || count === 50) {
+    setTimeout(showRateAppPrompt, 2000);
+  }
+}
+function showRateAppPrompt() {
+  if (document.getElementById('rate-app-modal')) return;
+  var modal = document.createElement('div');
+  modal.id = 'rate-app-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9997;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+  modal.innerHTML = '<div style="background:#fff;border-radius:18px;padding:24px;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
+    '<div style="font-size:2rem;margin-bottom:8px;">⭐</div>' +
+    '<div style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:8px;">Enjoying The Paw Report?</div>' +
+    '<div style="font-size:0.82rem;color:#475569;margin-bottom:16px;line-height:1.5;">Help other pet owners find us! Share your experience on TikTok or tell a friend. 🐾</div>' +
+    '<button onclick="shareRateApp()" style="background:linear-gradient(135deg,#0d9488,#0d9488cc);color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;">🎵 Share on TikTok</button>' +
+    '<button onclick="dismissRateApp()" style="background:none;border:none;color:#94a3b8;font-size:0.78rem;cursor:pointer;width:100%;">Maybe later</button></div>';
+  document.body.appendChild(modal);
+}
+function shareRateApp() {
+  var text = '🐾 I use The Paw Report to check if the pavement is safe for my dog before every walk! Ground temp, safety rating, and more. Check it out at mypawreport.github.io/the-paw-report/ #DogMom #PawReport #PetSafety #DogWalk';
+  navigator.clipboard.writeText(text).then(function() {
+    showToast('✅ Copied! Open TikTok and paste in your caption 🎵');
+  }).catch(function(){});
+  dismissRateApp();
+}
+function dismissRateApp() {
+  localStorage.setItem('paw_rate_dismissed', '1');
+  var m = document.getElementById('rate-app-modal');
+  if (m) m.remove();
+}
+
+// ═══════════════════════════════════════════════════════
+// ── ADD TO HOME SCREEN PROMPT ──
+// ═══════════════════════════════════════════════════════
+var deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  var btn = document.getElementById('install-app-btn');
+  if (btn) btn.style.display = 'block';
+});
+window.addEventListener('appinstalled', function() {
+  deferredInstallPrompt = null;
+  var btn = document.getElementById('install-app-btn');
+  if (btn) btn.style.display = 'none';
+  showToast('🎉 App installed! Find it on your home screen.');
+});
+function promptInstallApp() {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(function(r) {
+      if (r.outcome === 'accepted') showToast('🎉 Installing now!');
+      deferredInstallPrompt = null;
+    });
+  } else {
+    // iOS fallback
+    showToast('On iPhone: tap the Share button then "Add to Home Screen" 📲');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// ── REFERRAL COUNT in profile ──
+// ═══════════════════════════════════════════════════════
+function getReferralCount() {
+  return parseInt(localStorage.getItem('paw_referral_count') || '0');
+}
+function incrementReferralCount() {
+  var c = getReferralCount() + 1;
+  localStorage.setItem('paw_referral_count', c);
+}
 </script>
 
   <!-- Subscription Recovery Modal -->
@@ -2416,5 +2709,18 @@ function showToast(msg, duration) {
       <p style="text-align:center;font-size:0.7rem;color:#94a3b8;margin-top:10px;">Your agreement is recorded with your email and timestamp for your protection and ours.</p>
     </div>
   </div>
+      <!-- Add to Home Screen -->
+      <div class="card" id="install-app-card" style="text-align:center;">
+        <div class="card-title">📲 Install App</div>
+        <div style="font-size:0.82rem;color:#475569;margin-bottom:10px;">Add The Paw Report to your home screen for instant access — works like a native app!</div>
+        <button id="install-app-btn" onclick="promptInstallApp()" class="btn btn-secondary" style="font-size:0.85rem;padding:11px;display:none;">📲 Add to Home Screen</button>
+        <div style="font-size:0.75rem;color:#94a3b8;margin-top:8px;">On iPhone: tap Share → "Add to Home Screen"</div>
+      </div>
+
+      <!-- Copyright Footer -->
+      <div style="text-align:center;font-size:0.68rem;color:#94a3b8;padding:4px 16px 12px;">
+        © 2026 The Paw Report · <a href="legal.html" style="color:#0d9488;text-decoration:none;">Terms & Privacy</a> · <a href="mailto:mypawreport@gmail.com" style="color:#0d9488;text-decoration:none;">Contact</a>
+      </div>
+
 </body>
 </html>
