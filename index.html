@@ -1735,6 +1735,12 @@ function updateCrimeUI(d) {
   document.getElementById('crime-message').textContent = d.crimeMessage;
   const loc = [d.city, d.stateAbbr||d.state||d.country].filter(Boolean).join(', ');
   document.getElementById('crime-location').textContent = loc ? '📍 '+loc : '';
+  // Also update the location line on the main report card
+  if (loc) {
+    const locLine = document.getElementById('report-location-line');
+    const locText = document.getElementById('report-location-text');
+    if (locLine && locText) { locText.textContent = loc; locLine.style.display = 'block'; }
+  }
   document.getElementById('crime-violent-rate').textContent = d.violentOffenseRate ?? '--';
   document.getElementById('crime-property-rate').textContent = d.propertyOffenseRate ?? '--';
   document.getElementById('crime-score-val').textContent = d.crimeScore != null ? (100-d.crimeScore)+'/100' : '--';
@@ -1851,6 +1857,9 @@ async function startTracking() {
   if(isTracking){stopTracking();return;}
   const btn=document.getElementById('main-btn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Getting location…';
+  // Show location line as "Detecting…" while loading
+  const _locLine = document.getElementById('report-location-line');
+  if (_locLine) _locLine.style.display = 'block';
   showLoading();
   try {
     const {lat,lon}=await getLocation(); lastLat=lat; lastLon=lon;
@@ -1872,7 +1881,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v52';
+const APP_VERSION = 'v53';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2125,7 +2134,7 @@ function agreeDisclaimer() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=52').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=53').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
