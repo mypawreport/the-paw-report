@@ -2091,7 +2091,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v65';
+const APP_VERSION = 'v66';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2341,7 +2341,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=65').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=66').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2780,6 +2780,62 @@ function promptInstallApp() {
 
 
 // ═══════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════
+// ── AVATAR MANAGEMENT ──
+function toggleAvatarPicker() {
+  var picker = document.getElementById('avatar-picker');
+  if (picker) picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
+}
+
+function setAvatar(type, value) {
+  localStorage.setItem('paw_avatar_type', type);
+  localStorage.setItem('paw_avatar_value', value);
+  if (currentUser && currentUser.email) {
+    try {
+      var users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+      if (users[currentUser.email]) {
+        users[currentUser.email].avatar_type = type;
+        users[currentUser.email].avatar_value = value;
+        localStorage.setItem('paw_users', JSON.stringify(users));
+      }
+    } catch(e) {}
+  }
+  renderAvatar();
+  var picker = document.getElementById('avatar-picker');
+  if (picker) picker.style.display = 'none';
+  showToast('Avatar updated! 🎨');
+}
+
+function renderAvatar() {
+  var type = localStorage.getItem('paw_avatar_type');
+  var value = localStorage.getItem('paw_avatar_value');
+  if (currentUser && currentUser.email) {
+    try {
+      var users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+      var u = users[currentUser.email];
+      if (u && u.avatar_type) { type = u.avatar_type; value = u.avatar_value; }
+    } catch(e) {}
+  }
+  var smallAvatar = document.getElementById('user-avatar');
+  var largeAvatar = document.getElementById('avatar-large-preview');
+  var name = currentUser ? (currentUser.full_name || currentUser.email || '') : '';
+  var initial = name ? name.charAt(0).toUpperCase() : '🐾';
+  if (type === 'emoji' && value) {
+    if (smallAvatar) { smallAvatar.textContent = value; smallAvatar.style.background = 'linear-gradient(135deg,#0d9488,#059669)'; }
+    if (largeAvatar) { largeAvatar.textContent = value; largeAvatar.style.background = 'linear-gradient(135deg,#0d9488,#059669)'; }
+    document.querySelectorAll('.avatar-option').forEach(function(el) {
+      el.classList.toggle('selected', el.title && el.getAttribute('onclick') && el.getAttribute('onclick').includes(value));
+    });
+  } else if (type === 'color' && value) {
+    if (smallAvatar) { smallAvatar.textContent = initial; smallAvatar.style.background = value; }
+    if (largeAvatar) { largeAvatar.textContent = initial; largeAvatar.style.background = value; }
+  } else {
+    if (smallAvatar) { smallAvatar.textContent = initial; }
+    if (largeAvatar) { largeAvatar.textContent = initial; largeAvatar.style.background = 'linear-gradient(135deg,#0d9488,#059669)'; }
+  }
+}
+
 </script>
 
 </body>
