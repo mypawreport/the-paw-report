@@ -1299,6 +1299,14 @@ function showTab(tab) {
     document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
     document.getElementById('nav-'+t).classList.toggle('active', t===tab);
   });
+  // Sync edge glow to the active tab's data
+  if (tab === 'safety' && window._lastCrimeEdgeRating) {
+    updateEdgeGlow(window._lastCrimeEdgeRating);
+  } else if (tab === 'report' && lastPawData && lastPawData.rating) {
+    updateEdgeGlow(lastPawData.rating);
+  } else if (tab === 'wash' || tab === 'profile') {
+    updateEdgeGlow('Safe'); // neutral green for non-data tabs
+  }
 }
 
 let isSignUpMode = false;
@@ -2144,7 +2152,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v71';
+const APP_VERSION = 'v72';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2394,7 +2402,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=71').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=72').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
