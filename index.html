@@ -2022,6 +2022,40 @@ function scoreToColor(s){ if(s<10)return'#4ade80'; if(s<25)return'#86efac'; if(s
 function updateWalkTimeUI(d) {
   document.getElementById('walk-time-loading').style.display='none';
   document.getElementById('walk-time-content').style.display='block';
+
+  // Re-score hours with strong night penalty to ensure correct best hour
+  const nowHr = new Date().getHours();
+  const rescored = (d.hours||[]).map(h => {
+    let hp = 0;
+    if (h.hour >= 22 || h.hour < 5) hp = 80;
+    else if (h.hour >= 20 || h.hour < 6) hp = 40;
+    else if (h.hour >= 6 && h.hour <= 9) hp = -5;
+    return { ...h, totalScore: (h.totalScore || 0) + hp };
+  });
+  const upcoming = rescored.filter(h => !h.isPast);
+  const bestH = upcoming.length ? upcoming.reduce((a,b) => a.totalScore < b.totalScore ? a : b) : null;
+
+  // Rebuild recommendation with correct "right now" vs future logic
+  if (bestH) {
+    const isNow = bestH.hour === nowHr;
+    const sc = bestH.totalScore;
+    let icon = '😓', rec = `Tough day for walks. ${bestH.timeLabel} is the safest window but conditions are still rough.`;
+    if (sc < 10) {
+      icon = '🌟';
+      rec = isNow ? 'Right now is perfect! Mild temps and safe pavement.' : `${bestH.timeLabel} looks perfect — mild temps and safe pavement.`;
+    } else if (sc < 25) {
+      icon = '✅';
+      rec = isNow ? 'Right now looks great — cool temps and low UV.' : `${bestH.timeLabel} looks great — cool temps and low UV.`;
+    } else if (sc < 45) {
+      icon = '👍';
+      rec = `${bestH.timeLabel} is your best bet today — conditions are decent.`;
+    } else if (sc < 65) {
+      icon = '⚠️';
+      rec = `${bestH.timeLabel} is the least bad option. Ground may be warm — keep walks short.`;
+    }
+    d = { ...d, bestHour: bestH, windowLabel: bestH.timeLabel, recommendation: rec, icon, hours: rescored };
+  }
+
   document.getElementById('best-time-icon').textContent=d.icon;
   document.getElementById('best-time-window').textContent=d.windowLabel||d.bestHour?.timeLabel||'--';
   document.getElementById('best-time-rec').textContent=d.recommendation||'';
@@ -2144,7 +2178,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v73';
+const APP_VERSION = 'v74';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2394,7 +2428,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=73').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=74').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
