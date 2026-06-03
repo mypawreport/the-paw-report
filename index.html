@@ -1006,9 +1006,13 @@ function applyReferral(inputId) {
     localStorage.setItem('paw_referral_applied', val);
 
     setTimeout(() => {
-      hidePaywall();
-      showScreen('main');
-      updateUserBar();
+      // Ensure userPrefs exists so we go to main, not setup
+      if (!userPrefs) {
+        userPrefs = savePrefs(currentUser?.id || 'guest', { pet_name: 'My Dog', pet_size: 'medium', pet_breed: '' });
+      }
+      // Hide all screens and go straight to main app
+      document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+      loadMainScreen();
     }, 1800);
 
   } else if (val.startsWith('PAW-') && val.length >= 8) {
@@ -2004,7 +2008,7 @@ function playBarkSound() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=49').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=50').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
