@@ -2198,7 +2198,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v77';
+const APP_VERSION = 'v78';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2290,7 +2290,10 @@ function playBarkSound() {
   try {
     const audio = new Audio('https://mypawreport.github.io/the-paw-report/bark.mp3');
     audio.volume = 1.0;
-    audio.play().catch(() => {});
+    audio.play().catch(() => {
+      // fallback to wav
+      try { new Audio('https://mypawreport.github.io/the-paw-report/bark.wav').play(); } catch(e2) {}
+    });
   } catch(e) {}
 }
 
@@ -2437,7 +2440,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=77').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=78').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
