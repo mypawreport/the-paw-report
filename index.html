@@ -1994,7 +1994,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v61';
+const APP_VERSION = 'v62';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2242,12 +2242,66 @@ function agreeDisclaimer() {
   document.body.style.overflow = '';
 }
 
-</script>
 
-<script>
+
+  <!-- Subscription Recovery Modal -->
+  <div id="recovery-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:#f0fdf9;border-radius:18px;padding:28px 22px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+      <div style="text-align:center;margin-bottom:16px;">
+        <span style="font-size:2rem;">🔑</span>
+        <div style="font-size:1.1rem;font-weight:800;color:#1a1a1a;margin-top:6px;">Recover Your Access</div>
+        <div style="font-size:0.83rem;color:#666;margin-top:4px;">Enter the email you used when you subscribed and we'll restore your account instantly — no payment needed.</div>
+      </div>
+      <input id="recovery-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid #0d9488;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
+      <div id="recovery-msg" style="font-size:0.82rem;color:#c00;margin-bottom:8px;min-height:18px;text-align:center;"></div>
+      <button onclick="recoverAccess()" style="width:100%;background:#0d9488;color:#1e293b;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Restore My Subscription</button>
+      <button onclick="hideRecoveryModal()" style="width:100%;background:none;border:none;color:#999;margin-top:10px;cursor:pointer;font-size:0.85rem;">Cancel</button>
+    </div>
+  </div>
+  <div class="whats-new-toast" id="whats-new-toast">
+    <span class="toast-close" onclick="dismissToast()">✕</span>
+    <div class="toast-title">🆕 What's New</div>
+    <div id="whats-new-msg"></div>
+  </div>
+
+  <!-- ── DISCLAIMER / LIABILITY AGREEMENT MODAL ── -->
+  <div id="disclaimer-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;overflow-y:auto;padding:20px;box-sizing:border-box;">
+    <div style="background:#fff;border-radius:16px;max-width:480px;margin:20px auto;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-size:2rem;">⚠️</div>
+        <div style="font-size:1.1rem;font-weight:800;color:#1e293b;margin-top:6px;">Safety Disclaimer &amp; Agreement</div>
+        <div style="font-size:0.75rem;color:#64748b;margin-top:4px;">Please read and agree before using The Paw Report</div>
+      </div>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;font-size:0.8rem;line-height:1.7;color:#374151;max-height:280px;overflow-y:auto;margin-bottom:16px;">
+        <p style="font-weight:700;color:#dc2626;margin:0 0 8px;">📋 ESTIMATED TEMPERATURES — NOT GUARANTEED</p>
+        <p style="margin:0 0 10px;">The ground temperature readings provided by <strong>The Paw Report</strong> are <strong>ESTIMATES ONLY</strong>, calculated using air temperature data, UV index, wind speed, and surface type algorithms. Actual pavement and ground temperatures may differ significantly based on local conditions, shade, cloud cover, and other environmental factors.</p>
+        <p style="font-weight:700;color:#dc2626;margin:0 0 8px;">⚠️ LIMITATION OF LIABILITY</p>
+        <p style="margin:0 0 10px;"><strong>The Paw Report, its owners, and its developers</strong> are <strong>NOT responsible or liable</strong> for any injury, harm, burns, illness, or death to any pet or person resulting from reliance on the temperature estimates or safety ratings provided by this application.</p>
+        <p style="font-weight:700;color:#1e293b;margin:0 0 8px;">🖐️ ALWAYS USE THE 7-SECOND HAND TEST</p>
+        <p style="margin:0 0 10px;">Before every walk, place the back of your hand flat on the pavement for 7 seconds. If you cannot hold it comfortably, it is <strong>too hot for your dog's paws</strong>. This manual check is <strong>always the final word</strong> — the app is a guide only.</p>
+        <p style="font-weight:700;color:#1e293b;margin:0 0 8px;">✅ YOUR RESPONSIBILITY</p>
+        <p style="margin:0;">By using this app, you agree that <strong>you are solely responsible</strong> for your pet's safety. You will not hold The Paw Report or its creators liable for any damages arising from your use of this application.</p>
+        <p style="font-weight:700;color:#1e293b;margin:8px 0 8px;">🌈 EDGE LIGHTING — DISPLAY DISCLAIMER</p>
+        <p style="margin:0;">The coloured border (edge lighting) displayed around the screen is a <strong>visual aid only</strong>. Its appearance — including brightness, colour accuracy, and visibility — may vary significantly depending on your device model, screen settings, brightness level, or power-saving mode. <strong>Edge lighting must not be relied upon as your sole safety indicator.</strong> Always read the temperature value and safety rating text shown on screen, and perform the 7-second hand test before every walk.</p>
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:16px;font-size:0.82rem;color:#374151;line-height:1.5;">
+        <input type="checkbox" id="disclaimer-checkbox" onchange="toggleDisclaimerBtn()" style="width:18px;height:18px;margin-top:2px;accent-color:#0d9488;flex-shrink:0;">
+        <span>I have read and understood the disclaimer above. I agree that ground temperatures are estimates only, that edge lighting is a visual aid and may vary by device, and I accept full responsibility for my pet's safety. I will not hold The Paw Report, its owners, or its developers liable for any injury or harm.</span>
+      </label>
+      <button id="disclaimer-agree-btn" onclick="agreeDisclaimer()" disabled style="width:100%;padding:14px;border-radius:10px;border:none;background:#94a3b8;color:#fff;font-size:0.95rem;font-weight:700;cursor:not-allowed;transition:all 0.2s;">
+        ✅ I Agree — Continue to App
+      </button>
+      <p style="text-align:center;font-size:0.7rem;color:#94a3b8;margin-top:10px;">Your agreement is recorded with your email and timestamp for your protection and ours.</p>
+    </div>
+  </div>
+
+
+</body>
+</html>
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=61').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=62').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2693,59 +2747,5 @@ function incrementReferralCount() {
   var c = getReferralCount() + 1;
   localStorage.setItem('paw_referral_count', c);
 }
-</script>
-
-  <!-- Subscription Recovery Modal -->
-  <div id="recovery-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
-    <div style="background:#f0fdf9;border-radius:18px;padding:28px 22px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
-      <div style="text-align:center;margin-bottom:16px;">
-        <span style="font-size:2rem;">🔑</span>
-        <div style="font-size:1.1rem;font-weight:800;color:#1a1a1a;margin-top:6px;">Recover Your Access</div>
-        <div style="font-size:0.83rem;color:#666;margin-top:4px;">Enter the email you used when you subscribed and we'll restore your account instantly — no payment needed.</div>
-      </div>
-      <input id="recovery-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid #0d9488;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
-      <div id="recovery-msg" style="font-size:0.82rem;color:#c00;margin-bottom:8px;min-height:18px;text-align:center;"></div>
-      <button onclick="recoverAccess()" style="width:100%;background:#0d9488;color:#1e293b;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Restore My Subscription</button>
-      <button onclick="hideRecoveryModal()" style="width:100%;background:none;border:none;color:#999;margin-top:10px;cursor:pointer;font-size:0.85rem;">Cancel</button>
-    </div>
-  </div>
-  <div class="whats-new-toast" id="whats-new-toast">
-    <span class="toast-close" onclick="dismissToast()">✕</span>
-    <div class="toast-title">🆕 What's New</div>
-    <div id="whats-new-msg"></div>
-  </div>
-
-  <!-- ── DISCLAIMER / LIABILITY AGREEMENT MODAL ── -->
-  <div id="disclaimer-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;overflow-y:auto;padding:20px;box-sizing:border-box;">
-    <div style="background:#fff;border-radius:16px;max-width:480px;margin:20px auto;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
-      <div style="text-align:center;margin-bottom:16px;">
-        <div style="font-size:2rem;">⚠️</div>
-        <div style="font-size:1.1rem;font-weight:800;color:#1e293b;margin-top:6px;">Safety Disclaimer &amp; Agreement</div>
-        <div style="font-size:0.75rem;color:#64748b;margin-top:4px;">Please read and agree before using The Paw Report</div>
-      </div>
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;font-size:0.8rem;line-height:1.7;color:#374151;max-height:280px;overflow-y:auto;margin-bottom:16px;">
-        <p style="font-weight:700;color:#dc2626;margin:0 0 8px;">📋 ESTIMATED TEMPERATURES — NOT GUARANTEED</p>
-        <p style="margin:0 0 10px;">The ground temperature readings provided by <strong>The Paw Report</strong> are <strong>ESTIMATES ONLY</strong>, calculated using air temperature data, UV index, wind speed, and surface type algorithms. Actual pavement and ground temperatures may differ significantly based on local conditions, shade, cloud cover, and other environmental factors.</p>
-        <p style="font-weight:700;color:#dc2626;margin:0 0 8px;">⚠️ LIMITATION OF LIABILITY</p>
-        <p style="margin:0 0 10px;"><strong>The Paw Report, its owners, and its developers</strong> are <strong>NOT responsible or liable</strong> for any injury, harm, burns, illness, or death to any pet or person resulting from reliance on the temperature estimates or safety ratings provided by this application.</p>
-        <p style="font-weight:700;color:#1e293b;margin:0 0 8px;">🖐️ ALWAYS USE THE 7-SECOND HAND TEST</p>
-        <p style="margin:0 0 10px;">Before every walk, place the back of your hand flat on the pavement for 7 seconds. If you cannot hold it comfortably, it is <strong>too hot for your dog's paws</strong>. This manual check is <strong>always the final word</strong> — the app is a guide only.</p>
-        <p style="font-weight:700;color:#1e293b;margin:0 0 8px;">✅ YOUR RESPONSIBILITY</p>
-        <p style="margin:0;">By using this app, you agree that <strong>you are solely responsible</strong> for your pet's safety. You will not hold The Paw Report or its creators liable for any damages arising from your use of this application.</p>
-        <p style="font-weight:700;color:#1e293b;margin:8px 0 8px;">🌈 EDGE LIGHTING — DISPLAY DISCLAIMER</p>
-        <p style="margin:0;">The coloured border (edge lighting) displayed around the screen is a <strong>visual aid only</strong>. Its appearance — including brightness, colour accuracy, and visibility — may vary significantly depending on your device model, screen settings, brightness level, or power-saving mode. <strong>Edge lighting must not be relied upon as your sole safety indicator.</strong> Always read the temperature value and safety rating text shown on screen, and perform the 7-second hand test before every walk.</p>
-      </div>
-      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:16px;font-size:0.82rem;color:#374151;line-height:1.5;">
-        <input type="checkbox" id="disclaimer-checkbox" onchange="toggleDisclaimerBtn()" style="width:18px;height:18px;margin-top:2px;accent-color:#0d9488;flex-shrink:0;">
-        <span>I have read and understood the disclaimer above. I agree that ground temperatures are estimates only, that edge lighting is a visual aid and may vary by device, and I accept full responsibility for my pet's safety. I will not hold The Paw Report, its owners, or its developers liable for any injury or harm.</span>
-      </label>
-      <button id="disclaimer-agree-btn" onclick="agreeDisclaimer()" disabled style="width:100%;padding:14px;border-radius:10px;border:none;background:#94a3b8;color:#fff;font-size:0.95rem;font-weight:700;cursor:not-allowed;transition:all 0.2s;">
-        ✅ I Agree — Continue to App
-      </button>
-      <p style="text-align:center;font-size:0.7rem;color:#94a3b8;margin-top:10px;">Your agreement is recorded with your email and timestamp for your protection and ours.</p>
-    </div>
-  </div>
 
 
-</body>
-</html>
