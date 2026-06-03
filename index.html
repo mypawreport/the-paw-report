@@ -1687,8 +1687,28 @@ function getStatusColor(status) {
   return map[status] || '#0d9488';
 }
 function sendDangerNotification(msg) {
-  if (notificationsEnabled && Notification.permission === 'granted') { playBarkSound(); const notifColor = lastPawData ? getStatusColor(lastPawData.status) : '#0d9488'; navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 Paw Report Alert', { body: msg, icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png', vibrate: [200, 100, 200], data: { color: notifColor } })); };
+  if (notificationsEnabled && Notification.permission === 'granted') {
+    // Play bark immediately (works if app is in foreground)
+    playBarkSound();
+    window._pendingBarkOnFocus = true; // Also bark when user taps notification and app focuses
+    const notifColor = lastPawData ? getStatusColor(lastPawData.status) : '#0d9488';
+    navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 Paw Report Alert', {
+      body: msg,
+      icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png',
+      badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png',
+      vibrate: [200, 100, 200],
+      silent: false,
+      data: { color: notifColor }
+    }));
+  }
 }
+// Bark when user taps the notification and app comes to foreground
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && window._pendingBarkOnFocus) {
+    window._pendingBarkOnFocus = false;
+    setTimeout(playBarkSound, 200); // slight delay so audio context is ready
+  }
+});
 
 function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b.dataset.size === size)); }
 function selectSize(size, el) {
@@ -2178,7 +2198,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v74';
+const APP_VERSION = 'v75';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2268,20 +2288,34 @@ function toggleTips() {
 
 function playBarkSound() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    function bark(startTime) {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(220, startTime);
-      osc.frequency.exponentialRampToValueAtTime(440, startTime + 0.06);
-      osc.frequency.exponentialRampToValueAtTime(180, startTime + 0.15);
-      gain.gain.setValueAtTime(0.6, startTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
-      osc.start(startTime); osc.stop(startTime + 0.2);
+    // Primary: use real WAV audio file
+    const audio = new Audio('https://mypawreport.github.io/the-paw-report/bark.wav');
+    audio.volume = 1.0;
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Fallback: Web Audio API synthesis
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          if (ctx.state === 'suspended') ctx.resume();
+          function barkTone(startTime) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, startTime);
+            osc.frequency.exponentialRampToValueAtTime(440, startTime + 0.06);
+            osc.frequency.exponentialRampToValueAtTime(180, startTime + 0.15);
+            gain.gain.setValueAtTime(0.6, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+            osc.start(startTime); osc.stop(startTime + 0.2);
+          }
+          barkTone(ctx.currentTime);
+          barkTone(ctx.currentTime + 0.28);
+          barkTone(ctx.currentTime + 0.52);
+        } catch(e2) {}
+      });
     }
-    bark(ctx.currentTime); bark(ctx.currentTime + 0.28); bark(ctx.currentTime + 0.52);
   } catch(e) {}
 }
 
@@ -2428,7 +2462,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=74').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=75').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
