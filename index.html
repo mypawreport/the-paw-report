@@ -1927,7 +1927,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v57';
+const APP_VERSION = 'v58';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2180,7 +2180,7 @@ function agreeDisclaimer() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=57').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=58').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2403,10 +2403,12 @@ function showToast(msg, duration) {
         <p style="margin:0 0 10px;">Before every walk, place the back of your hand flat on the pavement for 7 seconds. If you cannot hold it comfortably, it is <strong>too hot for your dog's paws</strong>. This manual check is <strong>always the final word</strong> — the app is a guide only.</p>
         <p style="font-weight:700;color:#1e293b;margin:0 0 8px;">✅ YOUR RESPONSIBILITY</p>
         <p style="margin:0;">By using this app, you agree that <strong>you are solely responsible</strong> for your pet's safety. You will not hold The Paw Report or its creators liable for any damages arising from your use of this application.</p>
+        <p style="font-weight:700;color:#1e293b;margin:8px 0 8px;">🌈 EDGE LIGHTING — DISPLAY DISCLAIMER</p>
+        <p style="margin:0;">The coloured border (edge lighting) displayed around the screen is a <strong>visual aid only</strong>. Its appearance — including brightness, colour accuracy, and visibility — may vary significantly depending on your device model, screen settings, brightness level, or power-saving mode. <strong>Edge lighting must not be relied upon as your sole safety indicator.</strong> Always read the temperature value and safety rating text shown on screen, and perform the 7-second hand test before every walk.</p>
       </div>
       <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:16px;font-size:0.82rem;color:#374151;line-height:1.5;">
         <input type="checkbox" id="disclaimer-checkbox" onchange="toggleDisclaimerBtn()" style="width:18px;height:18px;margin-top:2px;accent-color:#0d9488;flex-shrink:0;">
-        <span>I have read and understood the disclaimer above. I agree that ground temperatures are estimates only, and I accept full responsibility for my pet's safety. I will not hold The Paw Report, its owners, or its developers liable for any injury or harm.</span>
+        <span>I have read and understood the disclaimer above. I agree that ground temperatures are estimates only, that edge lighting is a visual aid and may vary by device, and I accept full responsibility for my pet's safety. I will not hold The Paw Report, its owners, or its developers liable for any injury or harm.</span>
       </label>
       <button id="disclaimer-agree-btn" onclick="agreeDisclaimer()" disabled style="width:100%;padding:14px;border-radius:10px;border:none;background:#94a3b8;color:#fff;font-size:0.95rem;font-weight:700;cursor:not-allowed;transition:all 0.2s;">
         ✅ I Agree — Continue to App
