@@ -858,6 +858,17 @@
 
 <div id="tempWheelContainer" style="display:none;"></div>
 <script>
+function getReferralCount() {
+  return parseInt(localStorage.getItem('paw_referral_count') || '0');
+}
+function incrementReferralCount() {
+  var c = getReferralCount() + 1;
+  localStorage.setItem('paw_referral_count', c);
+}
+
+// ═══════════════════════════════════════════════════════
+// ── REFERRAL COUNT in profile ──
+
 const APP_ID = '6a1c6fbdd48b351a9eb7455e';
 let currentUser = null, userPrefs = null;
 let isTracking = false, trackingInterval = null;
@@ -1193,7 +1204,7 @@ function toggleAuthMode() {
   document.getElementById('auth-icon').textContent = isSignUpMode ? '🐾' : '🔐';
   document.getElementById('auth-error').style.display = 'none';
 }
-async function submitAuth() {
+async async function submitAuth() {
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
   const name = document.getElementById('auth-name').value.trim();
@@ -1994,7 +2005,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v62';
+const APP_VERSION = 'v63';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2301,7 +2312,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=62').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=63').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2737,15 +2748,8 @@ function promptInstallApp() {
 // Also update the beforeinstallprompt handler to NOT hide the button
 // (button is always shown now; we just use the prompt if available)
 
+
 // ═══════════════════════════════════════════════════════
-// ── REFERRAL COUNT in profile ──
-// ═══════════════════════════════════════════════════════
-function getReferralCount() {
-  return parseInt(localStorage.getItem('paw_referral_count') || '0');
-}
-function incrementReferralCount() {
-  var c = getReferralCount() + 1;
-  localStorage.setItem('paw_referral_count', c);
-}
+
 
 
