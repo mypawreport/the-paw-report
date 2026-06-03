@@ -1780,9 +1780,9 @@ const PAW_RATING_INFO = {
   'Extreme Cold': { emoji: '🥶', color: '#7b68ee', message: 'Too cold! Ice and salt can hurt paws.' },
   'Chilly':       { emoji: '❄️', color: '#5bc0de', message: 'Chilly — short walks OK, watch for ice.' },
   'Safe':         { emoji: '✅', color: '#5cb85c', message: 'Great walking conditions!' },
-  'Warm':         { emoji: '🌡️', color: '#f0ad4e', message: 'Warm — keep walks short and bring water.' },
-  'Hot':          { emoji: '🟠', color: '#F5A623', message: 'Hot! Limit time on pavement.' },
-  'Danger':       { emoji: '🔴', color: '#d9534f', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
+  'Warm':         { emoji: '⚠️', color: '#f0ad4e', message: 'Warm — keep walks short and bring water.' },
+  'Hot':          { emoji: '🔶', color: '#F5A623', message: 'Hot! Limit time on pavement.' },
+  'Danger':       { emoji: '🚨', color: '#d9534f', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
   'Fry Zone':     { emoji: '🔥', color: '#8b0000', message: 'Fry Zone! Stay off pavement entirely.' }
 };
 
@@ -2099,7 +2099,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v67';
+const APP_VERSION = 'v68';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2349,7 +2349,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=67').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=68').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
