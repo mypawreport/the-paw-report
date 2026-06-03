@@ -1155,6 +1155,8 @@ async function submitAuth() {
 function showAuthError(msg) { const el = document.getElementById('auth-error'); el.textContent = msg; el.style.display = 'block'; }
 
 async function onLoggedIn() {
+  // Show disclaimer if not yet agreed
+  showDisclaimerIfNeeded(currentUser?.email || '', currentUser?.full_name || '');
   try {
     userPrefs = getPrefs(currentUser.id);
   } catch(_) { userPrefs = null; }
@@ -1870,8 +1872,9 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v39';
+const APP_VERSION = 'v52';
 const WHATS_NEW = {
+  'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
   'v38': '🔐 Stay logged in — you won\'t need to sign in again unless you sign out.',
   'v37': '💾 Your profile name now saves permanently across logins.'
@@ -2048,12 +2051,81 @@ function playBarkSound() {
     } catch(e) { console.warn('initTheme error:', e); }
   }
 
-  </script>
+  
+// ── DISCLAIMER AGREEMENT ──
+function showDisclaimerIfNeeded(userEmail, userName) {
+  const key = 'paw_disclaimer_agreed_' + (userEmail || 'guest');
+  if (localStorage.getItem(key)) return; // already agreed
+  // Show modal
+  document.getElementById('disclaimer-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  // Store email for when they agree
+  document.getElementById('disclaimer-modal').dataset.email = userEmail || '';
+  document.getElementById('disclaimer-modal').dataset.name = userName || '';
+}
+
+function toggleDisclaimerBtn() {
+  const checked = document.getElementById('disclaimer-checkbox').checked;
+  const btn = document.getElementById('disclaimer-agree-btn');
+  btn.disabled = !checked;
+  btn.style.background = checked ? '#0d9488' : '#94a3b8';
+  btn.style.cursor = checked ? 'pointer' : 'not-allowed';
+}
+
+function agreeDisclaimer() {
+  const modal = document.getElementById('disclaimer-modal');
+  const email = modal.dataset.email || '';
+  const name = modal.dataset.name || '';
+  const agreedAt = new Date().toISOString();
+  const appVersion = 'v52';
+
+  // Save locally
+  const key = 'paw_disclaimer_agreed_' + (email || 'guest');
+  localStorage.setItem(key, agreedAt);
+
+  // Save to backend database
+  const payload = {
+    email: email,
+    full_name: name,
+    agreed_at: agreedAt,
+    app_version: appVersion,
+    agreement_text: 'I have read and understood the disclaimer. I agree ground temperatures are estimates only. I accept full responsibility for my pets safety. I will not hold The Paw Report liable for any injury or harm.'
+  };
+
+  // Store in paw_users for redundancy
+  try {
+    const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+    if (email && users[email]) {
+      users[email].disclaimer_agreed = agreedAt;
+      users[email].disclaimer_version = appVersion;
+      localStorage.setItem('paw_users', JSON.stringify(users));
+    }
+    // Also store in a separate agreements log
+    const agreements = JSON.parse(localStorage.getItem('paw_agreements') || '[]');
+    agreements.push(payload);
+    localStorage.setItem('paw_agreements', JSON.stringify(agreements));
+  } catch(_) {}
+
+  // Send to backend (best effort)
+  fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/saveDisclaimerAgreement', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {
+    // Backend unavailable — already saved locally above
+  });
+
+  // Close modal
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+</script>
 
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=51').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=52').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2240,6 +2312,35 @@ async function recoverAccess() {
     <span class="toast-close" onclick="dismissToast()">✕</span>
     <div class="toast-title">🆕 What's New</div>
     <div id="whats-new-msg"></div>
+  </div>
+
+  <!-- ── DISCLAIMER / LIABILITY AGREEMENT MODAL ── -->
+  <div id="disclaimer-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;overflow-y:auto;padding:20px;box-sizing:border-box;">
+    <div style="background:#fff;border-radius:16px;max-width:480px;margin:20px auto;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-size:2rem;">⚠️</div>
+        <div style="font-size:1.1rem;font-weight:800;color:#1e293b;margin-top:6px;">Safety Disclaimer &amp; Agreement</div>
+        <div style="font-size:0.75rem;color:#64748b;margin-top:4px;">Please read and agree before using The Paw Report</div>
+      </div>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;font-size:0.8rem;line-height:1.7;color:#374151;max-height:280px;overflow-y:auto;margin-bottom:16px;">
+        <p style="font-weight:700;color:#dc2626;margin:0 0 8px;">📋 ESTIMATED TEMPERATURES — NOT GUARANTEED</p>
+        <p style="margin:0 0 10px;">The ground temperature readings provided by <strong>The Paw Report</strong> are <strong>ESTIMATES ONLY</strong>, calculated using air temperature data, UV index, wind speed, and surface type algorithms. Actual pavement and ground temperatures may differ significantly based on local conditions, shade, cloud cover, and other environmental factors.</p>
+        <p style="font-weight:700;color:#dc2626;margin:0 0 8px;">⚠️ LIMITATION OF LIABILITY</p>
+        <p style="margin:0 0 10px;"><strong>The Paw Report, its owner Samantha Jones, and its developers</strong> are <strong>NOT responsible or liable</strong> for any injury, harm, burns, illness, or death to any pet or person resulting from reliance on the temperature estimates or safety ratings provided by this application.</p>
+        <p style="font-weight:700;color:#1e293b;margin:0 0 8px;">🖐️ ALWAYS USE THE 7-SECOND HAND TEST</p>
+        <p style="margin:0 0 10px;">Before every walk, place the back of your hand flat on the pavement for 7 seconds. If you cannot hold it comfortably, it is <strong>too hot for your dog's paws</strong>. This manual check is <strong>always the final word</strong> — the app is a guide only.</p>
+        <p style="font-weight:700;color:#1e293b;margin:0 0 8px;">✅ YOUR RESPONSIBILITY</p>
+        <p style="margin:0;">By using this app, you agree that <strong>you are solely responsible</strong> for your pet's safety. You will not hold The Paw Report or its creators liable for any damages arising from your use of this application.</p>
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:16px;font-size:0.82rem;color:#374151;line-height:1.5;">
+        <input type="checkbox" id="disclaimer-checkbox" onchange="toggleDisclaimerBtn()" style="width:18px;height:18px;margin-top:2px;accent-color:#0d9488;flex-shrink:0;">
+        <span>I have read and understood the disclaimer above. I agree that ground temperatures are estimates only, and I accept full responsibility for my pet's safety. I will not hold The Paw Report liable for any injury or harm.</span>
+      </label>
+      <button id="disclaimer-agree-btn" onclick="agreeDisclaimer()" disabled style="width:100%;padding:14px;border-radius:10px;border:none;background:#94a3b8;color:#fff;font-size:0.95rem;font-weight:700;cursor:not-allowed;transition:all 0.2s;">
+        ✅ I Agree — Continue to App
+      </button>
+      <p style="text-align:center;font-size:0.7rem;color:#94a3b8;margin-top:10px;">Your agreement is recorded with your email and timestamp for your protection and ours.</p>
+    </div>
   </div>
 </body>
 </html>
