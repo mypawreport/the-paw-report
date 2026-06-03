@@ -352,6 +352,15 @@
   body[data-theme="blush"]    { --accent: #db2777; --accent2: #f472b6; --glow: 219,39,119; }
   body[data-theme="frost"]    { --accent: #64748b; --accent2: #60a5fa; --glow: 37,99,235; background:#0f172a; }
 
+  
+    /* Avatar editor */
+    .avatar-picker-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:10px; }
+    .avatar-option { width:44px; height:44px; border-radius:50%; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; transition:all 0.2s; background:#f1f5f9; }
+    .avatar-option:hover, .avatar-option.selected { border-color:#0d9488; background:#e6fffa; transform:scale(1.1); }
+    .avatar-option.color-opt { font-size:0; }
+    .avatar-edit-section { text-align:center; }
+    .avatar-large { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,#0d9488,#059669); display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 8px; border:3px solid #e2e8f0; cursor:pointer; transition:all 0.2s; }
+    .avatar-large:hover { border-color:#0d9488; transform:scale(1.05); }
   </style>
 </head>
 <body>
@@ -759,6 +768,27 @@
         <div class="card-title">👤 Your Profile</div>
         <div class="profile-section" id="profile-display"></div>
         <button class="btn btn-secondary" onclick="showEditProfile()" style="margin-top:10px;font-size:0.82rem;padding:10px">✏️ Edit Profile</button>
+        <div style="margin-top:14px;border-top:1px solid #e2e8f0;padding-top:12px;" class="avatar-edit-section">
+          <div style="font-size:0.78rem;color:#64748b;margin-bottom:6px;font-weight:600;">🎨 Avatar</div>
+          <div class="avatar-large" id="avatar-large-preview" onclick="toggleAvatarPicker()">?</div>
+          <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Tap to change</div>
+          <div class="avatar-picker-row" id="avatar-picker" style="display:none;">
+            <div class="avatar-option" onclick="setAvatar('emoji','🐶')" title="Dog">🐶</div>
+            <div class="avatar-option" onclick="setAvatar('emoji','🐾')" title="Paws">🐾</div>
+            <div class="avatar-option" onclick="setAvatar('emoji','🐕')" title="Dog 2">🐕</div>
+            <div class="avatar-option" onclick="setAvatar('emoji','🦮')" title="Guide Dog">🦮</div>
+            <div class="avatar-option" onclick="setAvatar('emoji','🐩')" title="Poodle">🐩</div>
+            <div class="avatar-option" onclick="setAvatar('emoji','🐈')" title="Cat">🐈</div>
+            <div class="avatar-option" onclick="setAvatar('emoji','⭐')" title="Star">⭐</div>
+            <div class="avatar-option" onclick="setAvatar('emoji','🌿')" title="Nature">🌿</div>
+            <div class="avatar-option color-opt" onclick="setAvatar('color','#0d9488')" style="background:#0d9488;" title="Teal"></div>
+            <div class="avatar-option color-opt" onclick="setAvatar('color','#8b5cf6')" style="background:#8b5cf6;" title="Purple"></div>
+            <div class="avatar-option color-opt" onclick="setAvatar('color','#f59e0b')" style="background:#f59e0b;" title="Amber"></div>
+            <div class="avatar-option color-opt" onclick="setAvatar('color','#ef4444')" style="background:#ef4444;" title="Red"></div>
+            <div class="avatar-option color-opt" onclick="setAvatar('color','#3b82f6')" style="background:#3b82f6;" title="Blue"></div>
+            <div class="avatar-option color-opt" onclick="setAvatar('color','#ec4899')" style="background:#ec4899;" title="Pink"></div>
+          </div>
+        </div>
       </div>
 
       <!-- 💳 Subscription -->
@@ -1293,6 +1323,7 @@ async function onLoggedIn() {
     localStorage.setItem('paw_current_user', JSON.stringify(currentUser));
   }
   updateUserBar();
+  renderAvatar();
   if (!userPrefs) {
     showScreen('setup');
   } else if (currentTier !== 'free') {
@@ -1315,7 +1346,7 @@ function updateUserBar() {
   const name = currentUser.full_name || currentUser.email.split('@')[0];
   document.getElementById('user-name-display').textContent = name;
   document.getElementById('user-email-display').textContent = currentUser.email;
-  document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
+  renderAvatar(); // renders both small header avatar and large profile preview
   const tierEl = document.getElementById('tier-badge-display');
   tierEl.textContent = currentTier.charAt(0).toUpperCase()+currentTier.slice(1);
   tierEl.className = 'tier-badge tier-'+currentTier;
@@ -1850,15 +1881,19 @@ function updateDynamicColors(rating) {
   const textColor = textMap[tod] || textMap['day'];
   // text color stays light always
 
-  // Pulse dot
+  // Pulse dot — activate and color it based on current rating
   const pulse = document.getElementById('pulse-dot');
-  if (pulse && !pulse.classList.contains('inactive')) {
+  if (pulse) {
+    pulse.classList.remove('inactive');
     pulse.style.background = color;
     pulse.style.boxShadow = '0 0 8px ' + color;
   }
-  // Status text
+  // Status text — show rating name when report is live
   const statusText = document.getElementById('status-text');
-  if (statusText) statusText.style.color = color;
+  if (statusText) {
+    statusText.textContent = rating;
+    statusText.style.color = color;
+  }
   // Notif bell icon glow
   const notifIcon = document.querySelector('#notif-banner .notif-icon');
   if (notifIcon) notifIcon.style.filter = 'drop-shadow(0 0 8px ' + color + ')';
@@ -2056,7 +2091,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v64';
+const APP_VERSION = 'v65';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2306,7 +2341,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=64').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=65').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
