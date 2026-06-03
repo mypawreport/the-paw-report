@@ -1282,7 +1282,23 @@ async function saveEditProfile(modal) {
     currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); updateUserBar();
     const m = document.getElementById('edit-profile-modal'); if(m) m.remove();
     showToast('✅ Profile saved!');
-  } catch(e) { alert('Could not save. Try again.'); }
+  } catch(e) {
+    // Save failed silently — try a direct localStorage fallback
+    try {
+      const fallback = JSON.parse(localStorage.getItem('pawreport_user') || '{}');
+      fallback.name = document.getElementById('profile-name-input')?.value?.trim() || fallback.name;
+      localStorage.setItem('pawreport_user', JSON.stringify(fallback));
+      const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+      if (currentUser?.email && users[currentUser.email]) {
+        users[currentUser.email].name = fallback.name;
+        localStorage.setItem('paw_users', JSON.stringify(users));
+      }
+      const m2 = document.getElementById('edit-profile-modal'); if(m2) m2.remove();
+      showToast('✅ Profile saved!');
+    } catch(_) {
+      showToast('⚠️ Could not save — please try again.');
+    }
+  }
 }
 
 async function logout() {
@@ -1881,7 +1897,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v53';
+const APP_VERSION = 'v54';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2134,7 +2150,7 @@ function agreeDisclaimer() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=53').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=54').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
