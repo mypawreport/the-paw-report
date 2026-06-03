@@ -586,7 +586,7 @@
           <div class="rating-message" id="rating-message"></div>
         </div>
         <div class="paw-scale">
-          <div class="scale-item scale-toocold" id="scale-extremecold">🥶 Extreme</div>
+          <div class="scale-item scale-toocold" id="scale-extremecold">🧊 Extreme</div>
           <div class="scale-item scale-cold" id="scale-chilly">🌨️ Chilly</div>
           <div class="scale-item scale-safe" id="scale-safe">🟢 Safe</div>
           <div class="scale-item scale-warm" id="scale-warm">🟡 Warm</div>
@@ -632,6 +632,25 @@
             Place the <strong>back of your hand</strong> flat on the pavement. If you can't comfortably hold it there for <strong>7 seconds</strong> — it's too hot for your dog to walk on.
           </div>
           <div style="font-size:0.72rem;color:#94a3b8;margin-top:8px;font-style:italic;">Ground temp estimates are a guide. The hand test is always the final word. 🐾</div>
+        </div>
+
+        <!-- Cold weather tips -->
+        <div id="cold-field-guide" style="display:none;background:rgba(123,104,238,0.08);border:1px solid rgba(123,104,238,0.25);border-radius:14px;padding:14px 16px;margin-top:10px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="font-size:1.5rem;">🧤</span>
+            <div>
+              <div style="font-size:0.78rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:1px;">Cold Weather Paw Guide</div>
+              <div style="font-size:0.68rem;color:#94a3b8;margin-top:1px;">Keep paws safe in cold conditions</div>
+            </div>
+          </div>
+          <div style="font-size:0.82rem;line-height:1.7;color:#374151;">
+            🧊 <strong>The Cold Hand Test:</strong> Press the back of your hand to the pavement — if it feels uncomfortably cold within 7 seconds, it's too cold for bare paws.<br><br>
+            🧂 <strong>Salt & Ice Melt:</strong> Road salts and chemical de-icers can burn and irritate paw pads. Always rinse paws after winter walks.<br><br>
+            🐾 <strong>Paw Balm:</strong> Apply a protective balm before walks to create a barrier against ice, salt and frost.<br><br>
+            👟 <strong>Dog Boots:</strong> In Extreme Cold or icy conditions, boots are the safest option — they also protect against salt ingestion from licking paws.<br><br>
+            ⏱️ <strong>Keep It Short:</strong> In Extreme Cold, limit walks to 5–10 minutes max and watch for limping or paw lifting — signs your dog is too cold.
+          </div>
+          <div style="font-size:0.72rem;color:#94a3b8;margin-top:8px;font-style:italic;">Cold ground temps are estimates. The hand test is always the final word. 🐾</div>
         </div>
       </div>
 
@@ -1753,6 +1772,23 @@ function applyPawUIWithSurface(d) {
   adjusted.emoji = ratingInfo.emoji;
   adjusted.color = ratingInfo.color;
   adjusted.message = ratingInfo.message;
+
+  // Cold tips banner
+  const coldTips = {
+    'Extreme Cold': '🧊 Danger: Ice, frost & road salt can chemically burn your dog\'s paws. Boots or paw balm strongly recommended. Limit exposure to 5 minutes max.',
+    'Chilly':       '🌨️ Cold alert: Watch for icy patches, puddles and rock salt on pavements. Rinse paws after walks to remove salt residue.'
+  };
+  adjusted.coldTip = coldTips[adjusted.rating] || null;
+
+  // Hydration/heat tips banner (hot side)
+  const hotTips = {
+    'Warm':     '💧 Bring water — dogs can overheat quickly on warm pavement. Take breaks in shade.',
+    'Hot':      '🔶 Hot pavement warning! Wet the pavement first — if it dries in under 30 sec, it\'s too hot. Carry water and take shaded routes.',
+    'Danger':   '🚨 Dangerous heat! Pavement can cause burns in under 60 seconds. Stick to grass, carry water, watch for heavy panting.',
+    'Fry Zone': '🔥 Fry Zone — do NOT walk on pavement. Grass or indoor exercise only. Risk of serious burns.'
+  };
+  adjusted.hydrationMsg = hotTips[adjusted.rating] || null;
+
   updatePawUI(adjusted);
   // Fire tray update if enabled
   if (trayWidgetEnabled) showTrayNotification();
@@ -1777,8 +1813,8 @@ function getRatingFromTemp(tempF, size) {
 }
 
 const PAW_RATING_INFO = {
-  'Extreme Cold': { emoji: '🥶', color: '#7b68ee', message: 'Too cold! Ice and salt can hurt paws.' },
-  'Chilly':       { emoji: '❄️', color: '#5bc0de', message: 'Chilly — short walks OK, watch for ice.' },
+  'Extreme Cold': { emoji: '🧊', color: '#7b68ee', message: 'Dangerously cold! Ice, salt & frost can burn paws. Keep walks under 5 min.' },
+  'Chilly':       { emoji: '🌨️', color: '#5bc0de', message: 'Chilly — short walks OK. Check for ice patches & salt on pavements.' },
   'Safe':         { emoji: '✅', color: '#5cb85c', message: 'Great walking conditions!' },
   'Warm':         { emoji: '🌶️', color: '#f0ad4e', message: 'Warm — keep walks short and bring water.' },
   'Hot':          { emoji: '🔶', color: '#F5A623', message: 'Hot! Limit time on pavement.' },
@@ -1932,6 +1968,9 @@ function updatePawUI(d) {
   const ha = document.getElementById('hydration-alert');
   if(d.hydrationMsg){ ha.textContent=d.hydrationMsg; ha.style.display='block'; } else ha.style.display='none';
   document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  // Show cold field guide for cold ratings
+  var cfg = document.getElementById('cold-field-guide');
+  if (cfg) cfg.style.display = (d.rating === 'Extreme Cold' || d.rating === 'Chilly') ? 'block' : 'none';
   // Humidity
   var humEl = document.getElementById('humidity-display');
   if (humEl) humEl.textContent = d.humidity != null ? d.humidity + '%' : '--%';
@@ -1939,7 +1978,13 @@ function updatePawUI(d) {
   if (humAlert) { if (d.humidityWarning) { humAlert.textContent = d.humidityWarning; humAlert.style.display = 'block'; } else humAlert.style.display = 'none'; }
   // Danger notification
   updateDynamicColors(d.rating);
-  if (['Danger','Fry Zone','Extreme Cold'].includes(d.rating)) sendDangerNotification(`⚠️ ${d.rating}: ${d.message}`);
+  const dangerRatings = ['Danger','Fry Zone','Extreme Cold'];
+  const coldRatings = ['Extreme Cold','Chilly'];
+  if (dangerRatings.includes(d.rating)) {
+    sendDangerNotification('⚠️ ' + d.rating + ': ' + d.message);
+  } else if (coldRatings.includes(d.rating)) {
+    sendDangerNotification('🧊 ' + d.rating + ' conditions — ' + d.message);
+  }
 }
 async function fetchPawAndUpdate(lat, lon) {
   checkRateAppPrompt();
@@ -2099,7 +2144,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v69';
+const APP_VERSION = 'v70';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2349,7 +2394,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=69').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=70').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
