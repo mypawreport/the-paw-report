@@ -1799,10 +1799,10 @@ function applyPawUIWithSurface(d) {
 
 function getRatingFromTemp(tempF, size) {
   const thresholds = size === 'small'
-    ? { extremecold: 25, chilly: 40, safe: 75, warm: 85, danger: 100, fry: 115 }
+    ? { extremecold: 25, chilly: 40, safe: 72, warm: 82, danger: 95, fry: 110 }
     : size === 'large'
-    ? { extremecold: 20, chilly: 35, safe: 80, warm: 90, danger: 105, fry: 120 }
-    : { extremecold: 22, chilly: 38, safe: 77, warm: 87, danger: 103, fry: 118 };
+    ? { extremecold: 20, chilly: 35, safe: 75, warm: 84, danger: 98, fry: 113 }
+    : { extremecold: 22, chilly: 38, safe: 74, warm: 83, danger: 97, fry: 112 };
   if (tempF <= thresholds.extremecold) return 'Extreme Cold';
   if (tempF <= thresholds.chilly) return 'Chilly';
   if (tempF <= thresholds.safe) return 'Safe';
@@ -2144,7 +2144,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v70';
+const APP_VERSION = 'v71';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2394,7 +2394,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=70').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=71').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
