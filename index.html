@@ -2198,7 +2198,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v75';
+const APP_VERSION = 'v76';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2288,34 +2288,9 @@ function toggleTips() {
 
 function playBarkSound() {
   try {
-    // Primary: use real WAV audio file
-    const audio = new Audio('https://mypawreport.github.io/the-paw-report/bark.wav');
+    const audio = new Audio('https://mypawreport.github.io/the-paw-report/bark.mp3');
     audio.volume = 1.0;
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        // Fallback: Web Audio API synthesis
-        try {
-          const ctx = new (window.AudioContext || window.webkitAudioContext)();
-          if (ctx.state === 'suspended') ctx.resume();
-          function barkTone(startTime) {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(220, startTime);
-            osc.frequency.exponentialRampToValueAtTime(440, startTime + 0.06);
-            osc.frequency.exponentialRampToValueAtTime(180, startTime + 0.15);
-            gain.gain.setValueAtTime(0.6, startTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
-            osc.start(startTime); osc.stop(startTime + 0.2);
-          }
-          barkTone(ctx.currentTime);
-          barkTone(ctx.currentTime + 0.28);
-          barkTone(ctx.currentTime + 0.52);
-        } catch(e2) {}
-      });
-    }
+    audio.play().catch(() => {});
   } catch(e) {}
 }
 
@@ -2462,7 +2437,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=75').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=76').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
