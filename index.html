@@ -2198,7 +2198,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v76';
+const APP_VERSION = 'v77';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2437,7 +2437,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=76').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=77').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
