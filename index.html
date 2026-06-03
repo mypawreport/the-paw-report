@@ -824,6 +824,19 @@
         <div id="theme-locked-msg" style="display:none;font-size:0.72rem;color:#64748b;margin-top:10px;text-align:center;">🔒 Upgrade to Silver or Gold to unlock more themes</div>
       </div>
 
+      <!-- Add to Home Screen -->
+      <div class="card" id="install-app-card" style="text-align:center;">
+        <div class="card-title">📲 Install App</div>
+        <div style="font-size:0.82rem;color:#475569;margin-bottom:10px;">Add The Paw Report to your home screen for instant access — works like a native app!</div>
+        <button id="install-app-btn" onclick="promptInstallApp()" class="btn btn-secondary" style="font-size:0.85rem;padding:11px;display:none;">📲 Add to Home Screen</button>
+        <div style="font-size:0.75rem;color:#94a3b8;margin-top:8px;">On iPhone: tap Share → "Add to Home Screen"</div>
+      </div>
+
+      <!-- Copyright Footer -->
+      <div style="text-align:center;font-size:0.68rem;color:#94a3b8;padding:4px 16px 12px;">
+        © 2026 The Paw Report · <a href="legal.html" style="color:#0d9488;text-decoration:none;">Terms & Privacy</a> · <a href="mailto:mypawreport@gmail.com" style="color:#0d9488;text-decoration:none;">Contact</a>
+      </div>
+
       <!-- Sign out -->
       <button class="btn btn-secondary" onclick="logout()" style="margin-top:4px;font-size:0.85rem;padding:11px;color:#ef4444;border-color:#fecaca;">🚪 Sign Out</button>
 
@@ -1974,7 +1987,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v59';
+const APP_VERSION = 'v60';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2227,7 +2240,7 @@ function agreeDisclaimer() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=59').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=60').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2709,18 +2722,7 @@ function incrementReferralCount() {
       <p style="text-align:center;font-size:0.7rem;color:#94a3b8;margin-top:10px;">Your agreement is recorded with your email and timestamp for your protection and ours.</p>
     </div>
   </div>
-      <!-- Add to Home Screen -->
-      <div class="card" id="install-app-card" style="text-align:center;">
-        <div class="card-title">📲 Install App</div>
-        <div style="font-size:0.82rem;color:#475569;margin-bottom:10px;">Add The Paw Report to your home screen for instant access — works like a native app!</div>
-        <button id="install-app-btn" onclick="promptInstallApp()" class="btn btn-secondary" style="font-size:0.85rem;padding:11px;display:none;">📲 Add to Home Screen</button>
-        <div style="font-size:0.75rem;color:#94a3b8;margin-top:8px;">On iPhone: tap Share → "Add to Home Screen"</div>
-      </div>
 
-      <!-- Copyright Footer -->
-      <div style="text-align:center;font-size:0.68rem;color:#94a3b8;padding:4px 16px 12px;">
-        © 2026 The Paw Report · <a href="legal.html" style="color:#0d9488;text-decoration:none;">Terms & Privacy</a> · <a href="mailto:mypawreport@gmail.com" style="color:#0d9488;text-decoration:none;">Contact</a>
-      </div>
 
 </body>
 </html>
