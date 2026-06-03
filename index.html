@@ -364,6 +364,14 @@
   </style>
 </head>
 <body>
+  <!-- ── AUTO-UPDATE BANNER ── -->
+  <div id="update-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#0d9488;color:#fff;text-align:center;padding:10px 16px;font-size:0.88rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;animation:slideDown 0.3s ease;" onclick="applyUpdate()">
+    🔄 Update available — tap to refresh
+  </div>
+  <style>
+    @keyframes slideDown { from { transform:translateY(-100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
+  </style>
+
 <div class="edge-glow" id="edgeGlow"></div>
   <div class="container">
   <div class="header">
@@ -2091,7 +2099,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v66';
+const APP_VERSION = 'v67';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2341,7 +2349,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=66').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=67').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2835,6 +2843,58 @@ function renderAvatar() {
     if (largeAvatar) { largeAvatar.textContent = initial; largeAvatar.style.background = 'linear-gradient(135deg,#0d9488,#059669)'; }
   }
 }
+
+
+// ═══════════════════════════════════════════════════════
+// ── AUTO-UPDATE (Service Worker) ──
+var _swRegistration = null;
+
+function applyUpdate() {
+  if (_swRegistration && _swRegistration.waiting) {
+    _swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+  } else {
+    window.location.reload();
+  }
+}
+
+function checkForUpdate() {
+  if (!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.getRegistration().then(function(reg) {
+    if (!reg) return;
+    _swRegistration = reg;
+    // Already a waiting SW → show banner immediately
+    if (reg.waiting) {
+      document.getElementById('update-banner').style.display = 'block';
+    }
+    // New SW found while page is open
+    reg.addEventListener('updatefound', function() {
+      var newWorker = reg.installing;
+      if (!newWorker) return;
+      newWorker.addEventListener('statechange', function() {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          _swRegistration = reg;
+          document.getElementById('update-banner').style.display = 'block';
+        }
+      });
+    });
+  });
+  // When new SW takes control, reload automatically
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    window.location.reload();
+  });
+}
+
+// Run check on load
+window.addEventListener('load', function() {
+  checkForUpdate();
+  // Also poll every 10 minutes while tab is open
+  setInterval(function() {
+    navigator.serviceWorker.getRegistration().then(function(reg) {
+      if (reg) reg.update();
+    });
+  }, 600000);
+});
+
 
 </script>
 
