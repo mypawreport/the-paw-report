@@ -1591,12 +1591,12 @@ const PAW_RATING_INFO = {
   'Chilly':       { emoji: '❄️', color: '#5bc0de', message: 'Chilly — short walks OK, watch for ice.' },
   'Safe':         { emoji: '✅', color: '#5cb85c', message: 'Great walking conditions!' },
   'Warm':         { emoji: '🌡️', color: '#f0ad4e', message: 'Warm — keep walks short and bring water.' },
-  'Hot':          { emoji: '🟠', color: '#0d9488', message: 'Hot! Limit time on pavement.' },
+  'Hot':          { emoji: '🟠', color: '#F5A623', message: 'Hot! Limit time on pavement.' },
   'Danger':       { emoji: '🔴', color: '#d9534f', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
   'Fry Zone':     { emoji: '🔥', color: '#8b0000', message: 'Fry Zone! Stay off pavement entirely.' }
 };
 
-const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Too Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Caution':'caution','Danger':'danger','Fry Zone':'fry'};
+const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Too Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Hot':'caution','Caution':'caution','Danger':'danger','Fry Zone':'fry'};
 function updatePawScale(rating) {
   ['extremecold','chilly','safe','warm','caution','danger','fry'].forEach(s => { const el=document.getElementById('scale-'+s); if(el) el.classList.remove('active'); });
   const k = PAW_SCALE_MAP[rating]; if(k){ const el=document.getElementById('scale-'+k); if(el) el.classList.add('active'); }
@@ -1899,7 +1899,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v55';
+const APP_VERSION = 'v56';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2152,7 +2152,7 @@ function agreeDisclaimer() {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=55').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=56').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2166,6 +2166,7 @@ const EDGE_COLORS = {
   'Safe':         { color: '#7ED321', shadow: '0 0 0 6px #7ED321, 0 0 0 14px rgba(126,211,33,0.5), inset 0 0 0 6px #7ED321, inset 0 0 0 14px rgba(126,211,33,0.35)' },
   'Warm':         { color: '#F8E71C', shadow: '0 0 0 6px #F8E71C, 0 0 0 14px rgba(248,231,28,0.5), inset 0 0 0 6px #F8E71C, inset 0 0 0 14px rgba(248,231,28,0.35)' },
   'Caution':      { color: '#F5A623', shadow: '0 0 0 6px #F5A623, 0 0 0 16px rgba(245,166,35,0.55), 0 0 0 28px rgba(208,2,27,0.25), inset 0 0 0 6px #F5A623, inset 0 0 0 16px rgba(245,166,35,0.3)' },
+  'Hot':          { color: '#F5A623', shadow: '0 0 0 6px #F5A623, 0 0 0 16px rgba(245,166,35,0.6), 0 0 0 28px rgba(245,100,0,0.25), inset 0 0 0 6px #F5A623, inset 0 0 0 16px rgba(245,166,35,0.35)' },
   'Danger':       { color: '#D0021B', shadow: '0 0 0 7px #D0021B, 0 0 0 18px rgba(208,2,27,0.6), 0 0 0 32px rgba(245,166,35,0.2), inset 0 0 0 7px #D0021B, inset 0 0 0 18px rgba(208,2,27,0.45)' },
   'Fry Zone':     { color: '#D0021B', shadow: '0 0 0 9px #D0021B, 0 0 0 20px rgba(208,2,27,0.65), inset 0 0 0 9px #D0021B, inset 0 0 0 20px rgba(208,2,27,0.55)' },
 };
