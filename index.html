@@ -375,12 +375,12 @@
 .setting-label{font-size:0.83rem;color:#334155;font-weight:500;}
 .setting-sublabel{font-size:0.72rem;color:#94a3b8;}
 .setting-badge{font-size:0.68rem;font-weight:700;background:#d97706;color:#fff;border-radius:4px;padding:2px 5px;margin-left:5px;vertical-align:middle;}
-.toggle-switch{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle-switch{position:relative;width:48px;height:26px;flex-shrink:0;}
 .toggle-switch input{opacity:0;width:0;height:0;}
-.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:22px;transition:.3s;}
-.toggle-slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
-.toggle-switch input:checked + .toggle-slider{background:var(--c-teal);}
-.toggle-switch input:checked + .toggle-slider:before{transform:translateX(18px);}</style>
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:26px;transition:.3s;}
+.toggle-slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
+.toggle-switch input:checked + .toggle-slider{background:#0d9488;}
+.toggle-switch input:checked + .toggle-slider:before{transform:translateX(22px);}</style>
 </head>
 <body>
   <!-- ── AUTO-UPDATE BANNER ── -->
@@ -2233,7 +2233,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v89';
+const APP_VERSION = 'v90';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2436,7 +2436,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=89').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=90').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2926,10 +2926,14 @@ function saveAlertSetting(key, val) {
 function loadAlertSettingToggles() {
   const s = getAlertSettings();
   const defaults = { weatherTips: true, hotCar: true, walkReminder: true };
+  // Apply defaults to storage on first run
+  let changed = false;
+  Object.entries(defaults).forEach(([k, def]) => { if (s[k] === undefined) { s[k] = def; changed = true; } });
+  if (changed) localStorage.setItem('pawAlertSettings', JSON.stringify(s));
   Object.entries(defaults).forEach(([k, def]) => {
     const id = 'toggle-' + k.replace(/([A-Z])/g, c => '-' + c.toLowerCase());
     const el = document.getElementById(id);
-    if (el) el.checked = s[k] !== undefined ? s[k] : def;
+    if (el) { el.checked = s[k]; el.dispatchEvent(new Event('change')); }
   });
   // Gate walk reminder toggle to Gold only
   const tier = getUserTier();
