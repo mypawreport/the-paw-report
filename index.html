@@ -1036,7 +1036,6 @@
   </div>
 </div>
 
-<div id="tempWheelContainer" style="display:none;"></div>
 <!-- Subscription Recovery Modal -->
   <div id="recovery-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
     <div style="background:#f0fdf9;border-radius:18px;padding:28px 22px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
@@ -1092,10 +1091,7 @@
 function getReferralCount() {
   return parseInt(localStorage.getItem('paw_referral_count') || '0');
 }
-function incrementReferralCount() {
-  var c = getReferralCount() + 1;
-  localStorage.setItem('paw_referral_count', c);
-}
+
 
 // ═══════════════════════════════════════════════════════
 // ── REFERRAL COUNT in profile ──
@@ -1108,13 +1104,6 @@ let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, la
 let isSignUp = false, setupSize = 'medium', activeBilling = 'weekly', activeTierTab = 'bronze';
 let notificationsEnabled = false;
 
-// Restore subscription state from localStorage
-(function restoreSubState() {
-  const savedTier = localStorage.getItem('paw_sub_tier');
-  if (savedTier && ['bronze','silver','gold'].includes(savedTier)) {
-    currentTier = savedTier;
-  }
-})();
 
 // Launch end date: 7 days from now stored in localStorage
 const LAUNCH_KEY = 'paw_launch_end';
@@ -1625,14 +1614,12 @@ async function saveProfile() {
     // Check multiple sources for lifetime/referral access
     const profile = JSON.parse(localStorage.getItem('paw_current_user') || '{}');
     const referralApplied = localStorage.getItem('paw_referral_applied');
-    const LIFETIME_CODES = ['PAW-MOM-6RX1Z2','PAW-HUB-8K3M2X','PAW-GAB-OKTDVE','PAW-KID-9T5W4R',
-      'PAW-SLV-K01O57','PAW-SLV-MCU4GC','PAW-SLV-4OEZSZ','PAW-SLV-I6ZD9T','PAW-HUB-FREE1',
-      'PAW-GOLD-RSQ31G'];
-    const hasLifetime = profile.lifetimeAccess || profile.subscriptionActive || LIFETIME_CODES.includes(referralApplied);
+    const LIFETIME_CODE_LIST = Object.keys(LIFETIME_CODES);
+    const hasLifetime = profile.lifetimeAccess || profile.subscriptionActive || LIFETIME_CODE_LIST.includes(referralApplied);
 
     if (hasLifetime) {
       // Make sure profile is fully unlocked
-      if (LIFETIME_CODES.includes(referralApplied) && !profile.lifetimeAccess) {
+      if (LIFETIME_CODE_LIST.includes(referralApplied) && !profile.lifetimeAccess) {
         profile.tier = 'silver';
         profile.subscriptionActive = true;
         profile.lifetimeAccess = true;
@@ -1803,11 +1790,11 @@ function toggleNotifications() {
 function getStatusColor(status) {
   const map = {
     'Extreme Cold': '#6a0dad',
-    'Too Cold': '#4169e1',
+    
     'Chilly': '#00bcd4',
     'Safe': '#4caf50',
     'Warm': '#ffeb3b',
-    'Caution': '#ff9800',
+    
     'Danger': '#ff5722',
     'Fry Zone': '#b71c1c'
   };
@@ -1969,7 +1956,7 @@ const PAW_RATING_INFO = {
   'Fry Zone':     { emoji: '🔥', color: '#8b0000', message: 'Fry Zone! Stay off pavement entirely.' }
 };
 
-const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Too Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Hot':'caution','Caution':'caution','Danger':'danger','Fry Zone':'fry'};
+const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Hot':'caution','Danger':'danger','Fry Zone':'fry'};
 function updatePawScale(rating) {
   ['extremecold','chilly','safe','warm','caution','danger','fry'].forEach(s => { const el=document.getElementById('scale-'+s); if(el) el.classList.remove('active'); });
   const k = PAW_SCALE_MAP[rating]; if(k){ const el=document.getElementById('scale-'+k); if(el) el.classList.add('active'); }
@@ -1977,11 +1964,11 @@ function updatePawScale(rating) {
 function getRatingColor(rating) {
   const map = {
     'Extreme Cold': '#818cf8',
-    'Too Cold':     '#93c5fd',
+    
     'Chilly':       '#7dd3fc',
     'Safe':         '#0d9488',
     'Warm':         '#f59e0b',
-    'Caution':      '#ea580c',
+    
     'Danger':       '#ef4444',
     'Fry Zone':     '#dc2626'
   };
@@ -1990,87 +1977,10 @@ function getRatingColor(rating) {
 
 // Background gradients per rating × time of day
 // Each rating has: dawn, day, dusk, night
-const BG_GRADIENTS = {
-  'Extreme Cold': {
-    dawn:  'linear-gradient(160deg,#e0f2fe 0%,#bfdbfe 50%,#dbeafe 100%)',
-    day:   'linear-gradient(160deg,#eff6ff 0%,#dbeafe 50%,#e0f2fe 100%)',
-    dusk:  'linear-gradient(160deg,#e0f2fe 0%,#c7d2fe 50%,#ccfbf1 100%)',
-    night: 'linear-gradient(160deg,#dbeafe 0%,#c7d2fe 50%,#f0fdf4 100%)',
-  },
-  'Too Cold': {
-    dawn:  'linear-gradient(160deg,#e0f2fe 0%,#bae6fd 50%,#cffafe 100%)',
-    day:   'linear-gradient(160deg,#f0f9ff 0%,#e0f2fe 50%,#cffafe 100%)',
-    dusk:  'linear-gradient(160deg,#e0f2fe 0%,#bae6fd 50%,#c7d2fe 100%)',
-    night: 'linear-gradient(160deg,#dbeafe 0%,#bae6fd 50%,#cffafe 100%)',
-  },
-  'Chilly': {
-    dawn:  'linear-gradient(160deg,#ecfdf5 0%,#d1fae5 50%,#e0f2fe 100%)',
-    day:   'linear-gradient(160deg,#f0fdf4 0%,#dcfce7 50%,#e0f2fe 100%)',
-    dusk:  'linear-gradient(160deg,#f0fdf4 0%,#ccfbf1 50%,#cffafe 100%)',
-    night: 'linear-gradient(160deg,#ecfdf5 0%,#d1fae5 50%,#dbeafe 100%)',
-  },
-  'Safe': {
-    dawn:  'linear-gradient(160deg,#f0fdf4 0%,#dcfce7 50%,#ecfdf5 100%)',
-    day:   'linear-gradient(160deg,#f0fdf9 0%,#ccfbf1 50%,#f0fdf4 100%)',
-    dusk:  'linear-gradient(160deg,#ecfdf5 0%,#d1fae5 50%,#fef9c3 100%)',
-    night: 'linear-gradient(160deg,#f0fdf4 0%,#dcfce7 50%,#f0f9ff 100%)',
-  },
-  'Warm': {
-    dawn:  'linear-gradient(160deg,#fffbeb 0%,#fef3c7 50%,#fef9c3 100%)',
-    day:   'linear-gradient(160deg,#fffbeb 0%,#fde68a 50%,#fef3c7 100%)',
-    dusk:  'linear-gradient(160deg,#fff7ed 0%,#fed7aa 50%,#fef3c7 100%)',
-    night: 'linear-gradient(160deg,#fffbeb 0%,#fef3c7 50%,#fef9c3 100%)',
-  },
-  'Caution': {
-    dawn:  'linear-gradient(160deg,#fff7ed 0%,#ffedd5 50%,#fef3c7 100%)',
-    day:   'linear-gradient(160deg,#fff7ed 0%,#fed7aa 50%,#ffedd5 100%)',
-    dusk:  'linear-gradient(160deg,#fff7ed 0%,#fecaca 50%,#ffedd5 100%)',
-    night: 'linear-gradient(160deg,#fff7ed 0%,#ffedd5 50%,#fde8d8 100%)',
-  },
-  'Danger': {
-    dawn:  'linear-gradient(160deg,#fef2f2 0%,#fecaca 50%,#fee2e2 100%)',
-    day:   'linear-gradient(160deg,#fff1f2 0%,#fecdd3 50%,#fee2e2 100%)',
-    dusk:  'linear-gradient(160deg,#fef2f2 0%,#fca5a5 50%,#fecaca 100%)',
-    night: 'linear-gradient(160deg,#fef2f2 0%,#fecaca 50%,#fde8d8 100%)',
-  },
-  'Fry Zone': {
-    dawn:  'linear-gradient(160deg,#fff1f2 0%,#fecdd3 50%,#ffedd5 100%)',
-    day:   'linear-gradient(160deg,#fff1f2 0%,#fca5a5 50%,#fecdd3 100%)',
-    dusk:  'linear-gradient(160deg,#fef2f2 0%,#f87171 50%,#fca5a5 100%)',
-    night: 'linear-gradient(160deg,#fff1f2 0%,#fecdd3 50%,#ffedd5 100%)',
-  },
-};
-
-const TEXT_COLORS = {
-  'Extreme Cold': { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
-  'Too Cold':     { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
-  'Chilly':       { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
-  'Safe':         { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
-  'Warm':         { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
-  'Caution':      { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
-  'Danger':       { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
-  'Fry Zone':     { dawn:'#1e293b', day:'#1e293b', dusk:'#1e293b', night:'#1e293b' },
-};
-
-function getTimeOfDay() {
-  const h = new Date().getHours();
-  if (h >= 5  && h < 8)  return 'dawn';
-  if (h >= 8  && h < 18) return 'day';
-  if (h >= 18 && h < 21) return 'dusk';
-  return 'night';
-}
-
 function updateDynamicColors(rating) {
   updateEdgeGlow(rating);
-  updateTempWheel(rating);
   const color = getRatingColor(rating);
-  const tod = getTimeOfDay();
-  const bgMap = BG_GRADIENTS[rating] || BG_GRADIENTS['Safe'];
-  const bg = bgMap[tod] || bgMap['day'];
   document.body.style.background = 'linear-gradient(160deg,#f8fafc 0%,#f1f5f9 50%,#f0f4f0 100%)';
-  const textMap = TEXT_COLORS[rating] || TEXT_COLORS['Safe'];
-  const textColor = textMap[tod] || textMap['day'];
-  // text color stays light always
 
   // Pulse dot — activate and color it based on current rating
   const pulse = document.getElementById('pulse-dot');
@@ -2303,8 +2213,6 @@ function renderSelectedDay() {
   const isToday = idx === 0;
   const { rescored, best } = scoreDay(day.hours, isToday);
 
-  // If viewing Today and all remaining windows are bad (score >= 60), 
-  // show a "plan for tomorrow" nudge instead of a depressing recommendation
   let icon, rec, displayTime;
   // Score is now conditions-only — just show the best upcoming window
   const result = buildRec(best, isToday);
@@ -2438,7 +2346,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v86';
+const APP_VERSION = 'v87';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2498,21 +2406,6 @@ function dismissToast() {
 })();
 
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('screen-auth').classList.contains('active'))submitAuth();});
-
-// Safe API helper — guards against non-JSON responses
-async function safeApiCall(url, body) {
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) return null;
-    const ct = res.headers.get('content-type') || '';
-    if (!ct.includes('json')) return null;
-    return await res.json();
-  } catch(_) { return null; }
-}
 
 function toggleTips() {
   const body = document.getElementById('tips-body');
@@ -2680,7 +2573,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=86').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=87').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2689,28 +2582,14 @@ if ('serviceWorker' in navigator) {
 // ── Edge Glow System ──────────────────────────────────────────
 const EDGE_COLORS = {
   'Extreme Cold': { color: '#003366', shadow: '0 0 0 6px #003366, 0 0 0 14px rgba(0,51,102,0.5), inset 0 0 0 6px #003366, inset 0 0 0 14px rgba(0,51,102,0.35)' },
-  'Too Cold':     { color: '#4A90E2', shadow: '0 0 0 6px #4A90E2, 0 0 0 14px rgba(74,144,226,0.5), inset 0 0 0 6px #4A90E2, inset 0 0 0 14px rgba(74,144,226,0.35)' },
-  'Chilly':       { color: '#58E3C2', shadow: '0 0 0 6px #58E3C2, 0 0 0 14px rgba(88,227,194,0.5), inset 0 0 0 6px #58E3C2, inset 0 0 0 14px rgba(88,227,194,0.35)' },
+'Chilly':       { color: '#58E3C2', shadow: '0 0 0 6px #58E3C2, 0 0 0 14px rgba(88,227,194,0.5), inset 0 0 0 6px #58E3C2, inset 0 0 0 14px rgba(88,227,194,0.35)' },
   'Safe':         { color: '#7ED321', shadow: '0 0 0 6px #7ED321, 0 0 0 14px rgba(126,211,33,0.5), inset 0 0 0 6px #7ED321, inset 0 0 0 14px rgba(126,211,33,0.35)' },
   'Warm':         { color: '#F8E71C', shadow: '0 0 0 6px #F8E71C, 0 0 0 14px rgba(248,231,28,0.5), inset 0 0 0 6px #F8E71C, inset 0 0 0 14px rgba(248,231,28,0.35)' },
-  'Caution':      { color: '#F5A623', shadow: '0 0 0 6px #F5A623, 0 0 0 16px rgba(245,166,35,0.55), 0 0 0 28px rgba(208,2,27,0.25), inset 0 0 0 6px #F5A623, inset 0 0 0 16px rgba(245,166,35,0.3)' },
-  'Hot':          { color: '#F5A623', shadow: '0 0 0 6px #F5A623, 0 0 0 16px rgba(245,166,35,0.6), 0 0 0 28px rgba(245,100,0,0.25), inset 0 0 0 6px #F5A623, inset 0 0 0 16px rgba(245,166,35,0.35)' },
+'Hot':          { color: '#F5A623', shadow: '0 0 0 6px #F5A623, 0 0 0 16px rgba(245,166,35,0.6), 0 0 0 28px rgba(245,100,0,0.25), inset 0 0 0 6px #F5A623, inset 0 0 0 16px rgba(245,166,35,0.35)' },
   'Danger':       { color: '#D0021B', shadow: '0 0 0 7px #D0021B, 0 0 0 18px rgba(208,2,27,0.6), 0 0 0 32px rgba(245,166,35,0.2), inset 0 0 0 7px #D0021B, inset 0 0 0 18px rgba(208,2,27,0.45)' },
   'Fry Zone':     { color: '#D0021B', shadow: '0 0 0 9px #D0021B, 0 0 0 20px rgba(208,2,27,0.65), inset 0 0 0 9px #D0021B, inset 0 0 0 20px rgba(208,2,27,0.55)' },
 };
 
-// Temp wheel angles (degrees, 0=top, clockwise)
-// Cold=blue side (~210°), Warm=red/orange side (~30°)
-const WHEEL_ANGLES = {
-  'Extreme Cold': 225,  // Deep Arctic Blue - far cool side
-  'Too Cold':     200,  // Sky Blue
-  'Chilly':       175,  // Teal/Aquamarine
-  'Safe':         140,  // Fresh Green
-  'Warm':         60,   // Golden Yellow - crossing to warm side
-  'Caution':      35,   // Safety Orange
-  'Danger':       15,   // Crimson Red
-  'Fry Zone':     355,  // Crimson Red max
-};
 
 function syncGlowToActiveTab() {
   if (currentActiveTab === 'safety' && lastCrimeData) {
@@ -2777,30 +2656,6 @@ function drawTempWheel(canvasEl) {
   ctx.fill();
 }
 
-function updateTempWheel(status) {
-  const wheel = document.getElementById('tempWheelCanvas');
-  const needle = document.getElementById('tempWheelNeedle');
-  if (!wheel || !needle) return;
-  const angle = WHEEL_ANGLES[status] || 90;
-  needle.style.transform = `translateX(-50%) translateY(-100%) rotate(${angle}deg)`;
-}
-
-function initTempWheel() {
-  const container = document.getElementById('tempWheelContainer');
-  if (!container) return;
-  container.innerHTML = `
-    <div class="temp-wheel">
-      <canvas id="tempWheelCanvas" width="52" height="52"></canvas>
-      <div class="temp-wheel-needle" id="tempWheelNeedle"></div>
-      <div class="temp-wheel-dot"></div>
-    </div>`;
-  const canvas = document.getElementById('tempWheelCanvas');
-  if (canvas) drawTempWheel(canvas);
-}
-// ── End Edge Glow System ──────────────────────────────────────
-
-
-// ── Recovery Modal Functions ──────────────────────────────────
 function showRecoveryModal() {
   const modal = document.getElementById('recovery-modal');
   if (modal) {
@@ -3029,7 +2884,7 @@ function renderWalkHistory() {
   if (emptyEl) emptyEl.style.display = 'none';
   if (clearBtn) clearBtn.style.display = 'block';
   listEl.style.display = 'block';
-  var RATING_COLORS = {'Safe':'#4ade80','Warm':'#fbbf24','Hot':'#F5A623','Caution':'#fb923c','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Too Cold':'#60a5fa','Extreme Cold':'#818cf8'};
+  var RATING_COLORS = {'Safe':'#4ade80','Warm':'#fbbf24','Hot':'#F5A623','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Extreme Cold':'#818cf8'};
   listEl.innerHTML = hist.slice(0,20).map(function(e) {
     var col = RATING_COLORS[e.rating] || '#94a3b8';
     return '<div style="padding:10px 0;border-bottom:1px solid #e2e8f0;">' +
