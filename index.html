@@ -382,12 +382,12 @@
 .toggle-switch input:checked + .toggle-slider{background:#0d9488;}
 .toggle-switch input:checked + .toggle-slider:before{transform:translateX(22px);}</style>
   <!-- Google Analytics GA4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PLACEHOLDER"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5J1Q90B15"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-PLACEHOLDER');
+    gtag('config', 'G-Q5J1Q90B15');
   </script>
 </head>
 <body>
@@ -2276,7 +2276,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v92';
+const APP_VERSION = 'v93';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2479,7 +2479,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=92').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=93').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
