@@ -1,11 +1,13 @@
-const CACHE_NAME = 'paw-report-v86';
+const CACHE_NAME = 'paw-report-v87';
 const ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
-  '/legal.html'
+  '/legal.html',
+  '/bark.mp3',
+  '/bark.wav'
 ];
 
 self.addEventListener('install', event => {
