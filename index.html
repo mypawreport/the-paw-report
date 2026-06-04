@@ -361,7 +361,31 @@
     .avatar-edit-section { text-align:center; }
     .avatar-large { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,#0d9488,#059669); display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 8px; border:3px solid #e2e8f0; cursor:pointer; transition:all 0.2s; }
     .avatar-large:hover { border-color:#0d9488; transform:scale(1.05); }
-  </style>
+  
+/* ── Forecast strip ───────────────────────────── */
+.forecast-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.forecast-tab{flex:1;min-width:60px;padding:6px 4px;border:1.5px solid #e2e8f0;border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:#475569;cursor:pointer;text-align:center;transition:.2s;}
+.forecast-tab.active{background:#0d9488;color:#fff;border-color:#0d9488;}
+.forecast-tab.gold-tab{border-color:#d97706;color:#92400e;}
+.forecast-tab.gold-tab.active{background:#d97706;border-color:#d97706;color:#fff;}
+.forecast-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
+.forecast-strip::-webkit-scrollbar{display:none;}
+.forecast-day-card{flex:0 0 auto;width:80px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;transition:.2s;}
+.forecast-day-card.active{border-color:#0d9488;background:#f0fdfa;}
+.forecast-day-card.gold-locked{opacity:.55;pointer-events:none;}
+.forecast-day-card .fdc-day{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;}
+.forecast-day-card .fdc-icon{font-size:22px;margin:4px 0;}
+.forecast-day-card .fdc-best{font-size:11px;font-weight:600;color:#0d9488;}
+.forecast-day-card .fdc-temp{font-size:10px;color:#64748b;}
+.forecast-day-card .fdc-lock{font-size:14px;}
+.forecast-7day-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px;}
+.forecast-7day-row:last-child{border-bottom:none;}
+.f7-day{width:60px;font-weight:600;color:#334155;}
+.f7-icon{font-size:18px;width:28px;text-align:center;}
+.f7-best{color:#0d9488;font-weight:600;flex:1;text-align:center;}
+.f7-temp{color:#64748b;text-align:right;}
+
+</style>
 </head>
 <body>
   <!-- ── AUTO-UPDATE BANNER ── -->
@@ -540,9 +564,14 @@
       </div>
 
       <div class="card" id="walk-time-card" style="display:none;">
-        <div class="card-title">🕐 Best Time to Walk Today</div>
-        <div class="loading-inline" id="walk-time-loading">Analysing today's forecast…</div>
+        <div class="card-title">🕐 Best Time to Walk</div>
+        <!-- Day tabs -->
+        <div class="forecast-tabs" id="forecast-tabs"></div>
+        <div class="loading-inline" id="walk-time-loading">Analysing forecast…</div>
         <div id="walk-time-content" style="display:none;">
+          <!-- 3-day strip -->
+          <div class="forecast-strip" id="forecast-strip"></div>
+          <!-- Hourly detail for selected day -->
           <div class="best-time-hero">
             <span class="best-time-icon" id="best-time-icon">🌟</span>
             <div class="best-time-window" id="best-time-window">--</div>
@@ -553,6 +582,11 @@
             <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>Great</div>
             <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>OK</div>
             <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>Avoid</div>
+          </div>
+          <!-- 7-day Gold lock -->
+          <div id="forecast-7day" style="display:none;margin-top:12px;"></div>
+          <div id="forecast-gold-lock" style="display:none;margin-top:12px;text-align:center;padding:10px;background:#fef9c3;border-radius:10px;font-size:13px;color:#92400e;">
+            🔒 <strong>7-Day Forecast</strong> is a Gold feature. <a href="#" onclick="showTab('profile');return false;" style="color:#d97706;">Upgrade</a> to unlock.
           </div>
         </div>
       </div>
@@ -2039,58 +2073,146 @@ function updateCrimeUI(d) {
   }
 }
 function scoreToColor(s){ if(s<10)return'#4ade80'; if(s<25)return'#86efac'; if(s<45)return'#fbbf24'; if(s<65)return'#14b8a6'; return'#f87171'; }
+function buildForecastDays(apiData) {
+  // apiData may have .days (multi-day) or just .hours (today only)
+  const allDays = apiData.days || [{ date: null, hours: apiData.hours || [] }];
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const today = new Date();
+
+  window._forecastDays = allDays.map((day, i) => {
+    const dateObj = day.date ? new Date(day.date + 'T12:00:00') : new Date(today.getTime() + i * 86400000);
+    const isToday = i === 0;
+    const shortLabel = isToday ? 'Today' : (i === 1 ? 'Tmrw' : dayNames[dateObj.getDay()]);
+
+    const hours = day.hours || [];
+    const { best } = scoreDay(hours, isToday);
+    const { icon } = buildRec(best, isToday);
+
+    const temps = hours.map(h => h.temp).filter(Boolean);
+    const hi = temps.length ? Math.round(Math.max(...temps)) : '--';
+    const lo = temps.length ? Math.round(Math.min(...temps)) : '--';
+
+    return { shortLabel, icon, bestTime: best?.timeLabel || '--', hi, lo, hours };
+  });
+}
+
 function updateWalkTimeUI(d) {
+  // store today's data globally
+  window._forecastData = window._forecastData || {};
+  window._forecastData[0] = d;
+  window._selectedForecastDay = window._selectedForecastDay ?? 0;
+
   document.getElementById('walk-time-loading').style.display='none';
   document.getElementById('walk-time-content').style.display='block';
 
-  // Re-score hours with strong night penalty to ensure correct best hour
-  const nowHr = new Date().getHours();
-  const rescored = (d.hours||[]).map(h => {
+  renderForecastTabs();
+  renderForecastStrip();
+  renderSelectedDay();
+}
+
+function scoreDay(hours, isToday) {
+  const nowHr = isToday ? new Date().getHours() : -1;
+  const rescored = hours.map(h => {
     let hp = 0;
     if (h.hour >= 22 || h.hour < 5) hp = 80;
     else if (h.hour >= 20 || h.hour < 6) hp = 40;
     else if (h.hour >= 6 && h.hour <= 9) hp = -5;
-    return { ...h, totalScore: (h.totalScore || 0) + hp };
+    const isPast = isToday && h.hour < nowHr;
+    return { ...h, totalScore: (h.totalScore || 0) + hp, isPast };
   });
   const upcoming = rescored.filter(h => !h.isPast);
-  const bestH = upcoming.length ? upcoming.reduce((a,b) => a.totalScore < b.totalScore ? a : b) : null;
+  const best = upcoming.length ? upcoming.reduce((a,b) => a.totalScore < b.totalScore ? a : b) : rescored[0];
+  return { rescored, best };
+}
 
-  // Rebuild recommendation with correct "right now" vs future logic
-  if (bestH) {
-    const isNow = bestH.hour === nowHr;
-    const sc = bestH.totalScore;
-    let icon = '😓', rec = `Tough day for walks. ${bestH.timeLabel} is the safest window but conditions are still rough.`;
-    if (sc < 10) {
-      icon = '🌟';
-      rec = isNow ? 'Right now is perfect! Mild temps and safe pavement.' : `${bestH.timeLabel} looks perfect — mild temps and safe pavement.`;
-    } else if (sc < 25) {
-      icon = '✅';
-      rec = isNow ? 'Right now looks great — cool temps and low UV.' : `${bestH.timeLabel} looks great — cool temps and low UV.`;
-    } else if (sc < 45) {
-      icon = '👍';
-      rec = `${bestH.timeLabel} is your best bet today — conditions are decent.`;
-    } else if (sc < 65) {
-      icon = '⚠️';
-      rec = `${bestH.timeLabel} is the least bad option. Ground may be warm — keep walks short.`;
-    }
-    d = { ...d, bestHour: bestH, windowLabel: bestH.timeLabel, recommendation: rec, icon, hours: rescored };
+function buildRec(best, isToday) {
+  const nowHr = new Date().getHours();
+  const isNow = isToday && best.hour === nowHr;
+  const sc = best.totalScore;
+  let icon = '😓', rec = `Tough conditions. ${best.timeLabel} is the safest window but still rough.`;
+  if (sc < 10)  { icon='🌟'; rec = isNow ? 'Right now is perfect! Mild temps and safe pavement.' : `${best.timeLabel} looks perfect — mild temps, safe pavement.`; }
+  else if (sc < 25) { icon='✅'; rec = isNow ? 'Right now looks great — cool temps and low UV.' : `${best.timeLabel} looks great — cool temps, low UV.`; }
+  else if (sc < 45) { icon='👍'; rec = `${best.timeLabel} is the best window — conditions are decent.`; }
+  else if (sc < 65) { icon='⚠️'; rec = `${best.timeLabel} is the least bad option. Keep walks short.`; }
+  return { icon, rec };
+}
+
+function renderForecastTabs() {
+  const tier = getUserTier();
+  const isGold = tier === 'gold';
+  const tabs = document.getElementById('forecast-tabs');
+  if (!tabs) return;
+  const days = ['Today','Tomorrow','Day 3'];
+  const extras = isGold ? ['Day 4','Day 5','Day 6','Day 7'] : [];
+  const allDays = [...days, ...extras];
+  tabs.innerHTML = allDays.map((label, i) => {
+    const isSelected = i === (window._selectedForecastDay || 0);
+    return `<button class="forecast-tab ${isSelected?'active':''}" onclick="selectForecastDay(${i})">${label}</button>`;
+  }).join('');
+  if (!isGold) {
+    tabs.innerHTML += `<button class="forecast-tab gold-tab" onclick="showTab('profile')" title="Gold feature">+4 Days 🔒</button>`;
   }
+}
 
-  document.getElementById('best-time-icon').textContent=d.icon;
-  document.getElementById('best-time-window').textContent=d.windowLabel||d.bestHour?.timeLabel||'--';
-  document.getElementById('best-time-rec').textContent=d.recommendation||'';
-  const bars=document.getElementById('hourly-bars');
-  const hours=(d.hours||[]).filter(h=>h.hour%2===0);
-  const bestHour=d.bestHour?.hour;
-  const scores=hours.map(h=>h.totalScore);
-  const minS=Math.min(...scores),maxS=Math.max(...scores),range=Math.max(maxS-minS,1);
-  bars.innerHTML=hours.map(h=>{
-    const norm=(h.totalScore-minS)/range,barH=Math.max(6,Math.round(norm*42)+6);
-    const color=h.isPast?'rgba(255,255,255,0.15)':scoreToColor(h.totalScore);
-    const isBest=h.hour===bestHour;
+function renderForecastStrip() {
+  const tier = getUserTier();
+  const isGold = tier === 'gold';
+  const strip = document.getElementById('forecast-strip');
+  if (!strip || !window._forecastDays) return;
+  const days = window._forecastDays;
+  strip.innerHTML = days.map((day, i) => {
+    const locked = !isGold && i >= 3;
+    const selected = i === (window._selectedForecastDay || 0);
+    if (locked) {
+      return `<div class="forecast-day-card gold-locked"><div class="fdc-day">${day.shortLabel}</div><div class="fdc-lock">🔒</div><div class="fdc-temp">Gold</div></div>`;
+    }
+    return `<div class="forecast-day-card ${selected?'active':''}" onclick="selectForecastDay(${i})">
+      <div class="fdc-day">${day.shortLabel}</div>
+      <div class="fdc-icon">${day.icon}</div>
+      <div class="fdc-best">${day.bestTime}</div>
+      <div class="fdc-temp">${day.hi}°/${day.lo}°</div>
+    </div>`;
+  }).join('');
+}
+
+function selectForecastDay(idx) {
+  const tier = getUserTier();
+  const isGold = tier === 'gold';
+  if (!isGold && idx >= 3) { showTab('profile'); return; }
+  window._selectedForecastDay = idx;
+  renderForecastTabs();
+  renderForecastStrip();
+  renderSelectedDay();
+}
+
+function renderSelectedDay() {
+  const idx = window._selectedForecastDay || 0;
+  const days = window._forecastDays;
+  if (!days || !days[idx]) return;
+  const day = days[idx];
+  const isToday = idx === 0;
+  const { rescored, best } = scoreDay(day.hours, isToday);
+  const { icon, rec } = buildRec(best, isToday);
+
+  document.getElementById('best-time-icon').textContent = icon;
+  document.getElementById('best-time-window').textContent = best.timeLabel || '--';
+  document.getElementById('best-time-rec').textContent = rec;
+
+  const bars = document.getElementById('hourly-bars');
+  const hours = rescored.filter(h => h.hour % 2 === 0);
+  const bestHour = best.hour;
+  const scores = hours.map(h => h.totalScore);
+  const minS = Math.min(...scores), maxS = Math.max(...scores), range = Math.max(maxS - minS, 1);
+  bars.innerHTML = hours.map(h => {
+    const norm = (h.totalScore - minS) / range;
+    const barH = Math.max(6, Math.round(norm * 42) + 6);
+    const color = h.isPast ? 'rgba(0,0,0,0.08)' : scoreToColor(h.totalScore);
+    const isBest = h.hour === bestHour;
     return `<div class="hourly-col"><div class="hourly-bar-wrap"><div class="hourly-bar ${h.isPast?'past':''} ${isBest?'best-bar':''}" style="height:${barH}px;background:${color}"></div></div><div class="hourly-label ${isBest?'best-label':''}">${h.timeLabel.replace(' AM','a').replace(' PM','p')}</div></div>`;
   }).join('');
 }
+
+
 function updateWashUI(d) {
   document.getElementById('wash-loading').style.display='none';
   document.getElementById('wash-content').style.display='block';
@@ -2150,7 +2272,7 @@ async function fetchAll(lat, lon) {
     fetch('https://superagent-9eb7455e.base44.app/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
     fetch('https://superagent-9eb7455e.base44.app/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
     fetch('https://superagent-9eb7455e.base44.app/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
-    fetch('https://superagent-9eb7455e.base44.app/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore})}),
+    fetch('https://superagent-9eb7455e.base44.app/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
   ]);
   showResultCards(true);
   async function safeJson(r) { try { const ct=r.headers.get('content-type')||''; if(!ct.includes('json')) return null; return await r.json(); } catch(_) { return null; } }
@@ -2159,7 +2281,7 @@ async function fetchAll(lat, lon) {
   else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.';
   if(washRes.status==='fulfilled'&&washRes.value.ok){ const d=await safeJson(washRes.value); if(d) updateWashUI(d); else document.getElementById('wash-loading').textContent='Could not load wash stations.'; }
   else document.getElementById('wash-loading').textContent='Could not load wash stations.';
-  if(walkRes.status==='fulfilled'&&walkRes.value.ok){ const d=await safeJson(walkRes.value); if(d) updateWalkTimeUI(d); else document.getElementById('walk-time-loading').textContent='Could not load forecast.'; }
+  if(walkRes.status==='fulfilled'&&walkRes.value.ok){ const d=await safeJson(walkRes.value); if(d){ buildForecastDays(d); updateWalkTimeUI(d); } else document.getElementById('walk-time-loading').textContent='Could not load forecast.'; }
   else document.getElementById('walk-time-loading').textContent='Could not load forecast.';
 }
 
@@ -2198,7 +2320,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v79';
+const APP_VERSION = 'v80';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2440,7 +2562,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=79').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=80').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
