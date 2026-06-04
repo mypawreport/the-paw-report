@@ -2213,10 +2213,11 @@ function updateWalkTimeUI(d) {
 function scoreDay(hours, isToday) {
   const nowHr = isToday ? new Date().getHours() : -1;
   const rescored = hours.map(h => {
+    // No time-of-day penalty — score purely on actual conditions
+    // Slight bonus for ideal morning/evening walking hours (not a penalty, just a tie-breaker)
     let hp = 0;
-    if (h.hour >= 22 || h.hour < 5) hp = 80;
-    else if (h.hour >= 20 || h.hour < 6) hp = 40;
-    else if (h.hour >= 6 && h.hour <= 9) hp = -5;
+    if (h.hour >= 6 && h.hour <= 9) hp = -5;   // tiny morning bonus
+    else if (h.hour >= 17 && h.hour <= 19) hp = -3; // slight evening bonus
     const isPast = isToday && h.hour < nowHr;
     return { ...h, totalScore: (h.totalScore || 0) + hp, isPast };
   });
@@ -2301,29 +2302,11 @@ function renderSelectedDay() {
   // If viewing Today and all remaining windows are bad (score >= 60), 
   // show a "plan for tomorrow" nudge instead of a depressing recommendation
   let icon, rec, displayTime;
-  const nowHr = new Date().getHours();
-  const remainingHours = rescored.filter(h => !h.isPast);
-  const allBadToday = isToday && remainingHours.length > 0 && remainingHours.every(h => h.totalScore >= 60);
-  const niceConditions = isToday && best.totalScore >= 60 && best.totalScore < 90 && best.temp <= 80;
-
-  if (allBadToday && days.length > 1) {
-    // Peek at tomorrow's best
-    const tmrw = days[1];
-    const { best: tmrwBest } = scoreDay(tmrw.hours, false);
-    const { icon: tIcon } = buildRec(tmrwBest, false);
-    icon = tIcon;
-    displayTime = 'Tomorrow';
-    if (tmrwBest.totalScore < 25) {
-      rec = `No great windows left tonight — ${tmrwBest.timeLabel} tomorrow looks ${tmrwBest.totalScore < 10 ? 'perfect! 🌟' : 'great ✅'}`;
-    } else {
-      rec = `Evening's winding down — ${tmrwBest.timeLabel} tomorrow is your next best window.`;
-    }
-  } else {
-    const result = buildRec(best, isToday);
-    icon = result.icon;
-    rec = result.rec;
-    displayTime = best.timeLabel || '--';
-  }
+  // Score is now conditions-only — just show the best upcoming window
+  const result = buildRec(best, isToday);
+  icon = result.icon;
+  rec = result.rec;
+  displayTime = best.timeLabel || '--';
 
   document.getElementById('best-time-icon').textContent = icon;
   document.getElementById('best-time-window').textContent = displayTime;
@@ -2451,7 +2434,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v84';
+const APP_VERSION = 'v85';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2693,7 +2676,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=84').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=85').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
