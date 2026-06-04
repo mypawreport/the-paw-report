@@ -1069,6 +1069,7 @@ function getReferralCount() {
 }
 const APP_ID = '6a1c6fbdd48b351a9eb7455e';
 let currentUser = null, userPrefs = null;
+let currentActiveTab = 'report';
 let isTracking = false, trackingInterval = null;
 let currentPetSize = 'medium', currentTier = 'free';
 let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, lastCrimeScore = null;
@@ -1551,6 +1552,17 @@ async function saveProfile() {
   const breed = document.getElementById('setup-breed').value.trim();
   try {
     const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
+    if (!currentUser) throw new Error('Not logged in');
+    if (!currentUser.id) {
+      // Repair missing id (can happen on first sign-up)
+      currentUser.id = 'usr_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+      localStorage.setItem(LS_CUR_USER, JSON.stringify(currentUser));
+      const users = JSON.parse(localStorage.getItem(LS_USERS)||'{}');
+      if (currentUser.email && users[currentUser.email]) {
+        users[currentUser.email].id = currentUser.id;
+        localStorage.setItem(LS_USERS, JSON.stringify(users));
+      }
+    }
     userPrefs = savePrefs(currentUser.id, data);
     currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
     // Check multiple sources for lifetime/referral access
@@ -1572,7 +1584,7 @@ async function saveProfile() {
     } else {
       showScreen('paywall'); renderTierDisplay(); startCountdown();
     }
-  } catch(e) { alert('Could not save profile.'); }
+  } catch(e) { alert('Could not save profile: ' + (e.message || e)); }
 }
 function showEdgeLightingNotice() {
   if (localStorage.getItem('paw_edge_notice_seen')) return;
@@ -2233,7 +2245,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v90';
+const APP_VERSION = 'v91';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2436,7 +2448,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=90').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=91').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
