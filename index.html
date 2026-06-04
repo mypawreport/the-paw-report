@@ -385,6 +385,35 @@
 .f7-best{color:#0d9488;font-weight:600;flex:1;text-align:center;}
 .f7-temp{color:#64748b;text-align:right;}
 
+
+/* Weather tip banner */
+.weather-tip{display:none;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:0.82rem;color:#0369a1;display:flex;align-items:flex-start;gap:8px;}
+.weather-tip-icon{font-size:1.1rem;flex-shrink:0;}
+.weather-tip-text{line-height:1.4;}
+
+/* Hot car alert banner */
+.hot-car-alert{display:none;background:#fef3c7;border:1.5px solid #f59e0b;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:0.83rem;color:#92400e;}
+.hot-car-alert-title{font-weight:700;font-size:0.88rem;margin-bottom:3px;}
+
+/* Walk reminder banner */
+.walk-reminder-banner{display:none;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:12px 14px;margin-bottom:12px;}
+.walk-reminder-title{font-weight:700;font-size:0.88rem;color:#166534;margin-bottom:3px;}
+.walk-reminder-sub{font-size:0.8rem;color:#15803d;margin-bottom:8px;}
+.just-walked-btn{background:#16a34a;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;}
+
+/* Settings toggles in profile */
+.settings-card .setting-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1f5f9;}
+.settings-card .setting-row:last-child{border-bottom:none;}
+.setting-label{font-size:0.83rem;color:#334155;font-weight:500;}
+.setting-sublabel{font-size:0.72rem;color:#94a3b8;}
+.setting-badge{font-size:0.68rem;font-weight:700;background:#d97706;color:#fff;border-radius:4px;padding:2px 5px;margin-left:5px;vertical-align:middle;}
+.toggle-switch{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:22px;transition:.3s;}
+.toggle-slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
+.toggle-switch input:checked + .toggle-slider{background:#0d9488;}
+.toggle-switch input:checked + .toggle-slider:before{transform:translateX(18px);}
+
 </style>
 </head>
 <body>
@@ -564,6 +593,26 @@
       </div>
 
       <div class="card" id="paw-card" style="display:none;">
+
+        <!-- 🌦️ Weather condition tips -->
+        <div class="weather-tip" id="weather-tip-banner">
+          <span class="weather-tip-icon" id="weather-tip-icon">🌧️</span>
+          <span class="weather-tip-text" id="weather-tip-text"></span>
+        </div>
+
+        <!-- 🚗 Hot car reminder (Silver/Gold) -->
+        <div class="hot-car-alert" id="hot-car-alert">
+          <div class="hot-car-alert-title">🚗 Just arrived? Check your car!</div>
+          <div>Never leave pets in a parked vehicle — temps can spike dangerously fast.</div>
+        </div>
+
+        <!-- 🐾 Walk reminder (Gold) -->
+        <div class="walk-reminder-banner" id="walk-reminder-banner">
+          <div class="walk-reminder-title">🐾 Time for a walk?</div>
+          <div class="walk-reminder-sub" id="walk-reminder-sub">It's been a while since your last walk.</div>
+          <button class="just-walked-btn" onclick="logJustWalked()">✅ Just Walked</button>
+        </div>
+
         <div class="card-title">🌡️ Right Now — Ground Temperature</div>
         <div id="report-location-line" style="font-size:0.72rem;color:#64748b;text-align:center;margin:-4px 0 10px;display:none;">📍 <span id="report-location-text">Detecting…</span></div>
         <div class="size-selector" style="margin-bottom:12px;" id="size-selector-inline">
@@ -874,7 +923,46 @@
       </div>
 
       
-      <!-- 🦮 Walk History (Gold) -->
+      
+      <!-- ⚙️ Alert Settings -->
+      <div class="card settings-card" id="alert-settings-card">
+        <div class="card-title">⚙️ Alert Settings</div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">🌦️ Weather condition tips</div>
+            <div class="setting-sublabel">Rain, snow, heat wave banners on the Report tab</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-weather-tips" checked onchange="saveAlertSetting('weatherTips', this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">🚗 Hot car pet reminder</div>
+            <div class="setting-sublabel">Detects when you stop moving and reminds you to check the car</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-hot-car" checked onchange="saveAlertSetting('hotCar', this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">🐾 Walk reminder <span class="setting-badge">Gold</span></div>
+            <div class="setting-sublabel">Reminds you after 6 hours without logging a walk</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-walk-reminder" checked onchange="saveAlertSetting('walkReminder', this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+<!-- 🦮 Walk History (Gold) -->
       <div class="card" id="walk-history-card">
         <div class="card-title">🦮 Walk History</div>
         <div id="walk-history-lock" class="locked-feature" style="display:none;">
@@ -1442,6 +1530,7 @@ function renderSubStatus() {
       <div style="font-size:0.75rem;color:#64748b;">${currentTier==='free'?'Upgrade to unlock all features':'Active subscription'}</div>
     </div>`;
   document.getElementById('upgrade-btn').style.display = currentTier==='gold' ? 'none' : 'block';
+  loadAlertSettingToggles();
 }
 
 function showEditProfile() {
@@ -1586,6 +1675,7 @@ function loadMainScreen() {
   showWhatsNewToast();
   setTimeout(showEdgeLightingNotice, 1200);
   setTimeout(initTrayWidget, 500);
+  setTimeout(startVehicleDetection, 2000);
   renderFavLocations();
   renderWalkHistory();
   showScreen('main'); showTab('report');
@@ -2040,6 +2130,15 @@ function updatePawUI(d) {
   } else if (coldRatings.includes(d.rating)) {
     sendDangerNotification('🧊 ' + d.rating + ' conditions — ' + d.message);
   }
+  // Weather tips banner
+  showWeatherTip({
+    description: d.description || d.weatherDescription || '',
+    temp: d.airTempF || 70,
+    wind: d.windSpeedMph || 0,
+    cloud_cover: d.cloudCover || 0
+  });
+  // Walk reminder check
+  checkWalkReminder();
 }
 async function fetchPawAndUpdate(lat, lon) {
   checkRateAppPrompt();
@@ -2352,7 +2451,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v83';
+const APP_VERSION = 'v84';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2594,7 +2693,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=83').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=84').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3146,6 +3245,149 @@ window.addEventListener('load', function() {
   }, 600000);
 });
 
+
+
+// ═══════════════════════════════════════════════
+// ALERT SETTINGS
+// ═══════════════════════════════════════════════
+function getAlertSettings() {
+  try { return JSON.parse(localStorage.getItem('pawAlertSettings') || '{}'); }
+  catch(e) { return {}; }
+}
+function saveAlertSetting(key, val) {
+  const s = getAlertSettings();
+  s[key] = val;
+  localStorage.setItem('pawAlertSettings', JSON.stringify(s));
+}
+function loadAlertSettingToggles() {
+  const s = getAlertSettings();
+  const defaults = { weatherTips: true, hotCar: true, walkReminder: true };
+  Object.entries(defaults).forEach(([k, def]) => {
+    const id = 'toggle-' + k.replace(/([A-Z])/g, c => '-' + c.toLowerCase());
+    const el = document.getElementById(id);
+    if (el) el.checked = s[k] !== undefined ? s[k] : def;
+  });
+  // Gate walk reminder toggle to Gold only
+  const tier = getUserTier();
+  const walkToggle = document.getElementById('toggle-walk-reminder');
+  if (walkToggle && tier !== 'gold') {
+    walkToggle.disabled = true;
+    walkToggle.checked = false;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// WEATHER CONDITION TIPS
+// ═══════════════════════════════════════════════
+function showWeatherTip(weatherData) {
+  const s = getAlertSettings();
+  if (s.weatherTips === false) return;
+  const banner = document.getElementById('weather-tip-banner');
+  const iconEl = document.getElementById('weather-tip-icon');
+  const textEl = document.getElementById('weather-tip-text');
+  if (!banner || !weatherData) return;
+
+  const desc = (weatherData.description || '').toLowerCase();
+  const temp  = weatherData.temp || 70;
+  const wind  = weatherData.wind || 0;
+  const cloud = weatherData.cloud_cover || 0;
+
+  let tip = null;
+  if (desc.includes('snow') || desc.includes('blizzard'))
+    tip = { icon:'❄️', msg:'Snow expected — ice melt salt can burn paws. Rinse paws after every walk.' };
+  else if (desc.includes('thunder') || desc.includes('storm'))
+    tip = { icon:'⛈️', msg:'Thunderstorm possible — many dogs are sensitive to thunder. Keep walks short and close to home.' };
+  else if (desc.includes('rain') || desc.includes('drizzle') || desc.includes('shower'))
+    tip = { icon:'🌧️', msg:'Rain expected — wet pavement can be slippery. Dry paws thoroughly after.' };
+  else if (desc.includes('fog') || desc.includes('mist'))
+    tip = { icon:'🌫️', msg:'Foggy conditions — use a reflective leash or light for visibility.' };
+  else if (temp >= 90)
+    tip = { icon:'🔥', msg:'Heat advisory — limit outdoor time and always carry water.' };
+  else if (temp <= 25)
+    tip = { icon:'🧊', msg:'Extreme cold — protect paws with booties and limit walk time.' };
+  else if (wind > 25)
+    tip = { icon:'💨', msg:'Strong winds (' + Math.round(wind) + ' mph) — small dogs can be blown off balance. Keep them close.' };
+  else if (cloud < 10 && temp >= 75)
+    tip = { icon:'☀️', msg:'Full sun and warm — pavement heats up fast. Stick to shaded paths or early mornings.' };
+
+  if (tip) {
+    iconEl.textContent = tip.icon;
+    textEl.textContent = tip.msg;
+    banner.style.display = 'flex';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// HOT CAR DETECTOR (everyone)
+// ═══════════════════════════════════════════════
+var _vehicleSpeedHistory = [];
+var _vehicleWatchId = null;
+var _hotCarAlertShownAt = 0;
+
+function startVehicleDetection() {
+  const s = getAlertSettings();
+  if (s.hotCar === false) return;
+  if (!navigator.geolocation || _vehicleWatchId) return;
+  _vehicleWatchId = navigator.geolocation.watchPosition(function(pos) {
+    const speed = pos.coords.speed;
+    if (speed === null || speed === undefined) return;
+    const mph = speed * 2.237;
+    _vehicleSpeedHistory.push({ mph: mph, t: Date.now() });
+    if (_vehicleSpeedHistory.length > 10) _vehicleSpeedHistory.shift();
+    checkHotCarCondition();
+  }, null, { enableHighAccuracy: false, maximumAge: 10000, timeout: 20000 });
+}
+
+function checkHotCarCondition() {
+  if (_vehicleSpeedHistory.length < 3) return;
+  const recent = _vehicleSpeedHistory.slice(-5);
+  const wasDriving = recent.some(function(r){ return r.mph > 15; });
+  const nowStopped = recent.slice(-2).every(function(r){ return r.mph < 3; });
+  const cooldown = (Date.now() - _hotCarAlertShownAt) > 30 * 60 * 1000;
+  if (wasDriving && nowStopped && cooldown) showHotCarAlert();
+}
+
+function showHotCarAlert() {
+  const s = getAlertSettings();
+  if (s.hotCar === false) return;
+  const banner = document.getElementById('hot-car-alert');
+  if (!banner) return;
+  _hotCarAlertShownAt = Date.now();
+  banner.style.display = 'block';
+  setTimeout(function(){ banner.style.display = 'none'; }, 5 * 60 * 1000);
+}
+
+// ═══════════════════════════════════════════════
+// WALK REMINDER (Gold only)
+// ═══════════════════════════════════════════════
+function logJustWalked() {
+  localStorage.setItem('lastWalkTime', Date.now().toString());
+  const banner = document.getElementById('walk-reminder-banner');
+  if (banner) banner.style.display = 'none';
+  showToast('✅ Walk logged! Good pup parent 🐾');
+}
+
+function checkWalkReminder() {
+  const tier = getUserTier();
+  if (tier !== 'gold') return;
+  const s = getAlertSettings();
+  if (s.walkReminder === false) return;
+  const banner = document.getElementById('walk-reminder-banner');
+  const sub = document.getElementById('walk-reminder-sub');
+  if (!banner) return;
+  const last = parseInt(localStorage.getItem('lastWalkTime') || '0');
+  if (!last) return; // never logged — don't nag on first use
+  const hoursAgo = (Date.now() - last) / (1000 * 60 * 60);
+  if (hoursAgo >= 6) {
+    const hrs = Math.round(hoursAgo);
+    if (sub) sub.textContent = "It's been about " + hrs + " hour" + (hrs !== 1 ? 's' : '') + " since your last walk.";
+    banner.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+  }
+}
 
 </script>
 
