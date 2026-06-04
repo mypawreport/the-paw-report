@@ -22,63 +22,68 @@
   <link rel="icon" type="image/png" href="https://mypawreport.github.io/the-paw-report/icon-192.png"/>
   <link rel="manifest" href="https://mypawreport.github.io/the-paw-report/manifest.json"/>
   <meta name="theme-color" content="#0d9488"/>
-  <style>
+  <style>  :root {
+    --c-teal: var(--c-teal);
+    --c-slate: var(--c-slate);
+    --c-muted: var(--c-muted);
+    --c-border: var(--c-border);
+    --c-bg: var(--c-bg);
+    --c-card: var(--c-card);
+    --c-radius-sm: 8px;
+    --c-radius-md: 12px;
+    --c-radius-lg: 14px;
+    --c-shadow-sm: 0 1px 6px rgba(0,0,0,0.1);
+    --c-transition: all 0.2s;
+  }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#eaf0e8 0%,#e2ece0 50%,#e8ede5 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:#1e293b;transition:background 1.2s ease}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#eaf0e8 0%,#e2ece0 50%,#e8ede5 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:var(--c-slate);transition:background 1.2s ease}
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
     .header p{font-size:0.82rem;opacity:0.55}
-
     /* Cards */
-    .card{background:#ffffff;backdrop-filter:blur(20px);border:1px solid #e2e8f0;border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
+    .card{background:#ffffff;backdrop-filter:blur(20px);border:1px solid var(--c-border);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
     .card-title{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:0.45;margin-bottom:12px}
-    .divider{height:1px;background:#edf1eb;margin:12px 0}
-
+    .divider{height:1px;background:var(--c-card);margin:12px 0}
     /* Screens */
     .screen{display:none}
     .screen.active{display:block}
-
     /* Auth */
     .auth-card{text-align:center;padding:32px 24px}
     .auth-icon{font-size:3.5rem;margin-bottom:12px;display:block}
     .auth-title{font-size:1.3rem;font-weight:800;margin-bottom:6px}
     .auth-sub{font-size:0.85rem;opacity:0.6;margin-bottom:24px;line-height:1.5}
-    .auth-input{width:100%;background:#f4f7f2;border:1px solid #d1d5db;border-radius:12px;padding:12px 14px;color:#1e293b;font-size:0.95rem;margin-bottom:10px;outline:none;transition:border 0.2s}
+    .auth-input{width:100%;background:var(--c-bg);border:1px solid #d1d5db;border-radius:12px;padding:12px 14px;color:var(--c-slate);font-size:0.95rem;margin-bottom:10px;outline:none;transition:border 0.2s}
     .auth-input:focus{border-color:rgba(13,148,136,0.9)}
     .auth-input::placeholder{opacity:0.4}
     .auth-toggle{font-size:0.8rem;opacity:0.6;margin-top:12px;cursor:pointer}
-    .auth-toggle span{color:#0d9488;text-decoration:underline}
+    .auth-toggle span{color:var(--c-teal);text-decoration:underline}
     .auth-error{background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);border-radius:10px;padding:10px;font-size:0.82rem;color:#fca5a5;margin-bottom:10px;display:none}
-
     /* Buttons */
-    .btn{display:block;width:100%;padding:14px;border:none;border-radius:15px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s}
-    .btn-primary{background:linear-gradient(135deg,#0d9488,#4a7c59);color:#1e293b;box-shadow:0 8px 24px rgba(13,148,136,0.4)}
+    .btn{display:block;width:100%;padding:14px;border:none;border-radius:15px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:var(--c-transition)}
+    .btn-primary{background:linear-gradient(135deg,var(--c-teal),#4a7c59);color:var(--c-slate);box-shadow:0 8px 24px rgba(13,148,136,0.4)}
     .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(13,148,136,0.5)}
     .btn-primary:active{transform:translateY(0)}
-    .btn-secondary{background:#edf1eb;border:1.5px solid #e2e8f0;color:#1e293b}
-    .btn-secondary:hover{background:#edf1eb}
+    .btn-secondary{background:var(--c-card);border:1.5px solid var(--c-border);color:var(--c-slate)}
+    .btn-secondary:hover{background:var(--c-card)}
     .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
     .btn-sm{padding:9px 16px;font-size:0.82rem;border-radius:10px;width:auto;display:inline-block}
-
     /* User bar */
     .user-bar{display:flex;align-items:center;justify-content:space-between;background:#ffffff;border-radius:14px;padding:10px 14px;margin-bottom:12px;border:1px solid #d8e4d4;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
-    .user-info{display:flex;align-items:center;gap:8px}
-    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#059669);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:#1e293b}
+    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--c-teal),#059669);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:var(--c-slate)}
     .user-name{font-size:0.85rem;font-weight:600}
     .user-email{font-size:0.68rem;opacity:0.45}
-    .user-right{display:flex;align-items:center;gap:8px}
+    .user-info,.user-right{display:flex;align-items:center;gap:8px}
     .tier-badge{font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px}
     .tier-bronze{background:rgba(205,127,50,0.3);color:#cd7f32;border:1px solid rgba(205,127,50,0.4)}
     .tier-silver{background:rgba(192,192,192,0.2);color:#c0c0c0;border:1px solid rgba(192,192,192,0.3)}
     .tier-gold{background:rgba(255,215,0,0.2);color:#ffd700;border:1px solid rgba(255,215,0,0.3)}
-    .tier-free{background:#edf1eb;color:#94a3b8;border:1px solid #d1d5db}
-    .whats-new-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#e2e8f0,#dbeafe);border:1px solid rgba(150,120,255,0.4);color:#1e293b;border-radius:14px;padding:12px 18px;font-size:0.82rem;max-width:320px;width:90%;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);opacity:0;transition:opacity 0.4s ease,transform 0.4s ease;pointer-events:none;text-align:left;}
+    .tier-free{background:var(--c-card);color:#94a3b8;border:1px solid #d1d5db}
+    .whats-new-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,var(--c-border),#dbeafe);border:1px solid rgba(150,120,255,0.4);color:var(--c-slate);border-radius:14px;padding:12px 18px;font-size:0.82rem;max-width:320px;width:90%;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);opacity:0;transition:opacity 0.4s ease,transform 0.4s ease;pointer-events:none;text-align:left;}
 .whats-new-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.whats-new-toast .toast-title{font-weight:700;font-size:0.88rem;margin-bottom:4px;color:#64748b;}
+.whats-new-toast .toast-title{font-weight:700;font-size:0.88rem;margin-bottom:4px;color:var(--c-muted);}
 .whats-new-toast .toast-close{position:absolute;top:8px;right:12px;cursor:pointer;font-size:1rem;opacity:0.6;pointer-events:all;}
-.logout-btn{font-size:0.72rem;opacity:0.5;cursor:pointer;padding:4px 8px;border-radius:8px;border:1px solid #d1d5db;background:none;color:#1e293b}
-
+.logout-btn{font-size:0.72rem;opacity:0.5;cursor:pointer;padding:4px 8px;border-radius:8px;border:1px solid #d1d5db;background:none;color:var(--c-slate)}
     /* Setup */
     .setup-card{text-align:center;padding:24px}
     .setup-icon{font-size:2.8rem;margin-bottom:10px;display:block}
@@ -86,12 +91,10 @@
     .setup-sub{font-size:0.82rem;opacity:0.6;margin-bottom:20px}
     .form-group{margin-bottom:14px;text-align:left}
     .form-label{font-size:0.7rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;display:block}
-    .form-input{width:100%;background:#f4f7f2;border:1px solid #d1d5db;border-radius:12px;padding:11px 13px;color:#1e293b;font-size:0.9rem;outline:none}
+    .form-input{width:100%;background:var(--c-bg);border:1px solid #d1d5db;border-radius:12px;padding:11px 13px;color:var(--c-slate);font-size:0.9rem;outline:none}
     .form-input::placeholder{opacity:0.4}
-    .size-selector{display:flex;gap:8px}
-    .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid #d1d5db;background:#f4f7f2;color:#1e293b;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
-    .size-btn.active{background:rgba(13,148,136,0.2);border-color:#0d9488}
-
+    .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid #d1d5db;background:var(--c-bg);color:var(--c-slate);font-size:0.8rem;font-weight:600;cursor:pointer;transition:var(--c-transition);text-align:center}
+    .size-btn.active{background:rgba(13,148,136,0.2);border-color:var(--c-teal)}
     /* Paywall */
     .paywall-hero{text-align:center;padding:20px 10px 10px;background:#fff}
     .paywall-hero-icon{font-size:3rem;display:block;margin-bottom:8px}
@@ -101,57 +104,49 @@
     .countdown-title{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#374151;font-weight:700;margin-bottom:6px}
     .countdown-timer{display:flex;justify-content:center;gap:12px}
     .countdown-unit{text-align:center}
-    .countdown-num{font-size:1.6rem;font-weight:900;color:#0d9488;line-height:1}
+    .countdown-num{font-size:1.6rem;font-weight:900;color:var(--c-teal);line-height:1}
     .countdown-label{font-size:0.58rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px}
-
-    .tier-tabs{display:flex;gap:6px;margin-bottom:16px;background:#edf1eb;border-radius:12px;padding:4px;border:1px solid #e2e8f0}
-    .tier-tab{flex:1;padding:8px 4px;border-radius:9px;border:none;background:none;color:#64748b;font-size:0.78rem;font-weight:600;cursor:pointer;opacity:0.7;transition:all 0.2s}
-    .tier-tab.active{opacity:1;color:#1e293b}
-    .tier-tab.t-bronze.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#64748b}
-    .tier-tab.t-silver.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#64748b}
-    .tier-tab.t-gold.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:#64748b}
-
-    .billing-toggle{display:flex;gap:5px;margin-bottom:14px;background:#edf1eb;border-radius:10px;padding:3px;border:1px solid #e2e8f0}
-    .billing-btn{flex:1;padding:7px 4px;border-radius:8px;border:none;background:none;color:#64748b;font-size:0.72rem;font-weight:600;cursor:pointer;opacity:0.8;transition:all 0.2s}
-    .billing-btn.active{background:#0d9488;color:#1e293b;opacity:1;box-shadow:0 2px 6px rgba(234,88,12,0.3)}
-
+    .tier-tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--c-card);border-radius:12px;padding:4px;border:1px solid var(--c-border)}
+    .tier-tab{flex:1;padding:8px 4px;border-radius:9px;border:none;background:none;color:var(--c-muted);font-size:0.78rem;font-weight:600;cursor:pointer;opacity:0.7;transition:var(--c-transition)}
+    .tier-tab.active{opacity:1;color:var(--c-slate)}
+    .tier-tab.t-bronze.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:var(--c-muted)}
+    .tier-tab.t-silver.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:var(--c-muted)}
+    .tier-tab.t-gold.active{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,0.1);color:var(--c-muted)}
+    .billing-toggle{display:flex;gap:5px;margin-bottom:14px;background:var(--c-card);border-radius:10px;padding:3px;border:1px solid var(--c-border)}
+    .billing-btn{flex:1;padding:7px 4px;border-radius:8px;border:none;background:none;color:var(--c-muted);font-size:0.72rem;font-weight:600;cursor:pointer;opacity:0.8;transition:var(--c-transition)}
+    .billing-btn.active{background:var(--c-teal);color:var(--c-slate);opacity:1;box-shadow:0 2px 6px rgba(234,88,12,0.3)}
     .tier-card{border-radius:16px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden}
     .tier-card-bronze{background:linear-gradient(135deg,#f8fafb,#f0fdf9);border:2px solid #14b8a6;box-shadow:0 4px 16px rgba(249,115,22,0.1)}
     .tier-card-silver{background:linear-gradient(135deg,#f8faff,#f0f4ff);border:2px solid #3b82f6;box-shadow:0 4px 16px rgba(59,130,246,0.1)}
     .tier-card-gold{background:linear-gradient(135deg,#f8fafc,#f8fafc);border:2px solid #eab308;box-shadow:0 4px 16px rgba(234,179,8,0.1)}
     .tier-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-    .tier-card-name{font-size:1rem;font-weight:800;color:#1e293b}
+    .tier-card-name{font-size:1rem;font-weight:800;color:var(--c-slate)}
     .tier-card-price{text-align:right}
     .tier-price-main{font-size:1.4rem;font-weight:900;color:#0f172a}
     .tier-price-orig{font-size:0.72rem;text-decoration:line-through;color:#9ca3af;margin-right:4px}
     .tier-price-period{font-size:0.68rem;color:#6b7280}
     .tier-savings{font-size:0.65rem;background:rgba(74,222,128,0.2);color:#4ade80;padding:2px 7px;border-radius:20px;font-weight:700;margin-top:3px;display:inline-block}
     .tier-features{list-style:none;margin-bottom:14px}
-    .tier-features li{font-size:0.82rem;padding:4px 0;display:flex;align-items:flex-start;gap:7px;color:#1e293b}
+    .tier-features li{font-size:0.82rem;padding:4px 0;display:flex;align-items:flex-start;gap:7px;color:var(--c-slate)}
     .tier-features li .fi{flex-shrink:0;font-size:0.85rem}
     .tier-features li.locked{opacity:0.3;color:#9ca3af}
-    .popular-badge{position:absolute;top:12px;right:12px;font-size:0.6rem;background:linear-gradient(135deg,#0d9488,#dc2626);color:#1e293b;padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:0.5px;box-shadow:0 2px 6px rgba(234,88,12,0.3)}
-
+    .popular-badge{position:absolute;top:12px;right:12px;font-size:0.6rem;background:linear-gradient(135deg,var(--c-teal),#dc2626);color:var(--c-slate);padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:0.5px;box-shadow:0 2px 6px rgba(234,88,12,0.3)}
     .referral-section{margin-top:10px;padding:14px;background:#f0fdf9;border:1px solid #99f6e4;border-radius:14px;text-align:center;box-shadow:0 2px 8px rgba(249,115,22,0.08)}
-    .referral-title{font-size:0.82rem;font-weight:700;margin-bottom:4px;color:#1e293b}
+    .referral-title{font-size:0.82rem;font-weight:700;margin-bottom:4px;color:var(--c-slate)}
     .referral-sub{font-size:0.75rem;color:#6b7280;margin-bottom:10px}
-    .referral-input-row{display:flex;gap:7px}
-    .referral-input{flex:1;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:9px 12px;color:#1e293b;font-size:0.85rem;outline:none}
+    .referral-input{flex:1;background:#fff;border:1.5px solid var(--c-border);border-radius:10px;padding:9px 12px;color:var(--c-slate);font-size:0.85rem;outline:none}
     .referral-input::placeholder{opacity:0.4}
-    .referral-apply-btn{padding:9px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,#0d9488,#dc2626);color:#1e293b;font-size:0.82rem;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(234,88,12,0.25)}
+    .referral-apply-btn{padding:9px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--c-teal),#dc2626);color:var(--c-slate);font-size:0.82rem;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(234,88,12,0.25)}
     .referral-success{font-size:0.78rem;color:#4ade80;margin-top:6px;display:none}
-
     /* Main dashboard */
     .status-bar{display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.78rem;margin-bottom:10px}
     .pulse{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse-anim 2s infinite}
     .pulse.inactive{background:#9ca3af;animation:none}
     @keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
-
     .rating-display{text-align:center;margin-bottom:10px}
     .rating-emoji{font-size:3.8rem;line-height:1;margin-bottom:8px;display:block}
     .rating-label{font-size:1.7rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px;text-align:center}
     .rating-message{font-size:0.86rem;opacity:0.8;line-height:1.5;text-align:center}
-
     .paw-scale{display:flex;gap:3px;margin-top:10px}
     .scale-item{flex:1;padding:4px 2px;border-radius:6px;font-size:0.52rem;text-align:center;opacity:0.25;transition:opacity 0.3s;font-weight:600}
     .scale-item.active{opacity:1}
@@ -162,51 +157,46 @@
     .scale-fry{background:rgba(255,69,0,0.2);color:#ff4500}
     .scale-cold{background:rgba(147,197,253,0.2);color:#93c5fd}
     .scale-toocold{background:rgba(147,197,253,0.2);color:#1e40af}
-
     .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .stat-box{background:#f4f7f2;border-radius:12px;padding:11px 9px;text-align:center}
+    .stat-box{background:var(--c-bg);border-radius:12px;padding:11px 9px;text-align:center}
     .stat-value{font-size:1.25rem;font-weight:800;margin-bottom:2px}
     .stat-label{font-size:0.65rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.3px}
-    .ground-temp-box{grid-column:span 2;background:#f4f7f2;border:1px solid #d1d5db}
+    .ground-temp-box{grid-column:span 2;background:var(--c-bg);border:1px solid #d1d5db}
     .ground-temp-box .stat-value{font-size:1.9rem}
-
     .alert-banner{border-radius:12px;padding:10px 13px;font-size:0.82rem;line-height:1.5;margin-top:10px}
     .alert-cold{background:rgba(147,197,253,0.15);border:1px solid rgba(147,197,253,0.3);color:#bfdbfe}
     .alert-hydration{background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#7dd3fc}
-
     /* Crime */
     .crime-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
     .crime-emoji-big{font-size:2rem}
     .crime-info{flex:1}
     .crime-rating-label{font-size:1.15rem;font-weight:800;margin-bottom:2px}
     .crime-location{font-size:0.72rem;opacity:0.5}
-    .crime-message{font-size:0.83rem;opacity:0.8;line-height:1.5;margin-bottom:10px;padding:9px 12px;border-radius:10px;background:#f4f7f2}
+    .crime-message{font-size:0.83rem;opacity:0.8;line-height:1.5;margin-bottom:10px;padding:9px 12px;border-radius:10px;background:var(--c-bg)}
     .crime-scale{display:flex;gap:3px;margin-bottom:9px}
     .crime-scale-item{flex:1;height:5px;border-radius:3px;opacity:0.2;transition:opacity 0.3s}
     .crime-scale-item.active{opacity:1}
-    .crime-stats-row{display:flex;gap:7px}
-    .crime-stat{flex:1;background:#f4f7f2;border-radius:10px;padding:9px;text-align:center}
+    .referral-input-row,.crime-stats-row{display:flex;gap:7px}
+    .crime-stat{flex:1;background:var(--c-bg);border-radius:10px;padding:9px;text-align:center}
     .crime-stat-val{font-size:0.92rem;font-weight:700}
     .crime-stat-label{font-size:0.6rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px}
     .crime-source{font-size:0.6rem;opacity:0.28;text-align:center;margin-top:7px}
-
     /* Wash stations */
     .stations-list{display:flex;flex-direction:column;gap:9px}
-    .station-item{background:#f4f7f2;border-radius:13px;padding:11px 13px;display:flex;align-items:flex-start;gap:11px}
+    .station-item{background:var(--c-bg);border-radius:13px;padding:11px 13px;display:flex;align-items:flex-start;gap:11px}
     .station-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px}
     .station-info{flex:1;min-width:0}
     .station-name{font-size:0.88rem;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .station-type{font-size:0.68rem;opacity:0.5;margin-bottom:3px}
     .station-meta{display:flex;flex-wrap:wrap;gap:4px}
-    .station-tag{font-size:0.65rem;opacity:0.7;background:#f4f7f2;padding:2px 7px;border-radius:20px}
+    .station-tag{font-size:0.65rem;opacity:0.7;background:var(--c-bg);padding:2px 7px;border-radius:20px}
     .station-dist{font-size:0.72rem;font-weight:600;opacity:0.65;flex-shrink:0}
     .station-links{display:flex;gap:7px;margin-top:5px}
-    .station-link{font-size:0.68rem;color:#0d9488;text-decoration:none}
-
+    .station-link{font-size:0.68rem;color:var(--c-teal);text-decoration:none}
     /* Walk time */
     .best-time-hero{text-align:center;margin-bottom:14px}
     .best-time-icon{font-size:2.8rem;display:block;margin-bottom:6px}
-    .best-time-window{font-size:1.55rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:#0d9488}
+    .best-time-window{font-size:1.55rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:var(--c-teal)}
     .best-time-rec{font-size:0.86rem;opacity:0.8;line-height:1.5;max-width:300px;margin:0 auto}
     .hourly-chart{margin-top:14px;overflow-x:auto;padding-bottom:4px}
     .hourly-bars{display:flex;gap:3px;align-items:flex-end;height:65px;min-width:max-content}
@@ -214,62 +204,52 @@
     .hourly-bar-wrap{height:50px;display:flex;align-items:flex-end}
     .hourly-bar{width:19px;border-radius:4px 4px 0 0;transition:opacity 0.2s;min-height:4px}
     .hourly-bar.past{opacity:0.22}
-    .hourly-bar.best-bar{outline:2px solid #0d9488;outline-offset:2px}
+    .hourly-bar.best-bar{outline:2px solid var(--c-teal);outline-offset:2px}
     .hourly-label{font-size:0.53rem;opacity:0.45;white-space:nowrap}
-    .hourly-label.best-label{opacity:1;color:#0d9488;font-weight:700}
+    .hourly-label.best-label{opacity:1;color:var(--c-teal);font-weight:700}
     .chart-legend{display:flex;gap:10px;margin-top:9px;justify-content:center}
     .legend-item{display:flex;align-items:center;gap:4px;font-size:0.65rem;opacity:0.55}
     .legend-dot{width:8px;height:8px;border-radius:2px}
-
     /* Share */
     .share-card{background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);border-radius:22px;padding:18px;margin-bottom:10px;text-align:center}
     .share-title{font-size:0.85rem;font-weight:700;margin-bottom:10px;opacity:0.9}
-    .share-btns{display:flex;gap:8px}
-    .share-btn{flex:1;padding:9px;border-radius:10px;border:none;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s}
-    .share-btn-copy{background:linear-gradient(135deg,#0d9488,#059669);color:#1e293b}
-    .share-btn-tiktok{background:rgba(0,0,0,0.6);color:#1e293b;border:1px solid #d1d5db}
-
+    .size-selector,.share-btns{display:flex;gap:8px}
+    .share-btn{flex:1;padding:9px;border-radius:10px;border:none;font-size:0.78rem;font-weight:700;cursor:pointer;transition:var(--c-transition)}
+    .share-btn-copy{background:linear-gradient(135deg,var(--c-teal),#059669);color:var(--c-slate)}
+    .share-btn-tiktok{background:rgba(0,0,0,0.6);color:var(--c-slate);border:1px solid #d1d5db}
     /* Referral share */
     .referral-share-card{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:16px;padding:16px;margin-bottom:10px;text-align:center}
     .referral-code-display{font-size:1.5rem;font-weight:900;letter-spacing:3px;color:#4ade80;margin:8px 0}
     .referral-share-sub{font-size:0.75rem;opacity:0.6;margin-bottom:10px}
-
     /* Push notification */
     .notif-banner{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:14px;padding:13px 15px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
     .notif-icon{font-size:1.5rem;flex-shrink:0}
     .notif-text{flex:1;font-size:0.8rem;opacity:0.85;line-height:1.4}
-    .notif-btn{padding:7px 13px;border-radius:9px;border:none;background:rgba(251,191,36,0.4);color:#1e293b;font-size:0.75rem;font-weight:700;cursor:pointer;flex-shrink:0}
-
+    .notif-btn{padding:7px 13px;border-radius:9px;border:none;background:rgba(251,191,36,0.4);color:var(--c-slate);font-size:0.75rem;font-weight:700;cursor:pointer;flex-shrink:0}
     /* Locked feature */
-    .locked-feature{background:#f4f7f2;border:1px dashed rgba(255,255,255,0.12);border-radius:14px;padding:16px;text-align:center;margin-bottom:10px}
+    .locked-feature{background:var(--c-bg);border:1px dashed rgba(255,255,255,0.12);border-radius:14px;padding:16px;text-align:center;margin-bottom:10px}
     .locked-icon{font-size:1.8rem;margin-bottom:6px}
     .locked-title{font-size:0.88rem;font-weight:700;margin-bottom:4px;opacity:0.7}
     .locked-sub{font-size:0.75rem;opacity:0.45;margin-bottom:10px}
-
     /* Profile */
-    .profile-section{background:#f4f7f2;border-radius:14px;padding:14px;margin-bottom:10px}
+    .profile-section{background:var(--c-bg);border-radius:14px;padding:14px;margin-bottom:10px}
     .profile-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #d1d5db}
     .profile-row:last-child{border-bottom:none}
     .profile-label{font-size:0.75rem;opacity:0.5}
     .profile-val{font-size:0.85rem;font-weight:600}
-
     .location-info{font-size:0.7rem;opacity:0.3;margin-top:7px}
     .last-updated{font-size:0.65rem;opacity:0.28;margin-top:5px;text-align:center}
     .loading-inline{opacity:0.4;font-size:0.83rem;text-align:center;padding:10px 0}
     .error-msg{background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:13px;font-size:0.86rem;color:#fca5a5}
-
     .app-footer{text-align:center;font-size:0.65rem;opacity:0.25;margin-top:14px;line-height:1.8}
-    .app-footer a{color:#0d9488;text-decoration:none}
-
+    .app-footer a{color:var(--c-teal);text-decoration:none}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(13,148,136,0.3);border-top-color:#0d9488;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:5px}
-
+    .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(13,148,136,0.3);border-top-color:var(--c-teal);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:5px}
     /* Nav tabs */
-    .bottom-nav{display:flex;gap:4px;margin-bottom:12px;background:#f4f7f2;border-radius:14px;padding:4px}
-    .nav-btn{flex:1;padding:8px 4px;border-radius:10px;border:none;background:none;color:#1e293b;font-size:0.7rem;font-weight:600;cursor:pointer;opacity:0.45;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px}
+    .bottom-nav{display:flex;gap:4px;margin-bottom:12px;background:var(--c-bg);border-radius:14px;padding:4px}
+    .nav-btn{flex:1;padding:8px 4px;border-radius:10px;border:none;background:none;color:var(--c-slate);font-size:0.7rem;font-weight:600;cursor:pointer;opacity:0.45;transition:var(--c-transition);display:flex;flex-direction:column;align-items:center;gap:2px}
     .nav-btn .nav-icon{font-size:1.1rem}
     .nav-btn.active{background:rgba(13,148,136,0.3);opacity:1}
-  
     /* Edge glow system */
     .edge-glow {
       position: fixed;
@@ -291,7 +271,6 @@
     .edge-glow.pulsing {
       animation: edge-pulse 2.5s ease-in-out infinite;
     }
-
     /* Temp color wheel indicator */
     .temp-wheel {
       width: 52px; height: 52px;
@@ -326,8 +305,6 @@
       transform: translate(-50%, -50%);
       box-shadow: 0 0 4px rgba(0,0,0,0.8);
     }
-
-    
   /* ===== THEMES ===== */
   .theme-btn {
     border-radius: 12px;
@@ -343,64 +320,55 @@
   .theme-btn.active { border-color: #fff; transform: scale(1.06); }
   .theme-btn span { display:block; font-size:1.2rem; margin-bottom:4px; }
   .theme-btn.locked { opacity:0.45; cursor:not-allowed; }
-
   /* Theme variables */
-  body[data-theme="midnight"] { --accent: #0d9488; --accent2: #4a7c59; --glow: 13,148,136; }
-  body[data-theme="violet"]   { --accent: #0d9488; --accent2: #4a7c59; --glow: 124,58,237; }
+  body[data-theme="midnight"] { --accent: var(--c-teal); --accent2: #4a7c59; --glow: 13,148,136; }
+  body[data-theme="violet"]   { --accent: var(--c-teal); --accent2: #4a7c59; --glow: 124,58,237; }
   body[data-theme="ocean"]    { --accent: #0891b2; --accent2: #22d3ee; --glow: 8,145,178; }
   body[data-theme="forest"]   { --accent: #16a34a; --accent2: #4ade80; --glow: 22,163,74; }
   body[data-theme="blush"]    { --accent: #db2777; --accent2: #f472b6; --glow: 219,39,119; }
-  body[data-theme="frost"]    { --accent: #64748b; --accent2: #60a5fa; --glow: 37,99,235; background:#0f172a; }
-
-  
+  body[data-theme="frost"]    { --accent: var(--c-muted); --accent2: #60a5fa; --glow: 37,99,235; background:#0f172a; }
     /* Avatar editor */
     .avatar-picker-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:10px; }
-    .avatar-option { width:44px; height:44px; border-radius:50%; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; transition:all 0.2s; background:#f1f5f9; }
-    .avatar-option:hover, .avatar-option.selected { border-color:#0d9488; background:#e6fffa; transform:scale(1.1); }
+    .avatar-option { width:44px; height:44px; border-radius:50%; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; transition:var(--c-transition); background:#f1f5f9; }
+    .avatar-option:hover, .avatar-option.selected { border-color:var(--c-teal); background:#e6fffa; transform:scale(1.1); }
     .avatar-option.color-opt { font-size:0; }
     .avatar-edit-section { text-align:center; }
-    .avatar-large { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,#0d9488,#059669); display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 8px; border:3px solid #e2e8f0; cursor:pointer; transition:all 0.2s; }
-    .avatar-large:hover { border-color:#0d9488; transform:scale(1.05); }
-  
+    .avatar-large { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,var(--c-teal),#059669); display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 8px; border:3px solid var(--c-border); cursor:pointer; transition:var(--c-transition); }
+    .avatar-large:hover { border-color:var(--c-teal); transform:scale(1.05); }
 /* ── Forecast strip ───────────────────────────── */
 .forecast-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
-.forecast-tab{flex:1;min-width:60px;padding:6px 4px;border:1.5px solid #e2e8f0;border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:#475569;cursor:pointer;text-align:center;transition:.2s;}
-.forecast-tab.active{background:#0d9488;color:#fff;border-color:#0d9488;}
+.forecast-tab{flex:1;min-width:60px;padding:6px 4px;border:1.5px solid var(--c-border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:#475569;cursor:pointer;text-align:center;transition:.2s;}
+.forecast-tab.active{background:var(--c-teal);color:#fff;border-color:var(--c-teal);}
 .forecast-tab.gold-tab{border-color:#d97706;color:#92400e;}
 .forecast-tab.gold-tab.active{background:#d97706;border-color:#d97706;color:#fff;}
 .forecast-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
 .forecast-strip::-webkit-scrollbar{display:none;}
-.forecast-day-card{flex:0 0 auto;width:80px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;transition:.2s;}
-.forecast-day-card.active{border-color:#0d9488;background:#f0fdfa;}
+.forecast-day-card{flex:0 0 auto;width:80px;background:#f8fafc;border:1.5px solid var(--c-border);border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;transition:.2s;}
+.forecast-day-card.active{border-color:var(--c-teal);background:#f0fdfa;}
 .forecast-day-card.gold-locked{opacity:.55;pointer-events:none;}
 .forecast-day-card .fdc-day{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;}
 .forecast-day-card .fdc-icon{font-size:22px;margin:4px 0;}
-.forecast-day-card .fdc-best{font-size:11px;font-weight:600;color:#0d9488;}
-.forecast-day-card .fdc-temp{font-size:10px;color:#64748b;}
+.forecast-day-card .fdc-best{font-size:11px;font-weight:600;color:var(--c-teal);}
+.forecast-day-card .fdc-temp{font-size:10px;color:var(--c-muted);}
 .forecast-day-card .fdc-lock{font-size:14px;}
 .forecast-7day-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px;}
 .forecast-7day-row:last-child{border-bottom:none;}
 .f7-day{width:60px;font-weight:600;color:#334155;}
 .f7-icon{font-size:18px;width:28px;text-align:center;}
-.f7-best{color:#0d9488;font-weight:600;flex:1;text-align:center;}
-.f7-temp{color:#64748b;text-align:right;}
-
-
+.f7-best{color:var(--c-teal);font-weight:600;flex:1;text-align:center;}
+.f7-temp{color:var(--c-muted);text-align:right;}
 /* Weather tip banner */
 .weather-tip{display:none;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:0.82rem;color:#0369a1;display:flex;align-items:flex-start;gap:8px;}
 .weather-tip-icon{font-size:1.1rem;flex-shrink:0;}
 .weather-tip-text{line-height:1.4;}
-
 /* Hot car alert banner */
 .hot-car-alert{display:none;background:#fef3c7;border:1.5px solid #f59e0b;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:0.83rem;color:#92400e;}
 .hot-car-alert-title{font-weight:700;font-size:0.88rem;margin-bottom:3px;}
-
 /* Walk reminder banner */
 .walk-reminder-banner{display:none;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:12px 14px;margin-bottom:12px;}
 .walk-reminder-title{font-weight:700;font-size:0.88rem;color:#166534;margin-bottom:3px;}
 .walk-reminder-sub{font-size:0.8rem;color:#15803d;margin-bottom:8px;}
 .just-walked-btn{background:#16a34a;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;}
-
 /* Settings toggles in profile */
 .settings-card .setting-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1f5f9;}
 .settings-card .setting-row:last-child{border-bottom:none;}
@@ -411,10 +379,8 @@
 .toggle-switch input{opacity:0;width:0;height:0;}
 .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:22px;transition:.3s;}
 .toggle-slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
-.toggle-switch input:checked + .toggle-slider{background:#0d9488;}
-.toggle-switch input:checked + .toggle-slider:before{transform:translateX(18px);}
-
-</style>
+.toggle-switch input:checked + .toggle-slider{background:var(--c-teal);}
+.toggle-switch input:checked + .toggle-slider:before{transform:translateX(18px);}</style>
 </head>
 <body>
   <!-- ── AUTO-UPDATE BANNER ── -->
@@ -1087,15 +1053,19 @@
     </div>
   </div>
 
-<script>
-function getReferralCount() {
+<script>function getReferralCount() {
+// ── localStorage key constants ──
+const LS_USERS      = LS_USERS;
+const LS_CUR_USER   = LS_CUR_USER;
+const LS_SUB_TIER   = LS_SUB_TIER;
+const LS_TRAY       = LS_TRAY;
+const LS_REFERRAL   = LS_REFERRAL;
+const LS_LAST_EMAIL = LS_LAST_EMAIL;
+const LS_PREFS      = LS_PREFS;
+const LS_USER2      = LS_USER2;
+const LS_THEME      = LS_THEME;
   return parseInt(localStorage.getItem('paw_referral_count') || '0');
 }
-
-
-// ═══════════════════════════════════════════════════════
-// ── REFERRAL COUNT in profile ──
-
 const APP_ID = '6a1c6fbdd48b351a9eb7455e';
 let currentUser = null, userPrefs = null;
 let isTracking = false, trackingInterval = null;
@@ -1103,8 +1073,6 @@ let currentPetSize = 'medium', currentTier = 'free';
 let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, lastCrimeScore = null;
 let isSignUp = false, setupSize = 'medium', activeBilling = 'weekly', activeTierTab = 'bronze';
 let notificationsEnabled = false;
-
-
 // Launch end date: 7 days from now stored in localStorage
 const LAUNCH_KEY = 'paw_launch_end';
 function getLaunchEnd() {
@@ -1125,7 +1093,6 @@ function startCountdown() {
   }
   tick(); setInterval(tick, 1000);
 }
-
 // Pricing data
 const PRICES = {
   bronze: { weekly:{launch:'$0.99',regular:'$1.99',period:'/wk'}, monthly:{launch:'$2.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$24.99',regular:'$39.99',period:'/yr'} },
@@ -1137,7 +1104,6 @@ const FEATURES = {
   silver: ['✅ Everything in Bronze','✅ Walk history (30 days)','✅ Multiple pet profiles (up to 3)','✅ Detailed safety reports','✅ Route safety scanner','🔒 Unlimited pet profiles','🔒 Pro walker dashboard','🔒 Priority support'],
   gold:   ['✅ Everything in Silver','✅ Unlimited pet profiles','✅ Pro walker dashboard','✅ Walk sharing & client reports','✅ Priority support','✅ Save favourite wash stations','✅ Lifetime access option','✅ Early access to new features']
 };
-
 function renderTierDisplay() {
   const p = PRICES[activeTierTab][activeBilling];
   if (!p) return;
@@ -1168,7 +1134,6 @@ function renderTierDisplay() {
       </button>
     </div>`;
 }
-
 function selectTierTab(tier, el) {
   activeTierTab = tier;
   document.querySelectorAll('.tier-tab').forEach(t => t.classList.remove('active'));
@@ -1218,7 +1183,6 @@ async function handleSubscribe(tier, billing) {
     if (btn) { btn.disabled = false; btn.textContent = 'Subscribe'; }
   }
 }
-
 function handleCheckoutReturn() {
   const params = new URLSearchParams(window.location.search);
   const checkout = params.get('checkout');
@@ -1226,7 +1190,7 @@ function handleCheckoutReturn() {
   const period = params.get('period');
   if (checkout === 'success' && tier) {
     // Save subscription to localStorage
-    localStorage.setItem('paw_sub_tier', tier);
+    localStorage.setItem(LS_SUB_TIER, tier);
     localStorage.setItem('paw_sub_period', period || 'monthly');
     localStorage.setItem('paw_sub_start', new Date().toISOString());
     currentTier = tier;
@@ -1249,11 +1213,9 @@ function handleCheckoutReturn() {
   }
 }
 function startFree() { loadMainScreen(); }
-
 function applyReferral(inputId) {
   const val = document.getElementById(inputId).value.trim().toUpperCase();
   const successId = inputId === 'paywall-referral' ? 'paywall-referral-success' : 'setup-referral-success';
-
   // Family lifetime codes — grant lifetime Bronze access
   const LIFETIME_CODES = {
     'PAW-MOM-6RX1Z2': { name: 'Mom', tier: 'silver' },
@@ -1267,43 +1229,38 @@ function applyReferral(inputId) {
     'PAW-SLV-I6ZD9T': { name: 'Daughter Silver', tier: 'silver' },
     'PAW-GOLD-RSQ31G': { name: 'Gold Lifetime', tier: 'gold' }
   };
-
   const usedCodes = JSON.parse(localStorage.getItem('paw_used_codes') || '[]');
-
   if (LIFETIME_CODES[val]) {
     // Lifetime/family codes always work — no used-code block
     const codeInfo = LIFETIME_CODES[val];
     const grantedTier = codeInfo.tier || 'bronze';
-
     // Grant lifetime access at the specified tier
-    const profile = JSON.parse(localStorage.getItem('paw_current_user') || '{}');
+    const profile = JSON.parse(localStorage.getItem(LS_CUR_USER) || '{}');
     profile.tier = grantedTier;
     profile.subscriptionActive = true;
     profile.lifetimeAccess = true;
     profile.referralCode = val;
     profile.referralName = codeInfo.name;
-    localStorage.setItem('paw_current_user', JSON.stringify(profile));
+    localStorage.setItem(LS_CUR_USER, JSON.stringify(profile));
     // Also persist to paw_users store so it survives across sessions
     if (profile.email) {
       try {
-        const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+        const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
         users[profile.email] = profile;
-        localStorage.setItem('paw_users', JSON.stringify(users));
+        localStorage.setItem(LS_USERS, JSON.stringify(users));
       } catch(_) {}
     }
     usedCodes.push(val);
     localStorage.setItem('paw_used_codes', JSON.stringify(usedCodes));
     currentUser = profile;
     currentTier = grantedTier;
-    localStorage.setItem('paw_sub_tier', grantedTier);
+    localStorage.setItem(LS_SUB_TIER, grantedTier);
     localStorage.setItem('paw_session_active', '1');
-
     const tierLabel = grantedTier.charAt(0).toUpperCase() + grantedTier.slice(1);
     const el = document.getElementById(successId);
     el.textContent = '🎉 Lifetime ' + tierLabel + ' access unlocked!';
     el.style.display = 'block';
-    localStorage.setItem('paw_referral_applied', val);
-
+    localStorage.setItem(LS_REFERRAL, val);
     setTimeout(() => {
       // Ensure userPrefs exists so we go to main, not setup
       if (!userPrefs) {
@@ -1313,37 +1270,33 @@ function applyReferral(inputId) {
       document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
       loadMainScreen();
     }, 1800);
-
   } else if (val.startsWith('PAW-') && val.length >= 8) {
     // Generic code — free week
     const el = document.getElementById(successId);
     el.textContent = '✅ Code applied!';
     el.style.display = 'block';
-    localStorage.setItem('paw_referral_applied', val);
+    localStorage.setItem(LS_REFERRAL, val);
   } else {
     alert('Invalid referral code. Please check the code and try again.');
   }
 }
-
 // ---- Local auth (no server needed) ----
 function generateId() {
   return 'usr_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
 }
-
 async function authRegister(email, password, full_name) {
-  const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+  const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
   if (users[email]) throw new Error('An account with this email already exists.');
   const id = generateId();
   const user = { id, email, full_name, password: btoa(password), created: Date.now() };
   users[email] = user;
-  localStorage.setItem('paw_users', JSON.stringify(users));
-  localStorage.setItem('paw_current_user', JSON.stringify({id, email, full_name}));
-  localStorage.setItem('paw_last_email', email);
+  localStorage.setItem(LS_USERS, JSON.stringify(users));
+  localStorage.setItem(LS_CUR_USER, JSON.stringify({id, email, full_name}));
+  localStorage.setItem(LS_LAST_EMAIL, email);
   return user;
 }
-
 async function authLogin(email, password) {
-  const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+  const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
   const user = users[email];
   if (!user) throw new Error('No account found with that email. Please sign up first.');
   if (user.password !== btoa(password)) throw new Error('Incorrect password. Please try again.');
@@ -1356,18 +1309,17 @@ async function authLogin(email, password) {
     subscriptionActive: user.subscriptionActive || false,
     lifetimeAccess: user.lifetimeAccess || false
   };
-  localStorage.setItem('paw_current_user', JSON.stringify(profile));
-  localStorage.setItem('paw_last_email', email);
+  localStorage.setItem(LS_CUR_USER, JSON.stringify(profile));
+  localStorage.setItem(LS_LAST_EMAIL, email);
   return user;
 }
-
 async function authMe() {
-  const u = localStorage.getItem('paw_current_user');
+  const u = localStorage.getItem(LS_CUR_USER);
   if (!u) throw new Error('Not logged in');
   const current = JSON.parse(u);
   // Always merge with paw_users to get latest saved data (name, tier, etc.)
   try {
-    const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+    const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
     const master = users[current.email];
     if (master) {
       // Merge: master paw_users is source of truth for profile data
@@ -1378,26 +1330,24 @@ async function authMe() {
         subscriptionActive: master.subscriptionActive || current.subscriptionActive || false,
         lifetimeAccess: master.lifetimeAccess || current.lifetimeAccess || false
       };
-      localStorage.setItem('paw_current_user', JSON.stringify(merged));
+      localStorage.setItem(LS_CUR_USER, JSON.stringify(merged));
       return merged;
     }
   } catch(_) {}
   return current;
 }
-
 async function authLogout() {
-  localStorage.removeItem('paw_current_user');
+  localStorage.removeItem(LS_CUR_USER);
 }
-
 // Local entity storage (replaces API calls)
 function getPrefs(userId) {
-  const all = JSON.parse(localStorage.getItem('paw_prefs') || '{}');
+  const all = JSON.parse(localStorage.getItem(LS_PREFS) || '{}');
   return all[userId] || null;
 }
 function savePrefs(userId, data) {
-  const all = JSON.parse(localStorage.getItem('paw_prefs') || '{}');
+  const all = JSON.parse(localStorage.getItem(LS_PREFS) || '{}');
   all[userId] = { ...( all[userId] || {}), ...data, id: userId };
-  localStorage.setItem('paw_prefs', JSON.stringify(all));
+  localStorage.setItem(LS_PREFS, JSON.stringify(all));
   return all[userId];
 }
 function showScreen(id) {
@@ -1414,7 +1364,6 @@ function showTab(tab) {
   currentActiveTab = tab;
   syncGlowToActiveTab();
 }
-
 let isSignUpMode = false;
 function toggleAuthMode() {
   isSignUpMode = !isSignUpMode;
@@ -1436,7 +1385,6 @@ async function submitAuth() {
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>' + (isSignUpMode ? 'Creating…' : 'Signing in…');
   document.getElementById('auth-error').style.display = 'none';
   try {
-
     if (isSignUpMode) await authRegister(email, password, name);
     else await authLogin(email, password);
     currentUser = await authMe();
@@ -1445,7 +1393,6 @@ async function submitAuth() {
   finally { btn.disabled = false; btn.textContent = isSignUpMode ? 'Create Account' : 'Sign In'; }
 }
 function showAuthError(msg) { const el = document.getElementById('auth-error'); el.textContent = msg; el.style.display = 'block'; }
-
 async function onLoggedIn() {
   // Show disclaimer if not yet agreed
   showDisclaimerIfNeeded(currentUser?.email || '', currentUser?.full_name || '');
@@ -1453,15 +1400,15 @@ async function onLoggedIn() {
     userPrefs = getPrefs(currentUser.id);
   } catch(_) { userPrefs = null; }
   // Sync tier — check userPrefs first, then currentUser, then localStorage
-  const savedTier = userPrefs?.subscription_tier || currentUser?.tier || localStorage.getItem('paw_sub_tier');
+  const savedTier = userPrefs?.subscription_tier || currentUser?.tier || localStorage.getItem(LS_SUB_TIER);
   if (savedTier && ['bronze','silver','gold'].includes(savedTier)) {
     currentTier = savedTier;
-    localStorage.setItem('paw_sub_tier', currentTier);
+    localStorage.setItem(LS_SUB_TIER, currentTier);
   }
   // Sync currentUser tier so userBar shows correctly
   if (currentUser && currentTier !== 'free') {
     currentUser.tier = currentTier;
-    localStorage.setItem('paw_current_user', JSON.stringify(currentUser));
+    localStorage.setItem(LS_CUR_USER, JSON.stringify(currentUser));
   }
   updateUserBar();
   renderAvatar();
@@ -1481,7 +1428,6 @@ async function onLoggedIn() {
     startCountdown();
   }
 }
-
 function updateUserBar() {
   if (!currentUser) return;
   const name = currentUser.full_name || currentUser.email.split('@')[0];
@@ -1499,7 +1445,6 @@ function updateUserBar() {
   renderProfileDisplay();
   renderSubStatus();
 }
-
 function renderProfileDisplay() {
   if (!userPrefs && !currentUser) return;
   const petName = userPrefs?.pet_name || '—';
@@ -1523,7 +1468,6 @@ function renderSubStatus() {
   document.getElementById('upgrade-btn').style.display = currentTier==='gold' ? 'none' : 'block';
   loadAlertSettingToggles();
 }
-
 function showEditProfile() {
   const petName = userPrefs?.pet_name || '';
   const breed = userPrefs?.pet_breed || '';
@@ -1562,13 +1506,13 @@ async function saveEditProfile(modal) {
       // Update in-memory user
       if (fullName) currentUser.full_name = fullName;
       // Always write to paw_users master store (source of truth)
-      const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+      const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
       if (users[currentUser.email]) {
         if (fullName) users[currentUser.email].full_name = fullName;
-        localStorage.setItem('paw_users', JSON.stringify(users));
+        localStorage.setItem(LS_USERS, JSON.stringify(users));
       }
       // Sync paw_current_user from master store
-      localStorage.setItem('paw_current_user', JSON.stringify({
+      localStorage.setItem(LS_CUR_USER, JSON.stringify({
         ...currentUser,
         full_name: fullName || currentUser.full_name || ''
       }));
@@ -1581,13 +1525,13 @@ async function saveEditProfile(modal) {
   } catch(e) {
     // Save failed silently — try a direct localStorage fallback
     try {
-      const fallback = JSON.parse(localStorage.getItem('pawreport_user') || '{}');
+      const fallback = JSON.parse(localStorage.getItem(LS_USER2) || '{}');
       fallback.name = document.getElementById('edit-full-name')?.value?.trim() || fallback.name;
-      localStorage.setItem('pawreport_user', JSON.stringify(fallback));
-      const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+      localStorage.setItem(LS_USER2, JSON.stringify(fallback));
+      const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
       if (currentUser?.email && users[currentUser.email]) {
         users[currentUser.email].name = fallback.name;
-        localStorage.setItem('paw_users', JSON.stringify(users));
+        localStorage.setItem(LS_USERS, JSON.stringify(users));
       }
       const m2 = document.getElementById('edit-profile-modal'); if(m2) m2.remove();
       showToast('✅ Profile saved!');
@@ -1596,12 +1540,10 @@ async function saveEditProfile(modal) {
     }
   }
 }
-
 async function logout() {
   try { await authLogout(); } catch(_) {} currentUser = null; userPrefs = null;
   currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
 }
-
 function selectSetupSize(size, el) { setupSize = size; document.querySelectorAll('#screen-setup .size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
 async function saveProfile() {
   const name = document.getElementById('setup-name').value.trim();
@@ -1610,20 +1552,18 @@ async function saveProfile() {
     const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
     userPrefs = savePrefs(currentUser.id, data);
     currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
-
     // Check multiple sources for lifetime/referral access
-    const profile = JSON.parse(localStorage.getItem('paw_current_user') || '{}');
-    const referralApplied = localStorage.getItem('paw_referral_applied');
+    const profile = JSON.parse(localStorage.getItem(LS_CUR_USER) || '{}');
+    const referralApplied = localStorage.getItem(LS_REFERRAL);
     const LIFETIME_CODE_LIST = Object.keys(LIFETIME_CODES);
     const hasLifetime = profile.lifetimeAccess || profile.subscriptionActive || LIFETIME_CODE_LIST.includes(referralApplied);
-
     if (hasLifetime) {
       // Make sure profile is fully unlocked
       if (LIFETIME_CODE_LIST.includes(referralApplied) && !profile.lifetimeAccess) {
         profile.tier = 'silver';
         profile.subscriptionActive = true;
         profile.lifetimeAccess = true;
-        localStorage.setItem('paw_current_user', JSON.stringify(profile));
+        localStorage.setItem(LS_CUR_USER, JSON.stringify(profile));
       }
       currentUser = profile;
       currentTier = profile.tier || 'silver';
@@ -1633,8 +1573,6 @@ async function saveProfile() {
     }
   } catch(e) { alert('Could not save profile.'); }
 }
-
-// ── Edge Lighting Disclaimer (shown once) ──
 function showEdgeLightingNotice() {
   if (localStorage.getItem('paw_edge_notice_seen')) return;
   const modal = document.createElement('div');
@@ -1659,7 +1597,6 @@ function showEdgeLightingNotice() {
     </div>`;
   document.body.appendChild(modal);
 }
-
 function loadMainScreen() {
   showWhatsNewToast();
   setTimeout(showEdgeLightingNotice, 1200);
@@ -1677,7 +1614,6 @@ function loadMainScreen() {
     document.getElementById('notif-banner').style.display = 'flex';
   }
 }
-
 // Notifications
 async function requestNotifications() {
   localStorage.setItem('paw_notif_asked', '1');
@@ -1711,11 +1647,9 @@ function updateNotifBtn() {
   else if (Notification.permission === 'denied') { btn.textContent = '🔕 Blocked — tap to fix'; }
   else { btn.textContent = 'Enable'; }
 }
-
 // Tray widget (persistent notification)
-let trayWidgetEnabled = localStorage.getItem('paw_tray_widget') === 'true';
+let trayWidgetEnabled = localStorage.getItem(LS_TRAY) === 'true';
 let trayIntervalId = null;
-
 function toggleTrayWidget() {
   if (!('Notification' in window)) {
     alert('Notifications not supported on this browser.');
@@ -1724,7 +1658,7 @@ function toggleTrayWidget() {
   if (trayWidgetEnabled) {
     // Turn off
     trayWidgetEnabled = false;
-    localStorage.setItem('paw_tray_widget', 'false');
+    localStorage.setItem(LS_TRAY, 'false');
     document.getElementById('tray-toggle-btn').textContent = 'Enable';
     if (trayIntervalId) { clearInterval(trayIntervalId); trayIntervalId = null; }
   } else {
@@ -1732,7 +1666,7 @@ function toggleTrayWidget() {
     Notification.requestPermission().then(perm => {
       if (perm === 'granted') {
         trayWidgetEnabled = true;
-        localStorage.setItem('paw_tray_widget', 'true');
+        localStorage.setItem(LS_TRAY, 'true');
         document.getElementById('tray-toggle-btn').textContent = 'Disable';
         showTrayNotification();
         // Refresh tray every 30 minutes
@@ -1743,7 +1677,6 @@ function toggleTrayWidget() {
     });
   }
 }
-
 function showTrayNotification() {
   if (!trayWidgetEnabled || Notification.permission !== 'granted') return;
   const data = lastPawData;
@@ -1765,7 +1698,6 @@ function showTrayNotification() {
     setTimeout(() => n.close(), 10000);
   } catch(e) { console.warn('Tray notification error:', e); }
 }
-
 function initTrayWidget() {
   const btn = document.getElementById('tray-toggle-btn');
   if (!btn) return;
@@ -1774,10 +1706,9 @@ function initTrayWidget() {
     trayIntervalId = setInterval(showTrayNotification, 30 * 60 * 1000);
   } else {
     trayWidgetEnabled = false;
-    localStorage.setItem('paw_tray_widget', 'false');
+    localStorage.setItem(LS_TRAY, 'false');
   }
 }
-
 function toggleNotifications() {
   if (Notification.permission === 'granted' && notificationsEnabled) {
     notificationsEnabled = false;
@@ -1786,15 +1717,12 @@ function toggleNotifications() {
     requestNotifications();
   }
 }
-
 function getStatusColor(status) {
   const map = {
     'Extreme Cold': '#6a0dad',
-    
     'Chilly': '#00bcd4',
     'Safe': '#4caf50',
     'Warm': '#ffeb3b',
-    
     'Danger': '#ff5722',
     'Fry Zone': '#b71c1c'
   };
@@ -1823,14 +1751,12 @@ document.addEventListener('visibilitychange', () => {
     setTimeout(playBarkSound, 200); // slight delay so audio context is ready
   }
 });
-
 function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b.dataset.size === size)); }
 function selectSize(size, el) {
   currentPetSize = size; syncSizeSelectors(size);
   if (lastLat && lastPawData) fetchPawAndUpdate(lastLat, lastLon);
   if (currentUser) { try { savePrefs(currentUser.id, { pet_size: size }); } catch(_) {} }
 }
-
 // Surface type adjustment
 let currentSurface = 'asphalt';
 const SURFACE_MULTIPLIERS = {
@@ -1843,7 +1769,6 @@ const SURFACE_MULTIPLIERS = {
 const SURFACE_LABELS = {
   asphalt: '🖤 Asphalt', concrete: '⬜ Concrete', dirt: '🟫 Dirt/Sand', grass: '🌿 Grass', shaded: '🌳 Shaded'
 };
-
 function selectSurface(surface, el) {
   currentSurface = surface;
   // Update top selector button active states
@@ -1857,7 +1782,6 @@ function selectSurface(surface, el) {
   // Re-render with adjusted temp if we have data
   if (lastPawData) applyPawUIWithSurface(lastPawData);
 }
-
 function selectSurfaceInline(surface) {
   currentSurface = surface;
   // Sync top selector too
@@ -1871,7 +1795,6 @@ function selectSurfaceInline(surface) {
   // Re-render with adjusted temp if we have data
   if (lastPawData) applyPawUIWithSurface(lastPawData);
 }
-
 function syncInlineSurface(surface) {
   const surfaces = ['asphalt','concrete','dirt','grass','shaded'];
   surfaces.forEach(s => {
@@ -1890,7 +1813,6 @@ function syncInlineSurface(surface) {
     }
   });
 }
-
 function applyPawUIWithSurface(d) {
   const mult = SURFACE_MULTIPLIERS[currentSurface] || 1.0;
   // Adjust ground temp based on surface (relative to air temp)
@@ -1906,14 +1828,12 @@ function applyPawUIWithSurface(d) {
   adjusted.emoji = ratingInfo.emoji;
   adjusted.color = ratingInfo.color;
   adjusted.message = ratingInfo.message;
-
   // Cold tips banner
   const coldTips = {
     'Extreme Cold': '🧊 Danger: Ice, frost & road salt can chemically burn your dog\'s paws. Boots or paw balm strongly recommended. Limit exposure to 5 minutes max.',
     'Chilly':       '🌨️ Cold alert: Watch for icy patches, puddles and rock salt on pavements. Rinse paws after walks to remove salt residue.'
   };
   adjusted.coldTip = coldTips[adjusted.rating] || null;
-
   // Hydration/heat tips banner (hot side)
   const hotTips = {
     'Warm':     '💧 Bring water — dogs can overheat quickly on warm pavement. Take breaks in shade.',
@@ -1922,7 +1842,6 @@ function applyPawUIWithSurface(d) {
     'Fry Zone': '🔥 Fry Zone — do NOT walk on pavement. Grass or indoor exercise only. Risk of serious burns.'
   };
   adjusted.hydrationMsg = hotTips[adjusted.rating] || null;
-
   updatePawUI(adjusted);
   // Fire tray update if enabled
   if (trayWidgetEnabled) showTrayNotification();
@@ -1930,7 +1849,6 @@ function applyPawUIWithSurface(d) {
   const lbl = document.getElementById('surface-label');
   if (lbl) lbl.textContent = SURFACE_LABELS[currentSurface] || currentSurface;
 }
-
 function getRatingFromTemp(tempF, size) {
   const thresholds = size === 'small'
     ? { extremecold: 25, chilly: 40, safe: 72, warm: 82, danger: 95, fry: 110 }
@@ -1945,7 +1863,6 @@ function getRatingFromTemp(tempF, size) {
   if (tempF <= thresholds.fry) return 'Danger';
   return 'Fry Zone';
 }
-
 const PAW_RATING_INFO = {
   'Extreme Cold': { emoji: '🧊', color: '#7b68ee', message: 'Dangerously cold! Ice, salt & frost can burn paws. Keep walks under 5 min.' },
   'Chilly':       { emoji: '🌨️', color: '#5bc0de', message: 'Chilly — short walks OK. Check for ice patches & salt on pavements.' },
@@ -1955,7 +1872,6 @@ const PAW_RATING_INFO = {
   'Danger':       { emoji: '🚨', color: '#d9534f', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
   'Fry Zone':     { emoji: '🔥', color: '#8b0000', message: 'Fry Zone! Stay off pavement entirely.' }
 };
-
 const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Hot':'caution','Danger':'danger','Fry Zone':'fry'};
 function updatePawScale(rating) {
   ['extremecold','chilly','safe','warm','caution','danger','fry'].forEach(s => { const el=document.getElementById('scale-'+s); if(el) el.classList.remove('active'); });
@@ -1964,24 +1880,20 @@ function updatePawScale(rating) {
 function getRatingColor(rating) {
   const map = {
     'Extreme Cold': '#818cf8',
-    
     'Chilly':       '#7dd3fc',
     'Safe':         '#0d9488',
     'Warm':         '#f59e0b',
-    
     'Danger':       '#ef4444',
     'Fry Zone':     '#dc2626'
   };
   return map[rating] || '#64748b';
 }
-
 // Background gradients per rating × time of day
 // Each rating has: dawn, day, dusk, night
 function updateDynamicColors(rating) {
   updateEdgeGlow(rating);
   const color = getRatingColor(rating);
   document.body.style.background = 'linear-gradient(160deg,#f8fafc 0%,#f1f5f9 50%,#f0f4f0 100%)';
-
   // Pulse dot — activate and color it based on current rating
   const pulse = document.getElementById('pulse-dot');
   if (pulse) {
@@ -2008,7 +1920,6 @@ function updateDynamicColors(rating) {
   const emoji = document.getElementById('rating-emoji');
   if (emoji) emoji.style.filter = 'drop-shadow(0 0 12px ' + color + ')';
 }
-
 function updatePawUI(d) {
   lastPawData = d;
   document.getElementById('rating-emoji').textContent = d.emoji;
@@ -2092,38 +2003,30 @@ function buildForecastDays(apiData) {
   const allDays = apiData.days || [{ date: null, hours: apiData.hours || [] }];
   const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const today = new Date();
-
   window._forecastDays = allDays.map((day, i) => {
     const dateObj = day.date ? new Date(day.date + 'T12:00:00') : new Date(today.getTime() + i * 86400000);
     const isToday = i === 0;
     const shortLabel = isToday ? 'Today' : (i === 1 ? 'Tmrw' : dayNames[dateObj.getDay()]);
-
     const hours = day.hours || [];
     const { best } = scoreDay(hours, isToday);
     const { icon } = buildRec(best, isToday);
-
     const temps = hours.map(h => h.temp).filter(Boolean);
     const hi = temps.length ? Math.round(Math.max(...temps)) : '--';
     const lo = temps.length ? Math.round(Math.min(...temps)) : '--';
-
     return { shortLabel, icon, bestTime: best?.timeLabel || '--', hi, lo, hours };
   });
 }
-
 function updateWalkTimeUI(d) {
   // store today's data globally
   window._forecastData = window._forecastData || {};
   window._forecastData[0] = d;
   window._selectedForecastDay = window._selectedForecastDay ?? 0;
-
   document.getElementById('walk-time-loading').style.display='none';
   document.getElementById('walk-time-content').style.display='block';
-
   renderForecastTabs();
   renderForecastStrip();
   renderSelectedDay();
 }
-
 function scoreDay(hours, isToday) {
   const nowHr = isToday ? new Date().getHours() : -1;
   const rescored = hours.map(h => {
@@ -2139,7 +2042,6 @@ function scoreDay(hours, isToday) {
   const best = upcoming.length ? upcoming.reduce((a,b) => a.totalScore < b.totalScore ? a : b) : rescored[0];
   return { rescored, best };
 }
-
 function buildRec(best, isToday) {
   const nowHr = new Date().getHours();
   const isNow = isToday && best.hour === nowHr;
@@ -2151,7 +2053,6 @@ function buildRec(best, isToday) {
   else if (sc < 65) { icon='⚠️'; rec = `${best.timeLabel} is the least bad option. Keep walks short.`; }
   return { icon, rec };
 }
-
 function renderForecastTabs() {
   const tier = getUserTier();
   const isGold = tier === 'gold';
@@ -2169,7 +2070,6 @@ function renderForecastTabs() {
   }
   tabs.innerHTML = html2;
 }
-
 function renderForecastStrip() {
   const tier = getUserTier();
   const isGold = tier === 'gold';
@@ -2194,7 +2094,6 @@ function renderForecastStrip() {
     </div>`;
   }).join('');
 }
-
 function selectForecastDay(idx) {
   const tier = getUserTier();
   const isGold = tier === 'gold';
@@ -2204,7 +2103,6 @@ function selectForecastDay(idx) {
   renderForecastStrip();
   renderSelectedDay();
 }
-
 function renderSelectedDay() {
   const idx = window._selectedForecastDay || 0;
   const days = window._forecastDays;
@@ -2212,18 +2110,15 @@ function renderSelectedDay() {
   const day = days[idx];
   const isToday = idx === 0;
   const { rescored, best } = scoreDay(day.hours, isToday);
-
   let icon, rec, displayTime;
   // Score is now conditions-only — just show the best upcoming window
   const result = buildRec(best, isToday);
   icon = result.icon;
   rec = result.rec;
   displayTime = best.timeLabel || '--';
-
   document.getElementById('best-time-icon').textContent = icon;
   document.getElementById('best-time-window').textContent = displayTime;
   document.getElementById('best-time-rec').textContent = rec;
-
   const bars = document.getElementById('hourly-bars');
   const hours = rescored.filter(h => h.hour % 2 === 0);
   const bestHour = best.hour;
@@ -2237,8 +2132,6 @@ function renderSelectedDay() {
     return `<div class="hourly-col"><div class="hourly-bar-wrap"><div class="hourly-bar ${h.isPast?'past':''} ${isBest?'best-bar':''}" style="height:${barH}px;background:${color}"></div></div><div class="hourly-label ${isBest?'best-label':''}">${h.timeLabel.replace(' AM','a').replace(' PM','p')}</div></div>`;
   }).join('');
 }
-
-
 function updateWashUI(d) {
   document.getElementById('wash-loading').style.display='none';
   document.getElementById('wash-content').style.display='block';
@@ -2252,7 +2145,6 @@ function updateWashUI(d) {
     return `<div class="station-item"><div class="station-icon">${icon}</div><div class="station-info"><div class="station-name">${s.name}</div><div class="station-type">${s.type}</div>${s.address?`<div class="station-type" style="color:#94a3b8">${s.address}</div>`:''}<div class="station-meta">${tags.map(t=>`<span class="station-tag">${t}</span>`).join('')}</div>${links?`<div class="station-links">${links}</div>`:''}</div><div class="station-dist">${s.distanceMiles!=null?s.distanceMiles+' mi':''}</div></div>`;
   }).join('');
 }
-
 function buildShareText() {
   const paw=lastPawData, crime=lastCrimeData;
   const parts=['🐾 The Paw Report'];
@@ -2273,7 +2165,6 @@ function shareReferralTikTok() {
   const msg = `🐾 Try The Paw Report — check ground temps before every walk to keep your dog safe!\n\nUse my referral code for a FREE week: ${code}\n\nCheck it out!`;
   navigator.clipboard.writeText(msg).then(()=>{ window.open('https://www.tiktok.com/', '_blank'); });
 }
-
 const ALL_CARDS = ['walk-time-card','paw-card'];
 function showResultCards(v) {
   document.getElementById('initial-card').style.display=v?'none':'block';
@@ -2291,7 +2182,6 @@ function showFetchError(msg) {
   document.getElementById('error-card').style.display='block';
   document.getElementById('error-msg').textContent='⚠️ '+msg;
 }
-
 async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
@@ -2310,14 +2200,12 @@ async function fetchAll(lat, lon) {
   if(walkRes.status==='fulfilled'&&walkRes.value.ok){ const d=await safeJson(walkRes.value); if(d){ buildForecastDays(d); updateWalkTimeUI(d); } else document.getElementById('walk-time-loading').textContent='Could not load forecast.'; }
   else document.getElementById('walk-time-loading').textContent='Could not load forecast.';
 }
-
 function getLocation() {
   return new Promise((resolve,reject)=>{
     if(!navigator.geolocation){reject(new Error('Geolocation not supported.')); return;}
     navigator.geolocation.getCurrentPosition(p=>resolve({lat:p.coords.latitude,lon:p.coords.longitude}),e=>reject(new Error(e.code===1?'Location access denied. Please allow and retry.':'Could not get your location.')),{timeout:10000,enableHighAccuracy:true});
   });
 }
-
 async function startTracking() {
   if(isTracking){stopTracking();return;}
   const btn=document.getElementById('main-btn');
@@ -2343,17 +2231,14 @@ function stopTracking() {
   document.getElementById('pulse-dot').classList.add('inactive');
   document.getElementById('status-text').textContent='Report stopped';
 }
-
-
 // What's New toast
-const APP_VERSION = 'v87';
+const APP_VERSION = 'v88';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
   'v38': '🔐 Stay logged in — you won\'t need to sign in again unless you sign out.',
   'v37': '💾 Your profile name now saves permanently across logins.'
 };
-
 function showWhatsNewToast() {
   const seen = localStorage.getItem('paw_seen_version');
   if (seen === APP_VERSION) return;
@@ -2371,12 +2256,10 @@ function showWhatsNewToast() {
   setTimeout(() => dismissToast(), 9500);
   localStorage.setItem('paw_seen_version', APP_VERSION);
 }
-
 function dismissToast() {
   const toast = document.getElementById('whats-new-toast');
   if (toast) { toast.classList.remove('show'); toast.style.pointerEvents = 'none'; }
 }
-
 (async () => {
   try { handleCheckoutReturn(); } catch(e) { console.warn('checkout return error:', e); }
   try {
@@ -2385,7 +2268,7 @@ function dismissToast() {
   try {
     currentUser = await authMe();
     // Verify the user still exists in paw_users (not wiped)
-    const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+    const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
     if (currentUser && !users[currentUser.email]) {
       // Session token exists but user store is gone — try to restore from last email
       throw new Error('User store missing');
@@ -2396,7 +2279,7 @@ function dismissToast() {
     try { 
       showScreen('auth');
       // Auto-fill last used email
-      const lastEmail = localStorage.getItem('paw_last_email');
+      const lastEmail = localStorage.getItem(LS_LAST_EMAIL);
       if (lastEmail) {
         const emailField = document.getElementById('auth-email');
         if (emailField) emailField.value = lastEmail;
@@ -2404,9 +2287,7 @@ function dismissToast() {
     } catch(e2) { console.error('showScreen auth failed:', e2); }
   }
 })();
-
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('screen-auth').classList.contains('active'))submitAuth();});
-
 function toggleTips() {
   const body = document.getElementById('tips-body');
   const chevron = document.getElementById('tips-chevron');
@@ -2418,7 +2299,6 @@ function toggleTips() {
     chevron.style.transform = 'rotate(0deg)';
   }
 }
-
 function playBarkSound() {
   try {
     const audio = new Audio('https://mypawreport.github.io/the-paw-report/bark.mp3');
@@ -2429,7 +2309,6 @@ function playBarkSound() {
     });
   } catch(e) {}
 }
-
   function togglePasswordVisibility() {
     const input = document.getElementById('auth-password');
     const btn = document.getElementById('toggle-pass-btn');
@@ -2441,8 +2320,6 @@ function playBarkSound() {
       btn.textContent = '👁️';
     }
   }
-
-  
   // ===== THEME SYSTEM =====
   const THEMES = [
     { id: 'midnight', label: 'Midnight', emoji: '🌑', tier: 'bronze', colors: ['#F1F5F9','#0d9488'] },
@@ -2452,13 +2329,11 @@ function playBarkSound() {
     { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#fdf2f8','#db2777'] },
     { id: 'frost',    label: 'Frost',    emoji: '❄️',  tier: 'gold',   colors: ['#0f172a','#64748b'] },
   ];
-
   const TIER_RANK = { bronze: 1, silver: 2, gold: 3 };
-
   function applyTheme(themeId) {
     try {
       document.body.setAttribute('data-theme', themeId);
-      localStorage.setItem('paw_theme', themeId);
+      localStorage.setItem(LS_THEME, themeId);
       const t = THEMES.find(x => x.id === themeId);
       if (t) {
         document.documentElement.style.setProperty('--accent', t.colors[1]);
@@ -2470,14 +2345,13 @@ function playBarkSound() {
       }
     } catch(e) { console.warn('Theme apply error:', e); }
   }
-
   function renderThemeGrid() {
     const grid = document.getElementById('theme-grid');
     const lockedMsg = document.getElementById('theme-locked-msg');
     if (!grid) return;
     const userTier = (currentUser?.tier || currentTier || 'bronze').toLowerCase();
     const userRank = TIER_RANK[userTier] || 1;
-    const savedTheme = localStorage.getItem('paw_theme') || 'midnight';
+    const savedTheme = localStorage.getItem(LS_THEME) || 'midnight';
     let hasLocked = false;
     grid.innerHTML = THEMES.map(t => {
       const requiredRank = TIER_RANK[t.tier] || 1;
@@ -2493,17 +2367,13 @@ function playBarkSound() {
     }).join('');
     lockedMsg.style.display = hasLocked ? 'block' : 'none';
   }
-
   function initTheme() {
     try {
-      const saved = localStorage.getItem('paw_theme') || 'midnight';
+      const saved = localStorage.getItem(LS_THEME) || 'midnight';
       // Defer slightly so DOM is ready
       setTimeout(() => applyTheme(saved), 0);
     } catch(e) { console.warn('initTheme error:', e); }
   }
-
-  
-// ── DISCLAIMER AGREEMENT ──
 function showDisclaimerIfNeeded(userEmail, userName) {
   const key = 'paw_disclaimer_agreed_' + (userEmail || 'guest');
   if (localStorage.getItem(key)) return; // already agreed
@@ -2514,7 +2384,6 @@ function showDisclaimerIfNeeded(userEmail, userName) {
   document.getElementById('disclaimer-modal').dataset.email = userEmail || '';
   document.getElementById('disclaimer-modal').dataset.name = userName || '';
 }
-
 function toggleDisclaimerBtn() {
   const checked = document.getElementById('disclaimer-checkbox').checked;
   const btn = document.getElementById('disclaimer-agree-btn');
@@ -2522,18 +2391,15 @@ function toggleDisclaimerBtn() {
   btn.style.background = checked ? '#0d9488' : '#94a3b8';
   btn.style.cursor = checked ? 'pointer' : 'not-allowed';
 }
-
 function agreeDisclaimer() {
   const modal = document.getElementById('disclaimer-modal');
   const email = modal.dataset.email || '';
   const name = modal.dataset.name || '';
   const agreedAt = new Date().toISOString();
   const appVersion = 'v52';
-
   // Save locally
   const key = 'paw_disclaimer_agreed_' + (email || 'guest');
   localStorage.setItem(key, agreedAt);
-
   // Save to backend database
   const payload = {
     email: email,
@@ -2542,21 +2408,19 @@ function agreeDisclaimer() {
     app_version: appVersion,
     agreement_text: 'I have read and understood the disclaimer. I agree ground temperatures are estimates only. I accept full responsibility for my pets safety. I will not hold The Paw Report, its owners, or its developers liable for any injury or harm.'
   };
-
   // Store in paw_users for redundancy
   try {
-    const users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+    const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
     if (email && users[email]) {
       users[email].disclaimer_agreed = agreedAt;
       users[email].disclaimer_version = appVersion;
-      localStorage.setItem('paw_users', JSON.stringify(users));
+      localStorage.setItem(LS_USERS, JSON.stringify(users));
     }
     // Also store in a separate agreements log
     const agreements = JSON.parse(localStorage.getItem('paw_agreements') || '[]');
     agreements.push(payload);
     localStorage.setItem('paw_agreements', JSON.stringify(agreements));
   } catch(_) {}
-
   // Send to backend (best effort)
   fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/saveDisclaimerAgreement', {
     method: 'POST',
@@ -2565,21 +2429,17 @@ function agreeDisclaimer() {
   }).catch(() => {
     // Backend unavailable — already saved locally above
   });
-
   // Close modal
   modal.style.display = 'none';
   document.body.style.overflow = '';
 }
-
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=87').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=88').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
 }
-
-// ── Edge Glow System ──────────────────────────────────────────
 const EDGE_COLORS = {
   'Extreme Cold': { color: '#003366', shadow: '0 0 0 6px #003366, 0 0 0 14px rgba(0,51,102,0.5), inset 0 0 0 6px #003366, inset 0 0 0 14px rgba(0,51,102,0.35)' },
 'Chilly':       { color: '#58E3C2', shadow: '0 0 0 6px #58E3C2, 0 0 0 14px rgba(88,227,194,0.5), inset 0 0 0 6px #58E3C2, inset 0 0 0 14px rgba(88,227,194,0.35)' },
@@ -2589,8 +2449,6 @@ const EDGE_COLORS = {
   'Danger':       { color: '#D0021B', shadow: '0 0 0 7px #D0021B, 0 0 0 18px rgba(208,2,27,0.6), 0 0 0 32px rgba(245,166,35,0.2), inset 0 0 0 7px #D0021B, inset 0 0 0 18px rgba(208,2,27,0.45)' },
   'Fry Zone':     { color: '#D0021B', shadow: '0 0 0 9px #D0021B, 0 0 0 20px rgba(208,2,27,0.65), inset 0 0 0 9px #D0021B, inset 0 0 0 20px rgba(208,2,27,0.55)' },
 };
-
-
 function syncGlowToActiveTab() {
   if (currentActiveTab === 'safety' && lastCrimeData) {
     // Map crime rating string to an edge glow key
@@ -2613,7 +2471,6 @@ function syncGlowToActiveTab() {
     updateEdgeGlow('Safe');
   }
 }
-
 function updateEdgeGlow(status) {
   const glow = document.getElementById('edgeGlow');
   if (!glow) return;
@@ -2627,7 +2484,6 @@ function updateEdgeGlow(status) {
     glow.classList.remove('pulsing');
   }
 }
-
 function drawTempWheel(canvasEl) {
   if (!canvasEl) return;
   const ctx = canvasEl.getContext('2d');
@@ -2655,7 +2511,6 @@ function drawTempWheel(canvasEl) {
   ctx.fillStyle = '#f8fafc';
   ctx.fill();
 }
-
 function showRecoveryModal() {
   const modal = document.getElementById('recovery-modal');
   if (modal) {
@@ -2666,35 +2521,28 @@ function showRecoveryModal() {
     if (emailInput) emailInput.value = '';
   }
 }
-
 function hideRecoveryModal() {
   const modal = document.getElementById('recovery-modal');
   if (modal) modal.style.display = 'none';
 }
-
 async function recoverAccess() {
   const emailInput = document.getElementById('recovery-email');
   const msg = document.getElementById('recovery-msg');
   const btn = document.querySelector('#recovery-modal button[onclick="recoverAccess()"]');
-
   if (!emailInput || !emailInput.value.trim()) {
     if (msg) { msg.style.color = '#c00'; msg.textContent = 'Please enter your email address.'; }
     return;
   }
-
   const email = emailInput.value.trim().toLowerCase();
   if (msg) { msg.style.color = '#888'; msg.textContent = 'Checking your subscription…'; }
   if (btn) btn.disabled = true;
-
   try {
     const resp = await fetch('https://superagent-9eb7455e.base44.app/functions/recoverSubscription', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
     });
-
     const data = await resp.json();
-
     if ((data.success || data.found) && data.tier) {
       // Restore their subscription in localStorage
       const profile = {
@@ -2704,12 +2552,10 @@ async function recoverAccess() {
         subscriptionActive: true,
         recoveredAt: Date.now()
       };
-      localStorage.setItem('pawreport_user', JSON.stringify(profile));
+      localStorage.setItem(LS_USER2, JSON.stringify(profile));
       currentUser = profile;
       currentTier = data.tier;
-
       if (msg) { msg.style.color = '#1aaf4f'; msg.textContent = `✅ ${data.tier.charAt(0).toUpperCase() + data.tier.slice(1)} access restored!`; }
-
       setTimeout(() => {
         hideRecoveryModal();
         showScreen('main');
@@ -2721,13 +2567,8 @@ async function recoverAccess() {
   } catch(e) {
     if (msg) { msg.style.color = '#c00'; msg.textContent = 'Connection error. Please try again.'; }
   }
-
   if (btn) btn.disabled = false;
 }
-// ── End Recovery Modal Functions ──────────────────────────────
-
-
-// ── showToast (generic utility) ──
 function showToast(msg, duration) {
   duration = duration || 3000;
   var t = document.getElementById('generic-toast');
@@ -2742,10 +2583,6 @@ function showToast(msg, duration) {
   clearTimeout(t._timer);
   t._timer = setTimeout(function() { t.style.opacity = '0'; }, duration);
 }
-
-// ═══════════════════════════════════════════════════════
-// ── FAVORITE LOCATIONS ──
-// ═══════════════════════════════════════════════════════
 var MAX_FAVS = 5;
 function getFavLocations() {
   try { return JSON.parse(localStorage.getItem('paw_fav_locations') || '[]'); } catch(e) { return []; }
@@ -2780,12 +2617,9 @@ function useFavLocation(lat, lon, name) {
   showToast('📍 Using ' + name);
   fetchAll(lat, lon);
 }
-
-// ── TIER HELPER ──
 function getUserTier() {
-  return currentTier || localStorage.getItem('paw_sub_tier') || 'free';
+  return currentTier || localStorage.getItem(LS_SUB_TIER) || 'free';
 }
-
 function renderFavLocations() {
   var tier = getUserTier();
   var hasFavAccess = (tier === 'silver' || tier === 'gold');
@@ -2815,10 +2649,6 @@ function renderFavLocations() {
       '<button onclick="removeFavLocation(' + i + ')" style="background:none;border:none;color:#ef4444;font-size:1rem;cursor:pointer;padding:4px;">🗑️</button></div>';
   }).join('');
 }
-
-// ═══════════════════════════════════════════════════════
-// ── WALK HISTORY LOG ──
-// ═══════════════════════════════════════════════════════
 var MAX_HISTORY = 50;
 function getWalkHistory() {
   try { return JSON.parse(localStorage.getItem('paw_walk_history') || '[]'); } catch(e) { return []; }
@@ -2894,13 +2724,10 @@ function renderWalkHistory() {
       '<div style="font-size:0.78rem;color:#64748b;margin-top:3px;">🌡️ ' + e.groundTemp + '°F ground · ' + e.airTemp + '°F air · ' + e.surface + ' · ' + e.petSize + (e.location ? ' · 📍 ' + e.location : '') + '</div></div>';
   }).join('');
 }
-
-// ═══════════════════════════════════════════════════════
-// ── SHARE REPORT ──
-// ═══════════════════════════════════════════════════════
 function shareReport() {
   if (!lastPawData) { showToast('Run a report first!'); return; }
-  var loc = document.getElementById('report-location-text') ? document.getElementById('report-location-text').textContent : 'your area';
+  var locEl = document.getElementById('report-location-text');
+  var loc = locEl ? locEl.textContent : 'your area';
   var surface = currentSurface ? currentSurface.charAt(0).toUpperCase() + currentSurface.slice(1) : 'Asphalt';
   var text = '🐾 The Paw Report — ' + loc + '\n' +
     '🌡️ Ground Temp: ' + lastPawData.groundTempF + '°F (' + surface + ')\n' +
@@ -2918,10 +2745,6 @@ function shareReport() {
     });
   }
 }
-
-// ═══════════════════════════════════════════════════════
-// ── RATE THE APP PROMPT (after 5th report) ──
-// ═══════════════════════════════════════════════════════
 function checkRateAppPrompt() {
   if (localStorage.getItem('paw_rate_dismissed')) return;
   var count = parseInt(localStorage.getItem('paw_report_count') || '0') + 1;
@@ -2955,10 +2778,6 @@ function dismissRateApp() {
   var m = document.getElementById('rate-app-modal');
   if (m) m.remove();
 }
-
-// ═══════════════════════════════════════════════════════
-// ── ADD TO HOME SCREEN PROMPT ──
-// ═══════════════════════════════════════════════════════
 var deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
@@ -2997,30 +2816,22 @@ function promptInstallApp() {
     }
   }
 }
-
 // Also update the beforeinstallprompt handler to NOT hide the button
 // (button is always shown now; we just use the prompt if available)
-
-
-// ═══════════════════════════════════════════════════════
-
-// ═══════════════════════════════════════════════════════
-// ── AVATAR MANAGEMENT ──
 function toggleAvatarPicker() {
   var picker = document.getElementById('avatar-picker');
   if (picker) picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
 }
-
 function setAvatar(type, value) {
   localStorage.setItem('paw_avatar_type', type);
   localStorage.setItem('paw_avatar_value', value);
   if (currentUser && currentUser.email) {
     try {
-      var users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+      var users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
       if (users[currentUser.email]) {
         users[currentUser.email].avatar_type = type;
         users[currentUser.email].avatar_value = value;
-        localStorage.setItem('paw_users', JSON.stringify(users));
+        localStorage.setItem(LS_USERS, JSON.stringify(users));
       }
     } catch(e) {}
   }
@@ -3029,13 +2840,12 @@ function setAvatar(type, value) {
   if (picker) picker.style.display = 'none';
   showToast('Avatar updated! 🎨');
 }
-
 function renderAvatar() {
   var type = localStorage.getItem('paw_avatar_type');
   var value = localStorage.getItem('paw_avatar_value');
   if (currentUser && currentUser.email) {
     try {
-      var users = JSON.parse(localStorage.getItem('paw_users') || '{}');
+      var users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
       var u = users[currentUser.email];
       if (u && u.avatar_type) { type = u.avatar_type; value = u.avatar_value; }
     } catch(e) {}
@@ -3058,12 +2868,7 @@ function renderAvatar() {
     if (largeAvatar) { largeAvatar.textContent = initial; largeAvatar.style.background = 'linear-gradient(135deg,#0d9488,#059669)'; }
   }
 }
-
-
-// ═══════════════════════════════════════════════════════
-// ── AUTO-UPDATE (Service Worker) ──
 var _swRegistration = null;
-
 function applyUpdate() {
   if (_swRegistration && _swRegistration.waiting) {
     _swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
@@ -3071,7 +2876,6 @@ function applyUpdate() {
     window.location.reload();
   }
 }
-
 function checkForUpdate() {
   if (!('serviceWorker' in navigator)) return;
   navigator.serviceWorker.getRegistration().then(function(reg) {
@@ -3098,7 +2902,6 @@ function checkForUpdate() {
     window.location.reload();
   });
 }
-
 // Run check on load
 window.addEventListener('load', function() {
   checkForUpdate();
@@ -3109,12 +2912,7 @@ window.addEventListener('load', function() {
     });
   }, 600000);
 });
-
-
-
-// ═══════════════════════════════════════════════
 // ALERT SETTINGS
-// ═══════════════════════════════════════════════
 function getAlertSettings() {
   try { return JSON.parse(localStorage.getItem('pawAlertSettings') || '{}'); }
   catch(e) { return {}; }
@@ -3140,10 +2938,7 @@ function loadAlertSettingToggles() {
     walkToggle.checked = false;
   }
 }
-
-// ═══════════════════════════════════════════════
 // WEATHER CONDITION TIPS
-// ═══════════════════════════════════════════════
 function showWeatherTip(weatherData) {
   const s = getAlertSettings();
   if (s.weatherTips === false) return;
@@ -3151,12 +2946,10 @@ function showWeatherTip(weatherData) {
   const iconEl = document.getElementById('weather-tip-icon');
   const textEl = document.getElementById('weather-tip-text');
   if (!banner || !weatherData) return;
-
   const desc = (weatherData.description || '').toLowerCase();
   const temp  = weatherData.temp || 70;
   const wind  = weatherData.wind || 0;
   const cloud = weatherData.cloud_cover || 0;
-
   let tip = null;
   if (desc.includes('snow') || desc.includes('blizzard'))
     tip = { icon:'❄️', msg:'Snow expected — ice melt salt can burn paws. Rinse paws after every walk.' };
@@ -3174,7 +2967,6 @@ function showWeatherTip(weatherData) {
     tip = { icon:'💨', msg:'Strong winds (' + Math.round(wind) + ' mph) — small dogs can be blown off balance. Keep them close.' };
   else if (cloud < 10 && temp >= 75)
     tip = { icon:'☀️', msg:'Full sun and warm — pavement heats up fast. Stick to shaded paths or early mornings.' };
-
   if (tip) {
     iconEl.textContent = tip.icon;
     textEl.textContent = tip.msg;
@@ -3183,14 +2975,10 @@ function showWeatherTip(weatherData) {
     banner.style.display = 'none';
   }
 }
-
-// ═══════════════════════════════════════════════
 // HOT CAR DETECTOR (everyone)
-// ═══════════════════════════════════════════════
 var _vehicleSpeedHistory = [];
 var _vehicleWatchId = null;
 var _hotCarAlertShownAt = 0;
-
 function startVehicleDetection() {
   const s = getAlertSettings();
   if (s.hotCar === false) return;
@@ -3204,7 +2992,6 @@ function startVehicleDetection() {
     checkHotCarCondition();
   }, null, { enableHighAccuracy: false, maximumAge: 10000, timeout: 20000 });
 }
-
 function checkHotCarCondition() {
   if (_vehicleSpeedHistory.length < 3) return;
   const recent = _vehicleSpeedHistory.slice(-5);
@@ -3213,7 +3000,6 @@ function checkHotCarCondition() {
   const cooldown = (Date.now() - _hotCarAlertShownAt) > 30 * 60 * 1000;
   if (wasDriving && nowStopped && cooldown) showHotCarAlert();
 }
-
 function showHotCarAlert() {
   const s = getAlertSettings();
   if (s.hotCar === false) return;
@@ -3223,17 +3009,13 @@ function showHotCarAlert() {
   banner.style.display = 'block';
   setTimeout(function(){ banner.style.display = 'none'; }, 5 * 60 * 1000);
 }
-
-// ═══════════════════════════════════════════════
 // WALK REMINDER (Gold only)
-// ═══════════════════════════════════════════════
 function logJustWalked() {
   localStorage.setItem('lastWalkTime', Date.now().toString());
   const banner = document.getElementById('walk-reminder-banner');
   if (banner) banner.style.display = 'none';
   showToast('✅ Walk logged! Good pup parent 🐾');
 }
-
 function checkWalkReminder() {
   const tier = getUserTier();
   if (tier !== 'gold') return;
@@ -3252,9 +3034,7 @@ function checkWalkReminder() {
   } else {
     banner.style.display = 'none';
   }
-}
-
-</script>
+}</script>
 
 </body>
 </html>
