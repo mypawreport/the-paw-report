@@ -381,6 +381,14 @@
 .toggle-slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
 .toggle-switch input:checked + .toggle-slider{background:#0d9488;}
 .toggle-switch input:checked + .toggle-slider:before{transform:translateX(22px);}</style>
+  <!-- Google Analytics GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PLACEHOLDER"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-PLACEHOLDER');
+  </script>
 </head>
 <body>
   <!-- ── AUTO-UPDATE BANNER ── -->
@@ -1054,6 +1062,37 @@
   </div>
 
 <script>
+// ── Activity Tracking ──────────────────────────────────────────────
+function getDeviceType() {
+  const ua = navigator.userAgent;
+  if (/iPad|tablet/i.test(ua)) return 'Tablet';
+  if (/Mobi|Android|iPhone/i.test(ua)) return 'Mobile';
+  return 'Desktop';
+}
+function getCountry() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown'; } catch(_) { return 'Unknown'; }
+}
+function trackAppEvent(event_type, extra = {}) {
+  // Log to Base44
+  fetch('https://superagent-9eb7455e.base44.app/functions/trackInstall', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      event_type,
+      email: extra.email || '',
+      referral_code: extra.referral_code || '',
+      country: getCountry(),
+      device_type: getDeviceType(),
+      browser: navigator.userAgent.includes('Chrome') ? 'Chrome' : navigator.userAgent.includes('Firefox') ? 'Firefox' : 'Other',
+      ...extra
+    })
+  }).catch(() => {}); // silent fail — never block the app
+  // Log to GA4
+  if (typeof gtag !== 'undefined') gtag('event', event_type, extra);
+}
+// ──────────────────────────────────────────────────────────────────
+window.addEventListener('appinstalled', () => { trackAppEvent('install'); });
+
 // ── localStorage key constants ──
 const LS_USERS      = 'paw_users';
 const LS_CUR_USER   = 'paw_current_user';
@@ -1069,7 +1108,6 @@ function getReferralCount() {
 }
 const APP_ID = '6a1c6fbdd48b351a9eb7455e';
 let currentUser = null, userPrefs = null;
-let currentActiveTab = 'report';
 let isTracking = false, trackingInterval = null;
 let currentPetSize = 'medium', currentTier = 'free';
 let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, lastCrimeScore = null;
@@ -1263,6 +1301,7 @@ function applyReferral(inputId) {
     el.textContent = '🎉 Lifetime ' + tierLabel + ' access unlocked!';
     el.style.display = 'block';
     localStorage.setItem(LS_REFERRAL, val);
+    trackAppEvent('referral_used', { referral_code: val, email: currentUser?.email || '' });
     setTimeout(() => {
       // Ensure userPrefs exists so we go to main, not setup
       if (!userPrefs) {
@@ -1278,6 +1317,7 @@ function applyReferral(inputId) {
     el.textContent = '✅ Code applied!';
     el.style.display = 'block';
     localStorage.setItem(LS_REFERRAL, val);
+    trackAppEvent('referral_used', { referral_code: val, email: currentUser?.email || '' });
   } else {
     alert('Invalid referral code. Please check the code and try again.');
   }
@@ -1295,6 +1335,8 @@ async function authRegister(email, password, full_name) {
   localStorage.setItem(LS_USERS, JSON.stringify(users));
   localStorage.setItem(LS_CUR_USER, JSON.stringify({id, email, full_name}));
   localStorage.setItem(LS_LAST_EMAIL, email);
+  // Track signup
+  setTimeout(() => trackAppEvent('signup', { email }), 500);
   return user;
 }
 async function authLogin(email, password) {
@@ -1552,17 +1594,6 @@ async function saveProfile() {
   const breed = document.getElementById('setup-breed').value.trim();
   try {
     const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
-    if (!currentUser) throw new Error('Not logged in');
-    if (!currentUser.id) {
-      // Repair missing id (can happen on first sign-up)
-      currentUser.id = 'usr_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
-      localStorage.setItem(LS_CUR_USER, JSON.stringify(currentUser));
-      const users = JSON.parse(localStorage.getItem(LS_USERS)||'{}');
-      if (currentUser.email && users[currentUser.email]) {
-        users[currentUser.email].id = currentUser.id;
-        localStorage.setItem(LS_USERS, JSON.stringify(users));
-      }
-    }
     userPrefs = savePrefs(currentUser.id, data);
     currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
     // Check multiple sources for lifetime/referral access
@@ -1584,7 +1615,7 @@ async function saveProfile() {
     } else {
       showScreen('paywall'); renderTierDisplay(); startCountdown();
     }
-  } catch(e) { alert('Could not save profile: ' + (e.message || e)); }
+  } catch(e) { alert('Could not save profile.'); }
 }
 function showEdgeLightingNotice() {
   if (localStorage.getItem('paw_edge_notice_seen')) return;
@@ -2245,7 +2276,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v91';
+const APP_VERSION = 'v92';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2448,7 +2479,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=91').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=92').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
