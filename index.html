@@ -1422,6 +1422,8 @@ function showTab(tab) {
     document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
     document.getElementById('nav-'+t).classList.toggle('active', t===tab);
   });
+  currentActiveTab = tab;
+  syncGlowToActiveTab();
 }
 
 let isSignUpMode = false;
@@ -2170,6 +2172,8 @@ function updateCrimeUI(d) {
     document.getElementById('cs-4').classList.toggle('active',s>=58&&s<75);
     document.getElementById('cs-5').classList.toggle('active',s>=75);
     lastCrimeScore=s; lastCrimeData=d;
+    // Sync edge glow to crime rating when Safety tab is active
+    syncGlowToActiveTab();
   }
 }
 function scoreToColor(s){ if(s<10)return'#4ade80'; if(s<25)return'#86efac'; if(s<45)return'#fbbf24'; if(s<65)return'#14b8a6'; return'#f87171'; }
@@ -2434,7 +2438,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v85';
+const APP_VERSION = 'v86';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2676,7 +2680,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=85').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=86').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2707,6 +2711,29 @@ const WHEEL_ANGLES = {
   'Danger':       15,   // Crimson Red
   'Fry Zone':     355,  // Crimson Red max
 };
+
+function syncGlowToActiveTab() {
+  if (currentActiveTab === 'safety' && lastCrimeData) {
+    // Map crime rating string to an edge glow key
+    const crimeRatingMap = {
+      'Very Safe':  'Safe',
+      'Safe':       'Safe',
+      'Low Risk':   'Low Risk',
+      'Moderate':   'Moderate',
+      'Elevated':   'Hot',
+      'High Risk':  'Danger',
+      'Very High':  'Fry Zone'
+    };
+    const glowKey = crimeRatingMap[lastCrimeData.crimeRating] || 'Moderate';
+    updateEdgeGlow(glowKey);
+  } else if (currentActiveTab === 'report' && lastPawData) {
+    updateEdgeGlow(lastPawData.rating);
+  }
+  // wash/profile: fade glow to neutral
+  if (currentActiveTab === 'wash' || currentActiveTab === 'profile') {
+    updateEdgeGlow('Safe');
+  }
+}
 
 function updateEdgeGlow(status) {
   const glow = document.getElementById('edgeGlow');
