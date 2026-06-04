@@ -563,49 +563,7 @@
         <button class="notif-btn" onclick="requestNotifications()">Enable</button>
       </div>
 
-      <div class="card" id="walk-time-card" style="display:none;">
-        <div class="card-title">🕐 Best Time to Walk</div>
-        <!-- Day tabs -->
-        <div class="forecast-tabs" id="forecast-tabs"></div>
-        <div class="loading-inline" id="walk-time-loading">Analysing forecast…</div>
-        <div id="walk-time-content" style="display:none;">
-          <!-- 3-day strip -->
-          <div class="forecast-strip" id="forecast-strip"></div>
-          <!-- Hourly detail for selected day -->
-          <div class="best-time-hero">
-            <span class="best-time-icon" id="best-time-icon">🌟</span>
-            <div class="best-time-window" id="best-time-window">--</div>
-            <div class="best-time-rec" id="best-time-rec"></div>
-          </div>
-          <div class="hourly-chart"><div class="hourly-bars" id="hourly-bars"></div></div>
-          <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>Great</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>OK</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>Avoid</div>
-          </div>
-          <!-- 7-day Gold lock -->
-          <div id="forecast-7day" style="display:none;margin-top:12px;"></div>
-          <div id="forecast-gold-lock" style="display:none;margin-top:12px;text-align:center;padding:10px;background:#fef9c3;border-radius:10px;font-size:13px;color:#92400e;">
-            🔒 <strong>7-Day Forecast</strong> is a Gold feature. <a href="#" onclick="showTab('profile');return false;" style="color:#d97706;">Upgrade</a> to unlock.
-          </div>
-        </div>
-      </div>
-
-      
-      <!-- 📍 Favorite Locations (Silver/Gold) -->
-      <div class="card" id="fav-locations-card">
-        <div class="card-title">📍 Saved Locations</div>
-        <div id="fav-locations-list" style="margin-bottom:10px;"></div>
-        <div id="fav-lock" class="locked-feature" style="display:none;">
-          <div class="locked-icon">🔒</div>
-          <div class="locked-title">Save Favourite Locations</div>
-          <div class="locked-sub">Upgrade to Silver or Gold to save up to 5 locations and skip re-detecting every time.</div>
-          <button class="btn btn-primary" onclick="showScreen('paywall')" style="margin-top:10px;font-size:0.82rem;padding:10px;">🚀 Upgrade</button>
-        </div>
-        <button id="fav-add-btn" onclick="saveCurrentLocationAsFav()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;display:none;">➕ Save Current Location</button>
-      </div>
-
-<div class="card" id="paw-card" style="display:none;">
+      <div class="card" id="paw-card" style="display:none;">
         <div class="card-title">🌡️ Right Now — Ground Temperature</div>
         <div id="report-location-line" style="font-size:0.72rem;color:#64748b;text-align:center;margin:-4px 0 10px;display:none;">📍 <span id="report-location-text">Detecting…</span></div>
         <div class="size-selector" style="margin-bottom:12px;" id="size-selector-inline">
@@ -687,6 +645,49 @@
           <div style="font-size:0.72rem;color:#94a3b8;margin-top:8px;font-style:italic;">Cold ground temps are estimates. The hand test is always the final word. 🐾</div>
         </div>
       </div>
+<div class="card" id="walk-time-card" style="display:none;">
+        <div class="card-title">🕐 Best Time to Walk</div>
+        <!-- Day tabs -->
+        <div class="forecast-tabs" id="forecast-tabs"></div>
+        <div class="loading-inline" id="walk-time-loading">Analysing forecast…</div>
+        <div id="walk-time-content" style="display:none;">
+          <!-- 3-day strip -->
+          <div class="forecast-strip" id="forecast-strip"></div>
+          <!-- Hourly detail for selected day -->
+          <div class="best-time-hero">
+            <span class="best-time-icon" id="best-time-icon">🌟</span>
+            <div class="best-time-window" id="best-time-window">--</div>
+            <div class="best-time-rec" id="best-time-rec"></div>
+          </div>
+          <div class="hourly-chart"><div class="hourly-bars" id="hourly-bars"></div></div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>Great</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>OK</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>Avoid</div>
+          </div>
+          <!-- 7-day Gold lock -->
+          <div id="forecast-7day" style="display:none;margin-top:12px;"></div>
+          <div id="forecast-gold-lock" style="display:none;margin-top:12px;text-align:center;padding:10px;background:#fef9c3;border-radius:10px;font-size:13px;color:#92400e;">
+            🔒 <strong>7-Day Forecast</strong> is a Gold feature. <a href="#" onclick="showTab('profile');return false;" style="color:#d97706;">Upgrade</a> to unlock.
+          </div>
+        </div>
+      </div>
+
+      
+      <!-- 📍 Favorite Locations (Silver/Gold) -->
+      <div class="card" id="fav-locations-card">
+        <div class="card-title">📍 Saved Locations</div>
+        <div id="fav-locations-list" style="margin-bottom:10px;"></div>
+        <div id="fav-lock" class="locked-feature" style="display:none;">
+          <div class="locked-icon">🔒</div>
+          <div class="locked-title">Save Favourite Locations</div>
+          <div class="locked-sub">Upgrade to Silver or Gold to save up to 5 locations and skip re-detecting every time.</div>
+          <button class="btn btn-primary" onclick="showScreen('paywall')" style="margin-top:10px;font-size:0.82rem;padding:10px;">🚀 Upgrade</button>
+        </div>
+        <button id="fav-add-btn" onclick="saveCurrentLocationAsFav()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;display:none;">➕ Save Current Location</button>
+      </div>
+
+
 
       <div class="card" id="safety-tips-card" style="padding:0;overflow:hidden;">
         <button onclick="toggleTips()" style="width:100%;background:none;border:none;color:#1e293b;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
@@ -2351,7 +2352,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v82';
+const APP_VERSION = 'v83';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2593,7 +2594,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=82').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=83').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
