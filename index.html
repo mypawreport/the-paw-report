@@ -2142,16 +2142,17 @@ function renderForecastTabs() {
   const isGold = tier === 'gold';
   const tabs = document.getElementById('forecast-tabs');
   if (!tabs) return;
-  const days = ['Today','Tomorrow','Day 3'];
-  const extras = isGold ? ['Day 4','Day 5','Day 6','Day 7'] : [];
-  const allDays = [...days, ...extras];
-  tabs.innerHTML = allDays.map((label, i) => {
+  const allLabels = ['Today','Tomorrow','Day 3','Day 4','Day 5','Day 6','Day 7'];
+  const maxDay = window._forecastDays ? window._forecastDays.length : 3;
+  const visibleCount = isGold ? Math.min(maxDay, 7) : Math.min(maxDay, 3);
+  let html2 = allLabels.slice(0, visibleCount).map((label, i) => {
     const isSelected = i === (window._selectedForecastDay || 0);
     return `<button class="forecast-tab ${isSelected?'active':''}" onclick="selectForecastDay(${i})">${label}</button>`;
   }).join('');
-  if (!isGold) {
-    tabs.innerHTML += `<button class="forecast-tab gold-tab" onclick="showTab('profile')" title="Gold feature">+4 Days 🔒</button>`;
+  if (!isGold && maxDay > 3) {
+    html2 += `<button class="forecast-tab gold-tab" onclick="showTab('profile')" title="Gold: unlock 7-day forecast">+4 Days 🔒</button>`;
   }
+  tabs.innerHTML = html2;
 }
 
 function renderForecastStrip() {
@@ -2164,7 +2165,11 @@ function renderForecastStrip() {
     const locked = !isGold && i >= 3;
     const selected = i === (window._selectedForecastDay || 0);
     if (locked) {
-      return `<div class="forecast-day-card gold-locked"><div class="fdc-day">${day.shortLabel}</div><div class="fdc-lock">🔒</div><div class="fdc-temp">Gold</div></div>`;
+      return `<div class="forecast-day-card gold-locked">
+        <div class="fdc-day">${day.shortLabel}</div>
+        <div class="fdc-lock">🔒</div>
+        <div class="fdc-temp" style="color:#d97706;font-size:10px;font-weight:700;">Gold</div>
+      </div>`;
     }
     return `<div class="forecast-day-card ${selected?'active':''}" onclick="selectForecastDay(${i})">
       <div class="fdc-day">${day.shortLabel}</div>
@@ -2320,7 +2325,7 @@ function stopTracking() {
 
 
 // What's New toast
-const APP_VERSION = 'v80';
+const APP_VERSION = 'v81';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2562,7 +2567,7 @@ function agreeDisclaimer() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=80').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=81').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
