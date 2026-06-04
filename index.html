@@ -1055,15 +1055,15 @@
 
 <script>function getReferralCount() {
 // ── localStorage key constants ──
-const LS_USERS      = LS_USERS;
-const LS_CUR_USER   = LS_CUR_USER;
-const LS_SUB_TIER   = LS_SUB_TIER;
-const LS_TRAY       = LS_TRAY;
-const LS_REFERRAL   = LS_REFERRAL;
-const LS_LAST_EMAIL = LS_LAST_EMAIL;
-const LS_PREFS      = LS_PREFS;
-const LS_USER2      = LS_USER2;
-const LS_THEME      = LS_THEME;
+const LS_USERS      = 'paw_users';
+const LS_CUR_USER   = 'paw_current_user';
+const LS_SUB_TIER   = 'paw_sub_tier';
+const LS_TRAY       = 'paw_tray_widget';
+const LS_REFERRAL   = 'paw_referral_applied';
+const LS_LAST_EMAIL = 'paw_last_email';
+const LS_PREFS      = 'paw_prefs';
+const LS_USER2      = 'pawreport_user';
+const LS_THEME      = 'paw_theme';
   return parseInt(localStorage.getItem('paw_referral_count') || '0');
 }
 const APP_ID = '6a1c6fbdd48b351a9eb7455e';
@@ -2232,7 +2232,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v88';
+const APP_VERSION = 'v88b';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2435,7 +2435,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=88').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=88b').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
