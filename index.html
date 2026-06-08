@@ -1230,6 +1230,20 @@ function handleCheckoutReturn() {
   const tier = params.get('tier');
   const period = params.get('period');
   if (checkout === 'success' && tier) {
+    // Auto-cancel any previous active subscriptions before activating new one
+    if (currentUser && currentUser.email) {
+      try {
+        fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/cancelActiveSubscriptions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentUser.email })
+        }).then(r => r.json()).then(result => {
+          if (result.cancelled > 0) {
+            console.log('[PAW] Auto-cancelled', result.cancelled, 'old subscription(s) on tier upgrade.');
+          }
+        }).catch(e => console.warn('[PAW] Could not auto-cancel old subscriptions:', e));
+      } catch(e) { /* silent fail */ }
+    }
     // Save subscription to localStorage
     localStorage.setItem(LS_SUB_TIER, tier);
     localStorage.setItem('paw_sub_period', period || 'monthly');
@@ -1283,6 +1297,20 @@ function applyReferral(inputId) {
     profile.referralCode = val;
     profile.referralName = codeInfo.name;
     localStorage.setItem(LS_CUR_USER, JSON.stringify(profile));
+    // Auto-cancel any active Stripe subscriptions when lifetime code is redeemed
+    if (profile.email) {
+      try {
+        fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/cancelActiveSubscriptions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: profile.email })
+        }).then(r => r.json()).then(result => {
+          if (result.cancelled > 0) {
+            console.log('[PAW] Auto-cancelled', result.cancelled, 'active subscription(s) after lifetime code redemption.');
+          }
+        }).catch(e => console.warn('[PAW] Could not auto-cancel subscriptions:', e));
+      } catch(e) { /* silent fail — lifetime access still granted */ }
+    }
     // Also persist to paw_users store so it survives across sessions
     if (profile.email) {
       try {
@@ -2284,7 +2312,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v97';
+const APP_VERSION = 'v98';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
