@@ -576,8 +576,13 @@
 
         <!-- 🚗 Hot car reminder (Silver/Gold) -->
         <div class="hot-car-alert" id="hot-car-alert">
-          <div class="hot-car-alert-title">🚗 Just arrived? Check your car!</div>
+          <div class="hot-car-alert-title">🚗 Just arrived? Check your back seat!</div>
           <div>Never leave pets in a parked vehicle — temps can spike dangerously fast.</div>
+        </div>
+        <!-- 🧪 Hot car test button (debug) -->
+        <div id="hotcar-test-bar" style="display:none;margin-top:8px;text-align:center;">
+          <button onclick="testHotCarAlert()" style="background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;">🧪 Test Hot Car Alert</button>
+          <div id="hotcar-gps-status" style="font-size:0.72rem;color:#64748b;margin-top:4px;"></div>
         </div>
 
         <!-- 🐾 Walk reminder (Gold) -->
@@ -1057,10 +1062,6 @@
       <button id="disclaimer-agree-btn" onclick="agreeDisclaimer()" disabled style="width:100%;padding:14px;border-radius:10px;border:none;background:#94a3b8;color:#fff;font-size:0.95rem;font-weight:700;cursor:not-allowed;transition:all 0.2s;">
         ✅ I Agree — Continue to App
       </button>
-      <p style="text-align:center;font-size:0.7rem;color:#94a3b8;margin-top:10px;">Your agreement is recorded with your email and timestamp for your protection and ours.</p>
-    </div>
-  </div>
-
 <script>
 // ── Activity Tracking ──────────────────────────────────────────────
 function getDeviceType() {
@@ -1648,6 +1649,11 @@ function loadMainScreen() {
   setTimeout(startVehicleDetection, 2000);
   renderFavLocations();
   renderWalkHistory();
+  // Show hot car test bar for Silver/Gold debug
+  const _u = getCurrentUser ? getCurrentUser() : null;
+  const _ut = _u ? (_u.tier||'').toLowerCase() : '';
+  const _htb = document.getElementById('hotcar-test-bar');
+  if (_htb && (_ut === 'silver' || _ut === 'gold')) _htb.style.display = 'block';
   showScreen('main'); showTab('report');
   const petName = userPrefs?.pet_name || 'your pup';
   document.getElementById('pet-welcome-msg').textContent = `Ready to run ${petName}'s report?`;
@@ -2278,7 +2284,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v96';
+const APP_VERSION = 'v97';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2481,7 +2487,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=96').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=97').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3040,10 +3046,14 @@ function startVehicleDetection() {
   _vehicleWatchId = navigator.geolocation.watchPosition(function(pos) {
     const speed = pos.coords.speed;
     // High-accuracy mode required for speed — skip null readings
-    if (speed === null || speed === undefined || speed < 0) return;
+    if (speed === null || speed === undefined || speed < 0) {
+      showHotCarDebugStatus('GPS: no speed data (speed=' + speed + ')');
+      return;
+    }
     const mph = speed * 2.237;
     _vehicleSpeedHistory.push({ mph: mph, t: Date.now() });
     if (_vehicleSpeedHistory.length > 20) _vehicleSpeedHistory.shift();
+    showHotCarDebugStatus('GPS: ' + mph.toFixed(1) + ' mph | samples: ' + _vehicleSpeedHistory.length);
     checkHotCarCondition();
   }, function(err) {
     console.warn('Hot car GPS error:', err.message);
@@ -3060,6 +3070,17 @@ function checkHotCarCondition() {
   // Only alert once per 20 minutes
   const cooldown = (Date.now() - _hotCarAlertShownAt) > 20 * 60 * 1000;
   if (wasDriving && nowStopped && cooldown) showHotCarAlert();
+}
+function testHotCarAlert() {
+  const statusEl = document.getElementById('hotcar-gps-status');
+  if (statusEl) statusEl.textContent = 'Triggering alert now...';
+  showHotCarAlert();
+  // Reset cooldown so test always works
+  _hotCarAlertShownAt = 0;
+}
+function showHotCarDebugStatus(msg) {
+  const el = document.getElementById('hotcar-gps-status');
+  if (el) el.textContent = msg;
 }
 function showHotCarAlert() {
   const s = getAlertSettings();
@@ -3110,7 +3131,8 @@ function checkWalkReminder() {
   } else {
     banner.style.display = 'none';
   }
-}</script>
+}
+</script>
 
 </body>
 </html>
