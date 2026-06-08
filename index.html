@@ -2278,7 +2278,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v95';
+const APP_VERSION = 'v96';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2481,7 +2481,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=95').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=96').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3039,29 +3039,51 @@ function startVehicleDetection() {
   if (!navigator.geolocation || _vehicleWatchId) return;
   _vehicleWatchId = navigator.geolocation.watchPosition(function(pos) {
     const speed = pos.coords.speed;
-    if (speed === null || speed === undefined) return;
+    // High-accuracy mode required for speed — skip null readings
+    if (speed === null || speed === undefined || speed < 0) return;
     const mph = speed * 2.237;
     _vehicleSpeedHistory.push({ mph: mph, t: Date.now() });
-    if (_vehicleSpeedHistory.length > 10) _vehicleSpeedHistory.shift();
+    if (_vehicleSpeedHistory.length > 20) _vehicleSpeedHistory.shift();
     checkHotCarCondition();
-  }, null, { enableHighAccuracy: false, maximumAge: 10000, timeout: 20000 });
+  }, function(err) {
+    console.warn('Hot car GPS error:', err.message);
+  }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
 }
 function checkHotCarCondition() {
-  if (_vehicleSpeedHistory.length < 3) return;
-  const recent = _vehicleSpeedHistory.slice(-5);
+  if (_vehicleSpeedHistory.length < 4) return;
+  // Need at least one reading above 15 mph in last 10 samples = was driving
+  const recent = _vehicleSpeedHistory.slice(-10);
   const wasDriving = recent.some(function(r){ return r.mph > 15; });
-  const nowStopped = recent.slice(-2).every(function(r){ return r.mph < 3; });
-  const cooldown = (Date.now() - _hotCarAlertShownAt) > 30 * 60 * 1000;
+  // Last 3 consecutive readings all under 2 mph = truly stopped
+  const last3 = _vehicleSpeedHistory.slice(-3);
+  const nowStopped = last3.length === 3 && last3.every(function(r){ return r.mph < 2; });
+  // Only alert once per 20 minutes
+  const cooldown = (Date.now() - _hotCarAlertShownAt) > 20 * 60 * 1000;
   if (wasDriving && nowStopped && cooldown) showHotCarAlert();
 }
 function showHotCarAlert() {
   const s = getAlertSettings();
   if (s.hotCar === false) return;
-  const banner = document.getElementById('hot-car-alert');
-  if (!banner) return;
   _hotCarAlertShownAt = Date.now();
-  banner.style.display = 'block';
-  setTimeout(function(){ banner.style.display = 'none'; }, 5 * 60 * 1000);
+  // Show in-app banner
+  const banner = document.getElementById('hot-car-alert');
+  if (banner) {
+    banner.style.display = 'block';
+    setTimeout(function(){ banner.style.display = 'none'; }, 5 * 60 * 1000);
+  }
+  // Also fire a push notification so it works even when app is in background or on another tab
+  try {
+    if (Notification.permission === 'granted') {
+      new Notification('🚗 Just arrived? Check your back seat!', {
+        body: 'Never leave pets in a parked car — temps spike fast. Do a quick check!',
+        icon: '/the-paw-report/icon-192.png',
+        tag: 'hot-car-check',
+        requireInteraction: true
+      });
+    }
+  } catch(e) {}
+  // Play bark sound alert
+  try { playBarkSound(); } catch(e) {}
 }
 // WALK REMINDER (Gold only)
 function logJustWalked() {
