@@ -1103,6 +1103,18 @@ const LS_CUR_USER   = 'paw_current_user';
 const LS_SUB_TIER   = 'paw_sub_tier';
 const LS_TRAY       = 'paw_tray_widget';
 const LS_REFERRAL   = 'paw_referral_applied';
+const LIFETIME_CODES = {
+  'PAW-MOM-6RX1Z2': { name: 'Mom', tier: 'silver' },
+  'PAW-HUB-8K3M2X': { name: 'Husband', tier: 'silver' },
+  'PAW-GAB-OKTDVE': { name: 'Husband', tier: 'silver' },
+  'PAW-HUB-FREE1': { name: 'Husband', tier: 'silver' },
+  'PAW-KID-9T5W4R': { name: 'Daughter', tier: 'silver' },
+  'PAW-SLV-K01O57': { name: 'Silver Lifetime', tier: 'silver' },
+  'PAW-SLV-MCU4GC': { name: 'Mom Silver', tier: 'silver' },
+  'PAW-SLV-4OEZSZ': { name: 'Husband Silver', tier: 'silver' },
+  'PAW-SLV-I6ZD9T': { name: 'Daughter Silver', tier: 'silver' },
+  'PAW-GOLD-RSQ31G': { name: 'Gold Lifetime', tier: 'gold' }
+};
 const LS_LAST_EMAIL = 'paw_last_email';
 const LS_PREFS      = 'paw_prefs';
 const LS_USER2      = 'pawreport_user';
@@ -1285,19 +1297,7 @@ function startFree() { loadMainScreen(); }
 function applyReferral(inputId) {
   const val = document.getElementById(inputId).value.trim().toUpperCase();
   const successId = inputId === 'paywall-referral' ? 'paywall-referral-success' : 'setup-referral-success';
-  // Family lifetime codes — grant lifetime Bronze access
-  const LIFETIME_CODES = {
-    'PAW-MOM-6RX1Z2': { name: 'Mom', tier: 'silver' },
-    'PAW-HUB-8K3M2X': { name: 'Husband', tier: 'silver' },
-    'PAW-GAB-OKTDVE': { name: 'Husband', tier: 'silver' },
-    'PAW-HUB-FREE1': { name: 'Husband', tier: 'silver' },
-    'PAW-KID-9T5W4R': { name: 'Daughter', tier: 'silver' },
-    'PAW-SLV-K01O57': { name: 'Silver Lifetime', tier: 'silver' },
-    'PAW-SLV-MCU4GC': { name: 'Mom Silver', tier: 'silver' },
-    'PAW-SLV-4OEZSZ': { name: 'Husband Silver', tier: 'silver' },
-    'PAW-SLV-I6ZD9T': { name: 'Daughter Silver', tier: 'silver' },
-    'PAW-GOLD-RSQ31G': { name: 'Gold Lifetime', tier: 'gold' }
-  };
+  // Family lifetime codes — uses global LIFETIME_CODES
   const usedCodes = JSON.parse(localStorage.getItem('paw_used_codes') || '[]');
   if (LIFETIME_CODES[val]) {
     // Lifetime/family codes always work — no used-code block
@@ -2344,7 +2344,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v101';
+const APP_VERSION = 'v102';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
