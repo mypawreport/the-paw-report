@@ -1,4 +1,4 @@
-const CACHE_NAME = 'paw-report-v99';
+const CACHE_NAME = 'paw-report-v100';
 const ASSETS = [
   '/',
   '/index.html',
@@ -7,7 +7,8 @@ const ASSETS = [
   '/icon-512.png',
   '/legal.html',
   '/bark.mp3',
-  '/bark.wav'
+  '/bark.wav',
+  '/badge-96.png'
 ];
 
 self.addEventListener('install', event => {
@@ -45,7 +46,7 @@ self.addEventListener('push', event => {
   event.waitUntil(self.registration.showNotification(data.title || 'The Paw Report', {
     body: data.body || 'Check your walk safety now!',
     icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    badge: '/badge-96.png',
     data: { url: data.url || '/' }
   }));
 });
