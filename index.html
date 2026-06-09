@@ -1075,7 +1075,7 @@ function getCountry() {
 }
 function trackAppEvent(event_type, extra = {}) {
   // Log to Base44
-  fetch('https://superagent-9eb7455e.base44.app/functions/trackInstall', {
+  fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/trackInstall', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -1195,7 +1195,7 @@ async function handleSubscribe(tier, billing) {
   try {
     const referralCode = (document.getElementById('paywall-referral')?.value || document.getElementById('setup-referral')?.value || '').trim().toUpperCase();
     const referralApplied = referralCode.startsWith('PAW-') && referralCode.length >= 8;
-    const res = await fetch('https://superagent-9eb7455e.base44.app/functions/createCheckoutSession', {
+    const res = await fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/createCheckoutSession', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1251,18 +1251,29 @@ function handleCheckoutReturn() {
     currentTier = tier;
     window.history.replaceState({}, '', window.location.pathname);
     const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
-    // Update prefs if user is logged in
+    // Update prefs and persist tier to paw_users store
     if (currentUser) {
       const existing = getPrefs(currentUser.id) || {};
       userPrefs = savePrefs(currentUser.id, { ...existing, subscription_tier: tier, subscription_period: period || 'monthly', subscription_start: new Date().toISOString() });
       currentPetSize = userPrefs.pet_size || 'medium';
+      // Persist tier to master user store so it survives session clears
+      try {
+        const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
+        if (currentUser.email && users[currentUser.email]) {
+          users[currentUser.email].tier = tier;
+          users[currentUser.email].subscriptionActive = true;
+          localStorage.setItem(LS_USERS, JSON.stringify(users));
+        }
+        currentUser.tier = tier;
+        currentUser.subscriptionActive = true;
+        localStorage.setItem(LS_CUR_USER, JSON.stringify(currentUser));
+      } catch(_) {}
       updateUserBar();
       if (!userPrefs.pet_name || userPrefs.pet_name === 'My Dog') showScreen('setup');
       else loadMainScreen();
     }
-    // If no pet name set yet, send to setup; otherwise go to main
     if (!currentUser) loadMainScreen();
-    setTimeout(() => alert('🎉 Welcome to ' + tierName + '! Your Paw Report is ready.'), 600);
+    setTimeout(() => showToast('🎉 Welcome to ' + tierName + '! Your Paw Report is ready.'), 600);
   } else if (checkout === 'cancelled') {
     window.history.replaceState({}, '', window.location.pathname);
   }
@@ -1434,6 +1445,8 @@ function showTab(tab) {
       loadAlertSettingToggles();
       renderWalkHistory();
       renderFavLocations();
+      renderProfileDisplay();
+      renderSubStatus();
       // Show hot car test bar for Silver/Gold
       const _ut2 = (currentUser?.tier || getUserTier() || '').toLowerCase();
       const _htb2 = document.getElementById('hotcar-test-bar');
@@ -1623,7 +1636,7 @@ async function saveEditProfile(modal) {
   }
 }
 async function logout() {
-  try { await authLogout(); } catch(_) {} currentUser = null; userPrefs = null;
+  try { await authLogout(); } catch(_) {}
   currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
 }
 function selectSetupSize(size, el) { setupSize = size; document.querySelectorAll('#screen-setup .size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
@@ -2051,7 +2064,7 @@ function updatePawUI(d) {
 }
 async function fetchPawAndUpdate(lat, lon) {
   checkRateAppPrompt();
-  try { const res = await fetch('https://superagent-9eb7455e.base44.app/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) applyPawUIWithSurface(await res.json()); } } catch(_) {}
+  try { const res = await fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) applyPawUIWithSurface(await res.json()); } } catch(_) {}
 }
 function updateCrimeUI(d) {
   document.getElementById('crime-loading').style.display = 'none';
@@ -2273,10 +2286,10 @@ function showFetchError(msg) {
 async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
-    fetch('https://superagent-9eb7455e.base44.app/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
-    fetch('https://superagent-9eb7455e.base44.app/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
-    fetch('https://superagent-9eb7455e.base44.app/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
-    fetch('https://superagent-9eb7455e.base44.app/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
+    fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
+    fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
+    fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
+    fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
   ]);
   showResultCards(true);
   async function safeJson(r) { try { const ct=r.headers.get('content-type')||''; if(!ct.includes('json')) return null; return await r.json(); } catch(_) { return null; } }
@@ -2320,7 +2333,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v99';
+const APP_VERSION = 'v100';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2576,33 +2589,6 @@ function updateEdgeGlow(status) {
     glow.classList.remove('pulsing');
   }
 }
-function drawTempWheel(canvasEl) {
-  if (!canvasEl) return;
-  const ctx = canvasEl.getContext('2d');
-  const cx = canvasEl.width / 2, cy = canvasEl.height / 2, r = cx - 2;
-  // Draw color wheel segments
-  const segments = [
-    '#ff0000','#ff4400','#ff8800','#ffcc00',
-    '#ffff00','#aaff00','#44cc00','#00aa44',
-    '#009988','#0066cc','#0033ff','#4400cc',
-    '#8800aa','#cc0077','#ff0044','#ff0022'
-  ];
-  segments.forEach((color, i) => {
-    const startAngle = (i / segments.length) * Math.PI * 2 - Math.PI / 2;
-    const endAngle = ((i + 1) / segments.length) * Math.PI * 2 - Math.PI / 2;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.arc(cx, cy, r, startAngle, endAngle);
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.fill();
-  });
-  // Dark center circle
-  ctx.beginPath();
-  ctx.arc(cx, cy, r * 0.35, 0, Math.PI * 2);
-  ctx.fillStyle = '#f8fafc';
-  ctx.fill();
-}
 function showRecoveryModal() {
   const modal = document.getElementById('recovery-modal');
   if (modal) {
@@ -2629,7 +2615,7 @@ async function recoverAccess() {
   if (msg) { msg.style.color = '#888'; msg.textContent = 'Checking your subscription…'; }
   if (btn) btn.disabled = true;
   try {
-    const resp = await fetch('https://superagent-9eb7455e.base44.app/functions/recoverSubscription', {
+    const resp = await fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/recoverSubscription', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
