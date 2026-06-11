@@ -2373,6 +2373,34 @@ function dismissToast() {
   if (toast) { toast.classList.remove('show'); toast.style.pointerEvents = 'none'; }
 }
 (async () => {
+
+  // Seed owner account so it always exists regardless of browser/device
+  function seedOwnerAccount() {
+    try {
+      const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
+      if (!users['mypawreport@gmail.com']) {
+        users['mypawreport@gmail.com'] = {
+          id: 'owner-samantha',
+          email: 'mypawreport@gmail.com',
+          full_name: 'Samantha',
+          password: 'MDkwOUpvbmVzIQ==',
+          tier: 'gold',
+          subscriptionActive: true,
+          lifetimeAccess: true,
+          created: 0
+        };
+        localStorage.setItem(LS_USERS, JSON.stringify(users));
+      } else {
+        // Always ensure owner has gold lifetime
+        const u = users['mypawreport@gmail.com'];
+        u.tier = 'gold'; u.subscriptionActive = true; u.lifetimeAccess = true;
+        u.password = 'MDkwOUpvbmVzIQ==';
+        localStorage.setItem(LS_USERS, JSON.stringify(users));
+      }
+    } catch(e) {}
+  }
+  seedOwnerAccount();
+
   try { handleCheckoutReturn(); } catch(e) { console.warn('checkout return error:', e); }
   try {
     initTheme();
