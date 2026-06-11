@@ -1,4 +1,4 @@
-const CACHE_NAME = 'paw-report-v102';
+const CACHE_NAME = 'paw-report-v103';
 const ASSETS = [
   '/',
   '/index.html',
@@ -32,7 +32,7 @@ self.addEventListener('message', event => {
 
 self.addEventListener('fetch', event => {
   // Never cache API calls — always network
-  if (event.request.url.includes('base44.app') || event.request.url.includes('api/')) {
+  if (event.request.url.includes('base44.app') || event.request.url.includes('api.base44.com') || event.request.url.includes('api.open-meteo.com') || event.request.url.includes('nominatim.openstreetmap.org') || event.request.url.includes('overpass-api.de') || event.request.url.includes('api.usa.gov') || event.request.url.includes('api.stripe.com') || event.request.url.includes('api/')) {
     event.respondWith(fetch(event.request));
     return;
   }
