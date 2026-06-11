@@ -423,7 +423,7 @@
         Don't have an account? <span id="auth-toggle-label">Sign up</span>
       </div>
       <div id="forgot-row" style="text-align:center;margin-top:6px;font-size:0.78rem;color:#94a3b8;">
-        <a href="#" onclick="showForgotPassword();return false;" style="color:#94a3b8;text-decoration:underline;">Forgot password?</a>
+        <a href="#" onclick="showRecoveryModal();return false;" style="color:#94a3b8;text-decoration:underline;">Forgot password?</a>
       </div>
     </div>
     <div class="app-footer">
@@ -1235,7 +1235,7 @@ async function handleSubscribe(tier, billing) {
       throw new Error(data.error || 'Could not start checkout.');
     }
   } catch(e) {
-    alert('⚠️ ' + (e.message || 'Could not open checkout. Please try again.'));
+    showToast('⚠️ ' + (e.message || 'Could not open checkout. Please try again.'), 5000);
     if (btn) { btn.disabled = false; btn.textContent = 'Subscribe'; }
   }
 }
@@ -1362,7 +1362,7 @@ function applyReferral(inputId) {
     localStorage.setItem(LS_REFERRAL, val);
     trackAppEvent('referral_used', { referral_code: val, email: currentUser?.email || '' });
   } else {
-    alert('Invalid referral code. Please check the code and try again.');
+    showToast('⚠️ Invalid referral code. Please check and try again.', 4000);
   }
 }
 // ---- Local auth (no server needed) ----
@@ -1715,6 +1715,17 @@ function loadMainScreen() {
   const _htb = document.getElementById('hotcar-test-bar');
   if (_htb && (_ut === 'silver' || _ut === 'gold')) _htb.style.display = 'block';
   showScreen('main'); showTab('report');
+  if (navigator.permissions) {
+    navigator.permissions.query({name:'geolocation'}).then(function(r) {
+      if (r.state === 'denied') {
+        showFetchError('Location access denied. Go to browser Site settings and allow Location.');
+      } else if (r.state === 'prompt') {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+          lastLat = pos.coords.latitude; lastLon = pos.coords.longitude;
+        }, function() {});
+      }
+    }).catch(function() {});
+  }
   const petName = userPrefs?.pet_name || 'your pup';
   document.getElementById('pet-welcome-msg').textContent = `Ready to run ${petName}'s report?`;
   document.getElementById('header-sub').textContent = `Ground temp & walk safety for ${petName}`;
@@ -1729,12 +1740,12 @@ async function requestNotifications() {
   localStorage.setItem('paw_notif_asked', '1');
   document.getElementById('notif-banner').style.display = 'none';
   if (!('Notification' in window)) {
-    alert('Push notifications are not supported on this browser. Try adding the app to your home screen first.');
+    showToast('🔔 Push notifications not supported. Add app to home screen for best experience.', 5000);
     return;
   }
   // Already denied — browser won't show prompt again, guide user to settings
   if (Notification.permission === 'denied') {
-    alert('🔕 Notifications are blocked.\n\nTo enable:\n1. Tap the lock/info icon in your browser address bar\n2. Find "Notifications" and set to Allow\n3. Reload the page and try again');
+    showToast('🔕 Notifications blocked. Tap browser lock → Permissions → Allow.', 5000);
     updateNotifBtn();
     return;
   }
@@ -1746,7 +1757,7 @@ async function requestNotifications() {
       navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 The Paw Report', { body: "You'll now get alerts when conditions turn dangerous!", icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png', silent: false, data: { color: '#0d9488' } }));
     }
   } else if (perm === 'denied') {
-    alert('🔕 Notifications blocked.\n\nTo enable:\n1. Tap the lock/info icon in your browser address bar\n2. Find "Notifications" and set to Allow\n3. Reload the page and try again');
+    showToast('🔕 Notifications blocked. Tap browser lock → Permissions → Allow.', 5000);
   }
 }
 function updateNotifBtn() {
@@ -1762,7 +1773,7 @@ let trayWidgetEnabled = localStorage.getItem(LS_TRAY) === 'true';
 let trayIntervalId = null;
 function toggleTrayWidget() {
   if (!('Notification' in window)) {
-    alert('Notifications not supported on this browser.');
+    showToast('🔔 Notifications not supported on this browser.', 4000);
     return;
   }
   if (trayWidgetEnabled) {
@@ -1782,7 +1793,7 @@ function toggleTrayWidget() {
         // Refresh tray every 30 minutes
         trayIntervalId = setInterval(showTrayNotification, 30 * 60 * 1000);
       } else {
-        alert('Please allow notifications to use the tray widget.');
+        showToast('🔔 Please allow notifications to use the tray widget.', 4000);
       }
     });
   }
@@ -2523,7 +2534,7 @@ function playBarkSound() {
       return `<button class="theme-btn${isActive?' active':''}${isLocked?' locked':''}" 
         data-theme="${t.id}"
         style="background:linear-gradient(135deg,${t.colors[0]},${t.colors[1]})"
-        onclick="${isLocked ? `alert('🔒 ${t.label} is a ${t.tier.charAt(0).toUpperCase()+t.tier.slice(1)} theme — upgrade to unlock!')` : `applyTheme('${t.id}')`}">
+        onclick="${isLocked ? `showToast('🔒 Upgrade to unlock this theme!', 3000).toUpperCase()+t.tier.slice(1)} theme — upgrade to unlock!')` : `applyTheme('${t.id}')`}">
         <span>${t.emoji}</span>${t.label}${isLocked?' 🔒':''}
       </button>`;
     }).join('');
@@ -2597,7 +2608,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=97').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=104').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
