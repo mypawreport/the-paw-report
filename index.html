@@ -561,7 +561,7 @@
         <div style="font-size:2.3rem;margin-bottom:8px;">🔍</div>
         <div style="color:#64748b;font-size:0.88rem;margin:14px 0;">Getting your location and conditions…</div>
       </div>
-      <div class="card" id="error-card" style="display:none;"><div class="error-msg" id="error-msg"></div></div>
+      <div class="card" id="error-card" style="display:none;text-align:center;padding:24px 20px;"><div class="error-msg" id="error-msg" style="line-height:1.6;font-size:0.9rem"></div></div>
 
       <div class="notif-banner" id="notif-banner" style="display:none;">
         <div class="notif-icon">🔔</div>
@@ -2292,7 +2292,25 @@ function showLoading() {
 function showFetchError(msg) {
   ['initial-card','loading-card',...ALL_CARDS,'share-card'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('error-card').style.display='block';
-  document.getElementById('error-msg').textContent='⚠️ '+msg;
+  const isLocationDenied = msg && (msg.includes('denied') || msg.includes('Location access'));
+  if (isLocationDenied) {
+    document.getElementById('error-msg').innerHTML = 
+      '<div style="font-size:2rem;margin-bottom:8px">📍</div>' +
+      '<strong>Location access required</strong><br><br>' +
+      'The Paw Report needs your location to check ground temps.<br><br>' +
+      '<b>To fix this in Chrome:</b><br>' +
+      '1. Tap the <b>🔒 lock icon</b> in the address bar<br>' +
+      '2. Tap <b>Permissions → Location → Allow</b><br>' +
+      '3. Tap the button below<br><br>' +
+      '<b>If using the installed app:</b><br>' +
+      '1. Long-press the <b>Paw Report icon</b> → App info<br>' +
+      '2. Tap <b>Permissions → Location → Allow</b><br>' +
+      '3. Reopen the app and tap Run Report<br><br>' +
+      '<button onclick="startTracking()" style="background:#0d9488;color:white;border:none;border-radius:8px;padding:12px 24px;font-size:1rem;cursor:pointer;margin-top:4px">📍 Try Again</button>';
+  } else {
+    document.getElementById('error-msg').innerHTML = '⚠️ ' + msg +
+      '<br><br><button onclick="startTracking()" style="background:#0d9488;color:white;border:none;border-radius:8px;padding:10px 20px;font-size:0.9rem;cursor:pointer;margin-top:8px">🔄 Retry</button>';
+  }
 }
 async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
