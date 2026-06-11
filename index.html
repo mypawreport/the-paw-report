@@ -61,7 +61,7 @@
     .auth-error{background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);border-radius:10px;padding:10px;font-size:0.82rem;color:#fca5a5;margin-bottom:10px;display:none}
     /* Buttons */
     .btn{display:block;width:100%;padding:14px;border:none;border-radius:15px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:var(--c-transition)}
-    .btn-primary{background:linear-gradient(135deg,var(--c-teal),#4a7c59);color:var(--c-slate);box-shadow:0 8px 24px rgba(13,148,136,0.4)}
+    .btn-primary{background:linear-gradient(135deg,var(--btn-accent,#0d9488),color-mix(in srgb,var(--btn-accent,#0d9488) 80%,#1a5c50));color:#ffffff;box-shadow:0 8px 24px rgba(13,148,136,0.4)}
     .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(13,148,136,0.5)}
     .btn-primary:active{transform:translateY(0)}
     .btn-secondary{background:var(--c-card);border:1.5px solid var(--c-border);color:var(--c-slate)}
@@ -2362,7 +2362,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v103';
+const APP_VERSION = 'v104';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2497,7 +2497,11 @@ function playBarkSound() {
         document.documentElement.style.setProperty('--accent', t.colors[1]);
         // Only update DOM elements if they exist (not during early init)
         const btns = document.querySelectorAll('.btn-primary');
-        if (btns.length) btns.forEach(b => b.style.background = `linear-gradient(135deg, ${t.colors[1]}, ${t.colors[1]}cc)`);
+        // Update accent but don't override button background inline — use CSS var instead
+        if (btns.length) btns.forEach(b => {
+          b.style.removeProperty('background');
+          b.style.setProperty('--btn-accent', t.colors[1]);
+        });
         const themeBtns = document.querySelectorAll('.theme-btn');
         if (themeBtns.length) themeBtns.forEach(b => b.classList.toggle('active', b.dataset.theme === themeId));
       }
