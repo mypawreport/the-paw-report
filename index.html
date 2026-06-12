@@ -1088,7 +1088,7 @@ function getCountry() {
 }
 function trackAppEvent(event_type, extra = {}) {
   // Log to Base44
-  fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/trackInstall', {
+  fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/trackInstall', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -1220,7 +1220,7 @@ async function handleSubscribe(tier, billing) {
   try {
     const referralCode = (document.getElementById('paywall-referral')?.value || document.getElementById('setup-referral')?.value || '').trim().toUpperCase();
     const referralApplied = referralCode.startsWith('PAW-') && referralCode.length >= 8;
-    const res = await fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/createCheckoutSession', {
+    const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/createCheckoutSession', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1258,7 +1258,7 @@ function handleCheckoutReturn() {
     // Auto-cancel any previous active subscriptions before activating new one
     if (currentUser && currentUser.email) {
       try {
-        fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/cancelActiveSubscriptions', {
+        fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/cancelActiveSubscriptions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: currentUser.email })
@@ -1324,7 +1324,7 @@ function applyReferral(inputId) {
     // Auto-cancel any active Stripe subscriptions when lifetime code is redeemed
     if (profile.email) {
       try {
-        fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/cancelActiveSubscriptions', {
+        fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/cancelActiveSubscriptions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: profile.email })
@@ -2110,7 +2110,7 @@ function updatePawUI(d) {
 }
 async function fetchPawAndUpdate(lat, lon) {
   checkRateAppPrompt();
-  try { const res = await fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) applyPawUIWithSurface(await res.json()); } } catch(_) {}
+  try { const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) applyPawUIWithSurface(await res.json()); } } catch(_) {}
 }
 function updateCrimeUI(d) {
   document.getElementById('crime-loading').style.display = 'none';
@@ -2350,10 +2350,10 @@ function showFetchError(msg) {
 async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
-    fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
-    fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
-    fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
-    fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
   ]);
   showResultCards(true);
   async function safeJson(r) { try { const ct=r.headers.get('content-type')||''; if(!ct.includes('json')) return null; return await r.json(); } catch(_) { return null; } }
@@ -2439,7 +2439,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v105';
+const APP_VERSION = 'v106';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2674,7 +2674,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=105').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=106').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2753,7 +2753,7 @@ async function recoverAccess() {
   if (msg) { msg.style.color = '#888'; msg.textContent = 'Checking your subscription…'; }
   if (btn) btn.disabled = true;
   try {
-    const resp = await fetch('https://api.base44.com/api/apps/6a1c6fbdd48b351a9eb7455e/functions/recoverSubscription', {
+    const resp = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/recoverSubscription', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
