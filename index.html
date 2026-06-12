@@ -1475,6 +1475,32 @@ function showTab(tab) {
   });
   currentActiveTab = tab;
   syncGlowToActiveTab();
+  // Auto-fetch safety/wash data when switching tabs if we have coords but haven't loaded yet
+  if (tab === 'safety' && lastLat && lastLon) {
+    const crimeContent = document.getElementById('crime-content');
+    const crimeLoading = document.getElementById('crime-loading');
+    if (crimeContent && crimeContent.style.display === 'none' && crimeLoading && crimeLoading.textContent.includes('Run your report')) {
+      fetchSafetyOnly(lastLat, lastLon);
+    }
+  }
+}
+async function fetchSafetyOnly(lat, lon) {
+  const crimeLoading = document.getElementById('crime-loading');
+  if (crimeLoading) { crimeLoading.style.display = 'block'; crimeLoading.textContent = 'Loading area safety…'; }
+  try {
+    const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({latitude:lat,longitude:lon}),cache:'no-store'});
+    if (res.ok) {
+      const d = await res.json();
+      if (d && d.crimeRating) updateCrimeUI(d);
+      else if (crimeLoading) crimeLoading.textContent = 'Safety data unavailable for this area.';
+    } else {
+      if (crimeLoading) crimeLoading.textContent = 'Safety data unavailable for this area.';
+    }
+  } catch(e) {
+    if (crimeLoading) crimeLoading.textContent = 'Safety data unavailable for this area.';
+  }
 }
 let isSignUpMode = false;
 function toggleAuthMode() {
@@ -2439,7 +2465,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v106';
+const APP_VERSION = 'v107';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2674,7 +2700,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=106').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=107').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
