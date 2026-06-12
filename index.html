@@ -561,7 +561,17 @@
         <div style="font-size:2.3rem;margin-bottom:8px;">🔍</div>
         <div style="color:#64748b;font-size:0.88rem;margin:14px 0;">Getting your location and conditions…</div>
       </div>
-      <div class="card" id="error-card" style="display:none;text-align:center;padding:24px 20px;"><div class="error-msg" id="error-msg" style="line-height:1.6;font-size:0.9rem"></div></div>
+      <div class="card" id="error-card" style="display:none;text-align:center;padding:24px 20px;"><div class="error-msg" id="error-msg" style="line-height:1.6;font-size:0.9rem"></div>
+    <!-- Location Permission Gate -->
+    <div id="location-gate" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:9999;padding:32px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+      <div style="font-size:56px;margin-bottom:16px;">📍</div>
+      <h2 style="color:#0d9488;font-size:1.4rem;margin-bottom:12px;">Location Access Needed</h2>
+      <p style="color:#475569;font-size:0.95rem;line-height:1.5;margin-bottom:8px;">The Paw Report needs your location to check pavement temperature and safety conditions for your dog.</p>
+      <p style="color:#64748b;font-size:0.85rem;line-height:1.5;margin-bottom:24px;">Tap <strong>Allow</strong> when your browser asks — your location is never stored or shared.</p>
+      <button onclick="requestLocationPermission()" style="background:linear-gradient(135deg,#0d9488,#0a7c72);color:#fff;border:none;border-radius:14px;padding:16px 32px;font-size:1.05rem;font-weight:700;cursor:pointer;width:100%;max-width:320px;margin-bottom:12px;">📍 Allow Location Access</button>
+      <p id="location-gate-error" style="color:#ef4444;font-size:0.85rem;margin-top:8px;display:none;"></p>
+      <p style="color:#94a3b8;font-size:0.78rem;margin-top:16px;line-height:1.4;">If you already denied location, tap the 🔒 lock icon in your browser address bar → <strong>Permissions</strong> → <strong>Location → Allow</strong>, then reload the app.</p>
+    </div></div>
 
       <div class="notif-banner" id="notif-banner" style="display:none;">
         <div class="notif-icon">🔔</div>
@@ -584,7 +594,7 @@
         </div>
         <!-- 🧪 Hot car test button (debug) -->
         <div id="hotcar-test-bar" style="display:none;margin-top:8px;text-align:center;">
-          <button onclick="testHotCarAlert()" style="background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;">🧪 Test Hot Car Alert</button>
+          <button onclick="testHotCarAlert()" style="background:linear-gradient(135deg,#0d9488,#0a7c72);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;">🧪 Test Hot Car Alert</button>
           <div id="hotcar-gps-status" style="font-size:0.72rem;color:#64748b;margin-top:4px;"></div>
         </div>
 
@@ -1715,16 +1725,30 @@ function loadMainScreen() {
   const _htb = document.getElementById('hotcar-test-bar');
   if (_htb && (_ut === 'silver' || _ut === 'gold')) _htb.style.display = 'block';
   showScreen('main'); showTab('report');
+  // Check location permission state on load
   if (navigator.permissions) {
     navigator.permissions.query({name:'geolocation'}).then(function(r) {
       if (r.state === 'denied') {
-        showFetchError('Location access denied. Go to browser Site settings and allow Location.');
+        // Already denied — show gate immediately so user knows how to fix it
+        setTimeout(showLocationGate, 800);
       } else if (r.state === 'prompt') {
-        navigator.geolocation.getCurrentPosition(function(pos) {
-          lastLat = pos.coords.latitude; lastLon = pos.coords.longitude;
-        }, function() {});
+        // Not asked yet — trigger prompt automatically
+        navigator.geolocation.getCurrentPosition(
+          function(pos) { lastLat = pos.coords.latitude; lastLon = pos.coords.longitude; },
+          function(err) { if (err.code === 1) setTimeout(showLocationGate, 500); }
+        );
       }
+      // Watch for permission changes (e.g. user grants it in settings)
+      r.onchange = function() {
+        if (r.state === 'granted') { hideLocationGate(); }
+      };
     }).catch(function() {});
+  } else {
+    // Fallback: just try getCurrentPosition to trigger OS dialog
+    navigator.geolocation.getCurrentPosition(
+      function(pos) { lastLat = pos.coords.latitude; lastLon = pos.coords.longitude; },
+      function(err) { if (err.code === 1) setTimeout(showLocationGate, 500); }
+    );
   }
   const petName = userPrefs?.pet_name || 'your pup';
   document.getElementById('pet-welcome-msg').textContent = `Ready to run ${petName}'s report?`;
@@ -2343,9 +2367,51 @@ async function fetchAll(lat, lon) {
 }
 function getLocation() {
   return new Promise((resolve,reject)=>{
-    if(!navigator.geolocation){reject(new Error('Geolocation not supported.')); return;}
-    navigator.geolocation.getCurrentPosition(p=>resolve({lat:p.coords.latitude,lon:p.coords.longitude}),e=>reject(new Error(e.code===1?'Location access denied. Please allow and retry.':'Could not get your location.')),{timeout:10000,enableHighAccuracy:true});
+    if(!navigator.geolocation){reject(new Error('Geolocation not supported on this browser.')); return;}
+    navigator.geolocation.getCurrentPosition(
+      p => resolve({lat:p.coords.latitude, lon:p.coords.longitude}),
+      e => {
+        if (e.code === 1) {
+          // Permission denied — show the full-screen gate
+          showLocationGate();
+          reject(new Error('Location access denied.'));
+        } else {
+          reject(new Error('Could not get your location. Please check GPS is enabled.'));
+        }
+      },
+      {timeout:12000, enableHighAccuracy:true, maximumAge:0}
+    );
   });
+}
+function showLocationGate() {
+  const gate = document.getElementById('location-gate');
+  if (gate) { gate.style.display = 'flex'; }
+}
+function hideLocationGate() {
+  const gate = document.getElementById('location-gate');
+  if (gate) { gate.style.display = 'none'; }
+}
+function requestLocationPermission() {
+  const errEl = document.getElementById('location-gate-error');
+  if (errEl) errEl.style.display = 'none';
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      hideLocationGate();
+      lastLat = pos.coords.latitude;
+      lastLon = pos.coords.longitude;
+      // Auto-start report now that we have permission
+      startTracking();
+    },
+    function(err) {
+      if (errEl) {
+        errEl.textContent = err.code === 1
+          ? '❌ Still denied. Tap the 🔒 lock icon in your browser bar → Location → Allow, then reload.'
+          : '❌ Could not get location. Make sure GPS is on.';
+        errEl.style.display = 'block';
+      }
+    },
+    {timeout:15000, enableHighAccuracy:true, maximumAge:0}
+  );
 }
 async function startTracking() {
   if(isTracking){stopTracking();return;}
@@ -2373,7 +2439,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v104';
+const APP_VERSION = 'v105';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2608,7 +2674,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=104').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=105').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
