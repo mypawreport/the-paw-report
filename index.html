@@ -1709,6 +1709,7 @@ function loadMainScreen() {
   setTimeout(startVehicleDetection, 2000);
   renderFavLocations();
   renderWalkHistory();
+  var _fab = document.getElementById('fav-add-btn'); if (_fab && lastLat) _fab.style.display = 'block';
   // Show hot car test bar for Silver/Gold debug
   const _ut = (currentUser?.tier || getUserTier() || '').toLowerCase();
   const _htb = document.getElementById('hotcar-test-bar');
@@ -2428,7 +2429,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v108';
+const APP_VERSION = 'v109';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2663,7 +2664,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=108').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=109').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2796,15 +2797,56 @@ function saveFavLocations(favs) {
   localStorage.setItem('paw_fav_locations', JSON.stringify(favs));
 }
 function saveCurrentLocationAsFav() {
-  if (!lastKnownLat || !lastKnownLon) { showToast('Run a report first to detect your location.'); return; }
-  var name = prompt('Name this location (e.g. Home, Dog Park, Trail):');
-  if (!name || !name.trim()) return;
+  if (!lastLat || !lastLon) { showToast('\u{1F4CD} Run a report first to detect your location.'); return; }
   var favs = getFavLocations();
   if (favs.length >= MAX_FAVS) { showToast('Max 5 saved locations. Remove one first.'); return; }
-  favs.push({ name: name.trim(), lat: lastKnownLat, lon: lastKnownLon, added: new Date().toLocaleDateString() });
+  var existing = document.getElementById('save-loc-modal');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'save-loc-modal';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;width:100%;max-width:320px;';
+  var title = document.createElement('div');
+  title.style.cssText = 'font-weight:700;font-size:1rem;color:#1e293b;margin-bottom:12px;';
+  title.textContent = '\u{1F4CD} Name this location';
+  var inp = document.createElement('input');
+  inp.id = 'save-loc-input';
+  inp.type = 'text';
+  inp.placeholder = 'e.g. Home, Dog Park, Trail';
+  inp.maxLength = 30;
+  inp.style.cssText = 'width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.95rem;box-sizing:border-box;';
+  var row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:10px;margin-top:14px;';
+  var cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.cssText = 'flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;background:#f8fafc;color:#64748b;font-weight:600;cursor:pointer;';
+  cancelBtn.onclick = function(){ overlay.remove(); };
+  var saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save';
+  saveBtn.style.cssText = 'flex:1;padding:10px;border:none;border-radius:8px;background:linear-gradient(135deg,#0d9488,#0a7c72);color:#fff;font-weight:700;cursor:pointer;';
+  saveBtn.onclick = confirmSaveLocation;
+  row.appendChild(cancelBtn); row.appendChild(saveBtn);
+  box.appendChild(title); box.appendChild(inp); box.appendChild(row);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  setTimeout(function(){
+    inp.focus();
+    inp.addEventListener('keydown', function(e){ if(e.key==='Enter') confirmSaveLocation(); });
+  }, 100);
+}
+function confirmSaveLocation() {
+  var inp = document.getElementById('save-loc-input');
+  var name = inp ? inp.value.trim() : '';
+  var modal = document.getElementById('save-loc-modal');
+  if (modal) modal.remove();
+  if (!name) return;
+  var favs = getFavLocations();
+  if (favs.length >= MAX_FAVS) { showToast('Max 5 saved locations. Remove one first.'); return; }
+  favs.push({ name: name, lat: lastLat, lon: lastLon, added: new Date().toLocaleDateString() });
   saveFavLocations(favs);
   renderFavLocations();
-  showToast('📍 ' + name.trim() + ' saved!');
+  showToast('\u{1F4CD} ' + name + ' saved!');
 }
 function removeFavLocation(idx) {
   var favs = getFavLocations();
@@ -2814,7 +2856,7 @@ function removeFavLocation(idx) {
   showToast('Location removed.');
 }
 function useFavLocation(lat, lon, name) {
-  lastKnownLat = lat; lastKnownLon = lon;
+  lastLat = lat; lastLon = lon;
   var locLine = document.getElementById('report-location-text');
   if (locLine) locLine.textContent = name;
   var locDiv = document.getElementById('report-location-line');
