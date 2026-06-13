@@ -100,12 +100,6 @@
     .paywall-hero-icon{font-size:3rem;display:block;margin-bottom:8px}
     .paywall-hero-title{font-size:1.25rem;font-weight:800;margin-bottom:6px;color:#0f172a}
     .paywall-hero-sub{font-size:0.84rem;color:#475569;line-height:1.5;margin-bottom:16px}
-    .countdown-banner{background:linear-gradient(135deg,#f0fdf9,#f0fdfa);border:1px solid #14b8a6;border-radius:14px;padding:12px 16px;margin-bottom:16px;text-align:center;box-shadow:0 2px 12px rgba(249,115,22,0.12)}
-    .countdown-title{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#374151;font-weight:700;margin-bottom:6px}
-    .countdown-timer{display:flex;justify-content:center;gap:12px}
-    .countdown-unit{text-align:center}
-    .countdown-num{font-size:1.6rem;font-weight:900;color:var(--c-teal);line-height:1}
-    .countdown-label{font-size:0.58rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px}
     .tier-tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--c-card);border-radius:12px;padding:4px;border:1px solid var(--c-border)}
     .tier-tab{flex:1;padding:8px 4px;border-radius:9px;border:none;background:none;color:var(--c-muted);font-size:0.78rem;font-weight:600;cursor:pointer;opacity:0.7;transition:var(--c-transition)}
     .tier-tab.active{opacity:1;color:var(--c-slate)}
@@ -471,15 +465,7 @@
         <span class="paywall-hero-icon">🐾</span>
         <div class="paywall-hero-title">Unlock The Full Paw Report</div>
         <div class="paywall-hero-sub">Real-time ground temps, area safety, walk timing & more — all in one report for your dog.</div>
-        <div class="countdown-banner">
-          <div class="countdown-title">🔥 Launch Week Pricing Ends In</div>
-          <div class="countdown-timer">
-            <div class="countdown-unit"><div class="countdown-num" id="cd-days">07</div><div class="countdown-label">Days</div></div>
-            <div class="countdown-unit"><div class="countdown-num" id="cd-hours">00</div><div class="countdown-label">Hours</div></div>
-            <div class="countdown-unit"><div class="countdown-num" id="cd-mins">00</div><div class="countdown-label">Mins</div></div>
-            <div class="countdown-unit"><div class="countdown-num" id="cd-secs">00</div><div class="countdown-label">Secs</div></div>
-          </div>
-        </div>
+        
       </div>
       <div style="padding:0 16px 16px;">
         <div class="tier-tabs">
@@ -592,9 +578,9 @@
           <div class="hot-car-alert-title">🚗 Just arrived? Check your back seat!</div>
           <div>Never leave pets in a parked vehicle — temps can spike dangerously fast.</div>
         </div>
-        <!-- 🧪 Hot car test button (debug) -->
+        <!-- 🚗 Hot car quick check -->
         <div id="hotcar-test-bar" style="display:none;margin-top:8px;text-align:center;">
-          <button onclick="testHotCarAlert()" style="background:linear-gradient(135deg,#0d9488,#0a7c72);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;">🧪 Test Hot Car Alert</button>
+          <button onclick="testHotCarAlert()" style="background:linear-gradient(135deg,#0d9488,#0a7c72);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;">🚗 Just Parked? Check Back Seat</button>
           <div id="hotcar-gps-status" style="font-size:0.72rem;color:#64748b;margin-top:4px;"></div>
         </div>
 
@@ -1139,26 +1125,6 @@ let currentPetSize = 'medium', currentTier = 'free';
 let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, lastCrimeScore = null;
 let isSignUp = false, setupSize = 'medium', activeBilling = 'weekly', activeTierTab = 'bronze';
 let notificationsEnabled = false;
-// Launch end date: 7 days from now stored in localStorage
-const LAUNCH_KEY = 'paw_launch_end';
-function getLaunchEnd() {
-  let d = localStorage.getItem(LAUNCH_KEY);
-  if (!d) { d = new Date(Date.now() + 7*24*60*60*1000).toISOString(); localStorage.setItem(LAUNCH_KEY, d); }
-  return new Date(d);
-}
-function startCountdown() {
-  const end = getLaunchEnd();
-  function tick() {
-    const diff = end - Date.now();
-    if (diff <= 0) { ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id => document.getElementById(id).textContent = '00'); return; }
-    const days = Math.floor(diff/86400000), hrs = Math.floor((diff%86400000)/3600000), mins = Math.floor((diff%3600000)/60000), secs = Math.floor((diff%60000)/1000);
-    document.getElementById('cd-days').textContent = String(days).padStart(2,'0');
-    document.getElementById('cd-hours').textContent = String(hrs).padStart(2,'0');
-    document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
-    document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
-  }
-  tick(); setInterval(tick, 1000);
-}
 // Pricing data
 const PRICES = {
   bronze: { weekly:{launch:'$0.99',regular:'$1.99',period:'/wk'}, monthly:{launch:'$2.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$24.99',regular:'$39.99',period:'/yr'} },
@@ -1174,7 +1140,7 @@ function renderTierDisplay() {
   const p = PRICES[activeTierTab][activeBilling];
   if (!p) return;
   const feats = FEATURES[activeTierTab];
-  const isLaunch = getLaunchEnd() > new Date();
+  const isLaunch = true; // launch pricing always active
   const tierColors = {bronze:'#cd7f32',silver:'#c0c0c0',gold:'#ffd700'};
   const tierEmojis = {bronze:'🥉',silver:'🥈',gold:'🥇'};
   const color = tierColors[activeTierTab];
@@ -1454,7 +1420,7 @@ function savePrefs(userId, data) {
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + id).classList.add('active');
-  if (id==='paywall') { renderTierDisplay(); startCountdown(); }
+  if (id==='paywall') { renderTierDisplay(); }
 }
 function showTab(tab) {
     if (tab === 'profile') {
@@ -1467,7 +1433,7 @@ function showTab(tab) {
       // Show hot car test bar for Silver/Gold
       const _ut2 = (currentUser?.tier || getUserTier() || '').toLowerCase();
       const _htb2 = document.getElementById('hotcar-test-bar');
-      if (_htb2) _htb2.style.display = (_ut2 === 'silver' || _ut2 === 'gold') ? 'block' : 'none';
+      if (_htb2) _htb2.style.display = 'block';
     }
   ['report','safety','wash','profile'].forEach(t => {
     document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
@@ -1563,9 +1529,7 @@ async function onLoggedIn() {
     currentPetSize = userPrefs.pet_size || 'medium';
     syncSizeSelectors(currentPetSize);
     showScreen('paywall');
-    renderTierDisplay();
-    startCountdown();
-  }
+    renderTierDisplay(); }
 }
 function updateUserBar() {
   if (!currentUser) return;
@@ -1709,8 +1673,7 @@ async function saveProfile() {
       currentTier = profile.tier || 'silver';
       loadMainScreen();
     } else {
-      showScreen('paywall'); renderTierDisplay(); startCountdown();
-    }
+      showScreen('paywall'); renderTierDisplay(); }
   } catch(e) {
     showToast('⚠️ Could not save profile. Please try again.');
   }
@@ -1749,7 +1712,7 @@ function loadMainScreen() {
   // Show hot car test bar for Silver/Gold debug
   const _ut = (currentUser?.tier || getUserTier() || '').toLowerCase();
   const _htb = document.getElementById('hotcar-test-bar');
-  if (_htb && (_ut === 'silver' || _ut === 'gold')) _htb.style.display = 'block';
+  if (_htb) _htb.style.display = 'block';
   showScreen('main'); showTab('report');
   // Check location permission state on load
   if (navigator.permissions) {
@@ -2465,7 +2428,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v107';
+const APP_VERSION = 'v108';
 const WHATS_NEW = {
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
@@ -2700,7 +2663,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=107').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=108').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3300,15 +3263,13 @@ function logJustWalked() {
   showToast('✅ Walk logged! Good pup parent 🐾');
 }
 function checkWalkReminder() {
-  const tier = getUserTier();
-  if (tier !== 'gold') return;
-  const s = getAlertSettings();
+    const s = getAlertSettings();
   if (s.walkReminder === false) return;
   const banner = document.getElementById('walk-reminder-banner');
   const sub = document.getElementById('walk-reminder-sub');
   if (!banner) return;
   const last = parseInt(localStorage.getItem('lastWalkTime') || '0');
-  if (!last) return; // never logged — don't nag on first use
+  if (!last) { if (!window._walkBase) window._walkBase = Date.now(); if ((Date.now()-window._walkBase) < 1800000) return; }
   const hoursAgo = (Date.now() - last) / (1000 * 60 * 60);
   if (hoursAgo >= 6) {
     const hrs = Math.round(hoursAgo);
