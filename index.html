@@ -884,7 +884,10 @@
       <div class="card">
         <div class="card-title">💳 My Subscription</div>
         <div id="sub-status-display"></div>
-        <button class="btn btn-primary" onclick="showScreen('paywall')" style="margin-top:10px;font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+          <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
+          <button id="manage-sub-btn" onclick="manageSubscription()" style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:11px;font-size:0.85rem;font-weight:600;color:#1e293b;cursor:pointer;display:none;">⚙️ Manage / Cancel Subscription</button>
+        </div>
       </div>
 
       <!-- 🎁 Referral -->
@@ -1561,6 +1564,58 @@ function renderProfileDisplay() {
     <div class="profile-row"><span class="profile-label">Size</span><span class="profile-val">${petSize}</span></div>
   `;
 }
+function manageSubscription() {
+  var existing = document.getElementById('manage-sub-modal');
+  if (existing) existing.remove();
+  var tierName = (currentTier||'free').charAt(0).toUpperCase() + (currentTier||'free').slice(1);
+  var overlay = document.createElement('div');
+  overlay.id = 'manage-sub-modal';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;width:100%;max-width:340px;';
+  var title = document.createElement('div');
+  title.style.cssText = 'font-weight:800;font-size:1.05rem;color:#1e293b;margin-bottom:4px;';
+  title.textContent = 'Manage Subscription';
+  var planLine = document.createElement('div');
+  planLine.style.cssText = 'font-size:0.82rem;color:#64748b;margin-bottom:16px;';
+  planLine.textContent = 'Current plan: ' + tierName;
+  var cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel Subscription';
+  cancelBtn.style.cssText = 'width:100%;padding:11px;border:none;border-radius:10px;background:#fee2e2;color:#dc2626;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:10px;';
+  cancelBtn.onclick = cancelMySubscription;
+  var keepBtn = document.createElement('button');
+  keepBtn.textContent = 'Keep My Plan';
+  keepBtn.style.cssText = 'width:100%;padding:11px;border:1.5px solid #e2e8f0;border-radius:10px;background:#f8fafc;color:#64748b;font-weight:600;font-size:0.9rem;cursor:pointer;';
+  keepBtn.onclick = function(){ overlay.remove(); };
+  var helpNote = document.createElement('div');
+  helpNote.style.cssText = 'font-size:0.72rem;color:#94a3b8;margin-top:12px;text-align:center;';
+  helpNote.textContent = 'Questions? mypawreport@gmail.com';
+  box.appendChild(title); box.appendChild(planLine);
+  box.appendChild(cancelBtn); box.appendChild(keepBtn); box.appendChild(helpNote);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+}
+async function cancelMySubscription() {
+  var overlay = document.getElementById('manage-sub-modal');
+  if (overlay) overlay.remove();
+  var email = (currentUser && currentUser.email) ? currentUser.email : (localStorage.getItem('paw_user_email') || '');
+  if (!email) { showToast('Please sign in to manage your subscription.'); return; }
+  showToast('Processing...');
+  try {
+    var res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/cancelActiveSubscriptions',
+      { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:email}), cache:'no-store' });
+    var data = await res.json();
+    if (data.cancelled > 0) {
+      showToast('Subscription cancelled. You keep access until the end of your billing period.');
+      currentTier = 'free';
+      renderSubStatus();
+    } else {
+      showToast('No active subscription found for ' + email + '. Already cancelled? Email mypawreport@gmail.com if you need help.');
+    }
+  } catch(e) {
+    showToast('Error — please email mypawreport@gmail.com for assistance.');
+  }
+}
 function renderSubStatus() {
   const tierColors = {free:'#f1f5f9',bronze:'#fef3c7',silver:'#f1f5f9',gold:'#fefce8'};
   document.getElementById('sub-status-display').innerHTML = `
@@ -1568,7 +1623,8 @@ function renderSubStatus() {
       <div style="font-size:1rem;font-weight:800;margin-bottom:3px;">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
       <div style="font-size:0.75rem;color:#64748b;">${currentTier==='free'?'Upgrade to unlock all features':'Active subscription'}</div>
     </div>`;
-  document.getElementById('upgrade-btn').style.display = currentTier==='gold' ? 'none' : 'block';
+  var _ub = document.getElementById('upgrade-btn'); if(_ub) _ub.style.display = currentTier==='gold' ? 'none' : 'block';
+  var _mb = document.getElementById('manage-sub-btn'); if(_mb) _mb.style.display = (currentTier && currentTier !== 'free') ? 'block' : 'none';
   loadAlertSettingToggles();
 }
 function showEditProfile() {
