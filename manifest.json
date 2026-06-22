@@ -26,5 +26,56 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "lang": "en",
+  "dir": "ltr",
+  "screenshots": [
+    {
+      "src": "https://mypawreport.github.io/the-paw-report/screenshot1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Paw Safety Dashboard"
+    },
+    {
+      "src": "https://mypawreport.github.io/the-paw-report/screenshot2.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Area Safety & Crime Check"
+    },
+    {
+      "src": "https://mypawreport.github.io/the-paw-report/screenshot3.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Walk History & Reminders"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Check Paw Safety",
+      "short_name": "Paw Safety",
+      "description": "Check current ground temperature safety",
+      "url": "/?shortcut=safety",
+      "icons": [
+        {
+          "src": "https://mypawreport.github.io/the-paw-report/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Hot Car Alert",
+      "short_name": "Hot Car",
+      "description": "Quick hot car check reminder",
+      "url": "/?shortcut=hotcar",
+      "icons": [
+        {
+          "src": "https://mypawreport.github.io/the-paw-report/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }
