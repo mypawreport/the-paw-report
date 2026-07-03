@@ -417,7 +417,7 @@
         Don't have an account? <span id="auth-toggle-label">Sign up</span>
       </div>
       <div id="forgot-row" style="text-align:center;margin-top:6px;font-size:0.78rem;color:#94a3b8;">
-        <a href="#" onclick="showRecoveryModal();return false;" style="color:#94a3b8;text-decoration:underline;">Forgot password?</a>
+        <a href="#" onclick="showPasswordResetModal();return false;" style="color:#94a3b8;text-decoration:underline;">Forgot password?</a>
       </div>
     </div>
     <div class="app-footer">
@@ -1031,6 +1031,29 @@
       <button onclick="hideRecoveryModal()" style="width:100%;background:none;border:none;color:#999;margin-top:10px;cursor:pointer;font-size:0.85rem;">Cancel</button>
     </div>
   </div>
+
+<!-- Password Reset Modal -->
+  <div id="pwreset-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:#f0fdf9;border-radius:18px;padding:28px 22px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+      <div style="text-align:center;margin-bottom:16px;">
+        <span style="font-size:2rem;">🔒</span>
+        <div style="font-size:1.1rem;font-weight:800;color:#1a1a1a;margin-top:6px;">Reset Your Password</div>
+        <div id="pwreset-sub" style="font-size:0.83rem;color:#666;margin-top:4px;">Enter your account email and we'll send you a reset code.</div>
+      </div>
+      <div id="pwreset-step1">
+        <input id="pwreset-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid #0d9488;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
+        <div id="pwreset-msg1" style="font-size:0.82rem;color:#c00;margin-bottom:8px;min-height:18px;text-align:center;"></div>
+        <button onclick="requestPasswordReset()" style="width:100%;background:#0d9488;color:#1e293b;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Send Reset Code</button>
+      </div>
+      <div id="pwreset-step2" style="display:none;">
+        <input id="pwreset-code" type="text" inputmode="numeric" placeholder="6-digit code" style="width:100%;padding:12px;border:2px solid #0d9488;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
+        <input id="pwreset-newpass" type="password" placeholder="New password" style="width:100%;padding:12px;border:2px solid #0d9488;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
+        <div id="pwreset-msg2" style="font-size:0.82rem;color:#c00;margin-bottom:8px;min-height:18px;text-align:center;"></div>
+        <button onclick="submitPasswordReset()" style="width:100%;background:#0d9488;color:#1e293b;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Reset Password</button>
+      </div>
+      <button onclick="hidePasswordResetModal()" style="width:100%;background:none;border:none;color:#999;margin-top:10px;cursor:pointer;font-size:0.85rem;">Cancel</button>
+    </div>
+  </div>
   <div class="whats-new-toast" id="whats-new-toast">
     <span class="toast-close" onclick="dismissToast()">✕</span>
     <div class="toast-title">🆕 What's New</div>
@@ -1344,80 +1367,92 @@ function applyReferral(inputId) {
     showToast('⚠️ Invalid referral code. Please check and try again.', 4000);
   }
 }
-// ---- Local auth (no server needed) ----
-function generateId() {
-  return 'usr_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
-}
+// ---- Real backend auth (Base44 cloud — syncs across all devices) ----
+const LS_TOKEN = 'paw_session_token';
+const AUTH_API = 'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions';
+
 async function authRegister(email, password, full_name) {
-  const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
-  if (users[email]) throw new Error('An account with this email already exists.');
-  const id = generateId();
-  const user = { id, email, full_name, password: btoa(password), created: Date.now() };
-  users[email] = user;
-  localStorage.setItem(LS_USERS, JSON.stringify(users));
-  localStorage.setItem(LS_CUR_USER, JSON.stringify({id, email, full_name}));
+  const res = await fetch(`${AUTH_API}/authRegister`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, password, full_name })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Could not create account.');
+  localStorage.setItem(LS_TOKEN, data.token);
   localStorage.setItem(LS_LAST_EMAIL, email);
-  // Track signup
+  const profile = { id: data.id, email: data.email, full_name: data.full_name || '' };
+  localStorage.setItem(LS_CUR_USER, JSON.stringify(profile));
+  if (data.prefs) savePrefs(data.id, data.prefs, true);
   setTimeout(() => trackAppEvent('signup', { email }), 500);
-  return user;
+  return profile;
 }
 async function authLogin(email, password) {
-  const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
-  const user = users[email];
-  if (!user) throw new Error('No account found with that email. Please sign up first.');
-  if (user.password !== btoa(password)) throw new Error('Incorrect password. Please try again.');
-  // Restore full profile from paw_users (includes saved name, tier, subscription)
-  const profile = {
-    id: user.id,
-    email: user.email,
-    full_name: user.full_name || '',
-    tier: user.tier || 'free',
-    subscriptionActive: user.subscriptionActive || false,
-    lifetimeAccess: user.lifetimeAccess || false
-  };
-  localStorage.setItem(LS_CUR_USER, JSON.stringify(profile));
+  const res = await fetch(`${AUTH_API}/authLogin`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Could not sign in.');
+  localStorage.setItem(LS_TOKEN, data.token);
   localStorage.setItem(LS_LAST_EMAIL, email);
-  return user;
+  const profile = { id: data.id, email: data.email, full_name: data.full_name || '' };
+  localStorage.setItem(LS_CUR_USER, JSON.stringify(profile));
+  if (data.prefs) savePrefs(data.id, data.prefs, true);
+  return profile;
 }
 async function authMe() {
-  const u = localStorage.getItem(LS_CUR_USER);
-  if (!u) throw new Error('Not logged in');
-  const current = JSON.parse(u);
-  // Always merge with paw_users to get latest saved data (name, tier, etc.)
-  try {
-    const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
-    const master = users[current.email];
-    if (master) {
-      // Merge: master paw_users is source of truth for profile data
-      const merged = {
-        ...current,
-        full_name: master.full_name || current.full_name || '',
-        tier: master.tier || current.tier || 'free',
-        subscriptionActive: master.subscriptionActive || current.subscriptionActive || false,
-        lifetimeAccess: master.lifetimeAccess || current.lifetimeAccess || false
-      };
-      localStorage.setItem(LS_CUR_USER, JSON.stringify(merged));
-      return merged;
-    }
-  } catch(_) {}
-  return current;
+  const token = localStorage.getItem(LS_TOKEN);
+  if (!token) throw new Error('Not logged in');
+  const res = await fetch(`${AUTH_API}/authMe`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ token })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) { localStorage.removeItem(LS_TOKEN); throw new Error(data.error || 'Session expired'); }
+  const profile = { id: data.id, email: data.email, full_name: data.full_name || '' };
+  localStorage.setItem(LS_CUR_USER, JSON.stringify(profile));
+  if (data.prefs) savePrefs(data.id, data.prefs, true);
+  return profile;
 }
 async function authLogout() {
+  const token = localStorage.getItem(LS_TOKEN);
+  localStorage.removeItem(LS_TOKEN);
   localStorage.removeItem(LS_CUR_USER);
+  if (token) {
+    fetch(`${AUTH_API}/authLogout`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token }) }).catch(()=>{});
+  }
 }
-// Local entity storage (replaces API calls)
+// Sync a full_name change to the server (fire-and-forget)
+function syncProfileToServer(full_name) {
+  const token = localStorage.getItem(LS_TOKEN);
+  if (!token) return;
+  fetch(`${AUTH_API}/authUpdateProfile`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ token, full_name })
+  }).catch(()=>{});
+}
+// Local prefs cache for instant reads, backed by real server sync so data follows the account across devices
 function getPrefs(userId) {
   const all = JSON.parse(localStorage.getItem(LS_PREFS) || '{}');
   const key = userId || (currentUser && currentUser.email) || 'guest';
   // Try userId first, then email fallback, then 'guest'
   return all[userId] || all[key] || all[(currentUser && currentUser.email)] || null;
 }
-function savePrefs(userId, data) {
+function savePrefs(userId, data, skipSync) {
   // Fallback: use email from currentUser if userId is missing
   const key = userId || (currentUser && currentUser.email) || 'guest';
   const all = JSON.parse(localStorage.getItem(LS_PREFS) || '{}');
   all[key] = { ...(all[key] || {}), ...data, id: key };
   localStorage.setItem(LS_PREFS, JSON.stringify(all));
+  if (!skipSync) {
+    const token = localStorage.getItem(LS_TOKEN);
+    if (token) {
+      fetch(`${AUTH_API}/authSavePrefs`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ token, data: all[key] })
+      }).catch(()=>{});
+    }
+  }
   return all[key];
 }
 function showScreen(id) {
@@ -1508,7 +1543,14 @@ async function onLoggedIn() {
     userPrefs = getPrefs(prefKey);
   } catch(_) { userPrefs = null; }
   // Sync tier — check userPrefs first, then currentUser, then localStorage
-  const savedTier = userPrefs?.subscription_tier || currentUser?.tier || localStorage.getItem(LS_SUB_TIER);
+  let savedTier = userPrefs?.subscription_tier || currentUser?.tier || localStorage.getItem(LS_SUB_TIER);
+  // Owner account always keeps Gold Lifetime access
+  if (currentUser?.email === 'mypawreport@gmail.com') {
+    savedTier = 'gold';
+    if (userPrefs && userPrefs.subscription_tier !== 'gold') {
+      userPrefs = savePrefs(currentUser.id, { subscription_tier: 'gold', subscription_period: 'lifetime' });
+    }
+  }
   if (savedTier && ['bronze','silver','gold'].includes(savedTier)) {
     currentTier = savedTier;
     localStorage.setItem(LS_SUB_TIER, currentTier);
@@ -1664,17 +1706,12 @@ async function saveEditProfile(modal) {
     if (currentUser) {
       // Update in-memory user
       if (fullName) currentUser.full_name = fullName;
-      // Always write to paw_users master store (source of truth)
-      const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
-      if (users[currentUser.email]) {
-        if (fullName) users[currentUser.email].full_name = fullName;
-        localStorage.setItem(LS_USERS, JSON.stringify(users));
-      }
-      // Sync paw_current_user from master store
       localStorage.setItem(LS_CUR_USER, JSON.stringify({
         ...currentUser,
         full_name: fullName || currentUser.full_name || ''
       }));
+      // Sync name to the real backend so it follows the account across devices
+      if (fullName) syncProfileToServer(fullName);
     }
     const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
     userPrefs = savePrefs(currentUser.id, data);
@@ -2403,7 +2440,8 @@ async function fetchAll(lat, lon) {
   ]);
   showResultCards(true);
   async function safeJson(r) { try { const ct=r.headers.get('content-type')||''; if(!ct.includes('json')) return null; return await r.json(); } catch(_) { return null; } }
-  if(pawRes.status==='fulfilled'&&pawRes.value.ok){ const d=await safeJson(pawRes.value); if(d) applyPawUIWithSurface(d); }
+  if(pawRes.status==='fulfilled'&&pawRes.value.ok){ const d=await safeJson(pawRes.value); if(d) applyPawUIWithSurface(d); else document.getElementById('rating-message').innerHTML='⚠️ Could not load ground temp data. <button onclick="fetchAll(lat,lon)" style="background:#0d9488;color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px">🔄 Retry</button>'; }
+  else document.getElementById('rating-message').innerHTML='⚠️ Could not load ground temp data. <button onclick="fetchAll(lat,lon)" style="background:#0d9488;color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px">🔄 Retry</button>';
   if(crimeRes.status==='fulfilled'&&crimeRes.value.ok){ const d=await safeJson(crimeRes.value); if(d) updateCrimeUI(d); else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.'; }
   else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.';
   if(washRes.status==='fulfilled'&&washRes.value.ok){ const d=await safeJson(washRes.value); if(d) updateWashUI(d); else document.getElementById('wash-loading').textContent='Could not load wash stations.'; }
@@ -2485,8 +2523,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v110';
+const APP_VERSION = 'v111';
 const WHATS_NEW = {
+  'v111': '🌤️ Fixed Best Time to Walk & Ground Temp — switched to a more reliable weather data source.',
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
   'v38': '🔐 Stay logged in — you won\'t need to sign in again unless you sign out.',
@@ -2514,46 +2553,12 @@ function dismissToast() {
   if (toast) { toast.classList.remove('show'); toast.style.pointerEvents = 'none'; }
 }
 (async () => {
-
-  // Seed owner account so it always exists regardless of browser/device
-  function seedOwnerAccount() {
-    try {
-      const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
-      if (!users['mypawreport@gmail.com']) {
-        users['mypawreport@gmail.com'] = {
-          id: 'owner-samantha',
-          email: 'mypawreport@gmail.com',
-          full_name: 'Samantha',
-          password: 'MDkwOUpvbmVzIQ==',
-          tier: 'gold',
-          subscriptionActive: true,
-          lifetimeAccess: true,
-          created: 0
-        };
-        localStorage.setItem(LS_USERS, JSON.stringify(users));
-      } else {
-        // Always ensure owner has gold lifetime
-        const u = users['mypawreport@gmail.com'];
-        u.tier = 'gold'; u.subscriptionActive = true; u.lifetimeAccess = true;
-        u.password = 'MDkwOUpvbmVzIQ==';
-        localStorage.setItem(LS_USERS, JSON.stringify(users));
-      }
-    } catch(e) {}
-  }
-  seedOwnerAccount();
-
   try { handleCheckoutReturn(); } catch(e) { console.warn('checkout return error:', e); }
   try {
     initTheme();
   } catch(e) { console.warn('theme init error:', e); }
   try {
     currentUser = await authMe();
-    // Verify the user still exists in paw_users (not wiped)
-    const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
-    if (currentUser && !users[currentUser.email]) {
-      // Session token exists but user store is gone — try to restore from last email
-      throw new Error('User store missing');
-    }
     await onLoggedIn();
   } catch(e) {
     console.warn('Auth error (expected if not logged in):', e);
@@ -2830,6 +2835,78 @@ async function recoverAccess() {
     if (msg) { msg.style.color = '#c00'; msg.textContent = 'Connection error. Please try again.'; }
   }
   if (btn) btn.disabled = false;
+}
+let pwresetEmail = '';
+function showPasswordResetModal() {
+  const modal = document.getElementById('pwreset-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.getElementById('pwreset-step1').style.display = 'block';
+    document.getElementById('pwreset-step2').style.display = 'none';
+    document.getElementById('pwreset-sub').textContent = "Enter your account email and we'll send you a reset code.";
+    const emailInput = document.getElementById('pwreset-email');
+    if (emailInput) emailInput.value = document.getElementById('auth-email')?.value?.trim() || '';
+    const msg1 = document.getElementById('pwreset-msg1'); if (msg1) msg1.textContent = '';
+    const msg2 = document.getElementById('pwreset-msg2'); if (msg2) msg2.textContent = '';
+  }
+}
+function hidePasswordResetModal() {
+  const modal = document.getElementById('pwreset-modal');
+  if (modal) modal.style.display = 'none';
+}
+async function requestPasswordReset() {
+  const emailInput = document.getElementById('pwreset-email');
+  const msg = document.getElementById('pwreset-msg1');
+  const btn = document.querySelector('#pwreset-step1 button[onclick="requestPasswordReset()"]');
+  const email = (emailInput?.value || '').trim().toLowerCase();
+  if (!email) { if (msg) { msg.style.color = '#c00'; msg.textContent = 'Please enter your email address.'; } return; }
+  if (msg) { msg.style.color = '#888'; msg.textContent = 'Sending code…'; }
+  if (btn) btn.disabled = true;
+  try {
+    const res = await fetch(`${AUTH_API}/authRequestReset`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { if (msg) { msg.style.color = '#c00'; msg.textContent = data.error || 'Could not send reset code.'; } if (btn) btn.disabled = false; return; }
+    pwresetEmail = email;
+    document.getElementById('pwreset-step1').style.display = 'none';
+    document.getElementById('pwreset-step2').style.display = 'block';
+    document.getElementById('pwreset-sub').textContent = `We sent a 6-digit code to ${email}. Enter it below with your new password.`;
+  } catch(e) {
+    if (msg) { msg.style.color = '#c00'; msg.textContent = 'Connection error. Please try again.'; }
+  } finally { if (btn) btn.disabled = false; }
+}
+async function submitPasswordReset() {
+  const code = (document.getElementById('pwreset-code')?.value || '').trim();
+  const newPassword = document.getElementById('pwreset-newpass')?.value || '';
+  const msg = document.getElementById('pwreset-msg2');
+  const btn = document.querySelector('#pwreset-step2 button[onclick="submitPasswordReset()"]');
+  if (!code || !newPassword) { if (msg) { msg.style.color = '#c00'; msg.textContent = 'Please enter the code and a new password.'; } return; }
+  if (newPassword.length < 6) { if (msg) { msg.style.color = '#c00'; msg.textContent = 'Password must be at least 6 characters.'; } return; }
+  if (msg) { msg.style.color = '#888'; msg.textContent = 'Resetting…'; }
+  if (btn) btn.disabled = true;
+  try {
+    const res = await fetch(`${AUTH_API}/authResetPassword`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: pwresetEmail, code, new_password: newPassword })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { if (msg) { msg.style.color = '#c00'; msg.textContent = data.error || 'Could not reset password.'; } if (btn) btn.disabled = false; return; }
+    localStorage.setItem(LS_TOKEN, data.token);
+    localStorage.setItem(LS_LAST_EMAIL, data.email);
+    const profile = { id: data.id, email: data.email, full_name: data.full_name || '' };
+    localStorage.setItem(LS_CUR_USER, JSON.stringify(profile));
+    if (data.prefs) savePrefs(data.id, data.prefs, true);
+    if (msg) { msg.style.color = '#1aaf4f'; msg.textContent = '✅ Password reset! Signing you in…'; }
+    setTimeout(async () => {
+      hidePasswordResetModal();
+      currentUser = profile;
+      await onLoggedIn();
+    }, 1200);
+  } catch(e) {
+    if (msg) { msg.style.color = '#c00'; msg.textContent = 'Connection error. Please try again.'; }
+  } finally { if (btn) btn.disabled = false; }
 }
 function showToast(msg, duration) {
   duration = duration || 3000;
