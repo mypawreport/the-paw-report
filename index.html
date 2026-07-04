@@ -316,7 +316,7 @@
   .theme-btn.locked { opacity:0.45; cursor:not-allowed; }
   /* Theme variables */
   body[data-theme="midnight"] { --accent: var(--c-teal); --accent2: #4a7c59; --glow: 13,148,136; }
-  body[data-theme="violet"]   { --accent: var(--c-teal); --accent2: #4a7c59; --glow: 124,58,237; }
+  body[data-theme="violet"]   { --accent: #7c3aed; --accent2: #a78bfa; --glow: 124,58,237; }
   body[data-theme="ocean"]    { --accent: #0891b2; --accent2: #22d3ee; --glow: 8,145,178; }
   body[data-theme="forest"]   { --accent: #16a34a; --accent2: #4ade80; --glow: 22,163,74; }
   body[data-theme="blush"]    { --accent: #db2777; --accent2: #f472b6; --glow: 219,39,119; }
@@ -2523,8 +2523,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v112';
+const APP_VERSION = 'v113';
 const WHATS_NEW = {
+  'v113': '🎨 Fixed the Violet app theme — it now actually shows purple instead of teal!',
   'v112': '🎨 Fixed an invisible "Today" tab bug (broken CSS colors) and a sparse late-night forecast chart.',
   'v111': '🌤️ Fixed Best Time to Walk & Ground Temp — switched to a more reliable weather data source.',
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
