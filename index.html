@@ -23,12 +23,12 @@
   <link rel="manifest" href="https://mypawreport.github.io/the-paw-report/manifest.json"/>
   <meta name="theme-color" content="#0d9488"/>
   <style>  :root {
-    --c-teal: var(--c-teal);
-    --c-slate: var(--c-slate);
-    --c-muted: var(--c-muted);
-    --c-border: var(--c-border);
-    --c-bg: var(--c-bg);
-    --c-card: var(--c-card);
+    --c-teal: #0d9488;
+    --c-slate: #1e293b;
+    --c-muted: #64748b;
+    --c-border: #e2e8f0;
+    --c-bg: #f8fafc;
+    --c-card: #ffffff;
     --c-radius-sm: 8px;
     --c-radius-md: 12px;
     --c-radius-lg: 14px;
@@ -2350,7 +2350,7 @@ function renderSelectedDay() {
   document.getElementById('best-time-window').textContent = displayTime;
   document.getElementById('best-time-rec').textContent = rec;
   const bars = document.getElementById('hourly-bars');
-  const hours = rescored.filter(h => h.hour % 2 === 0);
+  const hours = rescored.length > 8 ? rescored.filter(h => h.hour % 2 === 0) : rescored;
   const bestHour = best.hour;
   const scores = hours.map(h => h.totalScore);
   const minS = Math.min(...scores), maxS = Math.max(...scores), range = Math.max(maxS - minS, 1);
@@ -2523,8 +2523,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v111';
+const APP_VERSION = 'v112';
 const WHATS_NEW = {
+  'v112': '🎨 Fixed an invisible "Today" tab bug (broken CSS colors) and a sparse late-night forecast chart.',
   'v111': '🌤️ Fixed Best Time to Walk & Ground Temp — switched to a more reliable weather data source.',
   'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
   'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
