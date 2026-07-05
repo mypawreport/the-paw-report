@@ -1814,10 +1814,11 @@ function loadMainScreen() {
       if (r.state === 'denied') {
         // Already denied — show gate immediately so user knows how to fix it
         setTimeout(showLocationGate, 800);
-      } else if (r.state === 'prompt') {
-        // Not asked yet — trigger prompt automatically
+      } else if (r.state === 'prompt' || r.state === 'granted') {
+        // Not asked yet, OR already granted from before — fetch location automatically
+        // (no native prompt appears if already granted, this just silently populates lastLat/lastLon)
         navigator.geolocation.getCurrentPosition(
-          function(pos) { lastLat = pos.coords.latitude; lastLon = pos.coords.longitude; },
+          function(pos) { lastLat = pos.coords.latitude; lastLon = pos.coords.longitude; hideLocationGate(); },
           function(err) { if (err.code === 1) setTimeout(showLocationGate, 500); }
         );
       }
@@ -2523,8 +2524,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v113';
+const APP_VERSION = 'v114';
 const WHATS_NEW = {
+  'v114': '📍 Fixed a bug where the app would ask for location again even after you already granted it.',
   'v113': '🎨 Fixed the Violet app theme — it now actually shows purple instead of teal!',
   'v112': '🎨 Fixed an invisible "Today" tab bug (broken CSS colors) and a sparse late-night forecast chart.',
   'v111': '🌤️ Fixed Best Time to Walk & Ground Temp — switched to a more reliable weather data source.',
