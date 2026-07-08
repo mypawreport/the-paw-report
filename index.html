@@ -269,7 +269,7 @@
     .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 0;gap:2px;overflow:hidden}
     .edge-paw-left{left:0}
     .edge-paw-right{right:0}
-    .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:2px;overflow:hidden}
+    .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:6px;overflow:hidden}
     .edge-paw-top{top:0}
     .edge-paw-bottom{bottom:0}
     .edge-paw-strip svg{width:13px;height:13px;flex-shrink:0;filter:drop-shadow(0 0 3px currentColor)}
@@ -2552,8 +2552,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v126';
+const APP_VERSION = 'v127';
 const WHATS_NEW = {
+  'v127': '🐾 Fixed the top and bottom edge paw prints — they were packed edge-to-edge with no gap, now spaced to match the sides.',
   'v126': '🐾 Edge lighting paw prints now form a tight continuous chain along every edge.',
   'v125': '🐾 Edge lighting paw prints packed in tighter.',
   'v124': '🐾 Tuned the edge lighting paw prints — smaller and closer together.',
