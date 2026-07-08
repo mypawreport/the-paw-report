@@ -272,8 +272,8 @@
     .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:6px;overflow:hidden}
     .edge-paw-top{top:0}
     .edge-paw-bottom{bottom:0}
-    .edge-paw-strip svg{width:15px;height:15px;flex-shrink:0;filter:drop-shadow(0 0 4px currentColor) saturate(1.5) brightness(1.1);animation:pawChase 8s linear infinite}
-    @keyframes pawChase{0%,6%,100%{opacity:.32;transform:scale(1);filter:drop-shadow(0 0 4px currentColor) saturate(1.5) brightness(1.1)}3%{opacity:1;transform:scale(1.55);filter:drop-shadow(0 0 14px currentColor) saturate(1.8) brightness(1.35)}}
+    .edge-paw-strip svg{width:15px;height:15px;flex-shrink:0;filter:drop-shadow(0 0 6px currentColor) saturate(1.8) brightness(1.3);animation:pawChase 8s linear infinite}
+    @keyframes pawChase{0%,6%,100%{opacity:.4;transform:scale(1);filter:drop-shadow(0 0 6px currentColor) saturate(1.8) brightness(1.3)}3%{opacity:1;transform:scale(1.7);filter:drop-shadow(0 0 22px currentColor) saturate(2.4) brightness(1.8)}}
     /* Temp color wheel indicator */
     .temp-wheel {
       width: 52px; height: 52px;
@@ -2553,8 +2553,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v133';
+const APP_VERSION = 'v134';
 const WHATS_NEW = {
+  'v134': '🐾 Fixed the edge-lighting chase to be one true continuous loop (was cycling through hidden overflow icons), and made the glow noticeably brighter.',
   'v133': '🐾 Edge lighting chase is slower, and the paw prints are a touch bigger and more vibrant.',
   'v132': '🐾 Edge lighting paws now chase around the screen in a continuous loop.',
   'v131': '🐾 Twin-paw mark now everywhere — avatar picker swatch, and the actual push notification icon/badge shown by Android.',
@@ -2818,16 +2819,29 @@ function syncGlowToActiveTab() {
   }
 }
 const PAW_ICON_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg>';
-function initEdgePaws() {
-  const sideCount = 80, topCount = 40;
+let edgePawsBuilt = false;
+function initEdgePaws(force) {
   const left = document.getElementById('edgePawLeft');
   const right = document.getElementById('edgePawRight');
   const top = document.getElementById('edgePawTop');
   const bottom = document.getElementById('edgePawBottom');
-  if (left && !left.dataset.built) { left.innerHTML = PAW_ICON_SVG.repeat(sideCount); left.dataset.built = '1'; }
-  if (right && !right.dataset.built) { right.innerHTML = PAW_ICON_SVG.repeat(sideCount); right.dataset.built = '1'; }
-  if (top && !top.dataset.built) { top.innerHTML = PAW_ICON_SVG.repeat(topCount); top.dataset.built = '1'; }
-  if (bottom && !bottom.dataset.built) { bottom.innerHTML = PAW_ICON_SVG.repeat(topCount); bottom.dataset.built = '1'; }
+  if (!left || !right || !top || !bottom) return;
+  if (edgePawsBuilt && !force) return;
+
+  // Build EXACTLY enough icons to fill each strip (no invisible overflow) so the
+  // chase animation's delay math lines up 1:1 with what's actually on screen.
+  const ICON = 15, GAP_SIDE = 4, GAP_TOPBOT = 6, PAD = 6, CORNER = 28;
+  const vh = window.innerHeight || document.documentElement.clientHeight;
+  const vw = window.innerWidth || document.documentElement.clientWidth;
+  const sideCount = Math.max(4, Math.ceil((vh - PAD * 2) / (ICON + GAP_SIDE)));
+  const topBotSpan = Math.max(0, vw - CORNER * 2 - PAD * 2);
+  const topCount = Math.max(4, Math.ceil(topBotSpan / (ICON + GAP_TOPBOT)));
+
+  left.innerHTML = PAW_ICON_SVG.repeat(sideCount);
+  right.innerHTML = PAW_ICON_SVG.repeat(sideCount);
+  top.innerHTML = PAW_ICON_SVG.repeat(topCount);
+  bottom.innerHTML = PAW_ICON_SVG.repeat(topCount);
+  edgePawsBuilt = true;
   assignChaseDelays();
 }
 function assignChaseDelays() {
@@ -2835,7 +2849,7 @@ function assignChaseDelays() {
   const right = document.getElementById('edgePawRight');
   const top = document.getElementById('edgePawTop');
   const bottom = document.getElementById('edgePawBottom');
-  if (!left || !right || !top || !bottom || top.dataset.chased) return;
+  if (!left || !right || !top || !bottom) return;
   // Build one continuous clockwise loop: top (L->R), right (T->B), bottom (R->L), left (B->T)
   const order = [
     ...Array.from(top.children),
@@ -2849,8 +2863,12 @@ function assignChaseDelays() {
     el.style.animationDuration = duration + 's';
     el.style.animationDelay = (-(i / N) * duration) + 's';
   });
-  top.dataset.chased = right.dataset.chased = bottom.dataset.chased = left.dataset.chased = '1';
 }
+let edgePawsResizeTimer = null;
+window.addEventListener('resize', function() {
+  clearTimeout(edgePawsResizeTimer);
+  edgePawsResizeTimer = setTimeout(function() { initEdgePaws(true); }, 300);
+});
 function updateEdgeGlow(status) {
   const glow = document.getElementById('edgeGlow');
   if (!glow) return;
