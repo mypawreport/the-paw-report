@@ -266,13 +266,13 @@
       animation: edge-pulse 2.5s ease-in-out infinite;
     }
     .edge-paw-strip{position:fixed;display:flex;color:#7ED321;transition:color 1.2s ease}
-    .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 0;gap:2px;overflow:hidden}
+    .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 0;gap:4px;overflow:hidden}
     .edge-paw-left{left:0}
     .edge-paw-right{right:0}
     .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:6px;overflow:hidden}
     .edge-paw-top{top:0}
     .edge-paw-bottom{bottom:0}
-    .edge-paw-strip svg{width:13px;height:13px;flex-shrink:0;filter:drop-shadow(0 0 3px currentColor)}
+    .edge-paw-strip svg{width:17px;height:17px;flex-shrink:0;filter:drop-shadow(0 0 3px currentColor)}
     /* Temp color wheel indicator */
     .temp-wheel {
       width: 52px; height: 52px;
@@ -2552,8 +2552,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v128';
+const APP_VERSION = 'v129';
 const WHATS_NEW = {
+  'v129': '🐾 Edge lighting now uses the same twin-paw mark as the header logo.',
   'v128': '🐾 New twin-paw logo mark in the header, inspired by the classic overlapping paw print style.',
   'v127': '🐾 Fixed the top and bottom edge paw prints — they were packed edge-to-edge with no gap, now spaced to match the sides.',
   'v126': '🐾 Edge lighting paw prints now form a tight continuous chain along every edge.',
@@ -2811,7 +2812,7 @@ function syncGlowToActiveTab() {
     updateEdgeGlow('Safe');
   }
 }
-const PAW_ICON_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg>';
+const PAW_ICON_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg>';
 function initEdgePaws() {
   const sideCount = 80, topCount = 40;
   const left = document.getElementById('edgePawLeft');
