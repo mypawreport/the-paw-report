@@ -40,6 +40,7 @@
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
+    .title-gradient{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
     .header p{font-size:0.82rem;opacity:0.55}
     /* Cards */
     .card{background:#ffffff;backdrop-filter:blur(20px);border:1px solid var(--c-border);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
@@ -396,7 +397,7 @@
 <div class="edge-glow" id="edgeGlow"></div>
   <div class="container">
   <div class="header">
-    <h1><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.12em;fill:currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg> The Paw Report</h1>
+    <h1><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.12em;fill:currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg> <span class="title-gradient">The Paw Report</span></h1>
     <p id="header-sub">Ground temp & walk safety for every dog</p>
   </div>
 
@@ -2539,8 +2540,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v121';
+const APP_VERSION = 'v122';
 const WHATS_NEW = {
+  'v122': '✨ "The Paw Report" title now has a subtle gradient fade that matches your chosen theme color.',
   'v121': '🐾 Fixed the paw-print avatar option — it now shows as a clean white icon on your theme color instead of a mismatched blue emoji.',
   'v120': '🐾 Replaced the emoji paw icon in the title and Report tab with a crisp dark-grey icon that renders consistently on every device.',
   'v119': '🎨 The profile avatar circle now matches your chosen app theme color instead of always being teal.',
