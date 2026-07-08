@@ -817,7 +817,7 @@
             <div class="crime-scale-item" style="background:#4ade80" id="cs-1"></div>
             <div class="crime-scale-item" style="background:#86efac" id="cs-2"></div>
             <div class="crime-scale-item" style="background:#fbbf24" id="cs-3"></div>
-            <div class="crime-scale-item" style="background:#34d399" id="cs-4"></div>
+            <div class="crime-scale-item" style="background:#f97316" id="cs-4"></div>
             <div class="crime-scale-item" style="background:#ef4444" id="cs-5"></div>
           </div>
           <div class="crime-stats-row">
@@ -2539,8 +2539,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v117';
+const APP_VERSION = 'v118';
 const WHATS_NEW = {
+  'v118': '🧡 Fixed the Area Safety scale bar — the "Elevated Risk" segment was showing green instead of orange, which didn\'t match the label.',
   'v117': '📅 7-day forecast is now much more accurate for US locations — real hour-by-hour data for the whole week instead of just a few samples a day.',
   'v116': '💜 Fixed the Violet theme for real this time — the theme picker swatch and the actual applied accent color were still using old teal values.',
   'v115': '📍 Location fixes now fall back to a faster network-based fix if GPS is slow indoors, instead of failing.',
