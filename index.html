@@ -863,7 +863,7 @@
           <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Tap to change</div>
           <div class="avatar-picker-row" id="avatar-picker" style="display:none;">
             <div class="avatar-option" onclick="setAvatar('emoji','🐶')" title="Dog">🐶</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🐾')" title="Paws">🐾</div>
+            <div class="avatar-option" onclick="setAvatar('emoji','🐾')" title="Paws"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.12em;fill:currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg></div>
             <div class="avatar-option" onclick="setAvatar('emoji','🐕')" title="Dog 2">🐕</div>
             <div class="avatar-option" onclick="setAvatar('emoji','🦮')" title="Guide Dog">🦮</div>
             <div class="avatar-option" onclick="setAvatar('emoji','🐩')" title="Poodle">🐩</div>
@@ -2539,8 +2539,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v120';
+const APP_VERSION = 'v121';
 const WHATS_NEW = {
+  'v121': '🐾 Fixed the paw-print avatar option — it now shows as a clean white icon on your theme color instead of a mismatched blue emoji.',
   'v120': '🐾 Replaced the emoji paw icon in the title and Report tab with a crisp dark-grey icon that renders consistently on every device.',
   'v119': '🎨 The profile avatar circle now matches your chosen app theme color instead of always being teal.',
   'v118': '🧡 Fixed the Area Safety scale bar — the "Elevated Risk" segment was showing green instead of orange, which didn\'t match the label.',
@@ -3260,8 +3261,14 @@ function renderAvatar() {
   var name = currentUser ? (currentUser.full_name || currentUser.email || '') : '';
   var initial = name ? name.charAt(0).toUpperCase() : '🐾';
   if (type === 'emoji' && value) {
-    if (smallAvatar) { smallAvatar.textContent = value; smallAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
-    if (largeAvatar) { largeAvatar.textContent = value; largeAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
+    var pawWhiteSvg = '<svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.12em;fill:#fff" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg>';
+    if (value === '🐾') {
+      if (smallAvatar) { smallAvatar.innerHTML = pawWhiteSvg; smallAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
+      if (largeAvatar) { largeAvatar.innerHTML = pawWhiteSvg; largeAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
+    } else {
+      if (smallAvatar) { smallAvatar.textContent = value; smallAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
+      if (largeAvatar) { largeAvatar.textContent = value; largeAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
+    }
     document.querySelectorAll('.avatar-option').forEach(function(el) {
       el.classList.toggle('selected', el.title && el.getAttribute('onclick') && el.getAttribute('onclick').includes(value));
     });
