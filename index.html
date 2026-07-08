@@ -272,7 +272,7 @@
     .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:6px;overflow:hidden}
     .edge-paw-top{top:0}
     .edge-paw-bottom{bottom:0}
-    .edge-paw-strip svg{width:17px;height:17px;flex-shrink:0;filter:drop-shadow(0 0 3px currentColor)}
+    .edge-paw-strip svg{width:14px;height:14px;flex-shrink:0;filter:drop-shadow(0 0 3px currentColor)}
     /* Temp color wheel indicator */
     .temp-wheel {
       width: 52px; height: 52px;
@@ -530,7 +530,7 @@
     </div>
 
     <div class="bottom-nav">
-      <button class="nav-btn active" id="nav-report" onclick="showTab('report')"><span class="nav-icon"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.12em;fill:currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg></span>Report</button>
+      <button class="nav-btn active" id="nav-report" onclick="showTab('report')"><span class="nav-icon"><svg viewBox="0 0 100 100" width="1.15em" height="1.15em" style="display:inline-block;vertical-align:-0.16em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></span>Report</button>
       <button class="nav-btn" id="nav-safety" onclick="showTab('safety')"><span class="nav-icon">🚨</span>Safety</button>
       <button class="nav-btn" id="nav-wash" onclick="showTab('wash')"><span class="nav-icon">🛁</span>Wash</button>
       <button class="nav-btn" id="nav-profile" onclick="showTab('profile')"><span class="nav-icon">👤</span>Profile</button>
@@ -573,7 +573,7 @@
     </div></div>
 
       <div class="notif-banner" id="notif-banner" style="display:none;">
-        <div class="notif-icon">🔔</div>
+        <div class="notif-icon"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;fill:#fbbf24" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></div>
         <div class="notif-text">Get alerts when ground temps become dangerous or weather turns extreme.</div>
         <button class="notif-btn" onclick="requestNotifications()">Enable</button>
       </div>
@@ -2552,8 +2552,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v129';
+const APP_VERSION = 'v130';
 const WHATS_NEW = {
+  'v130': '🐾 Twin-paw mark now used on the avatar, Report tab, and notification banner too. Edge lighting sized down a touch.',
   'v129': '🐾 Edge lighting now uses the same twin-paw mark as the header logo.',
   'v128': '🐾 New twin-paw logo mark in the header, inspired by the classic overlapping paw print style.',
   'v127': '🐾 Fixed the top and bottom edge paw prints — they were packed edge-to-edge with no gap, now spaced to match the sides.',
@@ -3295,7 +3296,7 @@ function renderAvatar() {
   var name = currentUser ? (currentUser.full_name || currentUser.email || '') : '';
   var initial = name ? name.charAt(0).toUpperCase() : '🐾';
   if (type === 'emoji' && value) {
-    var pawWhiteSvg = '<svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.12em;fill:#fff" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg>';
+    var pawWhiteSvg = '<svg viewBox="0 0 100 100" width="1.15em" height="1.15em" style="display:inline-block;vertical-align:-0.16em;fill:#fff" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg>';
     if (value === '🐾') {
       if (smallAvatar) { smallAvatar.innerHTML = pawWhiteSvg; smallAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
       if (largeAvatar) { largeAvatar.innerHTML = pawWhiteSvg; largeAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
