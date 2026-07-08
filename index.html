@@ -272,7 +272,8 @@
     .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:6px;overflow:hidden}
     .edge-paw-top{top:0}
     .edge-paw-bottom{bottom:0}
-    .edge-paw-strip svg{width:14px;height:14px;flex-shrink:0;filter:drop-shadow(0 0 3px currentColor)}
+    .edge-paw-strip svg{width:14px;height:14px;flex-shrink:0;filter:drop-shadow(0 0 3px currentColor);animation:pawChase 5s linear infinite}
+    @keyframes pawChase{0%,6%,100%{opacity:.28;transform:scale(1);filter:drop-shadow(0 0 3px currentColor)}3%{opacity:1;transform:scale(1.45);filter:drop-shadow(0 0 10px currentColor)}}
     /* Temp color wheel indicator */
     .temp-wheel {
       width: 52px; height: 52px;
@@ -2552,8 +2553,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v131';
+const APP_VERSION = 'v132';
 const WHATS_NEW = {
+  'v132': '🐾 Edge lighting paws now chase around the screen in a continuous loop.',
   'v131': '🐾 Twin-paw mark now everywhere — avatar picker swatch, and the actual push notification icon/badge shown by Android.',
   'v130': '🐾 Twin-paw mark now used on the avatar, Report tab, and notification banner too. Edge lighting sized down a touch.',
   'v129': '🐾 Edge lighting now uses the same twin-paw mark as the header logo.',
@@ -2825,6 +2827,28 @@ function initEdgePaws() {
   if (right && !right.dataset.built) { right.innerHTML = PAW_ICON_SVG.repeat(sideCount); right.dataset.built = '1'; }
   if (top && !top.dataset.built) { top.innerHTML = PAW_ICON_SVG.repeat(topCount); top.dataset.built = '1'; }
   if (bottom && !bottom.dataset.built) { bottom.innerHTML = PAW_ICON_SVG.repeat(topCount); bottom.dataset.built = '1'; }
+  assignChaseDelays();
+}
+function assignChaseDelays() {
+  const left = document.getElementById('edgePawLeft');
+  const right = document.getElementById('edgePawRight');
+  const top = document.getElementById('edgePawTop');
+  const bottom = document.getElementById('edgePawBottom');
+  if (!left || !right || !top || !bottom || top.dataset.chased) return;
+  // Build one continuous clockwise loop: top (L->R), right (T->B), bottom (R->L), left (B->T)
+  const order = [
+    ...Array.from(top.children),
+    ...Array.from(right.children),
+    ...Array.from(bottom.children).reverse(),
+    ...Array.from(left.children).reverse()
+  ];
+  const N = order.length;
+  const duration = 5; // seconds for one full lap around the screen
+  order.forEach(function(el, i) {
+    el.style.animationDuration = duration + 's';
+    el.style.animationDelay = (-(i / N) * duration) + 's';
+  });
+  top.dataset.chased = right.dataset.chased = bottom.dataset.chased = left.dataset.chased = '1';
 }
 function updateEdgeGlow(status) {
   const glow = document.getElementById('edgeGlow');
