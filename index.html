@@ -876,7 +876,7 @@
           <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Tap to change</div>
           <div class="avatar-picker-row" id="avatar-picker" style="display:none;">
             <div class="avatar-option" onclick="setAvatar('emoji','🐶')" title="Dog">🐶</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🐾')" title="Paws"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.12em;fill:currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg></div>
+            <div class="avatar-option" onclick="setAvatar('emoji','🐾')" title="Paws"><svg viewBox="0 0 100 100" width="1.15em" height="1.15em" style="display:inline-block;vertical-align:-0.16em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></div>
             <div class="avatar-option" onclick="setAvatar('emoji','🐕')" title="Dog 2">🐕</div>
             <div class="avatar-option" onclick="setAvatar('emoji','🦮')" title="Guide Dog">🦮</div>
             <div class="avatar-option" onclick="setAvatar('emoji','🐩')" title="Poodle">🐩</div>
@@ -2552,8 +2552,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v130';
+const APP_VERSION = 'v131';
 const WHATS_NEW = {
+  'v131': '🐾 Twin-paw mark now everywhere — avatar picker swatch, and the actual push notification icon/badge shown by Android.',
   'v130': '🐾 Twin-paw mark now used on the avatar, Report tab, and notification banner too. Edge lighting sized down a touch.',
   'v129': '🐾 Edge lighting now uses the same twin-paw mark as the header logo.',
   'v128': '🐾 New twin-paw logo mark in the header, inspired by the classic overlapping paw print style.',
