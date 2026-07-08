@@ -251,8 +251,7 @@
       top: 0; left: 0; right: 0; bottom: 0;
       pointer-events: none;
       z-index: 9999;
-      border-radius: 0;
-      transition: box-shadow 2s ease, opacity 2s ease;
+      transition: opacity 2s ease;
       opacity: 0;
     }
     .edge-glow.active {
@@ -266,6 +265,14 @@
     .edge-glow.pulsing {
       animation: edge-pulse 2.5s ease-in-out infinite;
     }
+    .edge-paw-strip{position:fixed;display:flex;color:#7ED321;transition:color 1.2s ease}
+    .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:space-between;align-items:center;padding:14px 0}
+    .edge-paw-left{left:0}
+    .edge-paw-right{right:0}
+    .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:space-between;align-items:center;padding:0 14px}
+    .edge-paw-top{top:0}
+    .edge-paw-bottom{bottom:0}
+    .edge-paw-strip svg{width:22px;height:22px;flex-shrink:0;filter:drop-shadow(0 0 5px currentColor)}
     /* Temp color wheel indicator */
     .temp-wheel {
       width: 52px; height: 52px;
@@ -394,7 +401,12 @@
     @keyframes slideDown { from { transform:translateY(-100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
   </style>
 
-<div class="edge-glow" id="edgeGlow"></div>
+<div class="edge-glow" id="edgeGlow">
+  <div class="edge-paw-strip edge-paw-left" id="edgePawLeft"></div>
+  <div class="edge-paw-strip edge-paw-right" id="edgePawRight"></div>
+  <div class="edge-paw-strip edge-paw-top" id="edgePawTop"></div>
+  <div class="edge-paw-strip edge-paw-bottom" id="edgePawBottom"></div>
+</div>
   <div class="container">
   <div class="header">
     <h1><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.12em;fill:currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg> <span class="title-gradient">The Paw Report</span></h1>
@@ -2540,8 +2552,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v122';
+const APP_VERSION = 'v123';
 const WHATS_NEW = {
+  'v123': '🐾 Edge lighting now shows a row of paw prints tracing the screen border instead of a solid glow, still colored to your safety rating.',
   'v122': '✨ "The Paw Report" title now has a subtle gradient fade that matches your chosen theme color.',
   'v121': '🐾 Fixed the paw-print avatar option — it now shows as a clean white icon on your theme color instead of a mismatched blue emoji.',
   'v120': '🐾 Replaced the emoji paw icon in the title and Report tab with a crisp dark-grey icon that renders consistently on every device.',
@@ -2793,11 +2806,24 @@ function syncGlowToActiveTab() {
     updateEdgeGlow('Safe');
   }
 }
+const PAW_ICON_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg>';
+function initEdgePaws() {
+  const sideCount = 16, topCount = 8;
+  const left = document.getElementById('edgePawLeft');
+  const right = document.getElementById('edgePawRight');
+  const top = document.getElementById('edgePawTop');
+  const bottom = document.getElementById('edgePawBottom');
+  if (left && !left.dataset.built) { left.innerHTML = PAW_ICON_SVG.repeat(sideCount); left.dataset.built = '1'; }
+  if (right && !right.dataset.built) { right.innerHTML = PAW_ICON_SVG.repeat(sideCount); right.dataset.built = '1'; }
+  if (top && !top.dataset.built) { top.innerHTML = PAW_ICON_SVG.repeat(topCount); top.dataset.built = '1'; }
+  if (bottom && !bottom.dataset.built) { bottom.innerHTML = PAW_ICON_SVG.repeat(topCount); bottom.dataset.built = '1'; }
+}
 function updateEdgeGlow(status) {
   const glow = document.getElementById('edgeGlow');
   if (!glow) return;
+  initEdgePaws();
   const cfg = EDGE_COLORS[status] || EDGE_COLORS['Safe'];
-  glow.style.boxShadow = cfg.shadow;
+  document.querySelectorAll('.edge-paw-strip').forEach(function(el) { el.style.color = cfg.color; });
   glow.classList.add('active');
   // Pulse for danger zones
   if (status === 'Danger' || status === 'Fry Zone') {
