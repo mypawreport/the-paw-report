@@ -266,10 +266,10 @@
       animation: edge-pulse 2.5s ease-in-out infinite;
     }
     .edge-paw-strip{position:fixed;display:flex;color:#7ED321;transition:color 1.2s ease}
-    .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:space-between;align-items:center;padding:14px 0}
+    .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 0;gap:2px;overflow:hidden}
     .edge-paw-left{left:0}
     .edge-paw-right{right:0}
-    .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:space-between;align-items:center;padding:0 14px}
+    .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:2px;overflow:hidden}
     .edge-paw-top{top:0}
     .edge-paw-bottom{bottom:0}
     .edge-paw-strip svg{width:13px;height:13px;flex-shrink:0;filter:drop-shadow(0 0 3px currentColor)}
@@ -2552,8 +2552,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v125';
+const APP_VERSION = 'v126';
 const WHATS_NEW = {
+  'v126': '🐾 Edge lighting paw prints now form a tight continuous chain along every edge.',
   'v125': '🐾 Edge lighting paw prints packed in tighter.',
   'v124': '🐾 Tuned the edge lighting paw prints — smaller and closer together.',
   'v123': '🐾 Edge lighting now shows a row of paw prints tracing the screen border instead of a solid glow, still colored to your safety rating.',
@@ -2810,7 +2811,7 @@ function syncGlowToActiveTab() {
 }
 const PAW_ICON_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg>';
 function initEdgePaws() {
-  const sideCount = 40, topCount = 20;
+  const sideCount = 80, topCount = 40;
   const left = document.getElementById('edgePawLeft');
   const right = document.getElementById('edgePawRight');
   const top = document.getElementById('edgePawTop');
