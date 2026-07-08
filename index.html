@@ -272,7 +272,7 @@
     .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:space-between;align-items:center;padding:0 14px}
     .edge-paw-top{top:0}
     .edge-paw-bottom{bottom:0}
-    .edge-paw-strip svg{width:15px;height:15px;flex-shrink:0;filter:drop-shadow(0 0 4px currentColor)}
+    .edge-paw-strip svg{width:13px;height:13px;flex-shrink:0;filter:drop-shadow(0 0 3px currentColor)}
     /* Temp color wheel indicator */
     .temp-wheel {
       width: 52px; height: 52px;
@@ -2552,8 +2552,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v124';
+const APP_VERSION = 'v125';
 const WHATS_NEW = {
+  'v125': '🐾 Edge lighting paw prints packed in tighter.',
   'v124': '🐾 Tuned the edge lighting paw prints — smaller and closer together.',
   'v123': '🐾 Edge lighting now shows a row of paw prints tracing the screen border instead of a solid glow, still colored to your safety rating.',
   'v122': '✨ "The Paw Report" title now has a subtle gradient fade that matches your chosen theme color.',
@@ -2809,7 +2810,7 @@ function syncGlowToActiveTab() {
 }
 const PAW_ICON_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg>';
 function initEdgePaws() {
-  const sideCount = 26, topCount = 13;
+  const sideCount = 40, topCount = 20;
   const left = document.getElementById('edgePawLeft');
   const right = document.getElementById('edgePawRight');
   const top = document.getElementById('edgePawTop');
