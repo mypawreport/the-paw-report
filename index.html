@@ -70,7 +70,7 @@
     .btn-sm{padding:9px 16px;font-size:0.82rem;border-radius:10px;width:auto;display:inline-block}
     /* User bar */
     .user-bar{display:flex;align-items:center;justify-content:space-between;background:#ffffff;border-radius:14px;padding:10px 14px;margin-bottom:12px;border:1px solid #d8e4d4;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
-    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--c-teal),#059669);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:var(--c-slate)}
+    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:var(--c-slate)}
     .user-name{font-size:0.85rem;font-weight:600}
     .user-email{font-size:0.68rem;opacity:0.45}
     .user-info,.user-right{display:flex;align-items:center;gap:8px}
@@ -327,7 +327,7 @@
     .avatar-option:hover, .avatar-option.selected { border-color:var(--c-teal); background:#e6fffa; transform:scale(1.1); }
     .avatar-option.color-opt { font-size:0; }
     .avatar-edit-section { text-align:center; }
-    .avatar-large { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,var(--c-teal),#059669); display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 8px; border:3px solid var(--c-border); cursor:pointer; transition:var(--c-transition); }
+    .avatar-large { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 8px; border:3px solid var(--c-border); cursor:pointer; transition:var(--c-transition); }
     .avatar-large:hover { border-color:var(--c-teal); transform:scale(1.05); }
 /* ── Forecast strip ───────────────────────────── */
 .forecast-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
@@ -2539,8 +2539,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v118';
+const APP_VERSION = 'v119';
 const WHATS_NEW = {
+  'v119': '🎨 The profile avatar circle now matches your chosen app theme color instead of always being teal.',
   'v118': '🧡 Fixed the Area Safety scale bar — the "Elevated Risk" segment was showing green instead of orange, which didn\'t match the label.',
   'v117': '📅 7-day forecast is now much more accurate for US locations — real hour-by-hour data for the whole week instead of just a few samples a day.',
   'v116': '💜 Fixed the Violet theme for real this time — the theme picker swatch and the actual applied accent color were still using old teal values.',
@@ -3258,8 +3259,8 @@ function renderAvatar() {
   var name = currentUser ? (currentUser.full_name || currentUser.email || '') : '';
   var initial = name ? name.charAt(0).toUpperCase() : '🐾';
   if (type === 'emoji' && value) {
-    if (smallAvatar) { smallAvatar.textContent = value; smallAvatar.style.background = 'linear-gradient(135deg,#0d9488,#059669)'; }
-    if (largeAvatar) { largeAvatar.textContent = value; largeAvatar.style.background = 'linear-gradient(135deg,#0d9488,#059669)'; }
+    if (smallAvatar) { smallAvatar.textContent = value; smallAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
+    if (largeAvatar) { largeAvatar.textContent = value; largeAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
     document.querySelectorAll('.avatar-option').forEach(function(el) {
       el.classList.toggle('selected', el.title && el.getAttribute('onclick') && el.getAttribute('onclick').includes(value));
     });
@@ -3268,7 +3269,7 @@ function renderAvatar() {
     if (largeAvatar) { largeAvatar.textContent = initial; largeAvatar.style.background = value; }
   } else {
     if (smallAvatar) { smallAvatar.textContent = initial; }
-    if (largeAvatar) { largeAvatar.textContent = initial; largeAvatar.style.background = 'linear-gradient(135deg,#0d9488,#059669)'; }
+    if (largeAvatar) { largeAvatar.textContent = initial; largeAvatar.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
   }
 }
 var _swRegistration = null;
