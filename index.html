@@ -335,6 +335,11 @@
   body[data-theme="forest"]   { --accent: #16a34a; --accent2: #4ade80; --glow: 22,163,74; }
   body[data-theme="blush"]    { --accent: #db2777; --accent2: #f472b6; --glow: 219,39,119; }
   body[data-theme="frost"]    { --accent: var(--c-muted); --accent2: #60a5fa; --glow: 37,99,235; background:#0f172a; }
+  /* Frost is a dark-background theme — the default header text/icon color (--c-slate, near-black)
+     was nearly invisible against it. Brighten just the header title/icon/subtitle for Frost. */
+  body[data-theme="frost"] .header h1 { color: #93c5fd; }
+  body[data-theme="frost"] .header .title-gradient { background: linear-gradient(90deg, #bfdbfe, #60a5fa); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+  body[data-theme="frost"] .header p { color: #94a3b8; opacity: 0.9; }
     /* Avatar editor */
     .avatar-picker-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:10px; }
     .avatar-option { width:44px; height:44px; border-radius:50%; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; transition:var(--c-transition); background:#f1f5f9; }
@@ -2562,8 +2567,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v137';
+const APP_VERSION = 'v138';
 const WHATS_NEW = {
+  'v138': '❄️ Fixed the header title and paw icon being nearly invisible on the Frost theme — now bright and legible against the dark background.',
   'v137': '🎨 Fixed a bug where your chosen theme (Frost, Violet, etc.) would flash back to the light background every time a report finished loading.',
   'v136': '🐾 Edge lighting now has a living shimmer — a soft brightness/color wave sweeps around the screen on top of the paw chase.',
   'v135': '🐾 Edge lighting is significantly more vibrant now — brighter baseline glow, bigger flash, and richer color saturation.',
