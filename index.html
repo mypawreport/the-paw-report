@@ -2572,8 +2572,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v140';
+const APP_VERSION = 'v141';
 const WHATS_NEW = {
+  'v141': '🔄 Fixed the app sometimes not updating to the latest version for people who already had it installed — the offline cache was stuck serving an old copy indefinitely. Now always grabs the freshest version when you have signal.',
   'v140': '⚡ Big performance fix — edge lighting was animating expensive filter effects on 100+ icons continuously, causing lag. Now uses lightweight GPU-friendly animation with the same glow look.',
   'v139': '🐾 Fixed edge lighting sometimes not matching the Report or Safety tab — it now always syncs to whichever tab is actually open.',
   'v138': '❄️ Fixed the header title and paw icon being nearly invisible on the Frost theme — now bright and legible against the dark background.',
@@ -2803,7 +2804,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=110').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=140').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
