@@ -15,6 +15,7 @@ This tracks releases for both the Android app (Google Play) and the underlying w
 
 Every user gets these instantly since the app is a live PWA hosted on GitHub Pages. Full in-app "What's New" history goes back further — this is the recent highlight reel.
 
+- **v140** — Major performance fix: the edge lighting was continuously animating expensive `filter` effects (drop-shadow x2, hue-rotate, saturate, brightness) on 100+ paw icons at once, on every screen, forever — a classic cause of phone lag/battery drain. Now uses a static filter (computed once) plus cheap GPU-friendly opacity/scale animation, and fewer, wider-spaced icons. Same glow look, way lighter on the device.
 - **v139** — Fixed edge lighting sometimes not matching the Report or Safety tab — a background report refresh was force-overriding the glow to the temperature color even while the Safety tab was open. It now always syncs to whichever tab is actually active.
 - **v138** — Fixed the Frost theme's header title and paw icon being nearly invisible (dark text/icon color on a dark background) — now uses a bright light-blue gradient and icon color for legibility.
 - **v137** — Fixed a bug where the chosen theme (Frost, Violet, etc.) would flash back to the light background every time a report finished loading — a leftover code path was force-resetting the background on every report cycle.
