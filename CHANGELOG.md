@@ -6,6 +6,7 @@ This tracks releases for both the Android app (Google Play) and the underlying w
 
 | Version | Version Code | Date | Highlights |
 |---|---|---|---|
+| 5.1.4 | 11 | 2026-07-09 | Fixed the home screen widget failing to load ("Can't load widget") after being added. Root cause: release build had code shrinking (`minifyEnabled true`) with zero explicit keep rules for the widget provider, which can silently break RemoteViews binding. Added proguard keep rules for the widget class, and hardened the provider so any unexpected error falls back to a safe placeholder instead of crashing the widget host. |
 | 5.1.3 | 10 | 2026-07-08 | Fixed home screen widget not appearing in the widget picker (was incorrectly non-exported). Edge lighting now has a color-cycling shimmer wave plus a brighter baseline glow and bigger chase flash. |
 | 5.1.2 | 9 | 2026-07-08 | Added the Ground Temp home screen widget (paw-shaped, transparent background, S/M/L size toggle, refresh button). Edge-lighting chase tuned to a true continuous loop with more vibrancy. |
 | 5.1.1 | 8 | 2026-07-08 | Edge-lighting and branding refinements ahead of the widget release. |
@@ -15,6 +16,7 @@ This tracks releases for both the Android app (Google Play) and the underlying w
 
 Every user gets these instantly since the app is a live PWA hosted on GitHub Pages. Full in-app "What's New" history goes back further — this is the recent highlight reel.
 
+- **v142** — Fixed a gap sometimes appearing at the bottom of the edge-lighting side strips on some phones — the viewport height used to size the icon chain could be measured before the browser UI fully settled. Now uses the largest of several viewport measurements plus a defensive re-check shortly after load.
 - **v141** — Critical fix: the service worker's offline cache (`sw.js`) had been frozen since v131 with a cache-first strategy, meaning some installed devices could keep being served an old, stale copy of the app indefinitely regardless of how many new versions were deployed — this is likely why some fixes seemed to "not take" for certain users. Switched to network-first (always fetch the latest when online, fall back to cache only when offline) and bumped the stale cache version.
 - **v140** — Major performance fix: the edge lighting was continuously animating expensive `filter` effects (drop-shadow x2, hue-rotate, saturate, brightness) on 100+ paw icons at once, on every screen, forever — a classic cause of phone lag/battery drain. Now uses a static filter (computed once) plus cheap GPU-friendly opacity/scale animation, and fewer, wider-spaced icons. Same glow look, way lighter on the device.
 - **v139** — Fixed edge lighting sometimes not matching the Report or Safety tab — a background report refresh was force-overriding the glow to the temperature color even while the Safety tab was open. It now always syncs to whichever tab is actually active.
