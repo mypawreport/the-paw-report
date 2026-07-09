@@ -2144,7 +2144,11 @@ function getRatingColor(rating) {
 // Background gradients per rating × time of day
 // Each rating has: dawn, day, dusk, night
 function updateDynamicColors(rating) {
-  updateEdgeGlow(rating);
+  // Don't force the edge glow to the temperature rating here — if the Safety tab is
+  // open, this used to override the crime-rating glow every time a report refreshed
+  // in the background, causing the edge lighting to mismatch whatever tab was showing.
+  // syncGlowToActiveTab() picks the right source (report vs crime) based on the tab.
+  syncGlowToActiveTab();
   const color = getRatingColor(rating);
   // NOTE: previously this force-set document.body.style.background to a hardcoded
   // light gradient here, which stomped over the user's selected theme (e.g. Frost,
@@ -2567,8 +2571,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v138';
+const APP_VERSION = 'v139';
 const WHATS_NEW = {
+  'v139': '🐾 Fixed edge lighting sometimes not matching the Report or Safety tab — it now always syncs to whichever tab is actually open.',
   'v138': '❄️ Fixed the header title and paw icon being nearly invisible on the Frost theme — now bright and legible against the dark background.',
   'v137': '🎨 Fixed a bug where your chosen theme (Frost, Violet, etc.) would flash back to the light background every time a report finished loading.',
   'v136': '🐾 Edge lighting now has a living shimmer — a soft brightness/color wave sweeps around the screen on top of the paw chase.',
