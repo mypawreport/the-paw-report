@@ -271,7 +271,12 @@
        with 100+ icons tiling the screen edges this caused real jank/lag on mid-range phones.
        Fix: filter is now STATIC (computed once, cached as a layer) and the only animated
        properties are opacity/transform, which are cheap and GPU-compositable. */
-    .edge-paw-strip{position:fixed;display:flex;color:#7ED321;transition:color 1.2s ease}
+    /* Shimmer: animate hue-rotate on the 4 STRIP CONTAINERS only (not on each of the
+       100+ individual icons like the old pre-v140 version did). Same visual color-cycle
+       feel, but the browser only has 4 filter contexts to recompute instead of 100+,
+       which is why this stays compatible with the v140 performance fix. */
+    @keyframes edgeHueShimmer{0%,100%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(22deg)}}
+    .edge-paw-strip{position:fixed;display:flex;color:#7ED321;transition:color 1.2s ease;animation:edgeHueShimmer 7s ease-in-out infinite;will-change:filter}
     .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 0;gap:6px;overflow:hidden}
     .edge-paw-left{left:0}
     .edge-paw-right{right:0}
@@ -2572,8 +2577,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v142';
+const APP_VERSION = 'v143';
 const WHATS_NEW = {
+  'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
   'v142': '🐾 Fixed the edge-lighting paw print border sometimes not reaching all the way down the sides of the screen on some phones.',
   'v141': '🔄 Fixed the app sometimes not updating to the latest version for people who already had it installed — the offline cache was stuck serving an old copy indefinitely. Now always grabs the freshest version when you have signal.',
   'v140': '⚡ Big performance fix — edge lighting was animating expensive filter effects on 100+ icons continuously, causing lag. Now uses lightweight GPU-friendly animation with the same glow look.',
@@ -2805,7 +2811,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=142').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=143').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
