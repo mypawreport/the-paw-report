@@ -2572,8 +2572,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v141';
+const APP_VERSION = 'v142';
 const WHATS_NEW = {
+  'v142': '🐾 Fixed the edge-lighting paw print border sometimes not reaching all the way down the sides of the screen on some phones.',
   'v141': '🔄 Fixed the app sometimes not updating to the latest version for people who already had it installed — the offline cache was stuck serving an old copy indefinitely. Now always grabs the freshest version when you have signal.',
   'v140': '⚡ Big performance fix — edge lighting was animating expensive filter effects on 100+ icons continuously, causing lag. Now uses lightweight GPU-friendly animation with the same glow look.',
   'v139': '🐾 Fixed edge lighting sometimes not matching the Report or Safety tab — it now always syncs to whichever tab is actually open.',
@@ -2804,7 +2805,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=140').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=142').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2854,15 +2855,27 @@ function initEdgePaws(force) {
   if (!left || !right || !top || !bottom) return;
   if (edgePawsBuilt && !force) return;
 
-  // Build EXACTLY enough icons to fill each strip (no invisible overflow) so the
-  // chase animation's delay math lines up 1:1 with what's actually on screen.
-  // PERF: wider spacing = fewer animated icons total (was crammed tight, causing lag with 100+ nodes each animating)
-  const ICON = 15, GAP_SIDE = 10, GAP_TOPBOT = 12, PAD = 6, CORNER = 28;
-  const vh = window.innerHeight || document.documentElement.clientHeight;
-  const vw = window.innerWidth || document.documentElement.clientWidth;
-  const sideCount = Math.max(4, Math.ceil((vh - PAD * 2) / (ICON + GAP_SIDE)));
+  // Build enough icons to fill each strip. Mobile viewport height can be measured
+  // BEFORE the browser/webview chrome (status bar, notch, dynamic toolbars) fully
+  // settles, so window.innerHeight at first-run time can under-report the true
+  // visible height — leaving a visible gap at the bottom of the side strips.
+  // Fix: take the max of several viewport signals AND over-provision a small
+  // buffer of extra icons (harmless — overflow:hidden clips any excess).
+  const ICON = 15, GAP_SIDE = 10, GAP_TOPBOT = 12, PAD = 6, CORNER = 28, BUFFER = 3;
+  const vh = Math.max(
+    window.innerHeight || 0,
+    document.documentElement.clientHeight || 0,
+    (window.visualViewport && window.visualViewport.height) || 0,
+    screen.height || 0
+  );
+  const vw = Math.max(
+    window.innerWidth || 0,
+    document.documentElement.clientWidth || 0,
+    (window.visualViewport && window.visualViewport.width) || 0
+  );
+  const sideCount = Math.max(4, Math.ceil((vh - PAD * 2) / (ICON + GAP_SIDE))) + BUFFER;
   const topBotSpan = Math.max(0, vw - CORNER * 2 - PAD * 2);
-  const topCount = Math.max(4, Math.ceil(topBotSpan / (ICON + GAP_TOPBOT)));
+  const topCount = Math.max(4, Math.ceil(topBotSpan / (ICON + GAP_TOPBOT))) + BUFFER;
 
   left.innerHTML = PAW_ICON_SVG.repeat(sideCount);
   right.innerHTML = PAW_ICON_SVG.repeat(sideCount);
@@ -2895,6 +2908,11 @@ let edgePawsResizeTimer = null;
 window.addEventListener('resize', function() {
   clearTimeout(edgePawsResizeTimer);
   edgePawsResizeTimer = setTimeout(function() { initEdgePaws(true); }, 300);
+});
+// Safety net: re-measure once shortly after load in case the viewport was still
+// settling (status bar/notch/toolbar) when initEdgePaws first ran.
+window.addEventListener('load', function() {
+  setTimeout(function() { initEdgePaws(true); }, 1200);
 });
 function updateEdgeGlow(status) {
   const glow = document.getElementById('edgeGlow');
