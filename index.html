@@ -29,10 +29,6 @@
     --c-border: #e2e8f0;
     --c-bg: #f8fafc;
     --c-card: #ffffff;
-    --c-radius-sm: 8px;
-    --c-radius-md: 12px;
-    --c-radius-lg: 14px;
-    --c-shadow-sm: 0 1px 6px rgba(0,0,0,0.1);
     --c-transition: all 0.2s;
   }
     *{box-sizing:border-box;margin:0;padding:0}
@@ -613,10 +609,6 @@
           <div>Never leave pets in a parked vehicle — temps can spike dangerously fast.</div>
         </div>
         <!-- 🚗 Hot car quick check -->
-        <div id="hotcar-test-bar" style="display:none;margin-top:8px;text-align:center;">
-          <button onclick="testHotCarAlert()" style="background:linear-gradient(135deg,#0d9488,#0a7c72);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;">🚗 Just Parked? Check Back Seat</button>
-          <div id="hotcar-gps-status" style="font-size:0.72rem;color:#64748b;margin-top:4px;"></div>
-        </div>
 
         <!-- 🐾 Walk reminder (Gold) -->
         <div class="walk-reminder-banner" id="walk-reminder-banner">
@@ -747,7 +739,6 @@
         </div>
         <button id="fav-add-btn" onclick="saveCurrentLocationAsFav()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;display:none;">➕ Save Current Location</button>
       </div>
-
 
 
       <div class="card" id="safety-tips-card" style="padding:0;overflow:hidden;">
@@ -1290,7 +1281,6 @@ function handleCheckoutReturn() {
           body: JSON.stringify({ email: currentUser.email })
         }).then(r => r.json()).then(result => {
           if (result.cancelled > 0) {
-            console.log('[PAW] Auto-cancelled', result.cancelled, 'old subscription(s) on tier upgrade.');
           }
         }).catch(e => console.warn('[PAW] Could not auto-cancel old subscriptions:', e));
       } catch(e) { /* silent fail */ }
@@ -1356,7 +1346,6 @@ function applyReferral(inputId) {
           body: JSON.stringify({ email: profile.email })
         }).then(r => r.json()).then(result => {
           if (result.cancelled > 0) {
-            console.log('[PAW] Auto-cancelled', result.cancelled, 'active subscription(s) after lifetime code redemption.');
           }
         }).catch(e => console.warn('[PAW] Could not auto-cancel subscriptions:', e));
       } catch(e) { /* silent fail — lifetime access still granted */ }
@@ -2586,35 +2575,6 @@ const WHATS_NEW = {
   'v138': '❄️ Fixed the header title and paw icon being nearly invisible on the Frost theme — now bright and legible against the dark background.',
   'v137': '🎨 Fixed a bug where your chosen theme (Frost, Violet, etc.) would flash back to the light background every time a report finished loading.',
   'v136': '🐾 Edge lighting now has a living shimmer — a soft brightness/color wave sweeps around the screen on top of the paw chase.',
-  'v135': '🐾 Edge lighting is significantly more vibrant now — brighter baseline glow, bigger flash, and richer color saturation.',
-  'v134': '🐾 Fixed the edge-lighting chase to be one true continuous loop (was cycling through hidden overflow icons), and made the glow noticeably brighter.',
-  'v133': '🐾 Edge lighting chase is slower, and the paw prints are a touch bigger and more vibrant.',
-  'v132': '🐾 Edge lighting paws now chase around the screen in a continuous loop.',
-  'v131': '🐾 Twin-paw mark now everywhere — avatar picker swatch, and the actual push notification icon/badge shown by Android.',
-  'v130': '🐾 Twin-paw mark now used on the avatar, Report tab, and notification banner too. Edge lighting sized down a touch.',
-  'v129': '🐾 Edge lighting now uses the same twin-paw mark as the header logo.',
-  'v128': '🐾 New twin-paw logo mark in the header, inspired by the classic overlapping paw print style.',
-  'v127': '🐾 Fixed the top and bottom edge paw prints — they were packed edge-to-edge with no gap, now spaced to match the sides.',
-  'v126': '🐾 Edge lighting paw prints now form a tight continuous chain along every edge.',
-  'v125': '🐾 Edge lighting paw prints packed in tighter.',
-  'v124': '🐾 Tuned the edge lighting paw prints — smaller and closer together.',
-  'v123': '🐾 Edge lighting now shows a row of paw prints tracing the screen border instead of a solid glow, still colored to your safety rating.',
-  'v122': '✨ "The Paw Report" title now has a subtle gradient fade that matches your chosen theme color.',
-  'v121': '🐾 Fixed the paw-print avatar option — it now shows as a clean white icon on your theme color instead of a mismatched blue emoji.',
-  'v120': '🐾 Replaced the emoji paw icon in the title and Report tab with a crisp dark-grey icon that renders consistently on every device.',
-  'v119': '🎨 The profile avatar circle now matches your chosen app theme color instead of always being teal.',
-  'v118': '🧡 Fixed the Area Safety scale bar — the "Elevated Risk" segment was showing green instead of orange, which didn\'t match the label.',
-  'v117': '📅 7-day forecast is now much more accurate for US locations — real hour-by-hour data for the whole week instead of just a few samples a day.',
-  'v116': '💜 Fixed the Violet theme for real this time — the theme picker swatch and the actual applied accent color were still using old teal values.',
-  'v115': '📍 Location fixes now fall back to a faster network-based fix if GPS is slow indoors, instead of failing.',
-  'v114': '📍 Fixed a bug where the app would ask for location again even after you already granted it.',
-  'v113': '🎨 Fixed the Violet app theme — it now actually shows purple instead of teal!',
-  'v112': '🎨 Fixed an invisible "Today" tab bug (broken CSS colors) and a sparse late-night forecast chart.',
-  'v111': '🌤️ Fixed Best Time to Walk & Ground Temp — switched to a more reliable weather data source.',
-  'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
-  'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
-  'v38': '🔐 Stay logged in — you won\'t need to sign in again unless you sign out.',
-  'v37': '💾 Your profile name now saves permanently across logins.'
 };
 function showWhatsNewToast() {
   const seen = localStorage.getItem('paw_seen_version');
@@ -3559,17 +3519,6 @@ function checkHotCarCondition() {
   // Only alert once per 20 minutes
   const cooldown = (Date.now() - _hotCarAlertShownAt) > 20 * 60 * 1000;
   if (wasDriving && nowStopped && cooldown) showHotCarAlert();
-}
-function testHotCarAlert() {
-  const statusEl = document.getElementById('hotcar-gps-status');
-  if (statusEl) statusEl.textContent = 'Triggering alert now...';
-  showHotCarAlert();
-  // Reset cooldown so test always works
-  _hotCarAlertShownAt = 0;
-}
-function showHotCarDebugStatus(msg) {
-  const el = document.getElementById('hotcar-gps-status');
-  if (el) el.textContent = msg;
 }
 function showHotCarAlert() {
   const s = getAlertSettings();
