@@ -2581,7 +2581,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v144';
+const APP_VERSION = 'v145';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2816,7 +2816,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=144').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=145').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2872,7 +2872,11 @@ function initEdgePaws(force) {
   // visible height — leaving a visible gap at the bottom of the side strips.
   // Fix: take the max of several viewport signals AND over-provision a small
   // buffer of extra icons (harmless — overflow:hidden clips any excess).
-  const ICON = 15, GAP_SIDE = 10, GAP_TOPBOT = 12, PAD = 6, CORNER = 28, BUFFER = 3;
+  // GAP_SIDE/GAP_TOPBOT must match the actual CSS `gap` values on .edge-paw-strip
+  // (6px / 8px) - they had drifted to 10/12, causing this formula to assume more
+  // space per icon than icons actually consume, under-counting icons and leaving
+  // a visible gap at the bottom of the side strips. Fixed 2026-07-09.
+  const ICON = 15, GAP_SIDE = 6, GAP_TOPBOT = 8, PAD = 6, CORNER = 28, BUFFER = 4;
   const vh = Math.max(
     window.innerHeight || 0,
     document.documentElement.clientHeight || 0,
