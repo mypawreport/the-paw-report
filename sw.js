@@ -1,4 +1,4 @@
-const CACHE_NAME = 'paw-report-v131';
+const CACHE_NAME = 'paw-report-v140';
 const ASSETS = [
   '/',
   '/index.html',
@@ -36,8 +36,22 @@ self.addEventListener('fetch', event => {
     event.respondWith(fetch(event.request));
     return;
   }
+  // NETWORK-FIRST for everything else. Previously this was cache-first (caches.match
+  // before fetch), which meant that once the SW cached index.html once, every future
+  // app open kept serving that STALE copy forever — no matter how many new versions
+  // were deployed to GitHub Pages — until the SW script's own bytes happened to change
+  // and trigger a re-install. That silently broke live-updates for anyone with the PWA
+  // already installed. Now: always try the network first (so deploys reach users
+  // immediately while online), and only fall back to the cached copy if the network
+  // request fails (offline support).
   event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
+    fetch(event.request).then(function(response) {
+      const copy = response.clone();
+      caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, copy).catch(() => {}); });
+      return response;
+    }).catch(function() {
+      return caches.match(event.request);
+    })
   );
 });
 
