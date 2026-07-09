@@ -2141,7 +2141,11 @@ function getRatingColor(rating) {
 function updateDynamicColors(rating) {
   updateEdgeGlow(rating);
   const color = getRatingColor(rating);
-  document.body.style.background = 'linear-gradient(160deg,#f8fafc 0%,#f1f5f9 50%,#f0f4f0 100%)';
+  // NOTE: previously this force-set document.body.style.background to a hardcoded
+  // light gradient here, which stomped over the user's selected theme (e.g. Frost,
+  // Violet) via inline style (inline always beats the body[data-theme] CSS rule).
+  // That caused the background to flash back to light every time a report finished
+  // loading. The active theme's CSS rule already controls the background — leave it alone.
   // Pulse dot — activate and color it based on current rating
   const pulse = document.getElementById('pulse-dot');
   if (pulse) {
@@ -2558,8 +2562,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v136';
+const APP_VERSION = 'v137';
 const WHATS_NEW = {
+  'v137': '🎨 Fixed a bug where your chosen theme (Frost, Violet, etc.) would flash back to the light background every time a report finished loading.',
   'v136': '🐾 Edge lighting now has a living shimmer — a soft brightness/color wave sweeps around the screen on top of the paw chase.',
   'v135': '🐾 Edge lighting is significantly more vibrant now — brighter baseline glow, bigger flash, and richer color saturation.',
   'v134': '🐾 Fixed the edge-lighting chase to be one true continuous loop (was cycling through hidden overflow icons), and made the glow noticeably brighter.',
