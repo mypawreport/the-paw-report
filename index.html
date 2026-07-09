@@ -271,12 +271,16 @@
        with 100+ icons tiling the screen edges this caused real jank/lag on mid-range phones.
        Fix: filter is now STATIC (computed once, cached as a layer) and the only animated
        properties are opacity/transform, which are cheap and GPU-compositable. */
-    /* Shimmer: animate hue-rotate on the 4 STRIP CONTAINERS only (not on each of the
-       100+ individual icons like the old pre-v140 version did). Same visual color-cycle
-       feel, but the browser only has 4 filter contexts to recompute instead of 100+,
-       which is why this stays compatible with the v140 performance fix. */
-    @keyframes edgeHueShimmer{0%,100%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(22deg)}}
-    .edge-paw-strip{position:fixed;display:flex;color:#7ED321;transition:color 1.2s ease;animation:edgeHueShimmer 7s ease-in-out infinite;will-change:filter}
+    /* v144: REMOVED the container-level hue-rotate shimmer added in v143. Turns out
+       applying `filter` to a container that wraps 25-30 actively-animating child icons
+       forces the browser to flatten/rasterize the whole strip into an offscreen buffer
+       and re-apply the filter every frame, regardless of how few elements have the
+       filter animation declared on them. That re-introduced the same class of lag as
+       the pre-v140 bug (entry 44) even though only 4 elements technically animated.
+       RULE: never animate `filter` on ANY element that has multiple animating children —
+       not on the icons, not on their parent strip. Keep filter fully static everywhere
+       in the edge-lighting system, animate only opacity/transform. */
+    .edge-paw-strip{position:fixed;display:flex;color:#7ED321;transition:color 1.2s ease}
     .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 0;gap:6px;overflow:hidden}
     .edge-paw-left{left:0}
     .edge-paw-right{right:0}
@@ -2110,10 +2114,10 @@ function applyPawUIWithSurface(d) {
 }
 function getRatingFromTemp(tempF, size) {
   const thresholds = size === 'small'
-    ? { extremecold: 25, chilly: 40, safe: 72, warm: 82, danger: 95, fry: 110 }
+    ? { extremecold: 25, chilly: 40, safe: 72, warm: 79, danger: 95, fry: 110 }
     : size === 'large'
-    ? { extremecold: 20, chilly: 35, safe: 75, warm: 84, danger: 98, fry: 113 }
-    : { extremecold: 22, chilly: 38, safe: 74, warm: 83, danger: 97, fry: 112 };
+    ? { extremecold: 20, chilly: 35, safe: 75, warm: 79, danger: 98, fry: 113 }
+    : { extremecold: 22, chilly: 38, safe: 74, warm: 79, danger: 97, fry: 112 };
   if (tempF <= thresholds.extremecold) return 'Extreme Cold';
   if (tempF <= thresholds.chilly) return 'Chilly';
   if (tempF <= thresholds.safe) return 'Safe';
@@ -2577,8 +2581,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v143';
+const APP_VERSION = 'v144';
 const WHATS_NEW = {
+  'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
   'v142': '🐾 Fixed the edge-lighting paw print border sometimes not reaching all the way down the sides of the screen on some phones.',
   'v141': '🔄 Fixed the app sometimes not updating to the latest version for people who already had it installed — the offline cache was stuck serving an old copy indefinitely. Now always grabs the freshest version when you have signal.',
@@ -2811,7 +2816,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=143').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=144').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
