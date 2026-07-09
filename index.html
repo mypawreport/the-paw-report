@@ -1502,10 +1502,7 @@ function showTab(tab) {
       renderFavLocations();
       renderProfileDisplay();
       renderSubStatus();
-      // Show hot car test bar for Silver/Gold
-      const _ut2 = (currentUser?.tier || getUserTier() || '').toLowerCase();
-      const _htb2 = document.getElementById('hotcar-test-bar');
-      if (_htb2) _htb2.style.display = 'block';
+      // Hot car test bar is dev-only debug UI - never show to real users
     }
   ['report','safety','wash','profile'].forEach(t => {
     document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
@@ -1837,10 +1834,7 @@ function loadMainScreen() {
   renderFavLocations();
   renderWalkHistory();
   var _fab = document.getElementById('fav-add-btn'); if (_fab && lastLat) _fab.style.display = 'block';
-  // Show hot car test bar for Silver/Gold debug
-  const _ut = (currentUser?.tier || getUserTier() || '').toLowerCase();
-  const _htb = document.getElementById('hotcar-test-bar');
-  if (_htb) _htb.style.display = 'block';
+  // Hot car test bar is dev-only debug UI - never show to real users
   showScreen('main'); showTab('report');
   // Check location permission state on load
   if (navigator.permissions) {
@@ -2581,7 +2575,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v145';
+const APP_VERSION = 'v146';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2816,7 +2810,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=145').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=146').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
