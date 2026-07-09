@@ -6,6 +6,8 @@ This tracks releases for both the Android app (Google Play) and the underlying w
 
 | Version | Version Code | Date | Highlights |
 |---|---|---|---|
+| 5.1.7 | 17 | 2026-07-09 | Added a widget settings screen (gear icon on the widget, also opens automatically when first added): choose pet size, a color theme (Teal/Navy/Violet), and an optional air-temperature line alongside ground temp. Shrunk the default widget footprint (was too large) and made it properly resizable via drag handles. |
+| 5.1.6 | 15 | 2026-07-09 | First build confirmed to actually contain the widget (all prior 5.1.x builds had it silently wiped by the Android project regeneration step). Widget now pulls live data directly from the backend. |
 | 5.1.4 | 11 | 2026-07-09 | Fixed the home screen widget failing to load ("Can't load widget") after being added. Root cause: release build had code shrinking (`minifyEnabled true`) with zero explicit keep rules for the widget provider, which can silently break RemoteViews binding. Added proguard keep rules for the widget class, and hardened the provider so any unexpected error falls back to a safe placeholder instead of crashing the widget host. |
 | 5.1.3 | 10 | 2026-07-08 | Fixed home screen widget not appearing in the widget picker (was incorrectly non-exported). Edge lighting now has a color-cycling shimmer wave plus a brighter baseline glow and bigger chase flash. |
 | 5.1.2 | 9 | 2026-07-08 | Added the Ground Temp home screen widget (paw-shaped, transparent background, S/M/L size toggle, refresh button). Edge-lighting chase tuned to a true continuous loop with more vibrancy. |
@@ -52,3 +54,4 @@ Every user gets these instantly since the app is a live PWA hosted on GitHub Pag
 
 ---
 *Maintained by the mypawreport team — mypawreport@gmail.com*
+
