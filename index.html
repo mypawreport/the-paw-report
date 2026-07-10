@@ -2374,12 +2374,15 @@ function updatePawUI(d) {
   } else if (coldRatings.includes(d.rating)) {
     sendDangerNotification('🧊 ' + d.rating + ' conditions — ' + d.message);
   }
-  // Weather tips banner
+  // Weather tips banner — backend has no text description, derive from numeric fields
   showWeatherTip({
     description: d.description || d.weatherDescription || '',
     temp: d.airTempF || 70,
     wind: d.windSpeedMph || 0,
-    cloud_cover: d.cloudCover || 0
+    cloud_cover: d.cloudCover || 0,
+    precipitation: d.precipitation || 0,
+    humidity: d.humidity || 0,
+    is_day: d.isDay !== false
   });
   // Walk reminder check
   checkWalkReminder();
@@ -2743,7 +2746,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v154';
+const APP_VERSION = 'v155';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2978,7 +2981,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=154').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=155').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3681,27 +3684,58 @@ function showWeatherTip(weatherData) {
   const iconEl = document.getElementById('weather-tip-icon');
   const textEl = document.getElementById('weather-tip-text');
   if (!banner || !weatherData) return;
-  const desc = (weatherData.description || '').toLowerCase();
-  const temp  = weatherData.temp || 70;
-  const wind  = weatherData.wind || 0;
-  const cloud = weatherData.cloud_cover || 0;
+
+  const desc   = (weatherData.description || '').toLowerCase();
+  const temp   = weatherData.temp || 70;
+  const wind   = weatherData.wind || 0;
+  const cloud  = weatherData.cloud_cover || 0;
+  const precip = weatherData.precipitation || 0;  // mm in last hour from MET Norway
+  const humid  = weatherData.humidity || 0;
+  const isDay  = weatherData.is_day !== false;
+
   let tip = null;
-  if (desc.includes('snow') || desc.includes('blizzard'))
-    tip = { icon:'❄️', msg:'Snow expected — ice melt salt can burn paws. Rinse paws after every walk.' };
-  else if (desc.includes('thunder') || desc.includes('storm'))
-    tip = { icon:'⛈️', msg:'Thunderstorm possible — many dogs are sensitive to thunder. Keep walks short and close to home.' };
-  else if (desc.includes('rain') || desc.includes('drizzle') || desc.includes('shower'))
-    tip = { icon:'🌧️', msg:'Rain expected — wet pavement can be slippery. Dry paws thoroughly after.' };
-  else if (desc.includes('fog') || desc.includes('mist'))
-    tip = { icon:'🌫️', msg:'Foggy conditions — use a reflective leash or light for visibility.' };
-  else if (temp >= 90)
-    tip = { icon:'🔥', msg:'Heat advisory — limit outdoor time and always carry water.' };
-  else if (temp <= 25)
-    tip = { icon:'🧊', msg:'Extreme cold — protect paws with booties and limit walk time.' };
-  else if (wind > 25)
-    tip = { icon:'💨', msg:'Strong winds (' + Math.round(wind) + ' mph) — small dogs can be blown off balance. Keep them close.' };
-  else if (cloud < 10 && temp >= 75)
-    tip = { icon:'☀️', msg:'Full sun and warm — pavement heats up fast. Stick to shaded paths or early mornings.' };
+
+  // Derive condition from numeric fields (backend sends no text description)
+  // Priority order: precipitation > wind > temp extremes > cloud/sun
+  if (precip >= 2.0)
+    tip = { icon:'⛈️', msg:'Heavy rain — thunderstorm possible. Many dogs are sensitive to thunder; keep walks short and close to home.' };
+  else if (precip >= 0.5)
+    tip = { icon:'🌧️', msg:'Rain falling now — wet pavement can be slippery. Dry paws thoroughly after your walk.' };
+  else if (precip > 0 && temp <= 33)
+    tip = { icon:'🌨️', msg:'Freezing precipitation — ice and salt on pavement can burn paws. Rinse and dry paws after every walk.' };
+  else if (precip > 0)
+    tip = { icon:'🌦️', msg:'Light drizzle — paws stay wet quickly. A quick towel-off after your walk keeps them comfortable.' };
+  else if (desc.includes('snow') || desc.includes('blizzard') || (temp <= 33 && cloud > 70))
+    tip = { icon:'❄️', msg:'Snow likely — ice melt salt can burn paws. Booties help, or rinse paws after every outing.' };
+  else if (desc.includes('fog') || desc.includes('mist') || (humid >= 95 && cloud > 90))
+    tip = { icon:'🌫️', msg:'Foggy or misty out — use a reflective leash or clip-on light so drivers can see you both.' };
+  else if (wind >= 30)
+    tip = { icon:'💨', msg:'Very strong winds (' + Math.round(wind) + ' mph) — small dogs can be pushed off balance. Keep them close and on leash.' };
+  else if (wind >= 20)
+    tip = { icon:'🌬️', msg:'Breezy today (' + Math.round(wind) + ' mph) — it may feel cooler than the temperature shows. Watch for flying debris.' };
+  else if (temp >= 95)
+    tip = { icon:'🔥', msg:'Extreme heat — limit outdoor time to under 10 minutes and carry plenty of water.' };
+  else if (temp >= 85 && cloud < 20 && isDay)
+    tip = { icon:'☀️', msg:'Full sun and hot — asphalt can be 40–60°F hotter than air temp. Stick to shaded paths or walk before 9 AM.' };
+  else if (temp <= 20)
+    tip = { icon:'🧊', msg:'Dangerously cold — frostbite can affect ears, paws, and tail quickly. Keep walks very short.' };
+  else if (temp <= 35)
+    tip = { icon:'🌨️', msg:'Near-freezing temps — watch for ice patches and limit time outdoors for short-haired or small dogs.' };
+  else if (cloud < 15 && temp >= 75 && isDay)
+    tip = { icon:'☀️', msg:'Clear and sunny — pavement heats up fast. Do the back-of-hand test before letting paws touch the ground.' };
+
+  // Fallback to text-based match if description is available
+  if (!tip && desc) {
+    if (desc.includes('thunder') || desc.includes('storm'))
+      tip = { icon:'⛈️', msg:'Thunderstorm possible — keep walks short and close to home.' };
+    else if (desc.includes('snow'))
+      tip = { icon:'❄️', msg:'Snow expected — rinse paws after every walk to remove ice melt salt.' };
+    else if (desc.includes('rain') || desc.includes('drizzle') || desc.includes('shower'))
+      tip = { icon:'🌧️', msg:'Rain expected — wet pavement can be slippery. Dry paws thoroughly after.' };
+    else if (desc.includes('fog') || desc.includes('mist'))
+      tip = { icon:'🌫️', msg:'Foggy — use a reflective leash or light for visibility.' };
+  }
+
   if (tip) {
     iconEl.textContent = tip.icon;
     textEl.textContent = tip.msg;
