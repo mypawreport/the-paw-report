@@ -1574,6 +1574,16 @@ async function onLoggedIn() {
   if (savedTier && ['bronze','silver','gold'].includes(savedTier)) {
     currentTier = savedTier;
     localStorage.setItem(LS_SUB_TIER, currentTier);
+  // Sync tier to Android native widget via custom scheme
+  try {
+    if (currentTier && currentTier !== 'free') {
+      const frame = document.createElement('iframe');
+      frame.style.display = 'none';
+      frame.src = 'pawreport://settier?tier=' + encodeURIComponent(currentTier);
+      document.body.appendChild(frame);
+      setTimeout(() => { try { document.body.removeChild(frame); } catch(e){} }, 2000);
+    }
+  } catch(e) {}
   }
   // Sync currentUser tier so userBar shows correctly
   if (currentUser && currentTier !== 'free') {
