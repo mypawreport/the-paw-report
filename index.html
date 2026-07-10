@@ -381,7 +381,7 @@
 .f7-best{color:var(--c-teal);font-weight:600;flex:1;text-align:center;}
 .f7-temp{color:var(--c-muted);text-align:right;}
 /* Weather tip banner */
-.weather-tip{display:none;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:0.82rem;color:#0369a1;display:flex;align-items:flex-start;gap:8px;}
+.weather-tip{display:none;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:0.82rem;color:#0369a1;align-items:flex-start;gap:8px;}
 .weather-tip-icon{font-size:1.1rem;flex-shrink:0;}
 .weather-tip-text{line-height:1.4;}
 /* Hot car alert banner */
@@ -2743,7 +2743,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v153';
+const APP_VERSION = 'v154';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2978,7 +2978,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=153').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=154').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
