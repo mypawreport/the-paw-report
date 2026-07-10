@@ -983,7 +983,7 @@
       </div>
 
 <!-- 🔔 Notifications (single consolidated card) -->
-      <div class="card">
+      <div class="card settings-card">
         <div class="card-title">🔔 Notifications</div>
         <div class="setting-row">
           <div>
@@ -2743,7 +2743,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v152';
+const APP_VERSION = 'v153';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2978,7 +2978,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=152').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=153').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
