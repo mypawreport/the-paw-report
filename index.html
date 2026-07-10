@@ -16,7 +16,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Paw Report"/>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🐾 The Paw Report</title><meta name="description" content="Ground temp & walk safety for every dog. Check before every walk."/>
   <link rel="apple-touch-icon" href="https://mypawreport.github.io/the-paw-report/icon-512.png"/>
   <link rel="icon" type="image/png" href="https://mypawreport.github.io/the-paw-report/icon-192.png"/>
@@ -29,6 +29,10 @@
     --c-border: #e2e8f0;
     --c-bg: #f8fafc;
     --c-card: #ffffff;
+    --c-radius-sm: 8px;
+    --c-radius-md: 12px;
+    --c-radius-lg: 14px;
+    --c-shadow-sm: 0 1px 6px rgba(0,0,0,0.1);
     --c-transition: all 0.2s;
   }
     *{box-sizing:border-box;margin:0;padding:0}
@@ -280,9 +284,9 @@
     .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 0;gap:6px;overflow:hidden}
     .edge-paw-left{left:0}
     .edge-paw-right{right:0}
-    .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:space-evenly;align-items:center;padding:0 2px;gap:4px;overflow:hidden}
+    .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:8px;overflow:hidden}
     .edge-paw-top{top:0}
-    .edge-paw-bottom{bottom:0;bottom:env(safe-area-inset-bottom,0px)}
+    .edge-paw-bottom{bottom:0}
     .edge-paw-strip svg{width:16px;height:16px;flex-shrink:0;filter:drop-shadow(0 0 8px currentColor) saturate(2) brightness(1.5);animation:pawChase 8s linear infinite;will-change:opacity,transform}
     @keyframes pawChase{0%,6%,100%{opacity:.7;transform:scale(1)}3%{opacity:1;transform:scale(1.6)}}
     /* Temp color wheel indicator */
@@ -609,6 +613,10 @@
           <div>Never leave pets in a parked vehicle — temps can spike dangerously fast.</div>
         </div>
         <!-- 🚗 Hot car quick check -->
+        <div id="hotcar-test-bar" style="display:none;margin-top:8px;text-align:center;">
+          <button onclick="testHotCarAlert()" style="background:linear-gradient(135deg,#0d9488,#0a7c72);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;">🚗 Just Parked? Check Back Seat</button>
+          <div id="hotcar-gps-status" style="font-size:0.72rem;color:#64748b;margin-top:4px;"></div>
+        </div>
 
         <!-- 🐾 Walk reminder (Gold) -->
         <div class="walk-reminder-banner" id="walk-reminder-banner">
@@ -739,6 +747,7 @@
         </div>
         <button id="fav-add-btn" onclick="saveCurrentLocationAsFav()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;display:none;">➕ Save Current Location</button>
       </div>
+
 
 
       <div class="card" id="safety-tips-card" style="padding:0;overflow:hidden;">
@@ -1281,6 +1290,7 @@ function handleCheckoutReturn() {
           body: JSON.stringify({ email: currentUser.email })
         }).then(r => r.json()).then(result => {
           if (result.cancelled > 0) {
+            console.log('[PAW] Auto-cancelled', result.cancelled, 'old subscription(s) on tier upgrade.');
           }
         }).catch(e => console.warn('[PAW] Could not auto-cancel old subscriptions:', e));
       } catch(e) { /* silent fail */ }
@@ -1346,6 +1356,7 @@ function applyReferral(inputId) {
           body: JSON.stringify({ email: profile.email })
         }).then(r => r.json()).then(result => {
           if (result.cancelled > 0) {
+            console.log('[PAW] Auto-cancelled', result.cancelled, 'active subscription(s) after lifetime code redemption.');
           }
         }).catch(e => console.warn('[PAW] Could not auto-cancel subscriptions:', e));
       } catch(e) { /* silent fail — lifetime access still granted */ }
@@ -1491,7 +1502,10 @@ function showTab(tab) {
       renderFavLocations();
       renderProfileDisplay();
       renderSubStatus();
-      // Hot car test bar is dev-only debug UI - never show to real users
+      // Show hot car test bar for Silver/Gold
+      const _ut2 = (currentUser?.tier || getUserTier() || '').toLowerCase();
+      const _htb2 = document.getElementById('hotcar-test-bar');
+      if (_htb2) _htb2.style.display = 'block';
     }
   ['report','safety','wash','profile'].forEach(t => {
     document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
@@ -1574,16 +1588,6 @@ async function onLoggedIn() {
   if (savedTier && ['bronze','silver','gold'].includes(savedTier)) {
     currentTier = savedTier;
     localStorage.setItem(LS_SUB_TIER, currentTier);
-  // Sync tier to Android native widget via custom scheme
-  try {
-    if (currentTier && currentTier !== 'free') {
-      const frame = document.createElement('iframe');
-      frame.style.display = 'none';
-      frame.src = 'pawreport://settier?tier=' + encodeURIComponent(currentTier);
-      document.body.appendChild(frame);
-      setTimeout(() => { try { document.body.removeChild(frame); } catch(e){} }, 2000);
-    }
-  } catch(e) {}
   }
   // Sync currentUser tier so userBar shows correctly
   if (currentUser && currentTier !== 'free') {
@@ -1833,7 +1837,10 @@ function loadMainScreen() {
   renderFavLocations();
   renderWalkHistory();
   var _fab = document.getElementById('fav-add-btn'); if (_fab && lastLat) _fab.style.display = 'block';
-  // Hot car test bar is dev-only debug UI - never show to real users
+  // Show hot car test bar for Silver/Gold debug
+  const _ut = (currentUser?.tier || getUserTier() || '').toLowerCase();
+  const _htb = document.getElementById('hotcar-test-bar');
+  if (_htb) _htb.style.display = 'block';
   showScreen('main'); showTab('report');
   // Check location permission state on load
   if (navigator.permissions) {
@@ -1845,7 +1852,7 @@ function loadMainScreen() {
         // Not asked yet, OR already granted from before — fetch location automatically
         // (no native prompt appears if already granted, this just silently populates lastLat/lastLon)
         navigator.geolocation.getCurrentPosition(
-          function(pos) { lastLat = pos.coords.latitude; lastLon = pos.coords.longitude; hideLocationGate(); syncLocationToWidget(lastLat, lastLon); },
+          function(pos) { lastLat = pos.coords.latitude; lastLon = pos.coords.longitude; hideLocationGate(); },
           function(err) { if (err.code === 1) setTimeout(showLocationGate, 500); }
         );
       }
@@ -2226,10 +2233,20 @@ function updatePawUI(d) {
   });
   // Walk reminder check
   checkWalkReminder();
+  // Sync weather data to Android widget via intent
+  try {
+    if (window.AndroidWidgetBridge && window.AndroidWidgetBridge.setWeatherData) {
+      window.AndroidWidgetBridge.setWeatherData(
+        Math.round(d.groundTempF || 0),
+        Math.round(d.airTempF || 0),
+        d.rating || '',
+        d.emoji || ''
+      );
+    }
+  } catch(e) {}
 }
 async function fetchPawAndUpdate(lat, lon) {
   checkRateAppPrompt();
-        try { syncLocationToWidget(lat, lon); } catch(e) {}
   try { const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) applyPawUIWithSurface(await res.json()); } } catch(_) {}
 }
 function updateCrimeUI(d) {
@@ -2486,43 +2503,36 @@ async function fetchAll(lat, lon) {
   if(walkRes.status==='fulfilled'&&walkRes.value.ok){ const d=await safeJson(walkRes.value); if(d){ buildForecastDays(d); updateWalkTimeUI(d); } else document.getElementById('walk-time-loading').textContent='Could not load forecast.'; }
   else document.getElementById('walk-time-loading').textContent='Could not load forecast.';
 }
-
-      // Sync location to Android widget via deep link
-      function syncLocationToWidget(lat, lon) {
-        try {
-          if (window.Android || navigator.userAgent.includes('wv')) {
-            window.location.href = 'pawreport://setlocation?lat=' + lat.toFixed(6) + '&lon=' + lon.toFixed(6);
-          }
-        } catch(e) {}
-      }
-
 function getLocation() {
   return new Promise((resolve,reject)=>{
     if(!navigator.geolocation){reject(new Error('Geolocation not supported on this browser.')); return;}
-    // Attempt 1: precise GPS (12s)
+    // Try a precise GPS fix first (8s). If that fails/times out (but wasn't a permission
+    // denial), fall back to a faster, lower-accuracy fix instead of failing outright —
+    // this handles weak/slow GPS signal indoors without showing a scary error.
     navigator.geolocation.getCurrentPosition(
       p => resolve({lat:p.coords.latitude, lon:p.coords.longitude}),
       e => {
-        if (e.code === 1) { showLocationGate(); reject(new Error('Location access denied.')); return; }
-        // Attempt 2: network/coarse, accept cached up to 5min (20s timeout)
+        if (e.code === 1) {
+          // Permission denied — show the full-screen gate
+          showLocationGate();
+          reject(new Error('Location access denied.'));
+          return;
+        }
+        // High-accuracy fix failed/timed out — retry with network-based location
         navigator.geolocation.getCurrentPosition(
           p => resolve({lat:p.coords.latitude, lon:p.coords.longitude}),
           e2 => {
-            if (e2.code === 1) { showLocationGate(); reject(new Error('Location access denied.')); return; }
-            // Attempt 3: any cached fix at all, up to 30min old (last resort for tablets/indoors)
-            navigator.geolocation.getCurrentPosition(
-              p => resolve({lat:p.coords.latitude, lon:p.coords.longitude}),
-              e3 => {
-                if (e3.code === 1) { showLocationGate(); reject(new Error('Location access denied.')); }
-                else { reject(new Error('Could not get your location. Please check GPS is enabled.')); }
-              },
-              {timeout:25000, enableHighAccuracy:false, maximumAge:1800000}
-            );
+            if (e2.code === 1) {
+              showLocationGate();
+              reject(new Error('Location access denied.'));
+            } else {
+              reject(new Error('Could not get your location. Please check GPS is enabled.'));
+            }
           },
-          {timeout:20000, enableHighAccuracy:false, maximumAge:300000}
+          {timeout:15000, enableHighAccuracy:false, maximumAge:60000}
         );
       },
-      {timeout:12000, enableHighAccuracy:true, maximumAge:0}
+      {timeout:8000, enableHighAccuracy:true, maximumAge:0}
     );
   });
 }
@@ -2582,7 +2592,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v148';
+const APP_VERSION = 'v145';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2593,6 +2603,35 @@ const WHATS_NEW = {
   'v138': '❄️ Fixed the header title and paw icon being nearly invisible on the Frost theme — now bright and legible against the dark background.',
   'v137': '🎨 Fixed a bug where your chosen theme (Frost, Violet, etc.) would flash back to the light background every time a report finished loading.',
   'v136': '🐾 Edge lighting now has a living shimmer — a soft brightness/color wave sweeps around the screen on top of the paw chase.',
+  'v135': '🐾 Edge lighting is significantly more vibrant now — brighter baseline glow, bigger flash, and richer color saturation.',
+  'v134': '🐾 Fixed the edge-lighting chase to be one true continuous loop (was cycling through hidden overflow icons), and made the glow noticeably brighter.',
+  'v133': '🐾 Edge lighting chase is slower, and the paw prints are a touch bigger and more vibrant.',
+  'v132': '🐾 Edge lighting paws now chase around the screen in a continuous loop.',
+  'v131': '🐾 Twin-paw mark now everywhere — avatar picker swatch, and the actual push notification icon/badge shown by Android.',
+  'v130': '🐾 Twin-paw mark now used on the avatar, Report tab, and notification banner too. Edge lighting sized down a touch.',
+  'v129': '🐾 Edge lighting now uses the same twin-paw mark as the header logo.',
+  'v128': '🐾 New twin-paw logo mark in the header, inspired by the classic overlapping paw print style.',
+  'v127': '🐾 Fixed the top and bottom edge paw prints — they were packed edge-to-edge with no gap, now spaced to match the sides.',
+  'v126': '🐾 Edge lighting paw prints now form a tight continuous chain along every edge.',
+  'v125': '🐾 Edge lighting paw prints packed in tighter.',
+  'v124': '🐾 Tuned the edge lighting paw prints — smaller and closer together.',
+  'v123': '🐾 Edge lighting now shows a row of paw prints tracing the screen border instead of a solid glow, still colored to your safety rating.',
+  'v122': '✨ "The Paw Report" title now has a subtle gradient fade that matches your chosen theme color.',
+  'v121': '🐾 Fixed the paw-print avatar option — it now shows as a clean white icon on your theme color instead of a mismatched blue emoji.',
+  'v120': '🐾 Replaced the emoji paw icon in the title and Report tab with a crisp dark-grey icon that renders consistently on every device.',
+  'v119': '🎨 The profile avatar circle now matches your chosen app theme color instead of always being teal.',
+  'v118': '🧡 Fixed the Area Safety scale bar — the "Elevated Risk" segment was showing green instead of orange, which didn\'t match the label.',
+  'v117': '📅 7-day forecast is now much more accurate for US locations — real hour-by-hour data for the whole week instead of just a few samples a day.',
+  'v116': '💜 Fixed the Violet theme for real this time — the theme picker swatch and the actual applied accent color were still using old teal values.',
+  'v115': '📍 Location fixes now fall back to a faster network-based fix if GPS is slow indoors, instead of failing.',
+  'v114': '📍 Fixed a bug where the app would ask for location again even after you already granted it.',
+  'v113': '🎨 Fixed the Violet app theme — it now actually shows purple instead of teal!',
+  'v112': '🎨 Fixed an invisible "Today" tab bug (broken CSS colors) and a sparse late-night forecast chart.',
+  'v111': '🌤️ Fixed Best Time to Walk & Ground Temp — switched to a more reliable weather data source.',
+  'v52': '⚠️ Safety disclaimer added — your agreement is now on record. New 🌳 Shaded surface type added!',
+  'v39': '🐾 Surface selector added! Pick Asphalt, Concrete, Dirt/Sand, or Grass for a more accurate ground temp.',
+  'v38': '🔐 Stay logged in — you won\'t need to sign in again unless you sign out.',
+  'v37': '💾 Your profile name now saves permanently across logins.'
 };
 function showWhatsNewToast() {
   const seen = localStorage.getItem('paw_seen_version');
@@ -2788,7 +2827,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=147').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=145').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3537,6 +3576,17 @@ function checkHotCarCondition() {
   // Only alert once per 20 minutes
   const cooldown = (Date.now() - _hotCarAlertShownAt) > 20 * 60 * 1000;
   if (wasDriving && nowStopped && cooldown) showHotCarAlert();
+}
+function testHotCarAlert() {
+  const statusEl = document.getElementById('hotcar-gps-status');
+  if (statusEl) statusEl.textContent = 'Triggering alert now...';
+  showHotCarAlert();
+  // Reset cooldown so test always works
+  _hotCarAlertShownAt = 0;
+}
+function showHotCarDebugStatus(msg) {
+  const el = document.getElementById('hotcar-gps-status');
+  if (el) el.textContent = msg;
 }
 function showHotCarAlert() {
   const s = getAlertSettings();
