@@ -2233,16 +2233,17 @@ function updatePawUI(d) {
   });
   // Walk reminder check
   checkWalkReminder();
-  // Sync weather data to Android widget via intent
+  // Sync weather data to Android widget via deep-link intent (works in TWA)
   try {
-    if (window.AndroidWidgetBridge && window.AndroidWidgetBridge.setWeatherData) {
-      window.AndroidWidgetBridge.setWeatherData(
-        Math.round(d.groundTempF || 0),
-        Math.round(d.airTempF || 0),
-        d.rating || '',
-        d.emoji || ''
-      );
-    }
+    const _g = Math.round(d.groundTempF || 0);
+    const _a = Math.round(d.airTempF || 0);
+    const _r = encodeURIComponent(d.rating || '');
+    const _e = encodeURIComponent(d.emoji || '🐾');
+    const _iframe = document.createElement('iframe');
+    _iframe.style.display = 'none';
+    _iframe.src = 'pawreport://setweather?ground=' + _g + '&air=' + _a + '&rating=' + _r + '&emoji=' + _e;
+    document.body.appendChild(_iframe);
+    setTimeout(() => { try { document.body.removeChild(_iframe); } catch(e){} }, 1000);
   } catch(e) {}
 }
 async function fetchPawAndUpdate(lat, lon) {
