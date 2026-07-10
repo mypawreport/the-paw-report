@@ -2743,7 +2743,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v151';
+const APP_VERSION = 'v152';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2978,7 +2978,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=151').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=152').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3067,19 +3067,24 @@ function assignChaseDelays() {
   const top = document.getElementById('edgePawTop');
   const bottom = document.getElementById('edgePawBottom');
   if (!left || !right || !top || !bottom) return;
-  // Build one continuous clockwise loop: top (L->R), right (T->B), bottom (R->L), left (B->T)
-  const order = [
-    ...Array.from(top.children),
-    ...Array.from(right.children),
-    ...Array.from(bottom.children).reverse(),
-    ...Array.from(left.children).reverse()
-  ];
+  // Clockwise order: top L->R, right T->B, bottom R->L (reversed), left B->T (reversed)
+  const topArr    = Array.from(top.children);
+  const rightArr  = Array.from(right.children);
+  const bottomArr = Array.from(bottom.children).reverse(); // R->L
+  const leftArr   = Array.from(left.children).reverse();   // B->T
+  const order = [...topArr, ...rightArr, ...bottomArr, ...leftArr];
   const N = order.length;
-  const duration = 8; // seconds for one full lap around the screen
+  // Use a speed of ~80px/s. Estimate perimeter in icon-units.
+  // Each icon step = ICON+GAP = ~21px for sides, ~23px for top/bottom
+  // Simple approach: fix duration to 12s for a natural speed across all screen sizes
+  const duration = 12;
   order.forEach(function(el, i) {
     el.style.animationDuration = duration + 's';
-    el.style.animationDelay = (-(i / N) * duration) + 's';
+    // Negative delay = start mid-animation so icons are pre-distributed around the loop
+    el.style.animationDelay = (-((i / N) * duration)).toFixed(3) + 's';
   });
+  // Also make all icons visible immediately (no cold-start fade-in gap)
+  order.forEach(function(el) { el.style.opacity = ''; });
 }
 let edgePawsResizeTimer = null;
 window.addEventListener('resize', function() {
@@ -3637,27 +3642,35 @@ function saveAlertSetting(key, val) {
 }
 function loadAlertSettingToggles() {
   const s = getAlertSettings();
-  const defaults = { weatherTips: true, hotCar: true, walkReminder: true };
-  // Apply defaults to storage on first run
+  // Apply defaults on first run
+  const defaults = { weatherTips: true, hotCar: true, walkReminder: true, trayWidget: false };
   let changed = false;
   Object.entries(defaults).forEach(([k, def]) => { if (s[k] === undefined) { s[k] = def; changed = true; } });
   if (changed) localStorage.setItem('pawAlertSettings', JSON.stringify(s));
-  Object.entries(defaults).forEach(([k, def]) => {
-    const id = 'toggle-' + k.replace(/([A-Z])/g, c => '-' + c.toLowerCase());
-    const el = document.getElementById(id);
-    if (el) { el.checked = s[k]; el.dispatchEvent(new Event('change')); }
-  });
-  // Sync new notification card toggles
+
+  // Hot car toggle (still uses old id pattern)
+  const hotCarEl = document.getElementById('toggle-hot-car');
+  if (hotCarEl) hotCarEl.checked = s.hotCar !== false;
+
+  // Dangerous condition alerts toggle
   const dangerToggle = document.getElementById('toggle-danger-alerts');
   if (dangerToggle) dangerToggle.checked = s.weatherTips !== false;
+
+  // Tray widget toggle
   const trayToggle = document.getElementById('toggle-tray-widget');
   if (trayToggle) trayToggle.checked = s.trayWidget === true;
-  // Gate walk reminder toggle to Gold only
+
+  // Walk reminder toggle — Gold only
   const tier = getUserTier();
   const walkToggle = document.getElementById('toggle-walk-reminder');
-  if (walkToggle && tier !== 'gold') {
-    walkToggle.disabled = true;
-    walkToggle.checked = false;
+  if (walkToggle) {
+    if (tier !== 'gold') {
+      walkToggle.disabled = true;
+      walkToggle.checked = false;
+    } else {
+      walkToggle.disabled = false;
+      walkToggle.checked = s.walkReminder !== false;
+    }
   }
 }
 // WEATHER CONDITION TIPS
