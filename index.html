@@ -965,16 +965,6 @@
           </label>
         </div>
 
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">🐾 Walk reminder <span class="setting-badge">Gold</span></div>
-            <div class="setting-sublabel">Reminds you after 6 hours without logging a walk</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-walk-reminder" checked onchange="saveAlertSetting('walkReminder', this.checked)">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
       </div>
 
 <!-- 🦮 Walk History (Gold) -->
@@ -995,19 +985,35 @@
 <!-- 🔔 Notifications (single consolidated card) -->
       <div class="card">
         <div class="card-title">🔔 Notifications</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="setting-row">
           <div>
-            <div style="font-size:0.85rem;font-weight:600;color:#1e293b;margin-bottom:2px;">Dangerous condition alerts</div>
-            <div style="font-size:0.72rem;color:#64748b;">When ground temps or weather turn extreme</div>
+            <div class="setting-label">🚨 Dangerous condition alerts</div>
+            <div class="setting-sublabel">When ground temps or weather turn extreme</div>
           </div>
-          <button class="btn btn-primary btn-sm" id="notif-toggle-btn" onclick="toggleNotifications()">Enable</button>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-danger-alerts" onchange="handleDangerAlertToggle(this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid #e2e8f0;">
+        <div class="setting-row" style="margin-top:10px;">
           <div>
-            <div style="font-size:0.85rem;font-weight:600;color:#1e293b;margin-bottom:2px;">📌 Tray widget</div>
-            <div style="font-size:0.72rem;color:#64748b;">Pin current conditions to your notification tray</div>
+            <div class="setting-label">📌 Tray widget</div>
+            <div class="setting-sublabel">Pin current conditions to your notification tray</div>
           </div>
-          <button class="btn btn-primary btn-sm" id="tray-toggle-btn" onclick="toggleTrayWidget()">Enable</button>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-tray-widget" onchange="handleTrayWidgetToggle(this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-row" style="margin-top:10px;">
+          <div>
+            <div class="setting-label">🐾 Walk reminder <span class="setting-badge">Gold</span></div>
+            <div class="setting-sublabel">Reminds you after 6 hours without logging a walk</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-walk-reminder" checked onchange="saveAlertSetting('walkReminder', this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
         </div>
       </div>
 
@@ -1655,6 +1661,10 @@ function manageSubscription() {
   var planLine = document.createElement('div');
   planLine.style.cssText = 'font-size:0.82rem;color:#64748b;margin-bottom:16px;';
   planLine.textContent = 'Current plan: ' + tierName;
+  var priceLine = document.createElement('div');
+  priceLine.style.cssText = 'font-size:0.88rem;font-weight:700;color:#0d9488;margin-bottom:16px;';
+  var planPrice = (PRICES[currentTier] && PRICES[currentTier].monthly) ? (PRICES[currentTier].monthly.launch || PRICES[currentTier].monthly.regular) + PRICES[currentTier].monthly.period : '';
+  priceLine.textContent = planPrice ? planPrice + ' · Active' : 'Active';
   var cancelBtn = document.createElement('button');
   cancelBtn.textContent = 'Cancel Subscription';
   cancelBtn.style.cssText = 'width:100%;padding:11px;border:none;border-radius:10px;background:#fee2e2;color:#dc2626;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:10px;';
@@ -1666,7 +1676,14 @@ function manageSubscription() {
   var helpNote = document.createElement('div');
   helpNote.style.cssText = 'font-size:0.72rem;color:#94a3b8;margin-top:12px;text-align:center;';
   helpNote.textContent = 'Questions? mypawreport@gmail.com';
-  box.appendChild(title); box.appendChild(planLine);
+  box.appendChild(title); box.appendChild(planLine); box.appendChild(priceLine);
+  if (currentTier !== 'gold') {
+    var upgradeBtn = document.createElement('button');
+    upgradeBtn.textContent = '⬆️ Change / Upgrade Plan';
+    upgradeBtn.style.cssText = 'width:100%;padding:11px;border:none;border-radius:10px;background:#0d9488;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:8px;';
+    upgradeBtn.onclick = function(){ overlay.remove(); showScreen('paywall'); };
+    box.appendChild(upgradeBtn);
+  }
   box.appendChild(cancelBtn); box.appendChild(keepBtn); box.appendChild(helpNote);
   overlay.appendChild(box);
   document.body.appendChild(overlay);
@@ -1694,14 +1711,107 @@ async function cancelMySubscription() {
 }
 function renderSubStatus() {
   const tierColors = {free:'#f1f5f9',bronze:'#fef3c7',silver:'#f1f5f9',gold:'#fefce8'};
+  const tierEmoji = {free:'🆓',bronze:'🥉',silver:'🥈',gold:'🥇'};
+  const tierFeatures = {
+    bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
+    silver: ['✅ Everything in Bronze','📍 Save up to 5 locations','🚗 Hot car reminder','📈 Detailed safety reports','🗺️ Route safety scanner'],
+    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support','💎 Lifetime access option']
+  };
+  const BILLING_LABELS = {weekly:'Weekly',monthly:'Monthly',yearly:'Yearly'};
+  let subBilling = 'monthly';
+  
+  // Build subscription display
+  let currentPlanPrice = '';
+  if (currentTier && currentTier !== 'free' && PRICES[currentTier]) {
+    const p = PRICES[currentTier][subBilling];
+    currentPlanPrice = p ? (p.launch || p.regular) + p.period : '';
+  }
+
+  const tierOrder = ['bronze','silver','gold'];
+  const tabsHtml = tierOrder.map(t => {
+    const isActive = t === (currentTier === 'free' ? 'bronze' : currentTier);
+    const color = t==='bronze'?'#92400e':t==='silver'?'#334155':'#92400e gold'===t?'#92400e':'#78350f';
+    const bgActive = t==='bronze'?'#fef3c7':t==='silver'?'#e2e8f0':'#fefce8';
+    return `<button onclick="subTabSelect('${t}',this)" class="sub-tier-tab${isActive?' active':''}" data-tier="${t}" style="flex:1;padding:7px 2px;border-radius:9px;border:none;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s;background:${isActive?bgActive:'none'};color:${isActive?(t==='bronze'?'#92400e':t==='silver'?'#334155':'#78350f'):'#94a3b8'}">${tierEmoji[t]} ${t.charAt(0).toUpperCase()+t.slice(1)}</button>`;
+  }).join('');
+
+  const initialTier = currentTier === 'free' ? 'bronze' : currentTier;
+  const p = PRICES[initialTier]?.[subBilling] || PRICES[initialTier]?.monthly;
+  const featuresHtml = (tierFeatures[initialTier]||[]).map(f=>`<div style="font-size:0.78rem;color:#475569;padding:3px 0;">${f}</div>`).join('');
+
   document.getElementById('sub-status-display').innerHTML = `
-    <div style="background:${tierColors[currentTier]||tierColors.free};border-radius:10px;padding:12px;text-align:center;">
-      <div style="font-size:1rem;font-weight:800;margin-bottom:3px;">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
-      <div style="font-size:0.75rem;color:#64748b;">${currentTier==='free'?'Upgrade to unlock all features':'Active subscription'}</div>
+    <div style="background:${tierColors[currentTier]||tierColors.free};border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:1.4rem;">${tierEmoji[currentTier]||'🆓'}</span>
+      <div>
+        <div style="font-size:0.92rem;font-weight:800;color:#1e293b;">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
+        <div style="font-size:0.72rem;color:#64748b;">${currentTier==='free'?'Upgrade to unlock all features':currentPlanPrice ? currentPlanPrice+' · Active' : 'Active subscription'}</div>
+      </div>
+    </div>
+    <div style="font-size:0.8rem;font-weight:700;color:#1e293b;margin-bottom:8px;">Compare Plans</div>
+    <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:12px;padding:4px;margin-bottom:10px;" id="sub-tier-tabs">${tabsHtml}</div>
+    <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:10px;padding:3px;margin-bottom:10px;" id="sub-billing-tabs">
+      ${['weekly','monthly','yearly'].map(b=>`<button onclick="subBillingSelect('${b}',this)" style="flex:1;padding:5px 2px;border-radius:8px;border:none;font-size:0.72rem;font-weight:600;cursor:pointer;background:${b==='monthly'?'#fff':'none'};color:${b==='monthly'?'#1e293b':'#94a3b8'};box-shadow:${b==='monthly'?'0 1px 4px rgba(0,0,0,0.08)':'none'};transition:all 0.2s;">${BILLING_LABELS[b]}</button>`).join('')}
+    </div>
+    <div id="sub-tier-detail" style="background:#fff;border-radius:10px;padding:12px;border:1px solid #e2e8f0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div id="sub-detail-name" style="font-weight:800;font-size:0.9rem;color:#1e293b;">${initialTier.charAt(0).toUpperCase()+initialTier.slice(1)}</div>
+        <div>
+          ${p && p.launch ? `<span style="font-size:0.72rem;text-decoration:line-through;color:#9ca3af;margin-right:4px;">${p.regular}</span>` : ''}
+          <span id="sub-detail-price" style="font-weight:900;font-size:1.1rem;color:#0d9488;">${p?((p.launch||p.regular)+p.period):'—'}</span>
+        </div>
+      </div>
+      <div id="sub-detail-features">${featuresHtml}</div>
+      ${currentTier==='free' ? `<button class="btn btn-primary" onclick="showScreen('paywall')" style="width:100%;margin-top:10px;font-size:0.82rem;">🚀 Get ${initialTier.charAt(0).toUpperCase()+initialTier.slice(1)}</button>` : ''}
     </div>`;
+
+  // Store billing state on window for callbacks
+  window._subBilling = subBilling;
+  window._subTier = initialTier;
+
   var _ub = document.getElementById('upgrade-btn'); if(_ub) _ub.style.display = currentTier==='gold' ? 'none' : 'block';
   var _mb = document.getElementById('manage-sub-btn'); if(_mb) _mb.style.display = (currentTier && currentTier !== 'free') ? 'block' : 'none';
   loadAlertSettingToggles();
+}
+
+function subTabSelect(tier, btn) {
+  window._subTier = tier;
+  document.querySelectorAll('#sub-tier-tabs .sub-tier-tab').forEach(b => {
+    const t = b.dataset.tier;
+    const isActive = t === tier;
+    const bgActive = t==='bronze'?'#fef3c7':t==='silver'?'#e2e8f0':'#fefce8';
+    b.style.background = isActive ? bgActive : 'none';
+    b.style.color = isActive ? (t==='bronze'?'#92400e':t==='silver'?'#334155':'#78350f') : '#94a3b8';
+  });
+  updateSubDetail();
+}
+
+function subBillingSelect(billing, btn) {
+  window._subBilling = billing;
+  const labels = {weekly:'Weekly',monthly:'Monthly',yearly:'Yearly'};
+  document.querySelectorAll('#sub-billing-tabs button').forEach(b => {
+    const isActive = b.textContent === labels[billing];
+    b.style.background = isActive ? '#fff' : 'none';
+    b.style.color = isActive ? '#1e293b' : '#94a3b8';
+    b.style.boxShadow = isActive ? '0 1px 4px rgba(0,0,0,0.08)' : 'none';
+  });
+  updateSubDetail();
+}
+
+function updateSubDetail() {
+  const tier = window._subTier || 'bronze';
+  const billing = window._subBilling || 'monthly';
+  const tierFeatures = {
+    bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
+    silver: ['✅ Everything in Bronze','📍 Save up to 5 locations','🚗 Hot car reminder','📈 Detailed safety reports','🗺️ Route safety scanner'],
+    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support','💎 Lifetime access option']
+  };
+  const p = PRICES[tier]?.[billing] || PRICES[tier]?.monthly;
+  const nameEl = document.getElementById('sub-detail-name');
+  const priceEl = document.getElementById('sub-detail-price');
+  const featEl = document.getElementById('sub-detail-features');
+  if (nameEl) nameEl.textContent = tier.charAt(0).toUpperCase()+tier.slice(1);
+  if (priceEl) priceEl.textContent = p ? ((p.launch||p.regular)+p.period) : '—';
+  if (featEl) featEl.innerHTML = (tierFeatures[tier]||[]).map(f=>`<div style="font-size:0.78rem;color:#475569;padding:3px 0;">${f}</div>`).join('');
 }
 function showEditProfile() {
   const petName = userPrefs?.pet_name || '';
@@ -1770,7 +1880,29 @@ async function saveEditProfile(modal) {
     }
   }
 }
-async function logout() {
+function logout() {
+  // Show confirmation
+  var existing = document.getElementById('logout-confirm-modal');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'logout-confirm-modal';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;width:100%;max-width:320px;text-align:center;';
+  box.innerHTML = `
+    <div style="font-size:2rem;margin-bottom:8px;">🚪</div>
+    <div style="font-weight:800;font-size:1rem;color:#1e293b;margin-bottom:6px;">Sign Out?</div>
+    <div style="font-size:0.82rem;color:#64748b;margin-bottom:20px;">You'll need to sign back in to access your account.</div>
+    <button onclick="doLogout()" style="width:100%;padding:11px;border:none;border-radius:10px;background:#ef4444;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:8px;">Yes, Sign Out</button>
+    <button onclick="document.getElementById('logout-confirm-modal').remove()" style="width:100%;padding:11px;border:1.5px solid #e2e8f0;border-radius:10px;background:#f8fafc;color:#64748b;font-weight:600;font-size:0.9rem;cursor:pointer;">Cancel</button>
+  `;
+  overlay.appendChild(box);
+  overlay.onclick = function(e){ if(e.target===overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
+}
+async function doLogout() {
+  var overlay = document.getElementById('logout-confirm-modal');
+  if (overlay) overlay.remove();
   try { await authLogout(); } catch(_) {}
   currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
 }
@@ -1922,7 +2054,7 @@ function toggleTrayWidget() {
     // Turn off
     trayWidgetEnabled = false;
     localStorage.setItem(LS_TRAY, 'false');
-    document.getElementById('tray-toggle-btn').textContent = 'Enable';
+    var _tb = document.getElementById('tray-toggle-btn'); if (_tb) _tb.textContent = 'Enable';
     if (trayIntervalId) { clearInterval(trayIntervalId); trayIntervalId = null; }
   } else {
     // Request permission and turn on
@@ -1930,7 +2062,7 @@ function toggleTrayWidget() {
       if (perm === 'granted') {
         trayWidgetEnabled = true;
         localStorage.setItem(LS_TRAY, 'true');
-        document.getElementById('tray-toggle-btn').textContent = 'Disable';
+        var _tb2 = document.getElementById('tray-toggle-btn'); if (_tb2) _tb2.textContent = 'Disable';
         showTrayNotification();
         // Refresh tray every 30 minutes
         trayIntervalId = setInterval(showTrayNotification, 30 * 60 * 1000);
@@ -1972,10 +2104,28 @@ function initTrayWidget() {
     localStorage.setItem(LS_TRAY, 'false');
   }
 }
+function handleDangerAlertToggle(checked) {
+  if (checked) {
+    toggleNotifications();
+  } else {
+    // User is disabling — just update the UI state
+    saveAlertSetting('weatherTips', false);
+    showToast('Dangerous condition alerts disabled.');
+  }
+}
+function handleTrayWidgetToggle(checked) {
+  if (checked) {
+    toggleTrayWidget();
+  } else {
+    saveAlertSetting('trayWidget', false);
+    stopTrayWidget && stopTrayWidget();
+    showToast('Tray widget disabled.');
+  }
+}
 function toggleNotifications() {
   if (Notification.permission === 'granted' && notificationsEnabled) {
     notificationsEnabled = false;
-    document.getElementById('notif-toggle-btn').textContent = 'Enable';
+    var _nb = document.getElementById('notif-toggle-btn'); if (_nb) _nb.textContent = 'Enable';
   } else {
     requestNotifications();
   }
@@ -2593,7 +2743,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v145';
+const APP_VERSION = 'v151';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2828,7 +2978,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=145').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=151').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3497,6 +3647,11 @@ function loadAlertSettingToggles() {
     const el = document.getElementById(id);
     if (el) { el.checked = s[k]; el.dispatchEvent(new Event('change')); }
   });
+  // Sync new notification card toggles
+  const dangerToggle = document.getElementById('toggle-danger-alerts');
+  if (dangerToggle) dangerToggle.checked = s.weatherTips !== false;
+  const trayToggle = document.getElementById('toggle-tray-widget');
+  if (trayToggle) trayToggle.checked = s.trayWidget === true;
   // Gate walk reminder toggle to Gold only
   const tier = getUserTier();
   const walkToggle = document.getElementById('toggle-walk-reminder');
@@ -3620,7 +3775,7 @@ function logJustWalked() {
   if (banner) banner.style.display = 'none';
   showToast('✅ Walk logged! Good pup parent 🐾');
 }
-function checkWalkReminder() {
+async function checkWalkReminder() {
     const s = getAlertSettings();
   if (s.walkReminder === false) return;
   const banner = document.getElementById('walk-reminder-banner');
@@ -3633,6 +3788,19 @@ function checkWalkReminder() {
     const hrs = Math.round(hoursAgo);
     if (sub) sub.textContent = "It's been about " + hrs + " hour" + (hrs !== 1 ? 's' : '') + " since your last walk.";
     banner.style.display = 'block';
+    // Fire push notification for walk reminder
+    if (Notification && Notification.permission === 'granted') {
+      try {
+        const swReg = await navigator.serviceWorker.ready;
+        swReg.showNotification('🐾 Time for a Walk!', {
+          body: 'It\'s been a while since your last walk. Check current conditions!',
+          icon: '/the-paw-report/icons/icon-192.png',
+          badge: '/the-paw-report/icons/icon-192.png',
+          tag: 'walk-reminder',
+          requireInteraction: false
+        });
+      } catch(e) {}
+    }
   } else {
     banner.style.display = 'none';
   }
