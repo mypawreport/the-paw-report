@@ -1224,12 +1224,9 @@ function stopTracking() {
       {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token:savedToken}), signal:ctrl.signal});
     const meData = await meResp.json();
     if (!meData.success) {
-      // Token truly expired — send to login
-      localStorage.removeItem('paw_token');
-      localStorage.removeItem('paw_user');
-      localStorage.removeItem('paw_prefs');
-      localStorage.removeItem('paw_tier');
-      showScreen('auth');
+      // Background refresh failed — keep user on current screen, do NOT log out
+      // The session may still be valid; only hard logout on explicit user action
+      console.log('Background authMe failed — keeping cached session');
       return;
     }
     // Update cache with fresh data
@@ -1255,8 +1252,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementB
 
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js?v=173').then(function(reg){
-    console.log('SW v173 registered');
+  navigator.serviceWorker.register('./sw.js?v=174').then(function(reg){
+    console.log('SW v174 registered');
   }).catch(function(e){ console.log('SW reg failed', e); });
 }
 </script>
