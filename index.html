@@ -745,14 +745,20 @@ function getClient() {
   return base44Client;
 }
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
-  if (id==='paywall') { renderTierDisplay(); startCountdown(); }
+  try {
+    document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display=''; });
+    const el = document.getElementById('screen-' + id);
+    if (el) { el.classList.add('active'); }
+    if (id==='paywall') { renderTierDisplay(); startCountdown(); }
+  } catch(e) { console.error('showScreen crashed:', e); }
 }
 function showTab(tab) {
+  currentActiveTab = tab;
   ['report','safety','wash','profile'].forEach(t => {
-    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
-    document.getElementById('nav-'+t).classList.toggle('active', t===tab);
+    const tabEl = document.getElementById('tab-'+t);
+    const navEl = document.getElementById('nav-'+t);
+    if (tabEl) tabEl.style.display = t===tab ? 'block' : 'none';
+    if (navEl) navEl.classList.toggle('active', t===tab);
   });
 }
 
@@ -921,14 +927,26 @@ async function saveProfile() {
   } catch(e) { alert('Could not save profile.'); }
 }
 function loadMainScreen() {
-  showScreen('main'); showTab('report');
-  const petName = userPrefs?.pet_name || 'your pup';
-  document.getElementById('pet-welcome-msg').textContent = `Ready to run ${petName}'s report?`;
-  document.getElementById('header-sub').textContent = `Ground temp & walk safety for ${petName}`;
-  syncSizeSelectors(currentPetSize); updateUserBar();
-  // Show notif prompt if not asked yet
-  if (!localStorage.getItem('paw_notif_asked') && 'Notification' in window) {
-    document.getElementById('notif-banner').style.display = 'flex';
+  try {
+    showScreen('main');
+    showTab('report');
+    const petName = (userPrefs && userPrefs.pet_name) ? userPrefs.pet_name : 'your pup';
+    const welcomeEl = document.getElementById('pet-welcome-msg');
+    const subEl = document.getElementById('header-sub');
+    if (welcomeEl) welcomeEl.textContent = 'Ready to run ' + petName + '\'s report?';
+    if (subEl) subEl.textContent = 'Ground temp & walk safety for ' + petName;
+    syncSizeSelectors(currentPetSize);
+    updateUserBar();
+    if (!localStorage.getItem('paw_notif_asked') && 'Notification' in window) {
+      const nb = document.getElementById('notif-banner');
+      if (nb) nb.style.display = 'flex';
+    }
+  } catch(e) {
+    console.error('loadMainScreen crashed:', e);
+    // Hard fallback — force the screen visible
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const ms = document.getElementById('screen-main');
+    if (ms) { ms.classList.add('active'); ms.style.display = 'block'; }
   }
 }
 
