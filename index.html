@@ -2079,17 +2079,19 @@ function showTrayNotification() {
   } catch(e) { console.warn('Tray notification error:', e); }
 }
 function initTrayWidget() {
-  const btn = document.getElementById('tray-toggle-btn');
-  if (!btn) return;
+  // Re-read saved pref fresh (may have been set by loadAlertSettingToggles)
+  const s = getAlertSettings();
+  trayWidgetEnabled = s.trayWidget !== false;
+  localStorage.setItem(LS_TRAY, trayWidgetEnabled ? 'true' : 'false');
+  // Sync toggle visual
+  const toggleEl = document.getElementById('toggle-tray-widget');
+  if (toggleEl) toggleEl.checked = trayWidgetEnabled;
+  // Start interval only if enabled AND permission granted
   if (trayWidgetEnabled && Notification.permission === 'granted') {
-    btn.textContent = 'Disable';
     if (!trayIntervalId) trayIntervalId = setInterval(showTrayNotification, 30 * 60 * 1000);
     showTrayNotification();
-  } else {
-    // DON'T reset the stored preference — just update button label
-    // The user's saved preference stays intact; interval won't run without permission
-    btn.textContent = trayWidgetEnabled ? 'Disable' : 'Enable';
   }
+  // Note: if permission not yet granted, interval won't start but preference is preserved
 }
 function handleDangerAlertToggle(checked) {
   if (checked) {
@@ -2968,7 +2970,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=180').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=181').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
