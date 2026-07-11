@@ -801,12 +801,23 @@ async function onLoggedIn() {
     if (token) {
       const meResp = await fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authMe', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
       const meData = await meResp.json();
-      if (meData.success) { userPrefs = meData.prefs || null; }
+      if (meData.success) {
+        userPrefs = meData.prefs || null;
+        if (userPrefs && userPrefs.subscription_tier) {
+          currentTier = userPrefs.subscription_tier;
+        }
+      }
     }
   } catch(_) { userPrefs = null; }
   updateUserBar();
-  if (!userPrefs) showScreen('setup');
-  else { currentPetSize = userPrefs.pet_size || 'medium'; syncSizeSelectors(currentPetSize); showScreen('paywall'); renderTierDisplay(); startCountdown(); }
+  if (!userPrefs || !userPrefs.pet_name || userPrefs.pet_name === 'My Dog') {
+    showScreen('setup');
+  } else if (currentTier === 'free') {
+    showScreen('paywall'); renderTierDisplay(); startCountdown();
+  } else {
+    // Bronze, Silver, Gold — go straight to the app
+    loadMainScreen();
+  }
 }
 
 function updateUserBar() {
