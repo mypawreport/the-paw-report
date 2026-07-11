@@ -797,8 +797,12 @@ function showAuthError(msg) { const el = document.getElementById('auth-error'); 
 
 async function onLoggedIn() {
   try {
-    const prefs = await getClient().entities.UserPreferences.filter({created_by: currentUser.id});
-    userPrefs = prefs && prefs.length > 0 ? prefs[0] : null;
+    const token = sessionStorage.getItem('paw_token');
+    if (token) {
+      const meResp = await fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authMe', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
+      const meData = await meResp.json();
+      if (meData.success) { userPrefs = meData.prefs || null; }
+    }
   } catch(_) { userPrefs = null; }
   updateUserBar();
   if (!userPrefs) showScreen('setup');
@@ -876,8 +880,11 @@ async function saveEditProfile(modal) {
   const size = editSize || userPrefs?.pet_size || 'medium';
   try {
     const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
-    if (userPrefs) userPrefs = await getClient().entities.UserPreferences.update(userPrefs.id, data);
-    else userPrefs = await getClient().entities.UserPreferences.create(data);
+    const token = sessionStorage.getItem('paw_token');
+    const saveResp = await fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authSavePrefs', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token, ...data})});
+    const saveData = await saveResp.json();
+    if (!saveData.success) throw new Error(saveData.error || 'Save failed');
+    userPrefs = saveData.prefs || data;
     currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); modal.remove();
   } catch(e) { alert('Could not save. Try again.'); }
 }
@@ -893,8 +900,11 @@ async function saveProfile() {
   const breed = document.getElementById('setup-breed').value.trim();
   try {
     const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
-    if (userPrefs) userPrefs = await getClient().entities.UserPreferences.update(userPrefs.id, data);
-    else userPrefs = await getClient().entities.UserPreferences.create(data);
+    const token = sessionStorage.getItem('paw_token');
+    const saveResp = await fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authSavePrefs', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token, ...data})});
+    const saveData = await saveResp.json();
+    if (!saveData.success) throw new Error(saveData.error || 'Save failed');
+    userPrefs = saveData.prefs || data;
     currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
     showScreen('paywall'); renderTierDisplay(); startCountdown();
   } catch(e) { alert('Could not save profile.'); }
@@ -933,7 +943,7 @@ function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEac
 function selectSize(size, el) {
   currentPetSize = size; syncSizeSelectors(size);
   if (lastLat && lastPawData) fetchPawAndUpdate(lastLat, lastLon);
-  if (userPrefs) { try { getClient().entities.UserPreferences.update(userPrefs.id, { pet_size: size }); } catch(_) {} }
+  if (userPrefs) { try { fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authSavePrefs', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token: sessionStorage.getItem('paw_token'), pet_size: size})}).catch(()=>{}); } catch(_) {} }
 }
 
 const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Too Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Caution':'caution','Danger':'danger','Fry Zone':'fry'};
