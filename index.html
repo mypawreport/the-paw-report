@@ -2,6 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <script>
+  // KILL all stale service workers before anything loads
+  (function(){
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      var toKill = regs.filter(function(r){
+        var scope = r.scope || '';
+        // Only kill if it's for this app's scope
+        return scope.indexOf('mypawreport') !== -1 || scope.indexOf('the-paw-report') !== -1;
+      });
+      if (toKill.length === 0) return;
+      return Promise.all(toKill.map(function(r){ return r.unregister(); })).then(function(){
+        // Force reload to run fresh JS (only reload once — guard with sessionStorage)
+        if (!sessionStorage.getItem('sw_reloaded_166')) {
+          sessionStorage.setItem('sw_reloaded_166', '1');
+          window.location.reload(true);
+        }
+      });
+    });
+  })();
+  </script>
   <script src="https://base44.app/api/sdk/v1/base44-sdk.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🐾 The Paw Report</title>
@@ -1202,17 +1223,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementB
 
 <script>
 if ('serviceWorker' in navigator) {
-  // Kill ALL stale service workers immediately (not on load - right now)
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    return Promise.all(regs.map(function(r){ return r.unregister(); }));
-  }).then(function(){
-    // Re-register fresh after unregistering
-    return navigator.serviceWorker.register('/sw.js?v=165');
-  }).then(function(reg){
-    console.log('SW v165 registered:', reg.scope);
-  }).catch(function(err){
-    console.log('SW error:', err);
-  });
+  navigator.serviceWorker.register('./sw.js?v=166').then(function(reg){
+    console.log('SW v166 registered');
+  }).catch(function(e){ console.log('SW reg failed', e); });
 }
 </script>
 </body>
