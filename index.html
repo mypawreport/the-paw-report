@@ -777,10 +777,18 @@ async function submitAuth() {
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>' + (isSignUpMode ? 'Creating…' : 'Signing in…');
   document.getElementById('auth-error').style.display = 'none';
   try {
-    const client = getClient();
-    if (isSignUpMode) await client.auth.register({ email, password, full_name: name });
-    await client.auth.login({ email, password });
-    currentUser = await client.auth.me();
+    const BASE_URL = 'https://base44.app/api/apps/' + APP_ID + '/functions/';
+    if (isSignUpMode) {
+      const regResp = await fetch(BASE_URL + 'authRegister', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,full_name:name})});
+      const regData = await regResp.json();
+      if (!regData.success) throw new Error(regData.error || 'Registration failed');
+    }
+    const loginResp = await fetch(BASE_URL + 'authLogin', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const loginData = await loginResp.json();
+    if (!loginData.success) throw new Error(loginData.error || 'Invalid email or password');
+    currentUser = { id: loginData.id, email: loginData.email, full_name: loginData.full_name };
+    sessionStorage.setItem('paw_token', loginData.token);
+    sessionStorage.setItem('paw_user', JSON.stringify(currentUser));
     await onLoggedIn();
   } catch(e) { showAuthError(e.message || 'Something went wrong.'); }
   finally { btn.disabled = false; btn.textContent = isSignUpMode ? 'Create Account' : 'Sign In'; }
@@ -875,7 +883,7 @@ async function saveEditProfile(modal) {
 }
 
 async function logout() {
-  try { await getClient().auth.logout(); } catch(_) {}
+  try { sessionStorage.removeItem('paw_token'); sessionStorage.removeItem('paw_user'); } catch(_) {}
   currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
 }
 
@@ -1137,7 +1145,16 @@ function stopTracking() {
   handleCheckoutReturn();
   handleCheckoutReturn();
   try {
-    const client=getClient(); currentUser=await client.auth.me();
+    const client=getClient(); const savedUser = sessionStorage.getItem('paw_user');
+    const savedToken = sessionStorage.getItem('paw_token');
+    if (savedUser && savedToken) {
+      currentUser = JSON.parse(savedUser);
+      // verify token still valid
+      const meResp = await fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authMe', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:savedToken})});
+      const meData = await meResp.json();
+      if (!meData.success) throw new Error('Session expired');
+      currentUser = { id: meData.id, email: meData.email, full_name: meData.full_name };
+    } else { throw new Error('No session'); }
     if(currentUser) await onLoggedIn(); else showScreen('auth');
   } catch(_) { showScreen('auth'); }
 })();
