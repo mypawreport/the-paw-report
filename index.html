@@ -787,8 +787,8 @@ async function submitAuth() {
     const loginData = await loginResp.json();
     if (!loginData.success) throw new Error(loginData.error || 'Invalid email or password');
     currentUser = { id: loginData.id, email: loginData.email, full_name: loginData.full_name };
-    sessionStorage.setItem('paw_token', loginData.token);
-    sessionStorage.setItem('paw_user', JSON.stringify(currentUser));
+    localStorage.setItem('paw_token', loginData.token);
+    localStorage.setItem('paw_user', JSON.stringify(currentUser));
     await onLoggedIn();
   } catch(e) { showAuthError(e.message || 'Something went wrong.'); }
   finally { btn.disabled = false; btn.textContent = isSignUpMode ? 'Create Account' : 'Sign In'; }
@@ -797,7 +797,7 @@ function showAuthError(msg) { const el = document.getElementById('auth-error'); 
 
 async function onLoggedIn() {
   try {
-    const token = sessionStorage.getItem('paw_token');
+    const token = localStorage.getItem('paw_token');
     if (token) {
       const meResp = await fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authMe', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
       const meData = await meResp.json();
@@ -880,7 +880,7 @@ async function saveEditProfile(modal) {
   const size = editSize || userPrefs?.pet_size || 'medium';
   try {
     const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
-    const token = sessionStorage.getItem('paw_token');
+    const token = localStorage.getItem('paw_token');
     const saveResp = await fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authSavePrefs', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token, ...data})});
     const saveData = await saveResp.json();
     if (!saveData.success) throw new Error(saveData.error || 'Save failed');
@@ -890,7 +890,7 @@ async function saveEditProfile(modal) {
 }
 
 async function logout() {
-  try { sessionStorage.removeItem('paw_token'); sessionStorage.removeItem('paw_user'); } catch(_) {}
+  try { localStorage.removeItem('paw_token'); localStorage.removeItem('paw_user'); } catch(_) {}
   currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
 }
 
@@ -900,7 +900,7 @@ async function saveProfile() {
   const breed = document.getElementById('setup-breed').value.trim();
   try {
     const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
-    const token = sessionStorage.getItem('paw_token');
+    const token = localStorage.getItem('paw_token');
     const saveResp = await fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authSavePrefs', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token, ...data})});
     const saveData = await saveResp.json();
     if (!saveData.success) throw new Error(saveData.error || 'Save failed');
@@ -943,7 +943,7 @@ function syncSizeSelectors(size) { document.querySelectorAll('.size-btn').forEac
 function selectSize(size, el) {
   currentPetSize = size; syncSizeSelectors(size);
   if (lastLat && lastPawData) fetchPawAndUpdate(lastLat, lastLon);
-  if (userPrefs) { try { fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authSavePrefs', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token: sessionStorage.getItem('paw_token'), pet_size: size})}).catch(()=>{}); } catch(_) {} }
+  if (userPrefs) { try { fetch('https://base44.app/api/apps/' + APP_ID + '/functions/authSavePrefs', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token: localStorage.getItem('paw_token'), pet_size: size})}).catch(()=>{}); } catch(_) {} }
 }
 
 const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Too Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Caution':'caution','Danger':'danger','Fry Zone':'fry'};
@@ -1155,8 +1155,8 @@ function stopTracking() {
   handleCheckoutReturn();
   handleCheckoutReturn();
   try {
-    const client=getClient(); const savedUser = sessionStorage.getItem('paw_user');
-    const savedToken = sessionStorage.getItem('paw_token');
+    const client=getClient(); const savedUser = localStorage.getItem('paw_user');
+    const savedToken = localStorage.getItem('paw_token');
     if (savedUser && savedToken) {
       currentUser = JSON.parse(savedUser);
       // verify token still valid
