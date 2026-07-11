@@ -2084,7 +2084,7 @@ function showTrayNotification() {
   try {
     const n = new Notification('🐾 The Paw Report', {
       body: temp + ' · ' + rating + ' · ' + surface + '\nLast updated ' + time,
-      icon: '/the-paw-report/icons/icon-192.png',
+      icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png',
       tag: 'paw-tray',        // same tag = replaces previous, doesn't stack
       renotify: false,
       silent: true             // no sound for tray updates
@@ -2981,7 +2981,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=175').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=176').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3806,7 +3806,7 @@ function showHotCarAlert() {
     if (Notification.permission === 'granted') {
       new Notification('🚗 Just arrived? Check your back seat!', {
         body: 'Never leave pets in a parked car — temps spike fast. Do a quick check!',
-        icon: '/the-paw-report/icon-192.png',
+        icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png',
         tag: 'hot-car-check',
         requireInteraction: true
       });
@@ -3841,8 +3841,8 @@ async function checkWalkReminder() {
         const swReg = await navigator.serviceWorker.ready;
         swReg.showNotification('🐾 Time for a Walk!', {
           body: 'It\'s been a while since your last walk. Check current conditions!',
-          icon: '/the-paw-report/icons/icon-192.png',
-          badge: '/the-paw-report/icons/icon-192.png',
+          icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png',
+          badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png',
           tag: 'walk-reminder',
           requireInteraction: false
         });
