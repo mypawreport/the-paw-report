@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#0d9488"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#0f172a 0%,#0d2a2a 50%,#0d3d3d 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:white}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f172a;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:white}
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
@@ -28,11 +28,11 @@
     .screen.active{display:block}
 
     /* Auth */
-    .auth-card{text-align:center;padding:32px 24px}
+    .auth-card{text-align:center;padding:32px 24px;background:#ffffff;border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,0.3)}
     .auth-icon{font-size:3.5rem;margin-bottom:12px;display:block}
-    .auth-title{font-size:1.3rem;font-weight:800;margin-bottom:6px}
-    .auth-sub{font-size:0.85rem;opacity:0.6;margin-bottom:24px;line-height:1.5}
-    .auth-input{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 14px;color:white;font-size:0.95rem;margin-bottom:10px;outline:none;transition:border 0.2s}
+    .auth-title{font-size:1.5rem;font-weight:700;color:#1e293b;margin-bottom:6px}
+    .auth-sub{font-size:0.88rem;color:#64748b;margin-bottom:20px;line-height:1.5}
+    .auth-input{width:100%;padding:14px 16px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:1rem;background:#f8fafc;color:#1e293b;outline:none;box-sizing:border-box;transition:border 0.2s}
     .auth-input:focus{border-color:rgba(249,115,22,0.6)}
     .auth-input::placeholder{opacity:0.4}
     .auth-toggle{font-size:0.8rem;opacity:0.6;margin-top:12px;cursor:pointer}
@@ -41,7 +41,7 @@
 
     /* Buttons */
     .btn{display:block;width:100%;padding:14px;border:none;border-radius:15px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s}
-    .btn-primary{background:linear-gradient(135deg,#0d9488,#0f766e);color:white;box-shadow:0 8px 24px rgba(13,148,136,0.4)}
+    .btn-primary{background:#334155;color:white;box-shadow:0 4px 16px rgba(0,0,0,0.3)}
     .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(249,115,22,0.5)}
     .btn-primary:active{transform:translateY(0)}
     .btn-secondary{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:white}
@@ -359,11 +359,6 @@
         <button class="btn btn-secondary" onclick="startFree()" style="margin-top:10px;font-size:0.82rem;padding:10px">Continue with free preview (limited)</button>
       </div>
     </div>
-    <div class="app-footer">
-      <p>© 2026 The Paw Report — All Rights Reserved.</p>
-      <p><a href="legal.html">Terms of Service & Privacy Policy</a> · <a href="mailto:mypawreport@gmail.com">mypawreport@gmail.com</a></p>
-    </div>
-  </div>
 
   <!-- ── MAIN ── -->
   <div id="screen-main" class="screen">
@@ -577,11 +572,6 @@
       <button class="btn btn-secondary" onclick="logout()" style="margin-top:4px;font-size:0.85rem;padding:11px">Sign Out</button>
     </div>
 
-    <div class="app-footer">
-      <p>© 2026 The Paw Report — All Rights Reserved.</p>
-      <p><a href="legal.html">Terms & Privacy</a> · <a href="mailto:mypawreport@gmail.com">mypawreport@gmail.com</a></p>
-    </div>
-  </div>
 </div>
 
 <script>
