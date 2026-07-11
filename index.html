@@ -924,7 +924,22 @@
         </div>
       </div>
 
-<!-- ⚙️ Alert Settings -->
+      <!-- 🎁 Referral -->
+      <div class="referral-share-card">
+        <div class="referral-title" style="font-weight:700;margin-bottom:4px;">🎁 Share &amp; Earn</div>
+        <div class="referral-share-sub">Give a friend a free week — when they sign up you both win!</div>
+        <div class="referral-code-display" id="my-referral-code">PAW-XXXX</div>
+        <div id="referral-count-display" style="font-size:0.75rem;color:#64748b;margin-top:4px;"></div>
+        <div class="referral-share-sub" style="margin-bottom:10px;">Share your code and they get 1 free week.</div>
+        <div class="share-btns">
+          <button class="share-btn share-btn-copy" onclick="copyReferralCode()">📋 Copy Code</button>
+          <button class="share-btn share-btn-tiktok" onclick="shareReferralTikTok()">🎵 TikTok</button>
+        </div>
+      </div>
+
+      
+      
+      <!-- ⚙️ Alert Settings -->
       <div class="card settings-card" id="alert-settings-card">
         <div class="card-title">⚙️ Alert Settings</div>
 
@@ -2966,7 +2981,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=177').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=178').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
