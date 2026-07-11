@@ -2083,10 +2083,12 @@ function initTrayWidget() {
   if (!btn) return;
   if (trayWidgetEnabled && Notification.permission === 'granted') {
     btn.textContent = 'Disable';
-    trayIntervalId = setInterval(showTrayNotification, 30 * 60 * 1000);
+    if (!trayIntervalId) trayIntervalId = setInterval(showTrayNotification, 30 * 60 * 1000);
+    showTrayNotification();
   } else {
-    trayWidgetEnabled = false;
-    localStorage.setItem(LS_TRAY, 'false');
+    // DON'T reset the stored preference — just update button label
+    // The user's saved preference stays intact; interval won't run without permission
+    btn.textContent = trayWidgetEnabled ? 'Disable' : 'Enable';
   }
 }
 function handleDangerAlertToggle(checked) {
@@ -2966,7 +2968,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=179').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=180').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3631,7 +3633,7 @@ function saveAlertSetting(key, val) {
 function loadAlertSettingToggles() {
   const s = getAlertSettings();
   // Apply defaults on first run
-  const defaults = { weatherTips: true, hotCar: true, walkReminder: true, trayWidget: false };
+  const defaults = { weatherTips: true, hotCar: true, walkReminder: true, trayWidget: true };
   let changed = false;
   Object.entries(defaults).forEach(([k, def]) => { if (s[k] === undefined) { s[k] = def; changed = true; } });
   if (changed) localStorage.setItem('pawAlertSettings', JSON.stringify(s));
@@ -3647,6 +3649,9 @@ function loadAlertSettingToggles() {
   // Tray widget toggle
   const trayToggle = document.getElementById('toggle-tray-widget');
   if (trayToggle) trayToggle.checked = s.trayWidget === true;
+  // Keep JS var in sync with saved setting
+  trayWidgetEnabled = s.trayWidget === true;
+  localStorage.setItem(LS_TRAY, trayWidgetEnabled ? 'true' : 'false');
 
   // Walk reminder toggle — Gold only
   const tier = getUserTier();
