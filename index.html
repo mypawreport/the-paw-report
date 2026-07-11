@@ -1612,7 +1612,7 @@ function updateUserBar() {
   tierEl.className = 'tier-badge tier-'+currentTier;
   // Referral code: PAW- + first 4 chars of user id
   const code = 'PAW-' + (currentUser.id || 'USER').slice(0,4).toUpperCase();
-  document.getElementById('my-referral-code').textContent = code;
+  var rcEl = document.getElementById('my-referral-code'); if (rcEl) rcEl.textContent = code;
   var rcd2 = document.getElementById('referral-count-display');
   if (rcd2) { var cnt2 = getReferralCount(); rcd2.textContent = cnt2 > 0 ? '🎁 ' + cnt2 + ' friend' + (cnt2===1?'':'s') + ' referred!' : ''; }
   renderProfileDisplay();
@@ -2966,7 +2966,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=177').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=179').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
