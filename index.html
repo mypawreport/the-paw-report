@@ -356,13 +356,6 @@
     .avatar-picker-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:10px; }
     .avatar-option { width:44px; height:44px; border-radius:50%; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; transition:var(--c-transition); background:#f1f5f9; }
     .avatar-option:hover, .avatar-option.selected { border-color:var(--c-teal); background:#e6fffa; transform:scale(1.1); }
-    /* Paw print background tile */
-    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-      background-image:var(--paw-tile-url);
-      background-size:72px 72px;
-      opacity:0.18;
-      transition:opacity 0.8s ease;
-    }
     #app-root{position:relative;z-index:1;width:100%;max-width:480px;}
     /* Profile tab tinted background */
     #tab-profile {
@@ -2783,7 +2776,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v197';
+const APP_VERSION = 'v198';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3037,7 +3030,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=197').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=198').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3070,10 +3063,8 @@ function syncGlowToActiveTab() {
     };
     const glowKey = crimeRatingMap[lastCrimeData.crimeRating] || 'Moderate';
     updateEdgeGlow(glowKey);
-    updatePawBackground(glowKey);
   } else if (currentActiveTab === 'report' && lastPawData) {
     updateEdgeGlow(lastPawData.rating);
-    updatePawBackground(lastPawData.rating);
   }
   // wash: fade glow to neutral; profile: use theme accent color
   if (currentActiveTab === 'wash') {
@@ -3164,26 +3155,6 @@ window.addEventListener('load', function() {
   setTimeout(function() { initEdgePaws(true); }, 1200);
 });
 
-const PAW_TIER_COLORS = {
-  'Extreme Cold': '#0EA5E9',
-  'Chilly':       '#38BDF8',
-  'Safe':         '#22C55E',
-  'Warm':         '#FF7A5A',
-  'Hot':          '#F97316',
-  'Danger':       '#EF4444',
-  'Fry Zone':     '#DC2626',
-};
-function buildPawTileUrl(hexColor) {
-  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" fill="' + hexColor + '">'
-    + '<g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g>'
-    + '<g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g>'
-    + '</svg>';
-  return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
-}
-function updatePawBackground(rating) {
-  var color = PAW_TIER_COLORS[rating] || '#22C55E';
-  document.documentElement.style.setProperty('--paw-tile-url', buildPawTileUrl(color));
-}
 function updateEdgeGlowColor(hex) {
   // Recolor the edge paw strips to match theme (no box-shadow ring)
   if (!hex) return;
