@@ -1949,6 +1949,7 @@ function showEdgeLightingNotice() {
 function loadMainScreen() {
   showWhatsNewToast();
   setTimeout(showEdgeLightingNotice, 1200);
+  loadAlertSettingToggles();  // Set all toggles correctly on login
   setTimeout(initTrayWidget, 500);
   setTimeout(startVehicleDetection, 2000);
   renderFavLocations();
@@ -2970,7 +2971,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=182').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=183').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -2978,10 +2979,10 @@ if ('serviceWorker' in navigator) {
 const EDGE_COLORS = {
   'Extreme Cold': { color: '#003366', shadow: '0 0 0 6px #003366, 0 0 0 14px rgba(0,51,102,0.5), inset 0 0 0 6px #003366, inset 0 0 0 14px rgba(0,51,102,0.35)' },
 'Chilly':       { color: '#58E3C2', shadow: '0 0 0 6px #58E3C2, 0 0 0 14px rgba(88,227,194,0.5), inset 0 0 0 6px #58E3C2, inset 0 0 0 14px rgba(88,227,194,0.35)' },
-  'Safe':         { color: '#7ED321', shadow: '0 0 0 6px #7ED321, 0 0 0 14px rgba(126,211,33,0.5), inset 0 0 0 6px #7ED321, inset 0 0 0 14px rgba(126,211,33,0.35)' },
+  'Safe':         { color: '#4ade80', shadow: '0 0 0 6px #4ade80, 0 0 0 14px rgba(74,222,128,0.5), inset 0 0 0 6px #4ade80, inset 0 0 0 14px rgba(74,222,128,0.35)' },
   'Low Risk':     { color: '#86efac', shadow: '0 0 0 6px #86efac, 0 0 0 14px rgba(134,239,172,0.5), inset 0 0 0 6px #86efac, inset 0 0 0 14px rgba(134,239,172,0.35)' },
   'Moderate':     { color: '#F8E71C', shadow: '0 0 0 6px #F8E71C, 0 0 0 14px rgba(248,231,28,0.5), inset 0 0 0 6px #F8E71C, inset 0 0 0 14px rgba(248,231,28,0.35)' },
-  'Warm':         { color: '#F8E71C', shadow: '0 0 0 6px #F8E71C, 0 0 0 14px rgba(248,231,28,0.5), inset 0 0 0 6px #F8E71C, inset 0 0 0 14px rgba(248,231,28,0.35)' },
+  'Warm':         { color: '#F5A623', shadow: '0 0 0 6px #F5A623, 0 0 0 14px rgba(245,166,35,0.5), inset 0 0 0 6px #F5A623, inset 0 0 0 14px rgba(245,166,35,0.35)' },
 'Hot':          { color: '#F5A623', shadow: '0 0 0 6px #F5A623, 0 0 0 16px rgba(245,166,35,0.6), 0 0 0 28px rgba(245,100,0,0.25), inset 0 0 0 6px #F5A623, inset 0 0 0 16px rgba(245,166,35,0.35)' },
   'Danger':       { color: '#D0021B', shadow: '0 0 0 7px #D0021B, 0 0 0 18px rgba(208,2,27,0.6), 0 0 0 32px rgba(245,166,35,0.2), inset 0 0 0 7px #D0021B, inset 0 0 0 18px rgba(208,2,27,0.45)' },
   'Fry Zone':     { color: '#D0021B', shadow: '0 0 0 9px #D0021B, 0 0 0 20px rgba(208,2,27,0.65), inset 0 0 0 9px #D0021B, inset 0 0 0 20px rgba(208,2,27,0.55)' },
