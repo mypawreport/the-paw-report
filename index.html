@@ -2783,7 +2783,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v196';
+const APP_VERSION = 'v197';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3037,7 +3037,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=196').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=197').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3185,26 +3185,22 @@ function updatePawBackground(rating) {
   document.documentElement.style.setProperty('--paw-tile-url', buildPawTileUrl(color));
 }
 function updateEdgeGlowColor(hex) {
-  // Apply a custom hex color directly as edge glow (for theme-based profile tab)
+  // Recolor the edge paw strips to match theme (no box-shadow ring)
   if (!hex) return;
-  hex = hex.replace('#','').trim();
-  if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
-  var r = parseInt(hex.slice(0,2),16)||13;
-  var g = parseInt(hex.slice(2,4),16)||148;
-  var b = parseInt(hex.slice(4,6),16)||136;
-  var shadow = '0 0 0 6px #'+hex+', 0 0 0 16px rgba('+r+','+g+','+b+',0.5), inset 0 0 0 6px #'+hex+', inset 0 0 0 14px rgba('+r+','+g+','+b+',0.35)';
-  var frames = document.querySelectorAll('.phone-frame,.app-frame,#app-root');
-  var root = document.getElementById('app-root') || document.body;
-  root.style.boxShadow = shadow;
-  // Also update the dedicated edge-light elements if present
-  document.querySelectorAll('.edge-glow,.edge-light').forEach(function(el){ el.style.boxShadow = shadow; });
+  document.querySelectorAll('.edge-paw-strip').forEach(function(el){ el.style.color = hex; });
 }
 function updateEdgeGlow(status) {
   const glow = document.getElementById('edgeGlow');
   if (!glow) return;
   initEdgePaws();
   const cfg = EDGE_COLORS[status] || EDGE_COLORS['Safe'];
-  document.querySelectorAll('.edge-paw-strip').forEach(function(el) { el.style.color = cfg.color; });
+  document.querySelectorAll('.edge-paw-strip').forEach(function(el) {
+    el.style.color = cfg.color;
+    el.style.boxShadow = ''; // never set box-shadow on strips
+  });
+  // Clear any box-shadow from app-root (no solid ring border)
+  var root = document.getElementById('app-root');
+  if (root) root.style.boxShadow = '';
   glow.classList.add('active');
   // Pulse for danger zones
   if (status === 'Danger' || status === 'Fry Zone') {
