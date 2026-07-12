@@ -41,8 +41,8 @@
 
     /* Buttons */
     .btn{display:block;width:100%;padding:14px;border:none;border-radius:15px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s}
-    .btn-primary{background:linear-gradient(135deg,#f97316,#dc2626);color:white;box-shadow:0 8px 24px rgba(249,115,22,0.4)}
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(249,115,22,0.5)}
+    .btn-primary{background:linear-gradient(135deg,#0d9488,#0f766e);color:white;box-shadow:0 8px 24px rgba(13,148,136,0.35)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(13,148,136,0.45)}
     .btn-primary:active{transform:translateY(0)}
     .btn-secondary{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:white}
     .btn-secondary:hover{background:rgba(255,255,255,0.13)}
@@ -722,7 +722,7 @@ async function handleSubscribe(tier, billing) {
   try {
     const referralCode = (document.getElementById('paywall-referral')?.value || document.getElementById('setup-referral')?.value || '').trim().toUpperCase();
     const referralApplied = referralCode.startsWith('PAW-') && referralCode.length >= 8;
-    const res = await fetch('/functions/getPetWashStations', {
+    const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -832,21 +832,37 @@ async function submitAuth() {
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>' + (isSignUpMode ? 'Creating…' : 'Signing in…');
   document.getElementById('auth-error').style.display = 'none';
   try {
-    const client = getClient();
-    if (isSignUpMode) await client.auth.register({ email, password, full_name: name });
-    await client.auth.login({ email, password });
-    currentUser = await client.auth.me();
+    if (isSignUpMode) {
+      const regRes = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/authRegister', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,full_name:name})});
+      const regData = await regRes.json();
+      if (!regRes.ok) { showAuthError(regData.error || 'Registration failed.'); return; }
+    }
+    const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/authLogin', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const data = await res.json();
+    if (!res.ok) { showAuthError(data.error || 'Invalid email or password.'); return; }
+    localStorage.setItem('paw_token', data.token);
+    localStorage.setItem('paw_user', JSON.stringify(data.user));
+    currentUser = data.user;
+    currentTier = data.user.tier || 'free';
+    if (data.prefs) {
+      userPrefs = data.prefs;
+      localStorage.setItem('paw_prefs', JSON.stringify(data.prefs));
+    }
     await onLoggedIn();
-  } catch(e) { showAuthError(e.message || 'Something went wrong.'); }
+  } catch(e) { showAuthError(e.message || 'Something went wrong. Please try again.'); }
   finally { btn.disabled = false; btn.textContent = isSignUpMode ? 'Create Account' : 'Sign In'; }
 }
 function showAuthError(msg) { const el = document.getElementById('auth-error'); el.textContent = msg; el.style.display = 'block'; }
 
 async function onLoggedIn() {
-  try {
-    const prefs = await getClient().entities.UserPreferences.filter({created_by: currentUser.id});
-    userPrefs = prefs && prefs.length > 0 ? prefs[0] : null;
-  } catch(_) { userPrefs = null; }
+  // Load prefs from backend if not already set
+  if (!userPrefs) {
+    try {
+      const token = localStorage.getItem('paw_token');
+      const r = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/authMe', {headers:{'Authorization':'Bearer '+token}});
+      if (r.ok) { const d = await r.json(); userPrefs = d.prefs || null; currentTier = d.user?.tier || currentTier; }
+    } catch(_) {}
+  }
   updateUserBar();
   if (!userPrefs) showScreen('setup');
   else { currentPetSize = userPrefs.pet_size || 'medium'; syncSizeSelectors(currentPetSize); showScreen('paywall'); renderTierDisplay(); startCountdown(); }
@@ -1048,7 +1064,7 @@ function updatePawUI(d) {
   if (['Danger','Fry Zone','Extreme Cold'].includes(d.rating)) sendDangerNotification(`⚠️ ${d.rating}: ${d.message}`);
 }
 async function fetchPawAndUpdate(lat, lon) {
-  try { const res = await fetch('/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok) updatePawUI(await res.json()); } catch(_) {}
+  try { const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok) updatePawUI(await res.json()); } catch(_) {}
 }
 function updateCrimeUI(d) {
   document.getElementById('crime-loading').style.display = 'none';
@@ -1152,10 +1168,10 @@ function showFetchError(msg) {
 async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
-    fetch('/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
-    fetch('/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
-    fetch('/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
-    fetch('/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore})}),
   ]);
   showResultCards(true);
   if(pawRes.status==='fulfilled'&&pawRes.value.ok) updatePawUI(await pawRes.value.json());
@@ -1235,7 +1251,7 @@ function showUpdateToast() {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=186').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=187').then(function(reg) {
       _swReg = reg;
       console.log('SW registered:', reg.scope);
 
