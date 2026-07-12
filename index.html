@@ -148,7 +148,7 @@
     .scale-item{flex:1;padding:4px 2px;border-radius:6px;font-size:0.52rem;text-align:center;opacity:0.25;transition:opacity 0.3s;font-weight:600}
     .scale-item.active{opacity:1}
     .scale-safe{background:rgba(74,222,128,0.2);color:#4ade80}
-    .scale-warm{background:rgba(251,191,36,0.2);color:#fbbf24}
+    .scale-warm{background:rgba(251,191,36,0.2);color:#ff7a5a}
     .scale-caution{background:rgba(245,158,11,0.15);color:#b45309}
     .scale-danger{background:rgba(248,113,113,0.2);color:#f87171}
     .scale-fry{background:rgba(255,69,0,0.2);color:#ff4500}
@@ -394,7 +394,7 @@
 .weather-tip-icon{font-size:1.1rem;flex-shrink:0;}
 .weather-tip-text{line-height:1.4;}
 /* Hot car alert banner */
-.hot-car-alert{display:none;background:#fef3c7;border:1.5px solid #f59e0b;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:0.83rem;color:#92400e;}
+.hot-car-alert{display:none;background:#fef3c7;border:1.5px solid #f97316;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:0.83rem;color:#92400e;}
 .hot-car-alert-title{font-weight:700;font-size:0.88rem;margin-bottom:3px;}
 /* Walk reminder banner */
 .walk-reminder-banner{display:none;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:12px 14px;margin-bottom:12px;}
@@ -603,7 +603,7 @@
     </div></div>
 
       <div class="notif-banner" id="notif-banner" style="display:none;">
-        <div class="notif-icon"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;fill:#fbbf24" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></div>
+        <div class="notif-icon"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;fill:#ff7a5a" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></div>
         <div class="notif-text">Get alerts when ground temps become dangerous or weather turns extreme.</div>
         <button class="notif-btn" onclick="requestNotifications()">Enable</button>
       </div>
@@ -732,7 +732,7 @@
           <div class="hourly-chart"><div class="hourly-bars" id="hourly-bars"></div></div>
           <div class="chart-legend">
             <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>Great</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>OK</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ff7a5a"></div>OK</div>
             <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>Avoid</div>
           </div>
           <!-- 7-day Gold lock -->
@@ -817,7 +817,7 @@
           <div style="display:flex;gap:12px;">
             <span style="font-size:1.4rem;flex-shrink:0;">🐕</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:700;color:#fbbf24;margin-bottom:3px;">Not all dogs feel heat the same way</div>
+              <div style="font-size:0.78rem;font-weight:700;color:#ff7a5a;margin-bottom:3px;">Not all dogs feel heat the same way</div>
               <div style="font-size:0.8rem;line-height:1.55;opacity:0.8;">
                 <strong>Flat-faced breeds</strong> (Pugs, Bulldogs, Frenchies) — overheat fastest. Even mild heat is dangerous. Keep walks short and early.<br><br>
                 <strong>Arctic breeds</strong> (Huskies, Malamutes) — struggle badly in heat, handle cold well. Avoid full sun above 70°F.<br><br>
@@ -859,7 +859,7 @@
           <div class="crime-scale">
             <div class="crime-scale-item" style="background:#4ade80" id="cs-1"></div>
             <div class="crime-scale-item" style="background:#86efac" id="cs-2"></div>
-            <div class="crime-scale-item" style="background:#fbbf24" id="cs-3"></div>
+            <div class="crime-scale-item" style="background:#ff7a5a" id="cs-3"></div>
             <div class="crime-scale-item" style="background:#f97316" id="cs-4"></div>
             <div class="crime-scale-item" style="background:#ef4444" id="cs-5"></div>
           </div>
@@ -915,7 +915,7 @@
             <div class="avatar-option" onclick="setAvatar('emoji','🌿')" title="Nature">🌿</div>
             <div class="avatar-option color-opt" onclick="setAvatar('color','#0d9488')" style="background:#0d9488;" title="Teal"></div>
             <div class="avatar-option color-opt" onclick="setAvatar('color','#8b5cf6')" style="background:#8b5cf6;" title="Purple"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#f59e0b')" style="background:#f59e0b;" title="Amber"></div>
+            <div class="avatar-option color-opt" onclick="setAvatar('color','#f97316')" style="background:#f97316;" title="Amber"></div>
             <div class="avatar-option color-opt" onclick="setAvatar('color','#ef4444')" style="background:#ef4444;" title="Red"></div>
             <div class="avatar-option color-opt" onclick="setAvatar('color','#3b82f6')" style="background:#3b82f6;" title="Blue"></div>
             <div class="avatar-option color-opt" onclick="setAvatar('color','#ec4899')" style="background:#ec4899;" title="Pink"></div>
@@ -2162,12 +2162,13 @@ function toggleNotifications() {
 }
 function getStatusColor(status) {
   const map = {
-    'Extreme Cold': '#6a0dad',
-    'Chilly': '#00bcd4',
-    'Safe': '#4caf50',
-    'Warm': '#ffeb3b',
-    'Danger': '#ff5722',
-    'Fry Zone': '#b71c1c'
+    'Extreme Cold': '#818cf8',
+    'Chilly': '#38bdf8',
+    'Safe': '#4ade80',
+    'Warm': '#ff7a5a',
+    'Hot': '#f97316',
+    'Danger': '#ef4444',
+    'Fry Zone': '#dc2626'
   };
   return map[status] || '#0d9488';
 }
@@ -2307,13 +2308,13 @@ function getRatingFromTemp(tempF, size) {
   return 'Fry Zone';
 }
 const PAW_RATING_INFO = {
-  'Extreme Cold': { emoji: '🧊', color: '#7b68ee', message: 'Dangerously cold! Ice, salt & frost can burn paws. Keep walks under 5 min.' },
-  'Chilly':       { emoji: '🌨️', color: '#5bc0de', message: 'Chilly — short walks OK. Check for ice patches & salt on pavements.' },
-  'Safe':         { emoji: '✅', color: '#5cb85c', message: 'Great walking conditions!' },
-  'Warm':         { emoji: '🌶️', color: '#f0ad4e', message: 'Warm — keep walks short and bring water.' },
-  'Hot':          { emoji: '🔶', color: '#F5A623', message: 'Hot! Limit time on pavement.' },
-  'Danger':       { emoji: '🚨', color: '#d9534f', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
-  'Fry Zone':     { emoji: '🔥', color: '#8b0000', message: 'Fry Zone! Stay off pavement entirely.' }
+  'Extreme Cold': { emoji: '🧊', color: '#818cf8', message: 'Dangerously cold! Ice, salt & frost can burn paws. Keep walks under 5 min.' },
+  'Chilly':       { emoji: '🌨️', color: '#38bdf8', message: 'Chilly — short walks OK. Check for ice patches & salt on pavements.' },
+  'Safe':         { emoji: '✅', color: '#4ade80', message: 'Great walking conditions!' },
+  'Warm':         { emoji: '🌶️', color: '#ff7a5a', message: 'Warm — keep walks short and bring water.' },
+  'Hot':          { emoji: '🔶', color: '#f97316', message: 'Hot! Limit time on pavement.' },
+  'Danger':       { emoji: '🚨', color: '#ef4444', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
+  'Fry Zone':     { emoji: '🔥', color: '#dc2626', message: 'Fry Zone! Stay off pavement entirely.' }
 };
 const PAW_SCALE_MAP = {'Extreme Cold':'extremecold','Chilly':'chilly','Safe':'safe','Warm':'warm','Hot':'caution','Danger':'danger','Fry Zone':'fry'};
 function updatePawScale(rating) {
@@ -2325,7 +2326,7 @@ function getRatingColor(rating) {
     'Extreme Cold': '#818cf8',
     'Chilly':       '#7dd3fc',
     'Safe':         '#0d9488',
-    'Warm':         '#f59e0b',
+    'Warm':         '#f97316',
     'Danger':       '#ef4444',
     'Fry Zone':     '#dc2626'
   };
@@ -2465,7 +2466,7 @@ function updateCrimeUI(d) {
     syncGlowToActiveTab();
   }
 }
-function scoreToColor(s){ if(s<10)return'#4ade80'; if(s<25)return'#86efac'; if(s<45)return'#fbbf24'; if(s<65)return'#14b8a6'; return'#f87171'; }
+function scoreToColor(s){ if(s<10)return'#4ade80'; if(s<25)return'#86efac'; if(s<45)return'#ff7a5a'; if(s<65)return'#14b8a6'; return'#f87171'; }
 function buildForecastDays(apiData) {
   // apiData may have .days (multi-day) or just .hours (today only)
   const allDays = apiData.days || [{ date: null, hours: apiData.hours || [] }];
@@ -2776,7 +2777,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v198';
+const APP_VERSION = 'v199';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3030,7 +3031,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=198').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=199').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3040,10 +3041,10 @@ const EDGE_COLORS = {
   'Extreme Cold': { color: '#818cf8', shadow: '0 0 0 6px #818cf8, 0 0 0 16px rgba(129,140,248,0.5), inset 0 0 0 6px #818cf8, inset 0 0 0 14px rgba(129,140,248,0.35)' },
   'Chilly':       { color: '#38bdf8', shadow: '0 0 0 6px #38bdf8, 0 0 0 16px rgba(56,189,248,0.5), inset 0 0 0 6px #38bdf8, inset 0 0 0 14px rgba(56,189,248,0.35)' },
   'Safe':         { color: '#4ade80', shadow: '0 0 0 6px #4ade80, 0 0 0 16px rgba(74,222,128,0.5), inset 0 0 0 6px #4ade80, inset 0 0 0 14px rgba(74,222,128,0.35)' },
-  'Low Risk':     { color: '#86efac', shadow: '0 0 0 6px #86efac, 0 0 0 14px rgba(134,239,172,0.5), inset 0 0 0 6px #86efac, inset 0 0 0 14px rgba(134,239,172,0.35)' },
-  'Moderate':     { color: '#fbbf24', shadow: '0 0 0 6px #fbbf24, 0 0 0 14px rgba(251,191,36,0.5), inset 0 0 0 6px #fbbf24, inset 0 0 0 14px rgba(251,191,36,0.35)' },
-  'Warm':         { color: '#f97316', shadow: '0 0 0 6px #f97316, 0 0 0 16px rgba(249,115,22,0.55), inset 0 0 0 6px #f97316, inset 0 0 0 14px rgba(249,115,22,0.35)' },
-  'Hot':          { color: '#f59e0b', shadow: '0 0 0 6px #f59e0b, 0 0 0 18px rgba(245,158,11,0.6), 0 0 0 28px rgba(245,158,11,0.25), inset 0 0 0 6px #f59e0b, inset 0 0 0 16px rgba(245,158,11,0.35)' },
+  'Low Risk':     { color: '#4ade80', shadow: '0 0 0 6px #4ade80, 0 0 0 14px rgba(74,222,128,0.5), inset 0 0 0 6px #4ade80, inset 0 0 0 14px rgba(74,222,128,0.35)' },
+  'Moderate':     { color: '#ff7a5a', shadow: '0 0 0 6px #ff7a5a, 0 0 0 14px rgba(255,122,90,0.5), inset 0 0 0 6px #ff7a5a, inset 0 0 0 14px rgba(255,122,90,0.35)' },
+  'Warm':         { color: '#ff7a5a', shadow: '0 0 0 6px #ff7a5a, 0 0 0 16px rgba(255,122,90,0.55), inset 0 0 0 6px #ff7a5a, inset 0 0 0 14px rgba(255,122,90,0.35)' },
+  'Hot':          { color: '#f97316', shadow: '0 0 0 6px #f97316, 0 0 0 18px rgba(249,115,22,0.6), 0 0 0 28px rgba(249,115,22,0.25), inset 0 0 0 6px #f97316, inset 0 0 0 16px rgba(249,115,22,0.35)' },
   'Danger':       { color: '#ef4444', shadow: '0 0 0 7px #ef4444, 0 0 0 18px rgba(239,68,68,0.6), 0 0 0 32px rgba(239,68,68,0.2), inset 0 0 0 7px #ef4444, inset 0 0 0 18px rgba(239,68,68,0.45)' },
   'Fry Zone':     { color: '#dc2626', shadow: '0 0 0 9px #dc2626, 0 0 0 22px rgba(220,38,38,0.65), inset 0 0 0 9px #dc2626, inset 0 0 0 20px rgba(220,38,38,0.55)' },
 };
@@ -3496,7 +3497,7 @@ function renderWalkHistory() {
   if (emptyEl) emptyEl.style.display = 'none';
   if (clearBtn) clearBtn.style.display = 'block';
   listEl.style.display = 'block';
-  var RATING_COLORS = {'Safe':'#4ade80','Warm':'#fbbf24','Hot':'#F5A623','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Extreme Cold':'#818cf8'};
+  var RATING_COLORS = {'Safe':'#4ade80','Warm':'#ff7a5a','Hot':'#f97316','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Extreme Cold':'#818cf8'};
   listEl.innerHTML = hist.slice(0,20).map(function(e) {
     var col = RATING_COLORS[e.rating] || '#94a3b8';
     return '<div style="padding:10px 0;border-bottom:1px solid #e2e8f0;">' +
