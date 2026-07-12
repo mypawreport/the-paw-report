@@ -36,7 +36,14 @@
     --c-transition: all 0.2s;
   }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(160deg,#eaf0e8 0%,#e2ece0 50%,#e8ede5 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:var(--c-slate);transition:background 1.2s ease}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#eaf0e8;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:var(--c-slate);transition:background-color 1.2s ease}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+      background-image:var(--paw-tile-url);
+      background-size:72px 72px;
+      opacity:0.18;
+      transition:opacity 0.8s ease;
+    }
+    #app-root{position:relative;z-index:1;width:100%;max-width:480px;}
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
@@ -2298,6 +2305,7 @@ function getRatingColor(rating) {
 // Background gradients per rating × time of day
 // Each rating has: dawn, day, dusk, night
 function updateDynamicColors(rating) {
+  updatePawBackground(rating);
   // Don't force the edge glow to the temperature rating here — if the Safety tab is
   // open, this used to override the crime-rating glow every time a report refreshed
   // in the background, causing the edge lighting to mismatch whatever tab was showing.
@@ -2740,7 +2748,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v189';
+const APP_VERSION = 'v190';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2908,6 +2916,8 @@ function playBarkSound() {
     lockedMsg.style.display = hasLocked ? 'block' : 'none';
   }
   function initTheme() {
+    // Set default paw tile color before first fetch
+    updatePawBackground('Safe');
     try {
       const saved = localStorage.getItem(LS_THEME) || 'midnight';
       // Defer slightly so DOM is ready
@@ -2975,10 +2985,33 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=189').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=190').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
+}
+
+// ── Dynamic Paw Print Background ──
+const PAW_TIER_COLORS = {
+  'Extreme Cold': '#0EA5E9',
+  'Chilly':       '#38BDF8',
+  'Safe':         '#22C55E',
+  'Warm':         '#FF7A5A',
+  'Hot':          '#F97316',
+  'Danger':       '#EF4444',
+  'Fry Zone':     '#DC2626',
+};
+function buildPawTileUrl(hexColor) {
+  // Inline SVG paw print, URL-encoded, as a CSS background-image
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" fill="' + hexColor + '">'
+    + '<g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g>'
+    + '<g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g>'
+    + '</svg>';
+  return "url("data:image/svg+xml," + encodeURIComponent(svg) + "")";
+}
+function updatePawBackground(rating) {
+  var color = PAW_TIER_COLORS[rating] || '#22C55E';
+  document.documentElement.style.setProperty('--paw-tile-url', buildPawTileUrl(color));
 }
 const EDGE_COLORS = {
   'Extreme Cold': { color: '#003366', shadow: '0 0 0 6px #003366, 0 0 0 14px rgba(0,51,102,0.5), inset 0 0 0 6px #003366, inset 0 0 0 14px rgba(0,51,102,0.35)' },
