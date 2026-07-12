@@ -356,6 +356,12 @@
     .avatar-picker-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:10px; }
     .avatar-option { width:44px; height:44px; border-radius:50%; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; transition:var(--c-transition); background:#f1f5f9; }
     .avatar-option:hover, .avatar-option.selected { border-color:var(--c-teal); background:#e6fffa; transform:scale(1.1); }
+    /* Profile tab tinted background */
+    #tab-profile {
+      background: linear-gradient(160deg, rgba(var(--profile-tint-rgb,13,148,136),0.10) 0%, rgba(var(--profile-tint-rgb,13,148,136),0.04) 40%, transparent 70%);
+      border-radius: 16px;
+      transition: background 0.6s ease;
+    }
     .avatar-option.color-opt { font-size:0; }
     .avatar-edit-section { text-align:center; }
     .avatar-large { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 8px; border:3px solid var(--c-border); cursor:pointer; transition:var(--c-transition); }
@@ -1489,6 +1495,12 @@ function showScreen(id) {
 }
 function showTab(tab) {
     if (tab === 'profile') {
+      // Sync profile tint to current theme
+      try {
+        var _savedTheme = localStorage.getItem('paw_theme') || 'midnight';
+        var _tObj = typeof THEMES !== 'undefined' && THEMES.find(function(x){return x.id===_savedTheme;});
+        if (_tObj) applyProfileTint(_tObj.colors[1]);
+      } catch(e) {}
       setTimeout(renderThemeGrid, 50);
       loadAlertSettingToggles();
       setTimeout(function(){ if(typeof renderAvatar==='function') renderAvatar(); }, 80);
@@ -2743,7 +2755,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v193';
+const APP_VERSION = 'v194';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2888,9 +2900,24 @@ function playBarkSound() {
       }
       // Re-render avatar so gradient uses new --accent/--accent2 immediately
       if (typeof renderAvatar === 'function') renderAvatar();
+      // Tint profile tab background to match theme
+      if (t) applyProfileTint(t.colors[1]);
     } catch(e) { console.warn('Theme apply error:', e); }
   }
-  function renderThemeGrid() {
+  function hexToRgb(hex) {
+    hex = hex.replace('#','');
+    if (hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+    var r = parseInt(hex.slice(0,2),16);
+    var g = parseInt(hex.slice(2,4),16);
+    var b = parseInt(hex.slice(4,6),16);
+    return r+','+g+','+b;
+  }
+  function applyProfileTint(accent) {
+    try {
+      document.documentElement.style.setProperty('--profile-tint-rgb', hexToRgb(accent || '#0d9488'));
+    } catch(e) {}
+  }
+function renderThemeGrid() {
     const grid = document.getElementById('theme-grid');
     const lockedMsg = document.getElementById('theme-locked-msg');
     if (!grid) return;
@@ -2980,7 +3007,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=193').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=194').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
