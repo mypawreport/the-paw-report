@@ -2971,9 +2971,33 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=183').then(function(reg) {
-      if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    navigator.serviceWorker.register('./sw.js?v=184').then(function(reg) {
+      // If a new SW is already waiting, activate it immediately
+      function activateWaiting() {
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+      }
+      activateWaiting();
+      // Watch for a new SW installing
+      reg.addEventListener('updatefound', function() {
+        var newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', function() {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New SW installed and waiting — activate it now without waiting
+            newWorker.postMessage({ type: 'SKIP_WAITING' });
+          }
+        });
+      });
+      // Poll for updates every 60 seconds so long-open sessions get updates too
+      setInterval(function() { reg.update(); }, 60000);
     }).catch(function() {});
+    // When the SW controller changes (new SW took over), reload once for fresh code
+    var refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (!refreshing) { refreshing = true; window.location.reload(); }
+    });
   });
 }
 const EDGE_COLORS = {
