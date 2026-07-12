@@ -24,6 +24,8 @@
   <meta name="theme-color" content="#0d9488"/>
   <style>  :root {
     --c-teal: #0d9488;
+    --accent: #0d9488;
+    --accent2: #4a7c59;
     --c-slate: #1e293b;
     --c-muted: #64748b;
     --c-border: #e2e8f0;
@@ -47,7 +49,7 @@
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
-    .title-gradient{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    .title-gradient{background:linear-gradient(90deg,var(--accent,#0d9488),var(--accent2,#4a7c59));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--accent,#0d9488)}
     .header p{font-size:0.82rem;opacity:0.55}
     /* Cards */
     .card{background:#ffffff;backdrop-filter:blur(20px);border:1px solid var(--c-border);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
@@ -2748,7 +2750,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v191';
+const APP_VERSION = 'v192';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2985,7 +2987,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=191').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=192').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
