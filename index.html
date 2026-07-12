@@ -1889,7 +1889,7 @@ async function doLogout() {
   var overlay = document.getElementById('logout-confirm-modal');
   if (overlay) overlay.remove();
   try { await authLogout(); } catch(_) {}
-  currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
+  currentUser = null; userPrefs = null; stopTracking(); localStorage.removeItem('paw_token'); localStorage.removeItem('paw_user'); localStorage.removeItem('paw_prefs'); localStorage.removeItem('paw_tier'); window.location.href = window.location.pathname + '?v=' + Date.now();
 }
 function selectSetupSize(size, el) { setupSize = size; document.querySelectorAll('#screen-setup .size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
 async function saveProfile() {
@@ -2970,7 +2970,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js?v=181').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js?v=182').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
