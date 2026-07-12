@@ -546,7 +546,7 @@
   <div id="screen-main" class="screen">
     <div class="user-bar">
       <div class="user-info">
-        <div class="user-avatar" id="user-avatar">?</div>
+        <div class="user-avatar" id="user-avatar" style="background:linear-gradient(135deg,#0d9488,#4a7c59)"></div>
         <div>
           <div class="user-name" id="user-name-display">--</div>
           <div class="user-email" id="user-email-display">--</div>
@@ -901,7 +901,7 @@
         <button class="btn btn-secondary" onclick="showEditProfile()" style="margin-top:10px;font-size:0.82rem;padding:10px">✏️ Edit Profile</button>
         <div style="margin-top:14px;border-top:1px solid #e2e8f0;padding-top:12px;" class="avatar-edit-section">
           <div style="font-size:0.78rem;color:#64748b;margin-bottom:6px;font-weight:600;">🎨 Avatar</div>
-          <div class="avatar-large" id="avatar-large-preview" onclick="toggleAvatarPicker()">?</div>
+          <div class="avatar-large" id="avatar-large-preview" onclick="toggleAvatarPicker()" style="background:linear-gradient(135deg,#0d9488,#4a7c59)"></div>
           <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Tap to change</div>
           <div class="avatar-picker-row" id="avatar-picker" style="display:none;">
             <div class="avatar-option" onclick="setAvatar('emoji','🐶')" title="Dog">🐶</div>
@@ -2124,10 +2124,30 @@ function handleDangerAlertToggle(checked) {
 }
 function handleTrayWidgetToggle(checked) {
   if (checked) {
-    toggleTrayWidget();
+    // Save preference immediately so toggle stays ON
+    saveAlertSetting('trayWidget', true);
+    trayWidgetEnabled = true;
+    // Request notification permission if not yet granted
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      Notification.requestPermission().then(function(perm) {
+        if (perm === 'granted') {
+          showTrayNotification();
+          trayIntervalId = trayIntervalId || setInterval(showTrayNotification, 30 * 60 * 1000);
+        } else {
+          showToast('🔔 Allow notifications in browser settings to use the tray widget.', 4000);
+          // Keep preference saved — user can grant later
+        }
+      });
+    } else if (Notification.permission === 'granted') {
+      showTrayNotification();
+      trayIntervalId = trayIntervalId || setInterval(showTrayNotification, 30 * 60 * 1000);
+    }
+    showToast('Tray widget enabled! 🐾');
   } else {
+    trayWidgetEnabled = false;
     saveAlertSetting('trayWidget', false);
-    stopTrayWidget && stopTrayWidget();
+    localStorage.setItem(LS_TRAY, 'false');
+    if (trayIntervalId) { clearInterval(trayIntervalId); trayIntervalId = null; }
     showToast('Tray widget disabled.');
   }
 }
@@ -2755,7 +2775,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v194';
+const APP_VERSION = 'v195';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2902,6 +2922,8 @@ function playBarkSound() {
       if (typeof renderAvatar === 'function') renderAvatar();
       // Tint profile tab background to match theme
       if (t) applyProfileTint(t.colors[1]);
+      // Update edge glow if on profile tab
+      if (currentActiveTab === 'profile' && t) { setTimeout(function(){ updateEdgeGlowColor(t.colors[1]); }, 20); }
     } catch(e) { console.warn('Theme apply error:', e); }
   }
   function hexToRgb(hex) {
@@ -3007,7 +3029,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=194').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=195').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3043,9 +3065,14 @@ function syncGlowToActiveTab() {
   } else if (currentActiveTab === 'report' && lastPawData) {
     updateEdgeGlow(lastPawData.rating);
   }
-  // wash/profile: fade glow to neutral
-  if (currentActiveTab === 'wash' || currentActiveTab === 'profile') {
+  // wash: fade glow to neutral; profile: use theme accent color
+  if (currentActiveTab === 'wash') {
     updateEdgeGlow('Safe');
+  }
+  if (currentActiveTab === 'profile') {
+    // Use the active theme accent as the edge glow color
+    var _themeAccent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0d9488';
+    updateEdgeGlowColor(_themeAccent);
   }
 }
 const PAW_ICON_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg>';
@@ -3126,6 +3153,21 @@ window.addEventListener('resize', function() {
 window.addEventListener('load', function() {
   setTimeout(function() { initEdgePaws(true); }, 1200);
 });
+function updateEdgeGlowColor(hex) {
+  // Apply a custom hex color directly as edge glow (for theme-based profile tab)
+  if (!hex) return;
+  hex = hex.replace('#','').trim();
+  if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+  var r = parseInt(hex.slice(0,2),16)||13;
+  var g = parseInt(hex.slice(2,4),16)||148;
+  var b = parseInt(hex.slice(4,6),16)||136;
+  var shadow = '0 0 0 6px #'+hex+', 0 0 0 16px rgba('+r+','+g+','+b+',0.5), inset 0 0 0 6px #'+hex+', inset 0 0 0 14px rgba('+r+','+g+','+b+',0.35)';
+  var frames = document.querySelectorAll('.phone-frame,.app-frame,#app-root');
+  var root = document.getElementById('app-root') || document.body;
+  root.style.boxShadow = shadow;
+  // Also update the dedicated edge-light elements if present
+  document.querySelectorAll('.edge-glow,.edge-light').forEach(function(el){ el.style.boxShadow = shadow; });
+}
 function updateEdgeGlow(status) {
   const glow = document.getElementById('edgeGlow');
   if (!glow) return;
