@@ -2028,7 +2028,14 @@ function updateNotifBtn() {
   else { btn.textContent = 'Enable'; }
 }
 // Tray widget (persistent notification)
-let trayWidgetEnabled = localStorage.getItem(LS_TRAY) === 'true';
+let trayWidgetEnabled = (function(){
+  try {
+    var s = JSON.parse(localStorage.getItem('pawAlertSettings') || '{}');
+    // pawAlertSettings is authoritative; fall back to old LS_TRAY key
+    if (s.trayWidget !== undefined) return s.trayWidget === true;
+    return localStorage.getItem(LS_TRAY) === 'true';
+  } catch(_) { return false; }
+})();
 let trayIntervalId = null;
 function toggleTrayWidget() {
   if (!('Notification' in window)) {
@@ -2039,6 +2046,7 @@ function toggleTrayWidget() {
     // Turn off
     trayWidgetEnabled = false;
     localStorage.setItem(LS_TRAY, 'false');
+    saveAlertSetting('trayWidget', false);
     var _tb = document.getElementById('tray-toggle-btn'); if (_tb) _tb.textContent = 'Enable';
     if (trayIntervalId) { clearInterval(trayIntervalId); trayIntervalId = null; }
   } else {
@@ -2047,6 +2055,7 @@ function toggleTrayWidget() {
       if (perm === 'granted') {
         trayWidgetEnabled = true;
         localStorage.setItem(LS_TRAY, 'true');
+        saveAlertSetting('trayWidget', true);
         var _tb2 = document.getElementById('tray-toggle-btn'); if (_tb2) _tb2.textContent = 'Disable';
         showTrayNotification();
         // Refresh tray every 30 minutes
@@ -2731,7 +2740,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v188';
+const APP_VERSION = 'v189';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2966,7 +2975,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=188').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=189').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
