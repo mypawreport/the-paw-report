@@ -97,7 +97,7 @@
     .form-input{width:100%;background:var(--c-bg);border:1px solid #d1d5db;border-radius:12px;padding:11px 13px;color:var(--c-slate);font-size:0.9rem;outline:none}
     .form-input::placeholder{opacity:0.4}
     .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid #d1d5db;background:var(--c-bg);color:var(--c-slate);font-size:0.8rem;font-weight:600;cursor:pointer;transition:var(--c-transition);text-align:center}
-    .size-btn.active{background:rgba(13,148,136,0.2);border-color:var(--c-teal)}
+    .size-btn.active{background:rgba(var(--glow,13,148,136),0.2);border-color:var(--accent,var(--c-teal));color:var(--accent,var(--c-teal))}
     /* Paywall */
     .paywall-hero{text-align:center;padding:20px 10px 10px;background:#fff}
     .paywall-hero-icon{font-size:3rem;display:block;margin-bottom:8px}
@@ -131,9 +131,9 @@
     .referral-section{margin-top:10px;padding:14px;background:#f0fdf9;border:1px solid #99f6e4;border-radius:14px;text-align:center;box-shadow:0 2px 8px rgba(249,115,22,0.08)}
     .referral-title{font-size:0.82rem;font-weight:700;margin-bottom:4px;color:var(--c-slate)}
     .referral-sub{font-size:0.75rem;color:#6b7280;margin-bottom:10px}
-    .referral-input{flex:1;background:#fff;border:1.5px solid var(--c-border);border-radius:10px;padding:9px 12px;color:var(--c-slate);font-size:0.85rem;outline:none}
+    .referral-input{flex:1;min-width:0;background:#fff;border:1.5px solid var(--c-border);border-radius:10px;padding:9px 10px;color:var(--c-slate);font-size:0.82rem;outline:none}
     .referral-input::placeholder{opacity:0.4}
-    .referral-apply-btn{padding:9px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--c-teal),#dc2626);color:var(--c-slate);font-size:0.82rem;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(234,88,12,0.25)}
+    .referral-apply-btn{flex-shrink:0;padding:9px 13px;border-radius:10px;border:none;background:var(--accent,#0d9488);color:#fff;font-size:0.8rem;font-weight:700;cursor:pointer;white-space:nowrap}
     .referral-success{font-size:0.78rem;color:#4ade80;margin-top:6px;display:none}
     /* Main dashboard */
     .status-bar{display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.78rem;margin-bottom:10px}
@@ -173,7 +173,7 @@
     .crime-scale{display:flex;gap:3px;margin-bottom:9px}
     .crime-scale-item{flex:1;height:5px;border-radius:3px;opacity:0.2;transition:opacity 0.3s}
     .crime-scale-item.active{opacity:1}
-    .referral-input-row,.crime-stats-row{display:flex;gap:7px}
+    .referral-input-row,.crime-stats-row{display:flex;gap:6px;align-items:center;flex-wrap:nowrap}
     .crime-stat{flex:1;background:var(--c-bg);border-radius:10px;padding:9px;text-align:center}
     .crime-stat-val{font-size:0.92rem;font-weight:700}
     .crime-stat-label{font-size:0.6rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px}
@@ -189,11 +189,11 @@
     .station-tag{font-size:0.65rem;opacity:0.7;background:var(--c-bg);padding:2px 7px;border-radius:20px}
     .station-dist{font-size:0.72rem;font-weight:600;opacity:0.65;flex-shrink:0}
     .station-links{display:flex;gap:7px;margin-top:5px}
-    .station-link{font-size:0.68rem;color:var(--c-teal);text-decoration:none}
+    .station-link{font-size:0.68rem;color:var(--accent,var(--c-teal));text-decoration:none}
     /* Walk time */
     .best-time-hero{text-align:center;margin-bottom:14px}
     .best-time-icon{font-size:2.8rem;display:block;margin-bottom:6px}
-    .best-time-window{font-size:1.55rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:var(--c-teal)}
+    .best-time-window{font-size:1.55rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:var(--accent,var(--c-teal))}
     .best-time-rec{font-size:0.86rem;opacity:0.8;line-height:1.5;max-width:300px;margin:0 auto}
     .hourly-chart{margin-top:14px;overflow-x:auto;padding-bottom:4px}
     .hourly-bars{display:flex;gap:3px;align-items:flex-end;height:65px;min-width:max-content}
@@ -201,9 +201,9 @@
     .hourly-bar-wrap{height:50px;display:flex;align-items:flex-end}
     .hourly-bar{width:19px;border-radius:4px 4px 0 0;transition:opacity 0.2s;min-height:4px}
     .hourly-bar.past{opacity:0.22}
-    .hourly-bar.best-bar{outline:2px solid var(--c-teal);outline-offset:2px}
+    .hourly-bar.best-bar{outline:2px solid var(--accent,var(--c-teal));outline-offset:2px}
     .hourly-label{font-size:0.53rem;opacity:0.45;white-space:nowrap}
-    .hourly-label.best-label{opacity:1;color:var(--c-teal);font-weight:700}
+    .hourly-label.best-label{opacity:1;color:var(--accent,var(--c-teal));font-weight:700}
     .chart-legend{display:flex;gap:10px;margin-top:9px;justify-content:center}
     .legend-item{display:flex;align-items:center;gap:4px;font-size:0.65rem;opacity:0.55}
     .legend-dot{width:8px;height:8px;border-radius:2px}
@@ -241,12 +241,12 @@
     .app-footer{text-align:center;font-size:0.65rem;opacity:0.25;margin-top:14px;line-height:1.8}
     .app-footer a{color:var(--c-teal);text-decoration:none}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(13,148,136,0.3);border-top-color:var(--c-teal);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:5px}
+    .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(var(--glow,13,148,136),0.3);border-top-color:var(--accent,var(--c-teal));border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:5px}
     /* Nav tabs */
     .bottom-nav{display:flex;gap:4px;margin-bottom:12px;background:var(--c-bg);border-radius:14px;padding:4px}
     .nav-btn{flex:1;padding:8px 4px;border-radius:10px;border:none;background:none;color:var(--c-slate);font-size:0.7rem;font-weight:600;cursor:pointer;opacity:0.45;transition:var(--c-transition);display:flex;flex-direction:column;align-items:center;gap:2px}
     .nav-btn .nav-icon{font-size:1.1rem}
-    .nav-btn.active{background:rgba(13,148,136,0.3);opacity:1}
+    .nav-btn.active{background:rgba(var(--glow,13,148,136),0.22);opacity:1;color:var(--accent,#0d9488)}
     /* Edge glow system */
     .edge-glow {
       position: fixed;
@@ -370,24 +370,24 @@
 /* ── Forecast strip ───────────────────────────── */
 .forecast-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
 .forecast-tab{flex:1;min-width:60px;padding:6px 4px;border:1.5px solid var(--c-border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:#475569;cursor:pointer;text-align:center;transition:.2s;}
-.forecast-tab.active{background:var(--c-teal);color:#fff;border-color:var(--c-teal);}
+.forecast-tab.active{background:var(--accent,var(--c-teal));color:#fff;border-color:var(--accent,var(--c-teal));}
 .forecast-tab.gold-tab{border-color:#d97706;color:#92400e;}
 .forecast-tab.gold-tab.active{background:#d97706;border-color:#d97706;color:#fff;}
 .forecast-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
 .forecast-strip::-webkit-scrollbar{display:none;}
 .forecast-day-card{flex:0 0 auto;width:80px;background:#f8fafc;border:1.5px solid var(--c-border);border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;transition:.2s;}
-.forecast-day-card.active{border-color:var(--c-teal);background:#f0fdfa;}
+.forecast-day-card.active{border-color:var(--accent,var(--c-teal));background:rgba(var(--glow,13,148,136),0.07);}
 .forecast-day-card.gold-locked{opacity:.55;pointer-events:none;}
 .forecast-day-card .fdc-day{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;}
 .forecast-day-card .fdc-icon{font-size:22px;margin:4px 0;}
-.forecast-day-card .fdc-best{font-size:11px;font-weight:600;color:var(--c-teal);}
+.forecast-day-card .fdc-best{font-size:11px;font-weight:600;color:var(--accent,var(--c-teal));}
 .forecast-day-card .fdc-temp{font-size:10px;color:var(--c-muted);}
 .forecast-day-card .fdc-lock{font-size:14px;}
 .forecast-7day-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px;}
 .forecast-7day-row:last-child{border-bottom:none;}
 .f7-day{width:60px;font-weight:600;color:#334155;}
 .f7-icon{font-size:18px;width:28px;text-align:center;}
-.f7-best{color:var(--c-teal);font-weight:600;flex:1;text-align:center;}
+.f7-best{color:var(--accent,var(--c-teal));font-weight:600;flex:1;text-align:center;}
 .f7-temp{color:var(--c-muted);text-align:right;}
 /* Weather tip banner */
 .weather-tip{display:none;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:0.82rem;color:#0369a1;align-items:flex-start;gap:8px;}
@@ -424,7 +424,7 @@
 </head>
 <body>
   <!-- ── AUTO-UPDATE BANNER ── -->
-  <div id="update-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#0d9488;color:#fff;text-align:center;padding:10px 16px;font-size:0.88rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;animation:slideDown 0.3s ease;" onclick="applyUpdate()">
+  <div id="update-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:var(--accent,#0d9488);color:#fff;text-align:center;padding:10px 16px;font-size:0.88rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;animation:slideDown 0.3s ease;" onclick="applyUpdate()">
     🔄 Update available — tap to refresh
   </div>
   <style>
@@ -597,7 +597,7 @@
       <h2 style="color:#0d9488;font-size:1.4rem;margin-bottom:12px;">Location Access Needed</h2>
       <p style="color:#475569;font-size:0.95rem;line-height:1.5;margin-bottom:8px;">The Paw Report needs your location to check pavement temperature and safety conditions for your dog.</p>
       <p style="color:#64748b;font-size:0.85rem;line-height:1.5;margin-bottom:24px;">Tap <strong>Allow</strong> when your browser asks — your location is never stored or shared.</p>
-      <button onclick="requestLocationPermission()" style="background:linear-gradient(135deg,#0d9488,#0a7c72);color:#fff;border:none;border-radius:14px;padding:16px 32px;font-size:1.05rem;font-weight:700;cursor:pointer;width:100%;max-width:320px;margin-bottom:12px;">📍 Allow Location Access</button>
+      <button onclick="requestLocationPermission()" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:14px;padding:16px 32px;font-size:1.05rem;font-weight:700;cursor:pointer;width:100%;max-width:320px;margin-bottom:12px;">📍 Allow Location Access</button>
       <p id="location-gate-error" style="color:#ef4444;font-size:0.85rem;margin-top:8px;display:none;"></p>
       <p style="color:#94a3b8;font-size:0.78rem;margin-top:16px;line-height:1.4;">If you already denied location, tap the 🔒 lock icon in your browser address bar → <strong>Permissions</strong> → <strong>Location → Allow</strong>, then reload the app.</p>
     </div></div>
@@ -623,7 +623,7 @@
         </div>
         <!-- 🚗 Hot car quick check -->
         <div id="hotcar-test-bar" style="display:none;margin-top:8px;text-align:center;">
-          <button onclick="testHotCarAlert()" style="background:linear-gradient(135deg,#0d9488,#0a7c72);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;">🚗 Just Parked? Check Back Seat</button>
+          <button onclick="testHotCarAlert()" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;">🚗 Just Parked? Check Back Seat</button>
           <div id="hotcar-gps-status" style="font-size:0.72rem;color:#64748b;margin-top:4px;"></div>
         </div>
 
@@ -784,7 +784,7 @@
           <div style="display:flex;gap:12px;margin-bottom:16px;">
             <span style="font-size:1.4rem;flex-shrink:0;">🧊</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:700;color:#0d9488;margin-bottom:3px;">Cold hurts paws too</div>
+              <div style="font-size:0.78rem;font-weight:700;color:var(--accent,#0d9488);margin-bottom:3px;">Cold hurts paws too</div>
               <div style="font-size:0.8rem;line-height:1.55;opacity:0.8;">Ice, snow, and especially <strong>road salt</strong> can crack and burn paws just like heat. Rinse your dog's paws after every winter walk — even if it doesn't look icy.</div>
             </div>
           </div>
@@ -792,7 +792,7 @@
           <div style="display:flex;gap:12px;margin-bottom:16px;">
             <span style="font-size:1.4rem;flex-shrink:0;">💧</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:700;color:#0d9488;margin-bottom:3px;">Hydration matters more than you think</div>
+              <div style="font-size:0.78rem;font-weight:700;color:var(--accent,#0d9488);margin-bottom:3px;">Hydration matters more than you think</div>
               <div style="font-size:0.8rem;line-height:1.55;opacity:0.8;">Dogs cool themselves by panting — not sweating. Offer water <strong>every 15–20 minutes</strong> on hot days. Small dogs and flat-faced breeds (pugs, bulldogs) overheat faster.</div>
             </div>
           </div>
@@ -1064,9 +1064,9 @@
         <div style="font-size:1.1rem;font-weight:800;color:#1a1a1a;margin-top:6px;">Recover Your Access</div>
         <div style="font-size:0.83rem;color:#666;margin-top:4px;">Enter the email you used when you subscribed and we'll restore your account instantly — no payment needed.</div>
       </div>
-      <input id="recovery-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid #0d9488;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
+      <input id="recovery-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid var(--accent,#0d9488);border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
       <div id="recovery-msg" style="font-size:0.82rem;color:#c00;margin-bottom:8px;min-height:18px;text-align:center;"></div>
-      <button onclick="recoverAccess()" style="width:100%;background:#0d9488;color:#1e293b;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Restore My Subscription</button>
+      <button onclick="recoverAccess()" style="width:100%;background:var(--accent,#0d9488);color:#fff;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Restore My Subscription</button>
       <button onclick="hideRecoveryModal()" style="width:100%;background:none;border:none;color:#999;margin-top:10px;cursor:pointer;font-size:0.85rem;">Cancel</button>
     </div>
   </div>
@@ -1080,15 +1080,15 @@
         <div id="pwreset-sub" style="font-size:0.83rem;color:#666;margin-top:4px;">Enter your account email and we'll send you a reset code.</div>
       </div>
       <div id="pwreset-step1">
-        <input id="pwreset-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid #0d9488;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
+        <input id="pwreset-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid var(--accent,#0d9488);border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
         <div id="pwreset-msg1" style="font-size:0.82rem;color:#c00;margin-bottom:8px;min-height:18px;text-align:center;"></div>
-        <button onclick="requestPasswordReset()" style="width:100%;background:#0d9488;color:#1e293b;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Send Reset Code</button>
+        <button onclick="requestPasswordReset()" style="width:100%;background:var(--accent,#0d9488);color:#fff;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Send Reset Code</button>
       </div>
       <div id="pwreset-step2" style="display:none;">
-        <input id="pwreset-code" type="text" inputmode="numeric" placeholder="6-digit code" style="width:100%;padding:12px;border:2px solid #0d9488;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
-        <input id="pwreset-newpass" type="password" placeholder="New password" style="width:100%;padding:12px;border:2px solid #0d9488;border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
+        <input id="pwreset-code" type="text" inputmode="numeric" placeholder="6-digit code" style="width:100%;padding:12px;border:2px solid var(--accent,#0d9488);border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
+        <input id="pwreset-newpass" type="password" placeholder="New password" style="width:100%;padding:12px;border:2px solid var(--accent,#0d9488);border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
         <div id="pwreset-msg2" style="font-size:0.82rem;color:#c00;margin-bottom:8px;min-height:18px;text-align:center;"></div>
-        <button onclick="submitPasswordReset()" style="width:100%;background:#0d9488;color:#1e293b;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Reset Password</button>
+        <button onclick="submitPasswordReset()" style="width:100%;background:var(--accent,#0d9488);color:#fff;border:none;border-radius:10px;padding:13px;font-size:1rem;font-weight:700;cursor:pointer;">Reset Password</button>
       </div>
       <button onclick="hidePasswordResetModal()" style="width:100%;background:none;border:none;color:#999;margin-top:10px;cursor:pointer;font-size:0.85rem;">Cancel</button>
     </div>
@@ -1120,7 +1120,7 @@
         <p style="margin:0;">The coloured border (edge lighting) displayed around the screen is a <strong>visual aid only</strong>. Its appearance — including brightness, colour accuracy, and visibility — may vary significantly depending on your device model, screen settings, brightness level, or power-saving mode. <strong>Edge lighting must not be relied upon as your sole safety indicator.</strong> Always read the temperature value and safety rating text shown on screen, and perform the 7-second hand test before every walk.</p>
       </div>
       <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:16px;font-size:0.82rem;color:#374151;line-height:1.5;">
-        <input type="checkbox" id="disclaimer-checkbox" onchange="toggleDisclaimerBtn()" style="width:18px;height:18px;margin-top:2px;accent-color:#0d9488;flex-shrink:0;">
+        <input type="checkbox" id="disclaimer-checkbox" onchange="toggleDisclaimerBtn()" style="width:18px;height:18px;margin-top:2px;accent-color:var(--accent,#0d9488);flex-shrink:0;">
         <span>I have read and understood the disclaimer above. I agree that ground temperatures are estimates only, that edge lighting is a visual aid and may vary by device, and I accept full responsibility for my pet's safety. I will not hold The Paw Report, its owners, or its developers liable for any injury or harm.</span>
       </label>
       <button id="disclaimer-agree-btn" onclick="agreeDisclaimer()" disabled style="width:100%;padding:14px;border-radius:10px;border:none;background:#94a3b8;color:#fff;font-size:0.95rem;font-weight:700;cursor:not-allowed;transition:all 0.2s;">
@@ -1679,7 +1679,7 @@ function manageSubscription() {
   planLine.style.cssText = 'font-size:0.82rem;color:#64748b;margin-bottom:16px;';
   planLine.textContent = 'Current plan: ' + tierName;
   var priceLine = document.createElement('div');
-  priceLine.style.cssText = 'font-size:0.88rem;font-weight:700;color:#0d9488;margin-bottom:16px;';
+  priceLine.style.cssText = 'font-size:0.88rem;font-weight:700;color:var(--accent,#0d9488);margin-bottom:16px;';
   var planPrice = (PRICES[currentTier] && PRICES[currentTier].monthly) ? (PRICES[currentTier].monthly.launch || PRICES[currentTier].monthly.regular) + PRICES[currentTier].monthly.period : '';
   priceLine.textContent = planPrice ? planPrice + ' · Active' : 'Active';
   var cancelBtn = document.createElement('button');
@@ -1697,7 +1697,7 @@ function manageSubscription() {
   if (currentTier !== 'gold') {
     var upgradeBtn = document.createElement('button');
     upgradeBtn.textContent = '⬆️ Change / Upgrade Plan';
-    upgradeBtn.style.cssText = 'width:100%;padding:11px;border:none;border-radius:10px;background:#0d9488;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:8px;';
+    upgradeBtn.style.cssText = 'width:100%;padding:11px;border:none;border-radius:10px;background:var(--accent,#0d9488);color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:8px;';
     upgradeBtn.onclick = function(){ overlay.remove(); showScreen('paywall'); };
     box.appendChild(upgradeBtn);
   }
@@ -1972,7 +1972,7 @@ function showEdgeLightingNotice() {
         <strong>Always check the temperature reading and rating text</strong> to confirm conditions before walking your pet.
       </div>
       <button onclick="document.getElementById('edge-notice-modal').remove();localStorage.setItem('paw_edge_notice_seen','1');"
-        style="background:linear-gradient(135deg,#0d9488,#0d9488cc);color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:0.9rem;font-weight:700;cursor:pointer;width:100%;">
+        style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:0.9rem;font-weight:700;cursor:pointer;width:100%;">
         Got it! 🐾
       </button>
     </div>`;
@@ -2713,10 +2713,10 @@ function showFetchError(msg) {
       '1. Long-press the <b>Paw Report icon</b> → App info<br>' +
       '2. Tap <b>Permissions → Location → Allow</b><br>' +
       '3. Reopen the app and tap Run Report<br><br>' +
-      '<button onclick="startTracking()" style="background:#0d9488;color:white;border:none;border-radius:8px;padding:12px 24px;font-size:1rem;cursor:pointer;margin-top:4px">📍 Try Again</button>';
+      '<button onclick="startTracking()" style="background:var(--accent,#0d9488);color:white;border:none;border-radius:8px;padding:12px 24px;font-size:1rem;cursor:pointer;margin-top:4px">📍 Try Again</button>';
   } else {
     document.getElementById('error-msg').innerHTML = '⚠️ ' + msg +
-      '<br><br><button onclick="startTracking()" style="background:#0d9488;color:white;border:none;border-radius:8px;padding:10px 20px;font-size:0.9rem;cursor:pointer;margin-top:8px">🔄 Retry</button>';
+      '<br><br><button onclick="startTracking()" style="background:var(--accent,#0d9488);color:white;border:none;border-radius:8px;padding:10px 20px;font-size:0.9rem;cursor:pointer;margin-top:8px">🔄 Retry</button>';
   }
 }
 async function fetchAll(lat, lon) {
@@ -2729,8 +2729,8 @@ async function fetchAll(lat, lon) {
   ]);
   showResultCards(true);
   async function safeJson(r) { try { const ct=r.headers.get('content-type')||''; if(!ct.includes('json')) return null; return await r.json(); } catch(_) { return null; } }
-  if(pawRes.status==='fulfilled'&&pawRes.value.ok){ const d=await safeJson(pawRes.value); if(d) applyPawUIWithSurface(d); else document.getElementById('rating-message').innerHTML='⚠️ Could not load ground temp data. <button onclick="fetchAll(lat,lon)" style="background:#0d9488;color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px">🔄 Retry</button>'; }
-  else document.getElementById('rating-message').innerHTML='⚠️ Could not load ground temp data. <button onclick="fetchAll(lat,lon)" style="background:#0d9488;color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px">🔄 Retry</button>';
+  if(pawRes.status==='fulfilled'&&pawRes.value.ok){ const d=await safeJson(pawRes.value); if(d) applyPawUIWithSurface(d); else document.getElementById('rating-message').innerHTML='⚠️ Could not load ground temp data. <button onclick="fetchAll(lat,lon)" style="background:var(--accent,#0d9488);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px">🔄 Retry</button>'; }
+  else document.getElementById('rating-message').innerHTML='⚠️ Could not load ground temp data. <button onclick="fetchAll(lat,lon)" style="background:var(--accent,#0d9488);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px">🔄 Retry</button>';
   if(crimeRes.status==='fulfilled'&&crimeRes.value.ok){ const d=await safeJson(crimeRes.value); if(d) updateCrimeUI(d); else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.'; }
   else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.';
   if(washRes.status==='fulfilled'&&washRes.value.ok){ const d=await safeJson(washRes.value); if(d) updateWashUI(d); else document.getElementById('wash-loading').textContent='Could not load wash stations.'; }
@@ -2827,7 +2827,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v203';
+const APP_VERSION = 'v204';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3034,7 +3034,7 @@ function toggleDisclaimerBtn() {
   const checked = document.getElementById('disclaimer-checkbox').checked;
   const btn = document.getElementById('disclaimer-agree-btn');
   btn.disabled = !checked;
-  btn.style.background = checked ? '#0d9488' : '#94a3b8';
+  btn.style.background = checked ? (getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0d9488') : '#94a3b8';
   btn.style.cursor = checked ? 'pointer' : 'not-allowed';
 }
 function agreeDisclaimer() {
@@ -3081,7 +3081,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=203').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=204').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3410,7 +3410,7 @@ function saveCurrentLocationAsFav() {
   cancelBtn.onclick = function(){ overlay.remove(); };
   var saveBtn = document.createElement('button');
   saveBtn.textContent = 'Save';
-  saveBtn.style.cssText = 'flex:1;padding:10px;border:none;border-radius:8px;background:linear-gradient(135deg,#0d9488,#0a7c72);color:#fff;font-weight:700;cursor:pointer;';
+  saveBtn.style.cssText = 'flex:1;padding:10px;border:none;border-radius:8px;background:var(--accent,#0d9488);color:#fff;font-weight:700;cursor:pointer;';
   saveBtn.onclick = confirmSaveLocation;
   row.appendChild(cancelBtn); row.appendChild(saveBtn);
   box.appendChild(title); box.appendChild(inp); box.appendChild(row);
@@ -3595,7 +3595,7 @@ function showRateAppPrompt() {
     '<div style="font-size:2rem;margin-bottom:8px;">⭐</div>' +
     '<div style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:8px;">Enjoying The Paw Report?</div>' +
     '<div style="font-size:0.82rem;color:#475569;margin-bottom:16px;line-height:1.5;">Help other pet owners find us! Share your experience on TikTok or tell a friend. 🐾</div>' +
-    '<button onclick="shareRateApp()" style="background:linear-gradient(135deg,#0d9488,#0d9488cc);color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;">🎵 Share on TikTok</button>' +
+    '<button onclick="shareRateApp()" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;">🎵 Share on TikTok</button>' +
     '<button onclick="dismissRateApp()" style="background:none;border:none;color:#94a3b8;font-size:0.78rem;cursor:pointer;width:100%;">Maybe later</button></div>';
   document.body.appendChild(modal);
 }
