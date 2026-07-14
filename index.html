@@ -2116,9 +2116,43 @@ function initTrayWidget() {
 }
 function handleDangerAlertToggle(checked) {
   if (checked) {
-    toggleNotifications();
+    // Save preference immediately so toggle stays ON
+    saveAlertSetting('weatherTips', true);
+    // Request notification permission if needed
+    if (!('Notification' in window)) {
+      showToast('🔔 Notifications not supported. Add app to home screen.', 4000);
+      return;
+    }
+    if (Notification.permission === 'denied') {
+      showToast('🔕 Notifications blocked. Tap browser lock → Permissions → Allow.', 5000);
+      return;
+    }
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission().then(function(perm) {
+        if (perm === 'granted') {
+          notificationsEnabled = true;
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(function(reg) {
+              reg.showNotification('🐾 The Paw Report', {
+                body: "You'll now get alerts when conditions turn dangerous!",
+                icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png',
+                badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png',
+                silent: false
+              });
+            });
+          }
+          showToast('🔔 Dangerous condition alerts enabled!');
+        } else {
+          // Permission denied — keep preference saved but warn
+          showToast('🔕 Notifications blocked. Tap browser lock → Permissions → Allow.', 5000);
+        }
+      });
+    } else {
+      notificationsEnabled = true;
+      showToast('🔔 Dangerous condition alerts enabled!');
+    }
   } else {
-    // User is disabling — just update the UI state
+    // User is disabling
     saveAlertSetting('weatherTips', false);
     showToast('Dangerous condition alerts disabled.');
   }
@@ -2777,7 +2811,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v201';
+const APP_VERSION = 'v202';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3031,7 +3065,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=201').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=202').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3725,7 +3759,7 @@ function loadAlertSettingToggles() {
 
   // Dangerous condition alerts toggle
   const dangerToggle = document.getElementById('toggle-danger-alerts');
-  if (dangerToggle) dangerToggle.checked = s.weatherTips !== false;
+  if (dangerToggle) dangerToggle.checked = s.weatherTips === true;
 
   // Tray widget toggle
   const trayToggle = document.getElementById('toggle-tray-widget');
