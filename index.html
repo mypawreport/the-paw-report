@@ -2375,7 +2375,7 @@ function updateDynamicColors(rating) {
 function updatePawUI(d) {
   lastPawData = d;
   document.getElementById('rating-emoji').textContent = d.emoji;
-  const lbl = document.getElementById('rating-label'); lbl.textContent = d.rating; lbl.style.color = d.color || 'white';
+  const lbl = document.getElementById('rating-label'); if (lbl) { lbl.textContent = d.rating; lbl.style.color = d.color || 'white'; }
   document.getElementById('rating-message').textContent = d.message;
   document.getElementById('ground-temp').textContent = d.groundTempF + '°F';
   document.getElementById('air-temp').textContent = d.airTempF + '°F';
@@ -2440,7 +2440,7 @@ function updateCrimeUI(d) {
   const emojiEl = document.getElementById('crime-emoji');
   emojiEl.textContent = '';
   emojiEl.style.background = d.crimeColor || '#ccc';
-  const rl = document.getElementById('crime-rating'); rl.textContent = d.crimeRating; rl.style.color = d.crimeColor||'white';
+  const rl = document.getElementById('crime-rating'); if (rl) { rl.textContent = d.crimeRating; rl.style.color = d.crimeColor||'white'; }
   document.getElementById('crime-message').textContent = d.crimeMessage;
   const loc = [d.city, d.stateAbbr||d.state||d.country].filter(Boolean).join(', ');
   document.getElementById('crime-location').textContent = loc ? '📍 '+loc : '';
@@ -2777,7 +2777,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v199';
+const APP_VERSION = 'v200';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3031,7 +3031,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=199').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=200').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
