@@ -1,4 +1,4 @@
-const CACHE_NAME = 'paw-report-v199';
+const CACHE_NAME = 'paw-report-v200';
 const ASSETS = [
   '/',
   '/index.html',
