@@ -411,7 +411,7 @@
 .toggle-switch input{opacity:0;width:0;height:0;}
 .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:26px;transition:.3s;}
 .toggle-slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
-.toggle-switch input:checked + .toggle-slider{background:#0d9488;}
+.toggle-switch input:checked + .toggle-slider{background:var(--accent,#0d9488);}
 .toggle-switch input:checked + .toggle-slider:before{transform:translateX(22px);}</style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5J1Q90B15"></script>
@@ -924,12 +924,17 @@
       </div>
 
       <!-- 💳 Subscription -->
-      <div class="card">
-        <div class="card-title">💳 My Subscription</div>
-        <div id="sub-status-display"></div>
-        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
-          <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
-          <button id="manage-sub-btn" onclick="manageSubscription()" style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:11px;font-size:0.85rem;font-weight:600;color:#1e293b;cursor:pointer;display:none;">⚙️ Manage / Cancel Subscription</button>
+      <div class="card" id="sub-card">
+        <div class="card-title" onclick="toggleSubCard()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;">
+          <span>💳 My Subscription</span>
+          <span id="sub-card-arrow" style="font-size:0.85rem;transition:transform 0.25s;display:inline-block;">▾</span>
+        </div>
+        <div id="sub-card-body">
+          <div id="sub-status-display"></div>
+          <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+            <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
+            <button id="manage-sub-btn" onclick="manageSubscription()" style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:11px;font-size:0.85rem;font-weight:600;color:#1e293b;cursor:pointer;display:none;">⚙️ Manage / Cancel Subscription</button>
+          </div>
         </div>
       </div>
 
@@ -1548,6 +1553,17 @@ async function fetchSafetyOnly(lat, lon) {
   }
 }
 let isSignUpMode = false;
+
+function toggleSubCard() {
+  var body = document.getElementById('sub-card-body');
+  var arrow = document.getElementById('sub-card-arrow');
+  if (!body) return;
+  var isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : '';
+  if (arrow) arrow.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+  localStorage.setItem('paw_sub_card_open', isOpen ? '0' : '1');
+}
+
 function toggleAuthMode() {
   isSignUpMode = !isSignUpMode;
   document.getElementById('auth-title').textContent = isSignUpMode ? 'Create account' : 'Welcome back';
@@ -2811,7 +2827,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v202';
+const APP_VERSION = 'v203';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3065,7 +3081,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=202').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=203').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
