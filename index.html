@@ -212,7 +212,7 @@
     .share-title{font-size:0.85rem;font-weight:700;margin-bottom:10px;opacity:0.9}
     .size-selector,.share-btns{display:flex;gap:8px}
     .share-btn{flex:1;padding:9px;border-radius:10px;border:none;font-size:0.78rem;font-weight:700;cursor:pointer;transition:var(--c-transition)}
-    .share-btn-copy{background:linear-gradient(135deg,var(--c-teal),#059669);color:var(--c-slate)}
+    .share-btn-copy{background:var(--accent,var(--c-teal));color:#fff}
     .share-btn-tiktok{background:rgba(0,0,0,0.6);color:var(--c-slate);border:1px solid #d1d5db}
     /* Referral share */
     .referral-share-card{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:16px;padding:16px;margin-bottom:10px;text-align:center}
@@ -664,7 +664,7 @@
           <div class="stat-box ground-temp-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.6rem;color:#64748b;margin-top:2px;">Asphalt</div></div>
           <!-- Inline surface picker on report card -->
           <div style="margin:10px 0 4px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;" id="inline-surface-selector">
-            <button onclick="selectSurfaceInline('asphalt')" id="isrf-asphalt" style="padding:5px 10px;border-radius:20px;font-size:0.7rem;border:2px solid #0d9488;background:#0d9488;color:#fff;font-weight:700;cursor:pointer;">🖤 Asphalt</button>
+            <button onclick="selectSurfaceInline('asphalt')" id="isrf-asphalt" style="padding:5px 10px;border-radius:20px;font-size:0.7rem;border:2px solid #e2e8f0;background:#fff;color:#374151;cursor:pointer;">🖤 Asphalt</button>
             <button onclick="selectSurfaceInline('concrete')" id="isrf-concrete" style="padding:5px 10px;border-radius:20px;font-size:0.7rem;border:2px solid #e2e8f0;background:#fff;color:#374151;cursor:pointer;">⬜ Concrete</button>
             <button onclick="selectSurfaceInline('dirt')" id="isrf-dirt" style="padding:5px 10px;border-radius:20px;font-size:0.7rem;border:2px solid #e2e8f0;background:#fff;color:#374151;cursor:pointer;">🟫 Dirt/Sand</button>
             <button onclick="selectSurfaceInline('grass')" id="isrf-grass" style="padding:5px 10px;border-radius:20px;font-size:0.7rem;border:2px solid #e2e8f0;background:#fff;color:#374151;cursor:pointer;">🌿 Grass</button>
@@ -2827,7 +2827,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v204';
+const APP_VERSION = 'v205';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -2970,6 +2970,8 @@ function playBarkSound() {
         const themeBtns = document.querySelectorAll('.theme-btn');
         if (themeBtns.length) themeBtns.forEach(b => b.classList.toggle('active', b.dataset.theme === themeId));
       }
+      // Sync inline surface buttons to new theme accent
+      if (typeof syncInlineSurface === 'function') { setTimeout(function(){ syncInlineSurface(window.currentSurface || 'asphalt'); }, 20); }
       // Re-render avatar so gradient uses new --accent/--accent2 immediately
       if (typeof renderAvatar === 'function') renderAvatar();
       // Tint profile tab background to match theme
@@ -3017,7 +3019,7 @@ function renderThemeGrid() {
     try {
       const saved = localStorage.getItem(LS_THEME) || 'midnight';
       // Defer slightly so DOM is ready
-      setTimeout(() => applyTheme(saved), 0);
+      setTimeout(() => { applyTheme(saved); setTimeout(() => syncInlineSurface(window.currentSurface || 'asphalt'), 50); }, 0);
     } catch(e) { console.warn('initTheme error:', e); }
   }
 function showDisclaimerIfNeeded(userEmail, userName) {
@@ -3081,7 +3083,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=204').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=205').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
