@@ -148,12 +148,12 @@
     .scale-item{flex:1;padding:4px 2px;border-radius:6px;font-size:0.52rem;text-align:center;opacity:0.25;transition:opacity 0.3s;font-weight:600}
     .scale-item.active{opacity:1}
     .scale-safe{background:rgba(74,222,128,0.2);color:#4ade80}
-    .scale-warm{background:rgba(251,191,36,0.2);color:#ff7a5a}
-    .scale-caution{background:rgba(245,158,11,0.15);color:#b45309}
-    .scale-danger{background:rgba(248,113,113,0.2);color:#f87171}
-    .scale-fry{background:rgba(255,69,0,0.2);color:#ff4500}
-    .scale-cold{background:rgba(147,197,253,0.2);color:#93c5fd}
-    .scale-toocold{background:rgba(147,197,253,0.2);color:#1e40af}
+    .scale-warm{background:rgba(255,122,90,0.2);color:#ff7a5a}
+    .scale-caution{background:rgba(249,115,22,0.18);color:#f97316}
+    .scale-danger{background:rgba(239,68,68,0.2);color:#ef4444}
+    .scale-fry{background:rgba(220,38,38,0.2);color:#dc2626}
+    .scale-cold{background:rgba(56,189,248,0.2);color:#38bdf8}
+    .scale-toocold{background:rgba(129,140,248,0.2);color:#818cf8}
     .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .stat-box{background:var(--c-bg);border-radius:12px;padding:11px 9px;text-align:center}
     .stat-value{font-size:1.25rem;font-weight:800;margin-bottom:2px}
@@ -161,7 +161,7 @@
     .ground-temp-box{grid-column:span 2;background:var(--c-bg);border:1px solid #d1d5db}
     .ground-temp-box .stat-value{font-size:1.9rem}
     .alert-banner{border-radius:12px;padding:10px 13px;font-size:0.82rem;line-height:1.5;margin-top:10px}
-    .alert-cold{background:rgba(147,197,253,0.15);border:1px solid rgba(147,197,253,0.3);color:#bfdbfe}
+    .alert-cold{background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.35);color:#38bdf8}
     .alert-hydration{background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#7dd3fc}
     /* Crime */
     .crime-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -650,9 +650,9 @@
         <div class="paw-scale">
           <div class="scale-item scale-toocold" id="scale-extremecold">🧊 Extreme</div>
           <div class="scale-item scale-cold" id="scale-chilly">🌨️ Chilly</div>
-          <div class="scale-item scale-safe" id="scale-safe">🟢 Safe</div>
-          <div class="scale-item scale-warm" id="scale-warm">🟡 Warm</div>
-          <div class="scale-item scale-caution" id="scale-caution">🟠 Hot</div>
+          <div class="scale-item scale-safe" id="scale-safe">✅ Safe</div>
+          <div class="scale-item scale-warm" id="scale-warm">🌶️ Warm</div>
+          <div class="scale-item scale-caution" id="scale-caution">🔶 Hot</div>
           <div class="scale-item scale-danger" id="scale-danger">🔴 Danger</div>
           <div class="scale-item scale-fry" id="scale-fry">🔥 Fry</div>
         </div>
@@ -697,7 +697,7 @@
         </div>
 
         <!-- Cold weather tips -->
-        <div id="cold-field-guide" style="display:none;background:rgba(123,104,238,0.08);border:1px solid rgba(123,104,238,0.25);border-radius:14px;padding:14px 16px;margin-top:10px;">
+        <div id="cold-field-guide" style="display:none;background:rgba(129,140,248,0.08);border:1px solid rgba(129,140,248,0.3);border-radius:14px;padding:14px 16px;margin-top:10px;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
             <span style="font-size:1.5rem;">🧤</span>
             <div>
@@ -2324,7 +2324,7 @@ function updatePawScale(rating) {
 function getRatingColor(rating) {
   const map = {
     'Extreme Cold': '#818cf8',
-    'Chilly':       '#7dd3fc',
+    'Chilly':       '#38bdf8',
     'Safe':         '#0d9488',
     'Warm':         '#f97316',
     'Danger':       '#ef4444',
@@ -2777,7 +2777,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v200';
+const APP_VERSION = 'v201';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3031,7 +3031,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=200').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=201').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
