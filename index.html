@@ -97,7 +97,7 @@
     .form-input{width:100%;background:var(--c-bg);border:1px solid #d1d5db;border-radius:12px;padding:11px 13px;color:var(--c-slate);font-size:0.9rem;outline:none}
     .form-input::placeholder{opacity:0.4}
     .size-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid #d1d5db;background:var(--c-bg);color:var(--c-slate);font-size:0.8rem;font-weight:600;cursor:pointer;transition:var(--c-transition);text-align:center}
-    .size-btn.active{background:rgba(var(--glow,13,148,136),0.2);border-color:var(--accent,var(--c-teal));color:var(--accent,var(--c-teal))}
+    .size-btn.active{background:var(--accent,#0d9488);border-color:var(--accent,var(--c-teal));color:#fff}
     /* Paywall */
     .paywall-hero{text-align:center;padding:20px 10px 10px;background:#fff}
     .paywall-hero-icon{font-size:3rem;display:block;margin-bottom:8px}
@@ -2290,17 +2290,18 @@ function selectSurfaceInline(surface) {
   if (lastPawData) applyPawUIWithSurface(lastPawData);
 }
 function syncInlineSurface(surface) {
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0d9488';
   const surfaces = ['asphalt','concrete','dirt','grass','shaded'];
   surfaces.forEach(s => {
     const btn = document.getElementById('isrf-' + s);
     if (!btn) return;
     if (s === surface) {
-      btn.style.background = '#0d9488';
-      btn.style.borderColor = '#0d9488';
+      btn.style.background = accent;
+      btn.style.borderColor = accent;
       btn.style.color = '#fff';
       btn.style.fontWeight = '700';
     } else {
-      btn.style.background = '#fff';
+      btn.style.background = '';
       btn.style.borderColor = '#e2e8f0';
       btn.style.color = '#374151';
       btn.style.fontWeight = '400';
@@ -2827,7 +2828,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v205';
+const APP_VERSION = 'v206';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3083,7 +3084,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=205').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=206').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
