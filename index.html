@@ -2670,7 +2670,7 @@ function updateWashUI(d) {
 }
   list.innerHTML=d.stations.map(s=>{
     const mapsUrl=`https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lon}`;
-    const tags=[s.hours?'⏰ '+s.hours:null].filter(Boolean);
+    const tags=[s.rating||null, s.hours?'⏰ '+s.hours:null].filter(Boolean);
     const links=[s.website?`<a class="station-link" href="${s.website}" target="_blank">🌐 Website</a>`:'',s.phone?`<a class="station-link" href="tel:${s.phone}">📞 ${s.phone}</a>`:'',`<a class="station-link" href="${mapsUrl}" target="_blank">🗺 Directions</a>`].filter(Boolean).join('');
     const typeEmoji = s.type.startsWith('🚛') ? '🚛' : s.type.startsWith('✂️') ? '✂️' : s.type.startsWith('🛒') ? '🛒' : '🐾';
     const noteHtml = s.note ? `<div style="font-size:0.7rem;color:#d97706;margin-top:3px;line-height:1.4">⚠️ ${s.note}</div>` : '';
@@ -2841,7 +2841,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v207';
+const APP_VERSION = 'v208';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3097,7 +3097,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=207').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=208').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
