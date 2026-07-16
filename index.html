@@ -2656,13 +2656,26 @@ function updateWashUI(d) {
   document.getElementById('wash-loading').style.display='none';
   document.getElementById('wash-content').style.display='block';
   const list=document.getElementById('stations-list');
-  if(!d.stations||d.stations.length===0){ list.innerHTML='<div class="no-stations" style="text-align:center;color:#64748b;font-size:0.84rem;padding:10px">No pet wash stations found within 3 miles.</div>'; return; }
+  if(!d.stations||d.stations.length===0){
+  var mapsQ = encodeURIComponent('pet wash near me dog wash grooming');
+  var mapsUrl = 'https://www.google.com/maps/search/' + mapsQ;
+  list.innerHTML = '<div style="text-align:center;padding:16px 8px">' +
+    '<div style="font-size:2rem;margin-bottom:8px">🔍</div>' +
+    '<div style="font-weight:700;font-size:0.92rem;margin-bottom:6px;color:var(--c-slate)">No stations found in our database nearby</div>' +
+    '<div style="font-size:0.8rem;color:#64748b;margin-bottom:14px;line-height:1.5">OpenStreetMap data may be incomplete for your area — many truck stop pet washes (Love\'s, Pilot) and groomers aren\'t listed yet.</div>' +
+    '<a href="' + mapsUrl + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:var(--accent,#0d9488);color:#fff;text-decoration:none;border-radius:12px;padding:11px 20px;font-size:0.86rem;font-weight:700;margin-bottom:10px;">📍 Search Google Maps</a>' +
+    '<br><a href="https://www.google.com/maps/search/Love\'s+Travel+Stop+pet+wash+near+me" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid #e2e8f0;color:#475569;text-decoration:none;border-radius:10px;padding:9px 16px;font-size:0.8rem;font-weight:600;margin-top:6px;">🚛 Find Love\'s Pet Wash Kiosks</a>' +
+    '</div>';
+  return;
+}
   list.innerHTML=d.stations.map(s=>{
     const mapsUrl=`https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lon}`;
-    const tags=[s.distanceMiles!=null?s.distanceMiles+' mi':null,s.hours?'⏰ '+s.hours:null].filter(Boolean);
+    const tags=[s.hours?'⏰ '+s.hours:null].filter(Boolean);
     const links=[s.website?`<a class="station-link" href="${s.website}" target="_blank">🌐 Website</a>`:'',s.phone?`<a class="station-link" href="tel:${s.phone}">📞 ${s.phone}</a>`:'',`<a class="station-link" href="${mapsUrl}" target="_blank">🗺 Directions</a>`].filter(Boolean).join('');
-    const icon=s.type==='Self-Service Dog Wash'?'🚿':s.type==='Pet Grooming'?'✂️':'🛁';
-    return `<div class="station-item"><div class="station-icon">${icon}</div><div class="station-info"><div class="station-name">${s.name}</div><div class="station-type">${s.type}</div>${s.address?`<div class="station-type" style="color:#94a3b8">${s.address}</div>`:''}<div class="station-meta">${tags.map(t=>`<span class="station-tag">${t}</span>`).join('')}</div>${links?`<div class="station-links">${links}</div>`:''}</div><div class="station-dist">${s.distanceMiles!=null?s.distanceMiles+' mi':''}</div></div>`;
+    const typeEmoji = s.type.startsWith('🚛') ? '🚛' : s.type.startsWith('✂️') ? '✂️' : s.type.startsWith('🛒') ? '🛒' : '🐾';
+    const noteHtml = s.note ? `<div style="font-size:0.7rem;color:#d97706;margin-top:3px;line-height:1.4">⚠️ ${s.note}</div>` : '';
+    const distLabel = s.distanceMiles!=null ? s.distanceMiles+' mi' : '';
+    return `<div class="station-item"><div class="station-icon">${typeEmoji}</div><div class="station-info"><div class="station-name">${s.name}</div><div class="station-type">${s.type}</div>${s.address?`<div class="station-type" style="color:#94a3b8">${s.address}</div>`:''}<div class="station-meta">${tags.map(t=>`<span class="station-tag">${t}</span>`).join('')}</div>${noteHtml}${links?`<div class="station-links">${links}</div>`:''}</div><div class="station-dist">${distLabel}</div></div>`;
   }).join('');
 }
 function buildShareText() {
@@ -2725,7 +2738,7 @@ async function fetchAll(lat, lon) {
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:5000})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:16000})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
   ]);
   showResultCards(true);
@@ -2828,7 +2841,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v206';
+const APP_VERSION = 'v207';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3084,7 +3097,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=206').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=207').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
