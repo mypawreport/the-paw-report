@@ -1601,6 +1601,7 @@ function restoreAccStates() {
   } catch(_) {}
 }
 function toggleSubCard() {
+  toggleAcc('acc-sub'); return; // redirected to accordion
   var body = document.getElementById('sub-card-body');
   var arrow = document.getElementById('sub-card-arrow');
   if (!body) return;
@@ -2891,7 +2892,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v213';
+const APP_VERSION = 'v214';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3147,7 +3148,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=213').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=214').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
