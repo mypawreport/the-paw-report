@@ -403,6 +403,15 @@
 .just-walked-btn{background:#16a34a;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;}
 /* Settings toggles in profile */
 .settings-card .setting-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1f5f9;}
+    /* ── Profile accordion ─────────────────────────── */
+    .acc-card{border-radius:16px;overflow:hidden;margin-bottom:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);}
+    .acc-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;user-select:none;font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;opacity:0.8;transition:opacity 0.2s;}
+    .acc-header:active{opacity:0.5;}
+    .acc-chevron{font-size:0.9rem;transition:transform 0.28s cubic-bezier(.4,0,.2,1);opacity:0.6;flex-shrink:0;}
+    .acc-chevron.open{transform:rotate(180deg);}
+    .acc-body{max-height:0;overflow:hidden;transition:max-height 0.32s cubic-bezier(.4,0,.2,1);}
+    .acc-body.open{max-height:2000px;}
+    .acc-inner{padding:0 16px 16px;}
 .settings-card .setting-row:last-child{border-bottom:none;}
 .setting-label{font-size:0.83rem;color:#334155;font-weight:500;}
 .setting-sublabel{font-size:0.72rem;color:#94a3b8;}
@@ -896,147 +905,145 @@
     <div id="tab-profile" style="display:none;">
 
       <!-- 👤 Profile -->
-      <div class="card">
-        <div class="card-title">👤 Your Profile</div>
-        <div class="profile-section" id="profile-display"></div>
-        <button class="btn btn-secondary" onclick="showEditProfile()" style="margin-top:10px;font-size:0.82rem;padding:10px">✏️ Edit Profile</button>
-        <div style="margin-top:14px;border-top:1px solid #e2e8f0;padding-top:12px;" class="avatar-edit-section">
-          <div style="font-size:0.78rem;color:#64748b;margin-bottom:6px;font-weight:600;">🎨 Avatar</div>
-          <div class="avatar-large" id="avatar-large-preview" onclick="toggleAvatarPicker()" style="background:linear-gradient(135deg,#0d9488,#4a7c59)"></div>
-          <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Tap to change</div>
-          <div class="avatar-picker-row" id="avatar-picker" style="display:none;">
-            <div class="avatar-option" onclick="setAvatar('emoji','🐶')" title="Dog">🐶</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🐾')" title="Paws"><svg viewBox="0 0 100 100" width="1.15em" height="1.15em" style="display:inline-block;vertical-align:-0.16em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🐕')" title="Dog 2">🐕</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🦮')" title="Guide Dog">🦮</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🐩')" title="Poodle">🐩</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🐈')" title="Cat">🐈</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','⭐')" title="Star">⭐</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🌿')" title="Nature">🌿</div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#0d9488')" style="background:#0d9488;" title="Teal"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#8b5cf6')" style="background:#8b5cf6;" title="Purple"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#f97316')" style="background:#f97316;" title="Amber"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#ef4444')" style="background:#ef4444;" title="Red"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#3b82f6')" style="background:#3b82f6;" title="Blue"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#ec4899')" style="background:#ec4899;" title="Pink"></div>
+      <!-- ── Profile header (always visible) ─────────────── -->
+      <div class="card" style="padding:16px 18px 14px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div class="avatar-large" id="avatar-large-preview" onclick="toggleAvatarPicker()" style="background:linear-gradient(135deg,#0d9488,#4a7c59);flex-shrink:0;cursor:pointer;"></div>
+          <div style="flex:1;min-width:0;">
+            <div class="profile-section" id="profile-display" style="margin:0;"></div>
           </div>
+          <button class="btn btn-secondary" onclick="showEditProfile()" style="font-size:0.78rem;padding:8px 12px;white-space:nowrap;">✏️ Edit</button>
+        </div>
+        <!-- Avatar picker inline -->
+        <div class="avatar-picker-row" id="avatar-picker" style="display:none;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);">
+          <div class="avatar-option" onclick="setAvatar('emoji','🐶')" title="Dog">🐶</div>
+          <div class="avatar-option" onclick="setAvatar('emoji','🐾')" title="Paws"><svg viewBox="0 0 100 100" width="1.15em" height="1.15em" style="display:inline-block;vertical-align:-0.16em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></div>
+          <div class="avatar-option" onclick="setAvatar('emoji','🐕')" title="Dog 2">🐕</div>
+          <div class="avatar-option" onclick="setAvatar('emoji','🦮')" title="Guide Dog">🦮</div>
+          <div class="avatar-option" onclick="setAvatar('emoji','🐩')" title="Poodle">🐩</div>
+          <div class="avatar-option" onclick="setAvatar('emoji','🐈')" title="Cat">🐈</div>
+          <div class="avatar-option" onclick="setAvatar('emoji','⭐')" title="Star">⭐</div>
+          <div class="avatar-option" onclick="setAvatar('emoji','🌿')" title="Nature">🌿</div>
+          <div class="avatar-option color-opt" onclick="setAvatar('color','#0d9488')" style="background:#0d9488;" title="Teal"></div>
+          <div class="avatar-option color-opt" onclick="setAvatar('color','#8b5cf6')" style="background:#8b5cf6;" title="Purple"></div>
+          <div class="avatar-option color-opt" onclick="setAvatar('color','#f97316')" style="background:#f97316;" title="Amber"></div>
+          <div class="avatar-option color-opt" onclick="setAvatar('color','#ef4444')" style="background:#ef4444;" title="Red"></div>
+          <div class="avatar-option color-opt" onclick="setAvatar('color','#3b82f6')" style="background:#3b82f6;" title="Blue"></div>
+          <div class="avatar-option color-opt" onclick="setAvatar('color','#ec4899')" style="background:#ec4899;" title="Pink"></div>
         </div>
       </div>
 
-      <!-- 💳 Subscription -->
-      <div class="card" id="sub-card">
-        <div class="card-title" onclick="toggleSubCard()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;">
+      <!-- ── Subscription accordion ─────────────────────── -->
+      <div class="acc-card" id="sub-card">
+        <div class="acc-header" onclick="toggleAcc('acc-sub')">
           <span>💳 My Subscription</span>
-          <span id="sub-card-arrow" style="font-size:0.85rem;transition:transform 0.25s;display:inline-block;">▾</span>
+          <span class="acc-chevron" id="acc-sub-chevron">▾</span>
         </div>
-        <div id="sub-card-body">
-          <div id="sub-status-display"></div>
-          <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
-            <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
-            <button id="manage-sub-btn" onclick="manageSubscription()" style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:11px;font-size:0.85rem;font-weight:600;color:#1e293b;cursor:pointer;display:none;">⚙️ Manage / Cancel Subscription</button>
+        <div class="acc-body" id="acc-sub">
+          <div class="acc-inner">
+            <div id="sub-status-display"></div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+              <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
+              <button id="manage-sub-btn" onclick="manageSubscription()" style="background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:11px;font-size:0.85rem;font-weight:600;color:inherit;cursor:pointer;display:none;">⚙️ Manage / Cancel</button>
+            </div>
           </div>
         </div>
       </div>
 
-<!-- ⚙️ Alert Settings -->
-      <div class="card settings-card" id="alert-settings-card">
-        <div class="card-title">⚙️ Alert Settings</div>
-
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">🌦️ Weather condition tips</div>
-            <div class="setting-sublabel">Rain, snow, heat wave banners on the Report tab</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-weather-tips" checked onchange="saveAlertSetting('weatherTips', this.checked)">
-            <span class="toggle-slider"></span>
-          </label>
+      <!-- ── Alert Settings accordion ───────────────────── -->
+      <div class="acc-card settings-card" id="alert-settings-card">
+        <div class="acc-header" onclick="toggleAcc('acc-alerts')">
+          <span>⚙️ Alert Settings</span>
+          <span class="acc-chevron" id="acc-alerts-chevron">▾</span>
         </div>
-
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">🚗 Hot car pet reminder</div>
-            <div class="setting-sublabel">Detects when you stop moving and reminds you to check the car</div>
+        <div class="acc-body" id="acc-alerts">
+          <div class="acc-inner" style="padding-top:4px;">
+            <div class="setting-row">
+              <div><div class="setting-label">🌦️ Weather tips</div><div class="setting-sublabel">Rain, snow, heat wave banners</div></div>
+              <label class="toggle-switch"><input type="checkbox" id="toggle-weather-tips" checked onchange="saveAlertSetting('weatherTips', this.checked)"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="setting-row">
+              <div><div class="setting-label">🚗 Hot car reminder</div><div class="setting-sublabel">Alerts when you stop moving with pets in the car</div></div>
+              <label class="toggle-switch"><input type="checkbox" id="toggle-hot-car" checked onchange="saveAlertSetting('hotCar', this.checked)"><span class="toggle-slider"></span></label>
+            </div>
           </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-hot-car" checked onchange="saveAlertSetting('hotCar', this.checked)">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
-      </div>
-
-<!-- 🦮 Walk History (Gold) -->
-      <div class="card" id="walk-history-card">
-        <div class="card-title">🦮 Walk History</div>
-        <div id="walk-history-lock" class="locked-feature" style="display:none;">
-          <div class="locked-icon">🔒</div>
-          <div class="locked-title">Walk History Log</div>
-          <div class="locked-sub">Gold members can track every walk with timestamp, temp, rating, and location.</div>
-          <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.82rem;padding:10px;margin-top:10px;">🚀 Upgrade to Gold</button>
-        </div>
-        <div id="walk-history-list" style="display:none;"></div>
-        <div id="walk-history-empty" style="display:none;font-size:0.82rem;color:#64748b;text-align:center;padding:12px;">No walks logged yet. Run a report and tap Log This Walk!</div>
-        <button id="log-walk-btn" onclick="logCurrentWalk()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;margin-top:10px;display:none;">📝 Log This Walk</button>
-        <button id="clear-history-btn" onclick="clearWalkHistory()" style="display:none;background:none;border:none;color:#ef4444;font-size:0.75rem;cursor:pointer;margin-top:6px;text-align:center;width:100%;">🗑️ Clear History</button>
-      </div>
-
-<!-- 🔔 Notifications (single consolidated card) -->
-      <div class="card settings-card">
-        <div class="card-title">🔔 Notifications</div>
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">🚨 Dangerous condition alerts</div>
-            <div class="setting-sublabel">When ground temps or weather turn extreme</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-danger-alerts" onchange="handleDangerAlertToggle(this.checked)">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <div class="setting-row" style="margin-top:10px;">
-          <div>
-            <div class="setting-label">📌 Tray widget</div>
-            <div class="setting-sublabel">Pin current conditions to your notification tray</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-tray-widget" onchange="handleTrayWidgetToggle(this.checked)">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <div class="setting-row" style="margin-top:10px;">
-          <div>
-            <div class="setting-label">🐾 Walk reminder <span class="setting-badge">Gold</span></div>
-            <div class="setting-sublabel">Reminds you after 6 hours without logging a walk</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-walk-reminder" checked onchange="saveAlertSetting('walkReminder', this.checked)">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <div class="setting-row" style="margin-top:10px;" id="edge-lighting-row">
-          <div>
-            <div class="setting-label">✨ Edge lighting <span class="setting-badge">Gold</span></div>
-            <div class="setting-sublabel">Animated paw border that glows with your safety rating</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-edge-lighting" checked onchange="handleEdgeLightingToggle(this.checked)">
-            <span class="toggle-slider"></span>
-          </label>
         </div>
       </div>
 
-      <!-- 🎨 App Theme (single card) -->
-      <div class="card" id="theme-card">
-        <div class="card-title">🎨 App Theme</div>
-        <div style="font-size:0.75rem;color:#64748b;margin-bottom:12px;">Personalise your Paw Report look</div>
-        <div id="theme-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;"></div>
-        <div id="theme-locked-msg" style="display:none;font-size:0.72rem;color:#64748b;margin-top:10px;text-align:center;">🔒 Upgrade to Silver or Gold to unlock more themes</div>
+      <!-- ── Walk History accordion ──────────────────────── -->
+      <div class="acc-card" id="walk-history-card">
+        <div class="acc-header" onclick="toggleAcc('acc-walks')">
+          <span>🦮 Walk History</span>
+          <span class="acc-chevron" id="acc-walks-chevron">▾</span>
+        </div>
+        <div class="acc-body" id="acc-walks">
+          <div class="acc-inner">
+            <div id="walk-history-lock" class="locked-feature" style="display:none;">
+              <div class="locked-icon">🔒</div>
+              <div class="locked-title">Walk History Log</div>
+              <div class="locked-sub">Gold members can track every walk with timestamp, temp, rating, and location.</div>
+              <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.82rem;padding:10px;margin-top:10px;">🚀 Upgrade to Gold</button>
+            </div>
+            <div id="walk-history-list" style="display:none;"></div>
+            <div id="walk-history-empty" style="display:none;font-size:0.82rem;color:#64748b;text-align:center;padding:12px;">No walks logged yet. Run a report and tap Log This Walk!</div>
+            <button id="log-walk-btn" onclick="logCurrentWalk()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;margin-top:10px;display:none;">📝 Log This Walk</button>
+            <button id="clear-history-btn" onclick="clearWalkHistory()" style="display:none;background:none;border:none;color:#ef4444;font-size:0.75rem;cursor:pointer;margin-top:6px;text-align:center;width:100%;">🗑️ Clear History</button>
+          </div>
+        </div>
       </div>
 
-      <!-- Add to Home Screen -->
-      <div class="card" id="install-app-card" style="text-align:center;">
-        <div class="card-title">📲 Install App</div>
+      <!-- ── Notifications accordion ────────────────────── -->
+      <div class="acc-card settings-card">
+        <div class="acc-header" onclick="toggleAcc('acc-notifs')">
+          <span>🔔 Notifications</span>
+          <span class="acc-chevron" id="acc-notifs-chevron">▾</span>
+        </div>
+        <div class="acc-body" id="acc-notifs">
+          <div class="acc-inner" style="padding-top:4px;">
+            <div class="setting-row">
+              <div><div class="setting-label">🚨 Dangerous condition alerts</div><div class="setting-sublabel">When ground temps or weather turn extreme</div></div>
+              <label class="toggle-switch"><input type="checkbox" id="toggle-danger-alerts" onchange="handleDangerAlertToggle(this.checked)"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="setting-row">
+              <div><div class="setting-label">📌 Tray widget</div><div class="setting-sublabel">Pin current conditions to your notification tray</div></div>
+              <label class="toggle-switch"><input type="checkbox" id="toggle-tray-widget" onchange="handleTrayWidgetToggle(this.checked)"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="setting-row">
+              <div><div class="setting-label">🐾 Walk reminder <span class="setting-badge">Gold</span></div><div class="setting-sublabel">Reminds you after 6 hours without logging a walk</div></div>
+              <label class="toggle-switch"><input type="checkbox" id="toggle-walk-reminder" checked onchange="saveAlertSetting('walkReminder', this.checked)"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="setting-row" id="edge-lighting-row">
+              <div><div class="setting-label">✨ Edge lighting <span class="setting-badge">Gold</span></div><div class="setting-sublabel">Paw border that glows with your safety rating</div></div>
+              <label class="toggle-switch"><input type="checkbox" id="toggle-edge-lighting" checked onchange="handleEdgeLightingToggle(this.checked)"><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── App Theme accordion ─────────────────────────── -->
+      <div class="acc-card" id="theme-card">
+        <div class="acc-header" onclick="toggleAcc('acc-theme')">
+          <span>🎨 App Theme</span>
+          <span class="acc-chevron" id="acc-theme-chevron">▾</span>
+        </div>
+        <div class="acc-body" id="acc-theme">
+          <div class="acc-inner">
+            <div style="font-size:0.75rem;color:#64748b;margin-bottom:12px;">Personalise your Paw Report look</div>
+            <div id="theme-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;"></div>
+            <div id="theme-locked-msg" style="display:none;font-size:0.72rem;color:#64748b;margin-top:10px;text-align:center;">🔒 Upgrade to Silver or Gold to unlock more themes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Install accordion ──────────────────────────── -->
+      <div class="acc-card" id="install-app-card">
+        <div class="acc-header" onclick="toggleAcc('acc-install')">
+          <span>📲 Install App</span>
+          <span class="acc-chevron" id="acc-install-chevron">▾</span>
+        </div>
+        <div class="acc-body" id="acc-install">
+        <div class="acc-inner" style="text-align:center;">
+        <div class="card-title" style="display:none;">📲 Install App</div>
         <div style="font-size:0.82rem;color:#475569;margin-bottom:10px;">Add The Paw Report to your home screen for instant access — works like a native app!</div>
         <div id="install-btn-wrap">
           <button id="install-app-btn" onclick="promptInstallApp()" class="btn btn-secondary" style="font-size:0.85rem;padding:11px;width:100%;">📲 Add to Home Screen</button>
@@ -1564,6 +1571,33 @@ async function fetchSafetyOnly(lat, lon) {
 }
 let isSignUpMode = false;
 
+function toggleAcc(id) {
+  var body = document.getElementById(id);
+  var chevron = document.getElementById(id + '-chevron');
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (chevron) chevron.classList.toggle('open', !isOpen);
+  // persist state
+  try {
+    var states = JSON.parse(localStorage.getItem('paw_acc_states') || '{}');
+    states[id] = !isOpen;
+    localStorage.setItem('paw_acc_states', JSON.stringify(states));
+  } catch(_) {}
+}
+function restoreAccStates() {
+  try {
+    var states = JSON.parse(localStorage.getItem('paw_acc_states') || '{}');
+    Object.keys(states).forEach(function(id) {
+      if (states[id]) {
+        var body = document.getElementById(id);
+        var chevron = document.getElementById(id + '-chevron');
+        if (body) body.classList.add('open');
+        if (chevron) chevron.classList.add('open');
+      }
+    });
+  } catch(_) {}
+}
 function toggleSubCard() {
   var body = document.getElementById('sub-card-body');
   var arrow = document.getElementById('sub-card-arrow');
@@ -2855,7 +2889,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v211';
+const APP_VERSION = 'v212';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3005,7 +3039,7 @@ function playBarkSound() {
       // Tint profile tab background to match theme
       if (t) applyProfileTint(t.colors[1]);
       // Update edge glow if on profile tab
-      if (currentActiveTab === 'profile' && t) { setTimeout(function(){ updateEdgeGlowColor(t.colors[1]); }, 20); }
+      if (currentActiveTab === 'profile' && t) { setTimeout(function(){ updateEdgeGlowColor(t.colors[1]); }, 20); restoreAccStates(); }
     } catch(e) { console.warn('Theme apply error:', e); }
   }
   function hexToRgb(hex) {
@@ -3111,7 +3145,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=211').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=212').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3847,6 +3881,7 @@ function loadAlertSettingToggles() {
   if (edgeLightToggle) edgeLightToggle.checked = s.edgeLighting !== false;
   edgeLightingEnabled = (_edgeTier === 'gold') ? (s.edgeLighting !== false) : true;
   applyEdgeLightingState();
+  restoreAccStates();
   const dangerToggle = document.getElementById('toggle-danger-alerts');
   if (dangerToggle) dangerToggle.checked = s.weatherTips === true;
 
