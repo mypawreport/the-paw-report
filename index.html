@@ -29,7 +29,7 @@
     --c-slate: #1e293b;
     --c-muted: #64748b;
     --c-border: #e2e8f0;
-    --c-bg: rgba(255,255,255,0.06);
+    --c-bg: #f8fafc;
     --c-card: #ffffff;
     --c-radius-sm: 8px;
     --c-radius-md: 12px;
@@ -38,14 +38,14 @@
     --c-transition: all 0.2s;
   }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#0d1117;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:var(--c-slate);transition:background-color 1.2s ease}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#eaf0e8;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px;color:var(--c-slate);transition:background-color 1.2s ease}
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
     .title-gradient{background:linear-gradient(90deg,var(--accent,#0d9488),var(--accent2,#4a7c59));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--accent,#0d9488)}
     .header p{font-size:0.82rem;opacity:0.55}
     /* Cards */
-    .card{background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
+    .card{background:#ffffff;backdrop-filter:blur(20px);border:1px solid var(--c-border);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
     .card-title{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:0.45;margin-bottom:12px}
     .divider{height:1px;background:var(--c-card);margin:12px 0}
     /* Screens */
@@ -229,7 +229,7 @@
     .locked-title{font-size:0.88rem;font-weight:700;margin-bottom:4px;opacity:0.7}
     .locked-sub{font-size:0.75rem;opacity:0.45;margin-bottom:10px}
     /* Profile */
-    .profile-section{background:transparent;border-radius:14px;padding:0;margin-bottom:0}
+    .profile-section{background:var(--c-bg);border-radius:14px;padding:14px;margin-bottom:10px}
     .profile-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #d1d5db}
     .profile-row:last-child{border-bottom:none}
     .profile-label{font-size:0.75rem;opacity:0.5}
@@ -1774,7 +1774,7 @@ async function cancelMySubscription() {
   }
 }
 function renderSubStatus() {
-  const tierColors = {free:'rgba(255,255,255,0.06)',bronze:'rgba(146,64,14,0.2)',silver:'rgba(100,116,139,0.2)',gold:'rgba(234,179,8,0.15)'};
+  const tierColors = {free:'#f1f5f9',bronze:'#fef3c7',silver:'#f1f5f9',gold:'#fefce8'};
   const tierEmoji = {free:'🆓',bronze:'🥉',silver:'🥈',gold:'🥇'};
   const tierFeatures = {
     bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
@@ -1807,18 +1807,18 @@ function renderSubStatus() {
     <div style="background:${tierColors[currentTier]||tierColors.free};border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
       <span style="font-size:1.4rem;">${tierEmoji[currentTier]||'🆓'}</span>
       <div>
-        <div style="font-size:0.92rem;font-weight:800;color:#ffffff;">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
-        <div style="font-size:0.72rem;color:rgba(255,255,255,0.55);">${currentTier==='free'?'Upgrade to unlock all features':currentPlanPrice ? currentPlanPrice+' · Active' : 'Active subscription'}</div>
+        <div style="font-size:0.92rem;font-weight:800;color:#1e293b;">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
+        <div style="font-size:0.72rem;color:#64748b;">${currentTier==='free'?'Upgrade to unlock all features':currentPlanPrice ? currentPlanPrice+' · Active' : 'Active subscription'}</div>
       </div>
     </div>
-    <div style="font-size:0.8rem;font-weight:700;color:rgba(255,255,255,0.85);margin-bottom:8px;">Compare Plans</div>
-    <div style="display:flex;gap:4px;background:rgba(255,255,255,0.08);border-radius:12px;padding:4px;margin-bottom:10px;" id="sub-tier-tabs">${tabsHtml}</div>
-    <div style="display:flex;gap:4px;background:rgba(255,255,255,0.08);border-radius:10px;padding:3px;margin-bottom:10px;" id="sub-billing-tabs">
+    <div style="font-size:0.8rem;font-weight:700;color:#1e293b;margin-bottom:8px;">Compare Plans</div>
+    <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:12px;padding:4px;margin-bottom:10px;" id="sub-tier-tabs">${tabsHtml}</div>
+    <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:10px;padding:3px;margin-bottom:10px;" id="sub-billing-tabs">
       ${['weekly','monthly','yearly'].map(b=>`<button onclick="subBillingSelect('${b}',this)" style="flex:1;padding:5px 2px;border-radius:8px;border:none;font-size:0.72rem;font-weight:600;cursor:pointer;background:${b==='monthly'?'#fff':'none'};color:${b==='monthly'?'#1e293b':'#94a3b8'};box-shadow:${b==='monthly'?'0 1px 4px rgba(0,0,0,0.08)':'none'};transition:all 0.2s;">${BILLING_LABELS[b]}</button>`).join('')}
     </div>
-    <div id="sub-tier-detail" style="background:rgba(255,255,255,0.06);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.1);">
+    <div id="sub-tier-detail" style="background:#fff;border-radius:10px;padding:12px;border:1px solid #e2e8f0;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div id="sub-detail-name" style="font-weight:800;font-size:0.9rem;color:#ffffff;">${initialTier.charAt(0).toUpperCase()+initialTier.slice(1)}</div>
+        <div id="sub-detail-name" style="font-weight:800;font-size:0.9rem;color:#1e293b;">${initialTier.charAt(0).toUpperCase()+initialTier.slice(1)}</div>
         <div>
           ${p && p.launch ? `<span style="font-size:0.72rem;text-decoration:line-through;color:#9ca3af;margin-right:4px;">${p.regular}</span>` : ''}
           <span id="sub-detail-price" style="font-weight:900;font-size:1.1rem;color:#0d9488;">${p?((p.launch||p.regular)+p.period):'—'}</span>
@@ -2892,7 +2892,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v216';
+const APP_VERSION = 'v217';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3148,7 +3148,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=216').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=217').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
