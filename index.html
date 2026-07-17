@@ -1014,6 +1014,16 @@
             <span class="toggle-slider"></span>
           </label>
         </div>
+        <div class="setting-row" style="margin-top:10px;" id="edge-lighting-row">
+          <div>
+            <div class="setting-label">✨ Edge lighting <span class="setting-badge">Gold</span></div>
+            <div class="setting-sublabel">Animated paw border that glows with your safety rating</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-edge-lighting" checked onchange="handleEdgeLightingToggle(this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
       </div>
 
       <!-- 🎨 App Theme (single card) -->
@@ -2845,7 +2855,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v209';
+const APP_VERSION = 'v210';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3101,7 +3111,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=209').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=210').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3148,6 +3158,39 @@ function syncGlowToActiveTab() {
   }
 }
 const PAW_ICON_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg>';
+// ── Edge-lighting on/off (Gold pref) ─────────────────────────────────────
+let edgeLightingEnabled = (function(){
+  try {
+    var s = JSON.parse(localStorage.getItem('pawAlertSettings') || '{}');
+    return s.edgeLighting !== false; // default ON
+  } catch(_) { return true; }
+})();
+
+function applyEdgeLightingState() {
+  var strips = document.querySelectorAll('.edge-paw-strip');
+  strips.forEach(function(el) {
+    el.style.opacity = edgeLightingEnabled ? '1' : '0';
+    el.style.pointerEvents = edgeLightingEnabled ? '' : 'none';
+  });
+  var toggle = document.getElementById('toggle-edge-lighting');
+  if (toggle) toggle.checked = edgeLightingEnabled;
+}
+
+function handleEdgeLightingToggle(checked) {
+  // Gold only
+  const tier = (localStorage.getItem('paw_tier') || 'free').toLowerCase();
+  if (tier !== 'gold') {
+    showToast('✨ Edge lighting customisation is a Gold feature. Upgrade to control it!');
+    var toggle = document.getElementById('toggle-edge-lighting');
+    if (toggle) toggle.checked = edgeLightingEnabled; // revert
+    return;
+  }
+  edgeLightingEnabled = checked;
+  saveAlertSetting('edgeLighting', checked);
+  applyEdgeLightingState();
+  showToast(checked ? '✨ Edge lighting enabled' : '✨ Edge lighting disabled');
+}
+
 let edgePawsBuilt = false;
 function initEdgePaws(force) {
   const left = document.getElementById('edgePawLeft');
@@ -3227,11 +3270,13 @@ window.addEventListener('load', function() {
 });
 
 function updateEdgeGlowColor(hex) {
+  if (!edgeLightingEnabled) return;
   // Recolor the edge paw strips to match theme (no box-shadow ring)
   if (!hex) return;
   document.querySelectorAll('.edge-paw-strip').forEach(function(el){ el.style.color = hex; });
 }
 function updateEdgeGlow(status) {
+  if (!edgeLightingEnabled) return;
   const glow = document.getElementById('edgeGlow');
   if (!glow) return;
   initEdgePaws();
@@ -3784,7 +3829,7 @@ function saveAlertSetting(key, val) {
 function loadAlertSettingToggles() {
   const s = getAlertSettings();
   // Apply defaults on first run
-  const defaults = { weatherTips: true, hotCar: true, walkReminder: true, trayWidget: false };
+  const defaults = { weatherTips: true, hotCar: true, walkReminder: true, trayWidget: false, edgeLighting: true };
   let changed = false;
   Object.entries(defaults).forEach(([k, def]) => { if (s[k] === undefined) { s[k] = def; changed = true; } });
   if (changed) localStorage.setItem('pawAlertSettings', JSON.stringify(s));
@@ -3794,6 +3839,14 @@ function loadAlertSettingToggles() {
   if (hotCarEl) hotCarEl.checked = s.hotCar !== false;
 
   // Dangerous condition alerts toggle
+  // Edge lighting state
+  const edgeLightToggle = document.getElementById('toggle-edge-lighting');
+  const edgeLightRow = document.getElementById('edge-lighting-row');
+  const _edgeTier = (localStorage.getItem('paw_tier') || 'free').toLowerCase();
+  if (edgeLightRow) edgeLightRow.style.display = (_edgeTier === 'gold') ? '' : 'none';
+  if (edgeLightToggle) edgeLightToggle.checked = s.edgeLighting !== false;
+  edgeLightingEnabled = (_edgeTier === 'gold') ? (s.edgeLighting !== false) : true;
+  applyEdgeLightingState();
   const dangerToggle = document.getElementById('toggle-danger-alerts');
   if (dangerToggle) dangerToggle.checked = s.weatherTips === true;
 
