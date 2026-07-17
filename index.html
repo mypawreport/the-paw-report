@@ -2462,9 +2462,9 @@ function updatePawUI(d) {
   // Danger notification
   // Defer edge-glow update so it never blocks the data render
   setTimeout(function(){ updateDynamicColors(d.rating); }, 60);
+  }); // end requestAnimationFrame
   const dangerRatings = ['Danger','Fry Zone','Extreme Cold'];
   const coldRatings = ['Extreme Cold','Chilly'];
-  }); // end requestAnimationFrame
   if (dangerRatings.includes(d.rating)) {
     sendDangerNotification('⚠️ ' + d.rating + ': ' + d.message);
   } else if (coldRatings.includes(d.rating)) {
@@ -2855,7 +2855,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v210';
+const APP_VERSION = 'v211';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3111,7 +3111,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=210').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=211').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
