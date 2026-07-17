@@ -592,7 +592,7 @@
       </div>
       <div class="card" id="error-card" style="display:none;text-align:center;padding:24px 20px;"><div class="error-msg" id="error-msg" style="line-height:1.6;font-size:0.9rem"></div>
     <!-- Location Permission Gate -->
-    <div id="location-gate" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:9999;padding:32px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+    <div id="location-gate" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:9999;padding:32px 24px;text-align:center;flex-direction:column;align-items:center;justify-content:center;">
       <div style="font-size:56px;margin-bottom:16px;">📍</div>
       <h2 style="color:#0d9488;font-size:1.4rem;margin-bottom:12px;">Location Access Needed</h2>
       <p style="color:#475569;font-size:0.95rem;line-height:1.5;margin-bottom:8px;">The Paw Report needs your location to check pavement temperature and safety conditions for your dog.</p>
@@ -2855,7 +2855,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v218';
+const APP_VERSION = 'v219';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3111,7 +3111,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=218').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=219').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
