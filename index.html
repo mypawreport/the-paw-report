@@ -937,9 +937,9 @@
       <div class="acc-card" id="sub-card">
         <div class="acc-header" onclick="toggleAcc('acc-sub')">
           <span>💳 My Subscription</span>
-          <span class="acc-chevron" id="acc-sub-chevron">▾</span>
+          <span class="acc-chevron open" id="acc-sub-chevron">▾</span>
         </div>
-        <div class="acc-body" id="acc-sub">
+        <div class="acc-body open" id="acc-sub">
           <div class="acc-inner">
             <div id="sub-status-display"></div>
             <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
@@ -1054,7 +1054,9 @@
           <strong>iPhone Safari:</strong><br>
           Tap the <strong>Share button</strong> (box with arrow) → <strong>"Add to Home Screen"</strong>
         </div>
-      </div>
+        </div><!-- /acc-inner -->
+        </div><!-- /acc-body -->
+      </div><!-- /acc-card install -->
 
       <!-- Copyright Footer -->
       <div style="text-align:center;font-size:0.68rem;color:#94a3b8;padding:4px 16px 12px;">
@@ -2889,7 +2891,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v212';
+const APP_VERSION = 'v213';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3145,7 +3147,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=212').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=213').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
