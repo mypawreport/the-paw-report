@@ -45,7 +45,7 @@
     .title-gradient{background:linear-gradient(90deg,var(--accent,#0d9488),var(--accent2,#4a7c59));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--accent,#0d9488)}
     .header p{font-size:0.82rem;opacity:0.55}
     /* Cards */
-    .card{background:#ffffff;backdrop-filter:blur(20px);border:1px solid var(--c-border);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 4px 28px rgba(0,0,0,0.45)}
+    .card{background:#ffffff;border:1px solid var(--c-border);border-radius:22px;padding:20px 18px;margin-bottom:10px;text-align:left;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
     .card-title{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:0.45;margin-bottom:12px}
     .divider{height:1px;background:var(--c-card);margin:12px 0}
     /* Screens */
@@ -289,7 +289,7 @@
     .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:8px;overflow:hidden;contain:strict}
     .edge-paw-top{top:0}
     .edge-paw-bottom{bottom:0}
-    .edge-paw-strip svg{width:16px;height:16px;flex-shrink:0;filter:drop-shadow(0 0 8px currentColor) saturate(2) brightness(1.5);animation:pawChase 8s linear infinite;will-change:opacity,transform}
+    .edge-paw-strip svg{width:16px;height:16px;flex-shrink:0;animation:pawChase 8s linear infinite;will-change:opacity,transform}
     @keyframes pawChase{0%,6%,100%{opacity:.7;transform:scale(1)}3%{opacity:1;transform:scale(1.6)}}
     /* Temp color wheel indicator */
     .temp-wheel {
@@ -2855,7 +2855,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v219';
+const APP_VERSION = 'v220';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3111,7 +3111,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=219').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=220').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3178,7 +3178,7 @@ function applyEdgeLightingState() {
 
 function handleEdgeLightingToggle(checked) {
   // Gold only
-  const tier = (localStorage.getItem('paw_tier') || 'free').toLowerCase();
+  const tier = (localStorage.getItem('paw_tier') || JSON.parse(localStorage.getItem('paw_prefs')||'{}').subscription_tier || 'free').toLowerCase();
   if (tier !== 'gold') {
     showToast('✨ Edge lighting customisation is a Gold feature. Upgrade to control it!');
     var toggle = document.getElementById('toggle-edge-lighting');
@@ -3842,7 +3842,7 @@ function loadAlertSettingToggles() {
   // Edge lighting state
   const edgeLightToggle = document.getElementById('toggle-edge-lighting');
   const edgeLightRow = document.getElementById('edge-lighting-row');
-  const _edgeTier = (localStorage.getItem('paw_tier') || 'free').toLowerCase();
+  const _edgeTier = (localStorage.getItem('paw_tier') || JSON.parse(localStorage.getItem('paw_prefs')||'{}').subscription_tier || 'free').toLowerCase();
   if (edgeLightRow) edgeLightRow.style.display = (_edgeTier === 'gold') ? '' : 'none';
   if (edgeLightToggle) edgeLightToggle.checked = s.edgeLighting !== false;
   edgeLightingEnabled = (_edgeTier === 'gold') ? (s.edgeLighting !== false) : true;
