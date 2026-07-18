@@ -429,6 +429,12 @@
   </div>
   <style>
     @keyframes slideDown { from { transform:translateY(-100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+    .acc-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows 0.28s ease,opacity 0.28s ease;opacity:1}
+    .acc-body>div{overflow:hidden}
+    .acc-body.collapsed{grid-template-rows:0fr;opacity:0;pointer-events:none}
+    .acc-arrow{display:inline-block;transition:transform 0.28s ease;font-style:normal;opacity:0.5;transform:rotate(0deg)}
+    .acc-arrow:not(.open){transform:rotate(-90deg)}
   </style>
 
 <div class="edge-glow" id="edgeGlow">
@@ -941,7 +947,7 @@
 <!-- ⚙️ Alert Settings -->
       <div class="card settings-card" id="alert-settings-card">
         <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('alert-body')">⚙️ Alert Settings<i class="acc-arrow open" id="arr-alert-body">▾</i></div>
-        <div id="alert-body" class="acc-body">
+        <div id="alert-body" class="acc-body"><div>
 
         <div class="setting-row">
           <div>
@@ -965,12 +971,13 @@
           </label>
         </div>
 
-        </div>
+        </div></div>
       </div>
 
 <!-- 🦮 Walk History (Gold) -->
       <div class="card" id="walk-history-card">
-        <div class="card-title">🦮 Walk History</div>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('walk-history-body')">🦮 Walk History<i class="acc-arrow open" id="arr-walk-history-body">▾</i></div>
+        <div id="walk-history-body" class="acc-body"><div>
         <div id="walk-history-lock" class="locked-feature" style="display:none;">
           <div class="locked-icon">🔒</div>
           <div class="locked-title">Walk History Log</div>
@@ -981,12 +988,13 @@
         <div id="walk-history-empty" style="display:none;font-size:0.82rem;color:#64748b;text-align:center;padding:12px;">No walks logged yet. Run a report and tap Log This Walk!</div>
         <button id="log-walk-btn" onclick="logCurrentWalk()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;margin-top:10px;display:none;">📝 Log This Walk</button>
         <button id="clear-history-btn" onclick="clearWalkHistory()" style="display:none;background:none;border:none;color:#ef4444;font-size:0.75rem;cursor:pointer;margin-top:6px;text-align:center;width:100%;">🗑️ Clear History</button>
+        </div></div>
       </div>
 
 <!-- 🔔 Notifications (single consolidated card) -->
       <div class="card settings-card">
         <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('notif-body')">🔔 Notifications<i class="acc-arrow open" id="arr-notif-body">▾</i></div>
-        <div id="notif-body" class="acc-body">
+        <div id="notif-body" class="acc-body"><div>
         <div class="setting-row">
           <div>
             <div class="setting-label">🚨 Dangerous condition alerts</div>
@@ -1027,15 +1035,17 @@
             <span class="toggle-slider"></span>
           </label>
         </div>
-        </div>
+        </div></div>
       </div>
 
       <!-- 🎨 App Theme (single card) -->
       <div class="card" id="theme-card">
-        <div class="card-title">🎨 App Theme</div>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('theme-body')">🎨 App Theme<i class="acc-arrow open" id="arr-theme-body">▾</i></div>
+        <div id="theme-body" class="acc-body"><div>
         <div style="font-size:0.75rem;color:#64748b;margin-bottom:12px;">Personalise your Paw Report look</div>
         <div id="theme-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;"></div>
         <div id="theme-locked-msg" style="display:none;font-size:0.72rem;color:#64748b;margin-top:10px;text-align:center;">🔒 Upgrade to Silver or Gold to unlock more themes</div>
+        </div></div>
       </div>
 
       <!-- Add to Home Screen -->
@@ -2859,7 +2869,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v222';
+const APP_VERSION = 'v223';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3115,7 +3125,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=222').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=223').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
