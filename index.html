@@ -940,7 +940,8 @@
 
 <!-- ⚙️ Alert Settings -->
       <div class="card settings-card" id="alert-settings-card">
-        <div class="card-title">⚙️ Alert Settings</div>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('alert-body')">⚙️ Alert Settings<i class="acc-arrow open" id="arr-alert-body">▾</i></div>
+        <div id="alert-body" class="acc-body">
 
         <div class="setting-row">
           <div>
@@ -964,6 +965,7 @@
           </label>
         </div>
 
+        </div>
       </div>
 
 <!-- 🦮 Walk History (Gold) -->
@@ -983,7 +985,8 @@
 
 <!-- 🔔 Notifications (single consolidated card) -->
       <div class="card settings-card">
-        <div class="card-title">🔔 Notifications</div>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('notif-body')">🔔 Notifications<i class="acc-arrow open" id="arr-notif-body">▾</i></div>
+        <div id="notif-body" class="acc-body">
         <div class="setting-row">
           <div>
             <div class="setting-label">🚨 Dangerous condition alerts</div>
@@ -1023,6 +1026,7 @@
             <input type="checkbox" id="toggle-edge-lighting" checked onchange="handleEdgeLightingToggle(this.checked)">
             <span class="toggle-slider"></span>
           </label>
+        </div>
         </div>
       </div>
 
@@ -2855,7 +2859,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v221';
+const APP_VERSION = 'v222';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3111,7 +3115,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=221').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=222').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3178,7 +3182,7 @@ function applyEdgeLightingState() {
 
 function handleEdgeLightingToggle(checked) {
   // Gold only
-  const tier = (localStorage.getItem('paw_tier') || JSON.parse(localStorage.getItem('paw_prefs')||'{}').subscription_tier || 'free').toLowerCase();
+  const tier = getUserTier().toLowerCase();
   if (tier !== 'gold') {
     showToast('✨ Edge lighting customisation is a Gold feature. Upgrade to control it!');
     var toggle = document.getElementById('toggle-edge-lighting');
@@ -3817,6 +3821,15 @@ window.addEventListener('load', function() {
   }, 600000);
 });
 // ALERT SETTINGS
+
+function toggleAcc(bodyId) {
+  var body = document.getElementById(bodyId);
+  var arr = document.getElementById('arr-' + bodyId);
+  if (!body) return;
+  body.classList.toggle('collapsed');
+  if (arr) arr.classList.toggle('open');
+}
+
 function getAlertSettings() {
   try { return JSON.parse(localStorage.getItem('pawAlertSettings') || '{}'); }
   catch(e) { return {}; }
@@ -3842,7 +3855,7 @@ function loadAlertSettingToggles() {
   // Edge lighting state
   const edgeLightToggle = document.getElementById('toggle-edge-lighting');
   const edgeLightRow = document.getElementById('edge-lighting-row');
-  const _edgeTier = (localStorage.getItem('paw_tier') || JSON.parse(localStorage.getItem('paw_prefs')||'{}').subscription_tier || 'free').toLowerCase();
+  const _edgeTier = getUserTier().toLowerCase();
   if (edgeLightRow) edgeLightRow.style.display = (_edgeTier === 'gold') ? '' : 'none';
   if (edgeLightToggle) edgeLightToggle.checked = s.edgeLighting !== false;
   edgeLightingEnabled = (_edgeTier === 'gold') ? (s.edgeLighting !== false) : true;
