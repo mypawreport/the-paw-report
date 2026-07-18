@@ -435,6 +435,15 @@
     .acc-body.collapsed{grid-template-rows:0fr;opacity:0;pointer-events:none}
     .acc-arrow{display:inline-block;transition:transform 0.28s ease;font-style:normal;opacity:0.5;transform:rotate(0deg)}
     .acc-arrow:not(.open){transform:rotate(-90deg)}
+
+    /* Accordion system */
+    .acc-title{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;margin-bottom:0}
+    .acc-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.3s ease;opacity:1}
+    .acc-body>div{overflow:hidden}
+    .acc-body.collapsed{grid-template-rows:0fr;opacity:0;pointer-events:none}
+    .acc-arrow{font-style:normal;opacity:0.4;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.2s;transform:rotate(-90deg)}
+    .acc-arrow.open{transform:rotate(0deg);opacity:0.6}
+    .card{cursor:default}
   </style>
 
 <div class="edge-glow" id="edgeGlow">
@@ -640,7 +649,8 @@
           <button class="just-walked-btn" onclick="logJustWalked()">✅ Just Walked</button>
         </div>
 
-        <div class="card-title">🌡️ Right Now — Ground Temperature</div>
+        <div class="card-title acc-title" onclick="toggleAcc('paw-body')">🌡️ Right Now — Ground Temperature<i class="acc-arrow open" id="arr-paw-body">▾</i></div>
+        <div id="paw-body" class="acc-body"><div>
         <div id="report-location-line" style="font-size:0.72rem;color:#64748b;text-align:center;margin:-4px 0 10px;display:none;">📍 <span id="report-location-text">Detecting…</span></div>
         <div class="size-selector" style="margin-bottom:12px;" id="size-selector-inline">
           <button class="size-btn" data-size="small" onclick="selectSize('small',this)">🐩 Small</button>
@@ -721,8 +731,10 @@
           <div style="font-size:0.72rem;color:#94a3b8;margin-top:8px;font-style:italic;">Cold ground temps are estimates. The hand test is always the final word. 🐾</div>
         </div>
       </div>
+</div></div>
 <div class="card" id="walk-time-card" style="display:none;">
-        <div class="card-title">🕐 Best Time to Walk</div>
+        <div class="card-title acc-title" onclick="toggleAcc('walk-body')">🕐 Best Time to Walk<i class="acc-arrow" id="arr-walk-body">▾</i></div>
+        <div id="walk-body" class="acc-body collapsed"><div>
         <!-- Day tabs -->
         <div class="forecast-tabs" id="forecast-tabs"></div>
         <div class="loading-inline" id="walk-time-loading">Analysing forecast…</div>
@@ -751,8 +763,10 @@
 
       
       <!-- 📍 Favorite Locations (Silver/Gold) -->
+      </div></div>
       <div class="card" id="fav-locations-card">
-        <div class="card-title">📍 Saved Locations</div>
+        <div class="card-title acc-title" onclick="toggleAcc('fav-body')">📍 Saved Locations<i class="acc-arrow" id="arr-fav-body">▾</i></div>
+        <div id="fav-body" class="acc-body collapsed"><div>
         <div id="fav-locations-list" style="margin-bottom:10px;"></div>
         <div id="fav-lock" class="locked-feature" style="display:none;">
           <div class="locked-icon">🔒</div>
@@ -765,6 +779,7 @@
 
 
 
+      </div></div>
       <div class="card" id="safety-tips-card" style="padding:0;overflow:hidden;">
         <button onclick="toggleTips()" style="width:100%;background:none;border:none;color:#1e293b;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
           <div style="display:flex;align-items:center;gap:10px;">
@@ -851,7 +866,8 @@
 
     <div id="tab-safety" style="display:none;">
       <div class="card" id="crime-card-main">
-        <div class="card-title">🚨 Area Safety</div>
+        <div class="card-title acc-title" onclick="toggleAcc('crime-body')">🚨 Area Safety<i class="acc-arrow" id="arr-crime-body">▾</i></div>
+      <div id="crime-body" class="acc-body collapsed"><div>
         <div class="loading-inline" id="crime-loading">Run your report first to see area safety.</div>
         <div id="crime-content" style="display:none;">
           <div class="crime-header">
@@ -883,11 +899,13 @@
         <div class="locked-sub">Unlock crime breakdowns, trend data & safe route suggestions with Silver or Gold.</div>
         <button class="btn btn-primary btn-sm" onclick="showScreen('paywall')">Upgrade Now</button>
       </div>
+    </div></div>
     </div>
 
     <div id="tab-wash" style="display:none;">
       <div class="card">
-        <div class="card-title">🛁 Nearby Pet Wash Stations</div>
+        <div class="card-title acc-title" onclick="toggleAcc('wash-body')">🛁 Nearby Pet Wash Stations<i class="acc-arrow" id="arr-wash-body">▾</i></div>
+      <div id="wash-body" class="acc-body collapsed"><div>
         <div class="loading-inline" id="wash-loading">Run your report first to find nearby stations.</div>
         <div id="wash-content" style="display:none;"><div class="stations-list" id="stations-list"></div></div>
       </div>
@@ -897,13 +915,15 @@
         <div class="locked-sub">Save your favourite grooming spots and get walking directions with Gold.</div>
         <button class="btn btn-primary btn-sm" onclick="showScreen('paywall')">Upgrade to Gold</button>
       </div>
+    </div></div>
     </div>
 
     <div id="tab-profile" style="display:none;">
 
       <!-- 👤 Profile -->
       <div class="card">
-        <div class="card-title">👤 Your Profile</div>
+        <div class="card-title acc-title" onclick="toggleAcc('profile-body')">👤 Your Profile<i class="acc-arrow" id="arr-profile-body">▾</i></div>
+        <div id="profile-body" class="acc-body collapsed"><div>
         <div class="profile-section" id="profile-display"></div>
         <button class="btn btn-secondary" onclick="showEditProfile()" style="margin-top:10px;font-size:0.82rem;padding:10px">✏️ Edit Profile</button>
         <div style="margin-top:14px;border-top:1px solid #e2e8f0;padding-top:12px;" class="avatar-edit-section">
@@ -930,6 +950,7 @@
       </div>
 
       <!-- 💳 Subscription -->
+      </div></div>
       <div class="card" id="sub-card">
         <div class="card-title" onclick="toggleSubCard()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;">
           <span>💳 My Subscription</span>
@@ -946,8 +967,8 @@
 
 <!-- ⚙️ Alert Settings -->
       <div class="card settings-card" id="alert-settings-card">
-        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('alert-body')">⚙️ Alert Settings<i class="acc-arrow open" id="arr-alert-body">▾</i></div>
-        <div id="alert-body" class="acc-body"><div>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('alert-body')">⚙️ Alert Settings<i class="acc-arrow" id="arr-alert-body">▾</i></div>
+        <div id="alert-body" class="acc-body collapsed"><div>
 
         <div class="setting-row">
           <div>
@@ -976,8 +997,8 @@
 
 <!-- 🦮 Walk History (Gold) -->
       <div class="card" id="walk-history-card">
-        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('walk-history-body')">🦮 Walk History<i class="acc-arrow open" id="arr-walk-history-body">▾</i></div>
-        <div id="walk-history-body" class="acc-body"><div>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('walk-history-body')">🦮 Walk History<i class="acc-arrow" id="arr-walk-history-body">▾</i></div>
+        <div id="walk-history-body" class="acc-body collapsed"><div>
         <div id="walk-history-lock" class="locked-feature" style="display:none;">
           <div class="locked-icon">🔒</div>
           <div class="locked-title">Walk History Log</div>
@@ -993,8 +1014,8 @@
 
 <!-- 🔔 Notifications (single consolidated card) -->
       <div class="card settings-card">
-        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('notif-body')">🔔 Notifications<i class="acc-arrow open" id="arr-notif-body">▾</i></div>
-        <div id="notif-body" class="acc-body"><div>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('notif-body')">🔔 Notifications<i class="acc-arrow" id="arr-notif-body">▾</i></div>
+        <div id="notif-body" class="acc-body collapsed"><div>
         <div class="setting-row">
           <div>
             <div class="setting-label">🚨 Dangerous condition alerts</div>
@@ -1040,8 +1061,8 @@
 
       <!-- 🎨 App Theme (single card) -->
       <div class="card" id="theme-card">
-        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('theme-body')">🎨 App Theme<i class="acc-arrow open" id="arr-theme-body">▾</i></div>
-        <div id="theme-body" class="acc-body"><div>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('theme-body')">🎨 App Theme<i class="acc-arrow" id="arr-theme-body">▾</i></div>
+        <div id="theme-body" class="acc-body collapsed"><div>
         <div style="font-size:0.75rem;color:#64748b;margin-bottom:12px;">Personalise your Paw Report look</div>
         <div id="theme-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;"></div>
         <div id="theme-locked-msg" style="display:none;font-size:0.72rem;color:#64748b;margin-top:10px;text-align:center;">🔒 Upgrade to Silver or Gold to unlock more themes</div>
@@ -1050,7 +1071,8 @@
 
       <!-- Add to Home Screen -->
       <div class="card" id="install-app-card" style="text-align:center;">
-        <div class="card-title">📲 Install App</div>
+        <div class="card-title acc-title" onclick="toggleAcc('install-body')">📲 Install App<i class="acc-arrow" id="arr-install-body">▾</i></div>
+        <div id="install-body" class="acc-body collapsed"><div>
         <div style="font-size:0.82rem;color:#475569;margin-bottom:10px;">Add The Paw Report to your home screen for instant access — works like a native app!</div>
         <div id="install-btn-wrap">
           <button id="install-app-btn" onclick="promptInstallApp()" class="btn btn-secondary" style="font-size:0.85rem;padding:11px;width:100%;">📲 Add to Home Screen</button>
@@ -1064,6 +1086,7 @@
       </div>
 
       <!-- Copyright Footer -->
+        </div></div>
       <div style="text-align:center;font-size:0.68rem;color:#94a3b8;padding:4px 16px 12px;">
         © 2026 The Paw Report · <a href="legal.html" style="color:#0d9488;text-decoration:none;">Terms & Privacy</a> · <a href="mailto:mypawreport@gmail.com" style="color:#0d9488;text-decoration:none;">Contact</a>
       </div>
@@ -2869,7 +2892,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v223';
+const APP_VERSION = 'v224';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3125,7 +3148,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=223').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=224').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
