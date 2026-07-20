@@ -2809,30 +2809,37 @@ function getLocation() {
     // Try a precise GPS fix first (8s). If that fails/times out (but wasn't a permission
     // denial), fall back to a faster, lower-accuracy fix instead of failing outright —
     // this handles weak/slow GPS signal indoors without showing a scary error.
+    // Step 1: try fast cached fix (any age) so we get something immediately
     navigator.geolocation.getCurrentPosition(
       p => resolve({lat:p.coords.latitude, lon:p.coords.longitude}),
-      e => {
-        if (e.code === 1) {
-          // Permission denied — show the full-screen gate
-          showLocationGate();
-          reject(new Error('Location access denied.'));
-          return;
-        }
-        // High-accuracy fix failed/timed out — retry with network-based location
+      _e => {
+        // Step 2: high-accuracy GPS, 15s timeout
         navigator.geolocation.getCurrentPosition(
           p => resolve({lat:p.coords.latitude, lon:p.coords.longitude}),
-          e2 => {
-            if (e2.code === 1) {
+          e => {
+            if (e.code === 1) {
               showLocationGate();
               reject(new Error('Location access denied.'));
-            } else {
-              reject(new Error('Could not get your location. Please check GPS is enabled.'));
+              return;
             }
+            // Step 3: network-based fallback, 20s timeout
+            navigator.geolocation.getCurrentPosition(
+              p => resolve({lat:p.coords.latitude, lon:p.coords.longitude}),
+              e2 => {
+                if (e2.code === 1) {
+                  showLocationGate();
+                  reject(new Error('Location access denied.'));
+                } else {
+                  reject(new Error('Could not get your location. Try moving outdoors or enabling GPS in phone settings.'));
+                }
+              },
+              {timeout:20000, enableHighAccuracy:false, maximumAge:300000}
+            );
           },
-          {timeout:15000, enableHighAccuracy:false, maximumAge:60000}
+          {timeout:15000, enableHighAccuracy:true, maximumAge:30000}
         );
       },
-      {timeout:8000, enableHighAccuracy:true, maximumAge:0}
+      {timeout:3000, enableHighAccuracy:false, maximumAge:120000}
     );
   });
 }
@@ -2892,7 +2899,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v224';
+const APP_VERSION = 'v225';
 const WHATS_NEW = {
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3148,7 +3155,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=224').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=225').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
