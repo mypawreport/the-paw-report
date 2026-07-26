@@ -1029,7 +1029,7 @@
         <div class="setting-row" style="margin-top:10px;">
           <div>
             <div class="setting-label">📌 Tray widget</div>
-            <div class="setting-sublabel">Pin current conditions to your notification tray</div>
+            <div class="setting-sublabel">Pin conditions to your notification tray (updates when app is open)</div>
           </div>
           <label class="toggle-switch">
             <input type="checkbox" id="toggle-tray-widget" onchange="handleTrayWidgetToggle(this.checked)">
@@ -2092,7 +2092,7 @@ async function requestNotifications() {
   updateNotifBtn();
   if (notificationsEnabled) {
     if (navigator.serviceWorker.controller) {
-      navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 The Paw Report', { body: "You'll now get alerts when conditions turn dangerous!", icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png', silent: false, data: { color: '#0d9488' } }));
+      navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 The Paw Report', { body: "You'll now get alerts when conditions turn dangerous! (App must be open to receive alerts.)", icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png', badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png', silent: false, data: { color: '#0d9488' } }));
     }
   } else if (perm === 'denied') {
     showToast('🔕 Notifications blocked. Tap browser lock → Permissions → Allow.', 5000);
@@ -2155,15 +2155,27 @@ function showTrayNotification() {
   const surface = SURFACE_LABELS[currentSurface] || 'Asphalt';
   const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
   try {
-    const n = new Notification('🐾 The Paw Report', {
-      body: temp + ' · ' + rating + ' · ' + surface + '\nLast updated ' + time,
-      icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png',
-      tag: 'paw-tray',        // same tag = replaces previous, doesn't stack
-      renotify: false,
-      silent: true             // no sound for tray updates
-    });
-    // Auto-close after 10 seconds to keep it subtle
-    setTimeout(() => n.close(), 10000);
+    // Use service worker for persistent notification (stays in tray)
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then(reg => reg.showNotification('🐾 The Paw Report', {
+        body: temp + ' · ' + rating + ' · ' + surface + '\nLast updated ' + time,
+        icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png',
+        badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png',
+        tag: 'paw-tray',
+        renotify: false,
+        silent: true,
+        data: { url: 'https://mypawreport.github.io/the-paw-report/' }
+      }));
+    } else {
+      const n = new Notification('🐾 The Paw Report', {
+        body: temp + ' · ' + rating + ' · ' + surface + '\nLast updated ' + time,
+        icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png',
+        badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png',
+        tag: 'paw-tray',
+        renotify: false,
+        silent: true
+      });
+    }
   } catch(e) { console.warn('Tray notification error:', e); }
 }
 function initTrayWidget() {
@@ -2197,7 +2209,7 @@ function handleDangerAlertToggle(checked) {
           if (navigator.serviceWorker && navigator.serviceWorker.controller) {
             navigator.serviceWorker.ready.then(function(reg) {
               reg.showNotification('🐾 The Paw Report', {
-                body: "You'll now get alerts when conditions turn dangerous!",
+                body: "You'll now get alerts when conditions turn dangerous! (App must be open to receive alerts.)",
                 icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png',
                 badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png',
                 silent: false
@@ -2502,10 +2514,13 @@ function updatePawUI(d) {
   }); // end requestAnimationFrame
   const dangerRatings = ['Danger','Fry Zone','Extreme Cold'];
   const coldRatings = ['Extreme Cold','Chilly'];
+  const warmRatings = ['Warm','Hot'];
   if (dangerRatings.includes(d.rating)) {
     sendDangerNotification('⚠️ ' + d.rating + ': ' + d.message);
   } else if (coldRatings.includes(d.rating)) {
     sendDangerNotification('🧊 ' + d.rating + ' conditions — ' + d.message);
+  } else if (warmRatings.includes(d.rating)) {
+    sendDangerNotification('🌡️ ' + d.rating + ': ' + d.message);
   }
   // Weather tips banner — backend has no text description, derive from numeric fields
   showWeatherTip({
@@ -2899,8 +2914,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v225';
+const APP_VERSION = 'v226';
 const WHATS_NEW = {
+  'v226': '🔔 Notifications fixed: tray widget now stays persistent in your notification bar, Warm/Hot temps trigger alerts, and the notification icon is corrected.',
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
   'v142': '🐾 Fixed the edge-lighting paw print border sometimes not reaching all the way down the sides of the screen on some phones.',
@@ -3155,7 +3171,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=225').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=226').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
