@@ -2915,8 +2915,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v226';
+const APP_VERSION = 'v227';
 const WHATS_NEW = {
+  'v227': '🌪️ Fixed weather tip showing wrong condition — now correctly detects storms, dark skies, and tornado warnings instead of showing "Clear and sunny" during bad weather.',
   'v226': '🔔 Notifications fixed: tray widget now stays persistent in your notification bar, Warm/Hot temps trigger alerts, and the notification icon is corrected.',
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
   'v143': '✨ Brought back the edge-lighting color shimmer — a smooth hue wave now sweeps across the glow, done in a lightweight way that keeps the v140 performance fix intact.',
@@ -3172,7 +3173,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=226').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=227').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3957,15 +3958,27 @@ function showWeatherTip(weatherData) {
   let tip = null;
 
   // Derive condition from numeric fields (backend sends no text description)
-  // Priority order: precipitation > wind > temp extremes > cloud/sun
-  if (precip >= 2.0)
+  // Also check NWS/local alerts via desc field for tornado/severe warnings
+  const isSevere = desc.includes('tornado') || desc.includes('severe') || desc.includes('warning') || desc.includes('watch');
+  const isStormy = desc.includes('thunder') || desc.includes('storm') || desc.includes('rain') || desc.includes('drizzle') || desc.includes('shower');
+  // MET Norway compact API sends no text — derive stormy conditions from numerics
+  // Dark & stormy: heavy cloud cover + high humidity + wind = likely storm even if precip=0 (next-hour forecast lag)
+  const likelyStormy = (cloud > 75 && wind >= 10 && humid >= 65) || precip > 0 || isStormy;
+  const likelySunny = cloud < 20 && !likelyStormy;
+
+  // Priority order: tornado/severe > precipitation > wind > temp extremes > cloud/sun
+  if (isSevere && desc.includes('tornado'))
+    tip = { icon:'🌪️', msg:'Tornado warning in your area — do NOT walk your dog outside. Shelter immediately in an interior room away from windows.' };
+  else if (isSevere)
+    tip = { icon:'⚠️', msg:'Severe weather warning in your area — keep walks extremely short or stay indoors until the warning lifts.' };
+  else if (precip >= 2.0 || (likelyStormy && precip >= 0.5))
     tip = { icon:'⛈️', msg:'Heavy rain — thunderstorm possible. Many dogs are sensitive to thunder; keep walks short and close to home.' };
   else if (precip >= 0.5)
     tip = { icon:'🌧️', msg:'Rain falling now — wet pavement can be slippery. Dry paws thoroughly after your walk.' };
   else if (precip > 0 && temp <= 33)
     tip = { icon:'🌨️', msg:'Freezing precipitation — ice and salt on pavement can burn paws. Rinse and dry paws after every walk.' };
-  else if (precip > 0)
-    tip = { icon:'🌦️', msg:'Light drizzle — paws stay wet quickly. A quick towel-off after your walk keeps them comfortable.' };
+  else if (precip > 0 || likelyStormy)
+    tip = { icon:'🌦️', msg:'Rain or storms nearby — paws stay wet quickly. A quick towel-off after your walk keeps them comfortable.' };
   else if (desc.includes('snow') || desc.includes('blizzard') || (temp <= 33 && cloud > 70))
     tip = { icon:'❄️', msg:'Snow likely — ice melt salt can burn paws. Booties help, or rinse paws after every outing.' };
   else if (desc.includes('fog') || desc.includes('mist') || (humid >= 95 && cloud > 90))
@@ -3982,8 +3995,10 @@ function showWeatherTip(weatherData) {
     tip = { icon:'🧊', msg:'Dangerously cold — frostbite can affect ears, paws, and tail quickly. Keep walks very short.' };
   else if (temp <= 35)
     tip = { icon:'🌨️', msg:'Near-freezing temps — watch for ice patches and limit time outdoors for short-haired or small dogs.' };
-  else if (cloud < 15 && temp >= 75 && isDay)
+  else if (likelySunny && temp >= 75 && isDay)
     tip = { icon:'☀️', msg:'Clear and sunny — pavement heats up fast. Do the back-of-hand test before letting paws touch the ground.' };
+  else if (cloud > 60 && !likelyStormy)
+    tip = { icon:'☁️', msg:'Overcast skies — pavement stays cooler than on sunny days, but still check the surface before walks.' };
 
   // Fallback to text-based match if description is available
   if (!tip && desc) {
