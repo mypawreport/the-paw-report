@@ -2899,6 +2899,8 @@ async function startTracking() {
   showLoading();
   try {
     const {lat,lon}=await getLocation(); lastLat=lat; lastLon=lon;
+    // Cache last known good location so we can fall back to it if GPS fails next time
+    try { localStorage.setItem('paw_last_coords', JSON.stringify({lat, lon, ts: Date.now()})); } catch(_) {}
     document.getElementById('location-info').textContent=`📍 ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
     await fetchAll(lat,lon);
     isTracking=true; btn.disabled=false; btn.textContent='⏹ Stop Report';
@@ -2906,7 +2908,49 @@ async function startTracking() {
     trackingInterval=setInterval(async()=>{
       try{const{lat:nl,lon:no}=await getLocation();lastLat=nl;lastLon=no;document.getElementById('location-info').textContent=`📍 ${nl.toFixed(4)}, ${no.toFixed(4)}`;await fetchAll(nl,no);}catch(_){}
     },2*60*1000);
-  } catch(err) { showFetchError(err.message); btn.disabled=false; btn.textContent='📍 Run My Paw Report'; }
+  } catch(err) {
+    // GPS failed — try cached last-known location (up to 24h old) before showing error
+    let usedFallback = false;
+    try {
+      const cached = JSON.parse(localStorage.getItem('paw_last_coords') || 'null');
+      if (cached && cached.lat && cached.lon && (Date.now() - cached.ts) < 86400000) {
+        lastLat = cached.lat; lastLon = cached.lon;
+        document.getElementById('location-info').textContent = `📍 ${cached.lat.toFixed(4)}, ${cached.lon.toFixed(4)} (last known)`;
+        showToast('📍 GPS unavailable — using your last known location.');
+        await fetchAll(cached.lat, cached.lon);
+        isTracking = true; btn.disabled = false; btn.textContent = '⏹ Stop Report';
+        document.getElementById('pulse-dot').classList.remove('inactive');
+        trackingInterval = setInterval(async () => {
+          try { const {lat:nl,lon:no}=await getLocation(); lastLat=nl; lastLon=no;
+            try { localStorage.setItem('paw_last_coords', JSON.stringify({lat:nl, lon:no, ts:Date.now()})); } catch(_) {}
+            document.getElementById('location-info').textContent=`📍 ${nl.toFixed(4)}, ${no.toFixed(4)}`;
+            await fetchAll(nl,no);
+          } catch(_) {}
+        }, 2*60*1000);
+        usedFallback = true;
+      }
+    } catch(_) {}
+    // If no cache, try first saved location
+    if (!usedFallback) {
+      try {
+        const favs = JSON.parse(localStorage.getItem('paw_favorites') || '[]');
+        if (favs.length > 0 && favs[0].lat && favs[0].lon) {
+          lastLat = favs[0].lat; lastLon = favs[0].lon;
+          document.getElementById('location-info').textContent = `📍 ${favs[0].name || 'Saved location'}`;
+          showToast('📍 GPS unavailable — using your saved location: ' + (favs[0].name || 'Home'));
+          await fetchAll(favs[0].lat, favs[0].lon);
+          isTracking = true; btn.disabled = false; btn.textContent = '⏹ Stop Report';
+          document.getElementById('pulse-dot').classList.remove('inactive');
+          usedFallback = true;
+        }
+      } catch(_) {}
+    }
+    if (!usedFallback) {
+      showFetchError(err.message);
+      btn.disabled = false;
+      btn.textContent = '📍 Run My Paw Report';
+    }
+  }
 }
 function stopTracking() {
   isTracking=false; clearInterval(trackingInterval); trackingInterval=null;
@@ -2915,8 +2959,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v227';
+const APP_VERSION = 'v228';
 const WHATS_NEW = {
+  'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
   'v227': '🌪️ Fixed weather tip showing wrong condition — now correctly detects storms, dark skies, and tornado warnings instead of showing "Clear and sunny" during bad weather.',
   'v226': '🔔 Notifications fixed: tray widget now stays persistent in your notification bar, Warm/Hot temps trigger alerts, and the notification icon is corrected.',
   'v144': '⚡ Reverted the edge-lighting shimmer added in v143 — it caused lag again for the same underlying reason as the v140 bug. Edge lighting is back to smooth and lag-free.',
@@ -3173,7 +3218,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=227').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=228').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
