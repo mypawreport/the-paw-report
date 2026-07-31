@@ -45,12 +45,12 @@
     .title-gradient{background:linear-gradient(90deg,var(--accent,#0d9488),var(--accent2,#4a7c59));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--accent,#0d9488)}
     .header p{font-size:0.82rem;opacity:0.55}
     /* Cards */
-    .card{background:#ffffff;border:1px solid var(--c-border);border-radius:16px;padding:14px 14px;margin-bottom:8px;text-align:left;box-shadow:0 1px 6px rgba(0,0,0,0.06)}
+    .card{background:#ffffff;border:1px solid var(--c-border);border-radius:16px;padding:14px 14px;margin-bottom:8px;text-align:left;box-shadow:0 1px 6px rgba(0,0,0,0.06);position:relative;z-index:2}
     .card-title{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:0.5;margin-bottom:8px}
     .divider{height:1px;background:var(--c-card);margin:12px 0}
     /* Screens */
     .screen{display:none}
-    .screen.active{display:block}
+    .screen.active{display:block;position:relative;z-index:2}
     /* Auth */
     .auth-card{text-align:center;padding:32px 24px}
     .auth-icon{font-size:3.5rem;margin-bottom:12px;display:block}
@@ -3233,7 +3233,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v238';
+const APP_VERSION = 'v239';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3493,7 +3493,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=238').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=239').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
