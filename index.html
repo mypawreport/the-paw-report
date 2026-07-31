@@ -72,7 +72,7 @@
     .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
     .btn-sm{padding:9px 16px;font-size:0.82rem;border-radius:10px;width:auto;display:inline-block}
     /* User bar */
-    .user-bar{display:flex;align-items:center;justify-content:space-between;background:#ffffff;border-radius:14px;padding:10px 14px;margin-bottom:12px;border:1px solid #d8e4d4;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+    .user-bar{display:none;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.08);border-radius:14px;padding:10px 14px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.1)}
     .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:var(--c-slate)}
     .user-name{font-size:0.85rem;font-weight:600}
     .user-email{font-size:0.68rem;opacity:0.45}
@@ -243,10 +243,21 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     .spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(var(--glow,13,148,136),0.3);border-top-color:var(--accent,var(--c-teal));border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:5px}
     /* Nav tabs */
-    .bottom-nav{display:flex;gap:4px;margin-bottom:12px;background:var(--c-bg);border-radius:14px;padding:4px}
-    .nav-btn{flex:1;padding:8px 4px;border-radius:10px;border:none;background:none;color:var(--c-slate);font-size:0.7rem;font-weight:600;cursor:pointer;opacity:0.45;transition:var(--c-transition);display:flex;flex-direction:column;align-items:center;gap:2px}
-    .nav-btn .nav-icon{font-size:1.1rem}
-    .nav-btn.active{background:rgba(var(--glow,13,148,136),0.22);opacity:1;color:var(--accent,#0d9488)}
+    .bottom-nav{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:14px;padding:0;position:relative;height:64px}
+    .nav-btn{position:relative;width:56px;height:56px;border-radius:50%;border:none;background:rgba(255,255,255,0.06);color:var(--c-slate);font-size:0.6rem;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);opacity:0.5;flex:none;margin:0 -4px;z-index:1}
+    .nav-btn .nav-icon{font-size:1.15rem;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+    .nav-btn.active{background:rgba(13,148,136,0.25);opacity:1;color:var(--accent,#0d9488);transform:scale(1.15);z-index:3;box-shadow:0 2px 12px rgba(13,148,136,0.3)}
+    .nav-btn.active .nav-icon{font-size:1.4rem}
+    .nav-btn:not(.active):hover{opacity:0.75;transform:scale(1.05)}
+    .nav-btn:active:not(.active){transform:scale(0.95)}
+    /* Rotary arc effect: tabs curve around active center */
+    .nav-btn:nth-child(1){transform:translateY(0)}
+    .nav-btn:nth-child(4){transform:translateY(0)}
+    .nav-btn.active:nth-child(1){transform:translateY(-2px) scale(1.15)}
+    .nav-btn.active:nth-child(4){transform:translateY(-2px) scale(1.15)}
+    /* Label appears below active tab */
+    .nav-btn .nav-label{font-size:0.55rem;opacity:0;transition:opacity 0.3s}
+    .nav-btn.active .nav-label{opacity:0.9}
     /* Edge glow system */
     .edge-glow {
       position: fixed;
@@ -560,25 +571,12 @@
   </div>
 
   <div id="screen-main" class="screen">
-    <div class="user-bar">
-      <div class="user-info">
-        <div class="user-avatar" id="user-avatar" style="background:linear-gradient(135deg,#0d9488,#4a7c59)"></div>
-        <div>
-          <div class="user-name" id="user-name-display">--</div>
-          <div class="user-email" id="user-email-display">--</div>
-        </div>
-      </div>
-      <div class="user-right">
-        <div class="tier-badge tier-free" id="tier-badge-display">Free</div>
-        <button class="logout-btn" onclick="logout()">Sign out</button>
-      </div>
-    </div>
-
-    <div class="bottom-nav">
-      <button class="nav-btn active" id="nav-report" onclick="showTab('report')"><span class="nav-icon"><svg viewBox="0 0 100 100" width="1.15em" height="1.15em" style="display:inline-block;vertical-align:-0.16em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></span>Report</button>
-      <button class="nav-btn" id="nav-safety" onclick="showTab('safety')"><span class="nav-icon">🚨</span>Safety</button>
-      <button class="nav-btn" id="nav-wash" onclick="showTab('wash')"><span class="nav-icon">🛁</span>Wash</button>
-      <button class="nav-btn" id="nav-profile" onclick="showTab('profile')"><span class="nav-icon">👤</span>Profile</button>
+    
+    <div class="bottom-nav" id="rotary-nav">
+      <button class="nav-btn active" id="nav-report" onclick="showTab('report')"><span class="nav-icon"><svg viewBox="0 0 100 100" width="1.15em" height="1.15em" style="display:inline-block;vertical-align:-0.16em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></span><span class="nav-label">Report</span></button>
+      <button class="nav-btn" id="nav-safety" onclick="showTab('safety')"><span class="nav-icon">🚨</span><span class="nav-label">Safety</span></button>
+      <button class="nav-btn" id="nav-wash" onclick="showTab('wash')"><span class="nav-icon">🛁</span><span class="nav-label">Wash</span></button>
+      <button class="nav-btn" id="nav-profile" onclick="showTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profile</span></button>
     </div>
 
     <div id="tab-report">
@@ -586,12 +584,7 @@
         <div style="margin-bottom:10px;">🐾</div>
         <div style="font-size:1rem;font-weight:600;margin-bottom:5px;" id="pet-welcome-msg">Ready to check conditions?</div>
         <div style="font-size:0.83rem;color:#64748b;margin-bottom:16px;">Ground temp, walk timing & safety — all in one report.</div>
-        <div style="font-size:0.7rem;color:#64748b;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Dog size:</div>
-        <div class="size-selector" id="size-selector-initial">
-          <button class="size-btn" data-size="small" onclick="selectSize('small',this)">🐩 Small</button>
-          <button class="size-btn active" data-size="medium" onclick="selectSize('medium',this)">🐕 Medium</button>
-          <button class="size-btn" data-size="large" onclick="selectSize('large',this)">🦮 Large</button>
-        </div>
+
         <div style="font-size:0.7rem;color:#64748b;margin:10px 0 6px;text-transform:uppercase;letter-spacing:1px;">Walking surface:</div>
         <div class="size-selector" id="surface-selector" style="flex-wrap:wrap;">
           <button class="size-btn active" data-surface="asphalt" onclick="selectSurface('asphalt',this)">🖤 Asphalt</button>
@@ -652,10 +645,10 @@
         <div class="card-title acc-title" onclick="toggleAcc('paw-body')">🌡️ Right Now — Ground Temperature<i class="acc-arrow open" id="arr-paw-body">▾</i></div>
         <div id="paw-body" class="acc-body"><div>
         <div id="report-location-line" style="font-size:0.72rem;color:#64748b;text-align:center;margin:-4px 0 10px;display:none;">📍 <span id="report-location-text">Detecting…</span></div>
-        <div class="size-selector" style="margin-bottom:12px;" id="size-selector-inline">
-          <button class="size-btn" data-size="small" onclick="selectSize('small',this)">🐩 Small</button>
-          <button class="size-btn active" data-size="medium" onclick="selectSize('medium',this)">🐕 Medium</button>
-          <button class="size-btn" data-size="large" onclick="selectSize('large',this)">🦮 Large</button>
+        <!-- Dog selector moved to Profile tab - shows active dog here -->
+        <div id="active-dog-bar" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;font-size:0.78rem;color:#94a3b8;">
+          <span id="active-dog-name" style="font-weight:600;color:#fff;"></span>
+          <span id="active-dog-size" style="background:rgba(13,148,136,0.15);color:var(--accent,#0d9488);padding:2px 10px;border-radius:12px;font-size:0.7rem;font-weight:600;"></span>
         </div>
         <div class="status-bar"><div class="pulse inactive" id="pulse-dot"></div><span id="status-text">Ready</span></div>
         <div class="rating-display">
@@ -676,16 +669,22 @@
         <div id="hydration-alert" class="alert-banner alert-hydration" style="display:none;"></div>
         <div id="humidity-alert" style="display:none;background:#e0f2fe;border:1px solid #38bdf8;border-radius:10px;padding:10px;font-size:0.8rem;color:#0369a1;margin-top:8px;"></div>
         <div class="divider"></div>
-        <div class="stats-grid">
-          <div class="stat-box ground-temp-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.6rem;color:#64748b;margin-top:2px;">Asphalt</div></div>
-          <!-- Inline surface picker on report card -->
-          <div style="margin:10px 0 4px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;" id="inline-surface-selector">
-            <button onclick="selectSurfaceInline('asphalt')" id="isrf-asphalt" style="padding:5px 10px;border-radius:20px;font-size:0.7rem;border:2px solid #e2e8f0;background:#fff;color:#374151;cursor:pointer;">🖤 Asphalt</button>
-            <button onclick="selectSurfaceInline('concrete')" id="isrf-concrete" style="padding:5px 10px;border-radius:20px;font-size:0.7rem;border:2px solid #e2e8f0;background:#fff;color:#374151;cursor:pointer;">⬜ Concrete</button>
-            <button onclick="selectSurfaceInline('dirt')" id="isrf-dirt" style="padding:5px 10px;border-radius:20px;font-size:0.7rem;border:2px solid #e2e8f0;background:#fff;color:#374151;cursor:pointer;">🟫 Dirt/Sand</button>
-            <button onclick="selectSurfaceInline('grass')" id="isrf-grass" style="padding:5px 10px;border-radius:20px;font-size:0.7rem;border:2px solid #e2e8f0;background:#fff;color:#374151;cursor:pointer;">🌿 Grass</button>
-            <button onclick="selectSurfaceInline('shaded')" id="isrf-shaded" style="padding:5px 10px;border-radius:20px;font-size:0.7rem;border:2px solid #e2e8f0;background:#fff;color:#374151;cursor:pointer;">🌳 Shaded</button>
-          </div>
+        <!-- Ground temp - BIG hero box -->
+        <div class="stat-box ground-temp-hero" style="grid-column:span 2;text-align:center;padding:16px 8px;border-radius:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);">
+          <div class="stat-value" id="ground-temp" style="font-size:2.4rem;font-weight:800;">--°F</div>
+          <div class="stat-label" style="margin-top:2px;">Est. Ground Temp</div>
+          <div class="stat-sublabel" id="surface-label" style="font-size:0.65rem;color:var(--accent,#0d9488);margin-top:4px;font-weight:600;">Asphalt</div>
+        </div>
+        <!-- Surface picker -->
+        <div style="grid-column:span 2;margin:10px 0 4px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;" id="inline-surface-selector">
+          <button onclick="selectSurfaceInline('asphalt')" id="isrf-asphalt" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🖤 Asphalt</button>
+          <button onclick="selectSurfaceInline('concrete')" id="isrf-concrete" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">⬜ Concrete</button>
+          <button onclick="selectSurfaceInline('dirt')" id="isrf-dirt" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🟫 Dirt/Sand</button>
+          <button onclick="selectSurfaceInline('grass')" id="isrf-grass" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🌿 Grass</button>
+          <button onclick="selectSurfaceInline('shaded')" id="isrf-shaded" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🌳 Shaded</button>
+        </div>
+        <!-- Air temp + stats in 2x2 grid -->
+        <div class="stats-grid" style="grid-column:span 2;">
           <div class="stat-box"><div class="stat-value" id="air-temp">--°F</div><div class="stat-label">Air Temp</div></div>
           <div class="stat-box"><div class="stat-value" id="uv-index">--</div><div class="stat-label">UV Index</div></div>
           <div class="stat-box"><div class="stat-value" id="wind-speed">--</div><div class="stat-label">Wind Speed</div></div>
@@ -919,6 +918,19 @@
     </div>
 
     <div id="tab-profile" style="display:none;">
+      <div class="user-bar" style="display:flex;">
+      <div class="user-info">
+        <div class="user-avatar" id="user-avatar" style="background:linear-gradient(135deg,#0d9488,#4a7c59)"></div>
+        <div>
+          <div class="user-name" id="user-name-display">--</div>
+          <div class="user-email" id="user-email-display">--</div>
+        </div>
+      </div>
+      <div class="user-right">
+        <div class="tier-badge tier-free" id="tier-badge-display">Free</div>
+        <button class="logout-btn" onclick="logout()">Sign out</button>
+      </div>
+    </div>
 
       <!-- 👤 Profile -->
       <div class="card">
@@ -947,6 +959,32 @@
             <div class="avatar-option color-opt" onclick="setAvatar('color','#ec4899')" style="background:#ec4899;" title="Pink"></div>
           </div>
         </div>
+      </div>
+
+
+      <!-- 🐕 Dog Profiles -->
+      <div class="card" id="dog-profiles-card">
+        <div class="card-title acc-title" onclick="toggleAcc('dog-profiles-body')">🐕 My Dogs <span id="dog-count-badge" style="font-size:0.7rem;opacity:0.6;font-weight:400;"></span><i class="acc-arrow" id="arr-dog-profiles-body">▾</i></div>
+        <div id="dog-profiles-body" class="acc-body"><div>
+          <div id="dog-profiles-list"></div>
+          <button class="btn btn-primary" id="add-dog-btn" onclick="showAddDogForm()" style="margin-top:12px;font-size:0.82rem;padding:10px;width:100%;">➕ Add Dog Profile</button>
+          <div id="add-dog-form" style="display:none;margin-top:12px;">
+            <div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:14px;">
+              <input type="text" id="new-dog-name" placeholder="Dog's name" style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;color:#fff;font-size:0.9rem;margin-bottom:8px;" maxlength="30"/>
+              <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Size:</div>
+              <div class="size-selector" style="margin-bottom:10px;">
+                <button class="size-btn" data-size="small" onclick="selectNewDogSize('small',this)">🐩 Small</button>
+                <button class="size-btn active" data-size="medium" onclick="selectNewDogSize('medium',this)">🐕 Medium</button>
+                <button class="size-btn" data-size="large" onclick="selectNewDogSize('large',this)">🦮 Large</button>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary" onclick="addDogProfile()" style="flex:1;font-size:0.82rem;padding:9px;">✅ Save</button>
+                <button class="btn btn-secondary" onclick="hideAddDogForm()" style="flex:1;font-size:0.82rem;padding:9px;">❌ Cancel</button>
+              </div>
+            </div>
+          </div>
+          <div id="dog-limit-msg" style="font-size:0.72rem;color:#94a3b8;text-align:center;margin-top:8px;"></div>
+        </div></div>
       </div>
 
       <!-- 💳 Subscription -->
@@ -1697,7 +1735,181 @@ function updateUserBar() {
   if (rcd2) { var cnt2 = getReferralCount(); rcd2.textContent = cnt2 > 0 ? '🎁 ' + cnt2 + ' friend' + (cnt2===1?'':'s') + ' referred!' : ''; }
   renderProfileDisplay();
   renderSubStatus();
+  if (typeof loadDogProfiles === 'function') loadDogProfiles();
 }
+
+// ===== DOG PROFILES SYSTEM =====
+let dogProfiles = [];
+let activeDogId = null;
+let newDogSize = 'medium';
+
+const DOG_LIMITS = { free: 1, bronze: 3, silver: 5, gold: 30 };
+
+function loadDogProfiles() {
+  try { dogProfiles = JSON.parse(localStorage.getItem('paw_dogs') || '[]'); } catch(_) { dogProfiles = []; }
+  if (!activeDogId && dogProfiles.length > 0) activeDogId = dogProfiles[0].id;
+  // If no dogs exist, create a default one from existing prefs
+  if (dogProfiles.length === 0 && userPrefs) {
+    const defaultDog = {
+      id: 'dog_' + Date.now(),
+      name: userPrefs.pet_name || 'My Dog',
+      size: userPrefs.pet_size || currentPetSize || 'medium',
+      breed: userPrefs.pet_breed || ''
+    };
+    dogProfiles.push(defaultDog);
+    activeDogId = defaultDog.id;
+    saveDogProfiles();
+  }
+  renderDogProfiles();
+  updateActiveDogBar();
+}
+
+function saveDogProfiles() {
+  try { localStorage.setItem('paw_dogs', JSON.stringify(dogProfiles)); } catch(_) {}
+}
+
+function getDogLimit() {
+  return DOG_LIMITS[currentTier] || 1;
+}
+
+function renderDogProfiles() {
+  const list = document.getElementById('dog-profiles-list');
+  if (!list) return;
+  const limit = getDogLimit();
+  
+  if (dogProfiles.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:#94a3b8;font-size:0.82rem;padding:12px;">No dogs added yet. Tap "Add Dog Profile" to get started.</div>';
+  } else {
+    list.innerHTML = dogProfiles.map(dog => {
+      const isActive = dog.id === activeDogId;
+      const sizeEmoji = dog.size === 'small' ? '🐩' : dog.size === 'large' ? '🦮' : '🐕';
+      return `
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1px solid ${isActive ? 'rgba(13,148,136,0.3)' : 'rgba(255,255,255,0.08)'};">
+          <div style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1;" onclick="setActiveDog('${dog.id}')">
+            <span style="font-size:1.3rem;">${sizeEmoji}</span>
+            <div>
+              <div style="font-weight:600;color:#fff;font-size:0.88rem;">${dog.name}</div>
+              <div style="font-size:0.7rem;color:#94a3b8;">${dog.size.charAt(0).toUpperCase()+dog.size.slice(1)}${dog.breed ? ' · ' + dog.breed : ''}</div>
+            </div>
+            ${isActive ? '<span style="font-size:0.65rem;background:rgba(13,148,136,0.2);color:var(--accent,#0d9488);padding:2px 8px;border-radius:10px;font-weight:600;">ACTIVE</span>' : ''}
+          </div>
+          <button onclick="removeDogProfile('${dog.id}')" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:none;border-radius:8px;padding:6px 10px;font-size:0.72rem;cursor:pointer;margin-left:8px;">🗑️</button>
+        </div>`;
+    }).join('');
+  }
+  
+  // Update count badge and limit message
+  const badge = document.getElementById('dog-count-badge');
+  if (badge) badge.textContent = `(${dogProfiles.length}/${limit})`;
+  
+  const addBtn = document.getElementById('add-dog-btn');
+  if (addBtn) addBtn.style.display = dogProfiles.length >= limit ? 'none' : 'block';
+  
+  const limitMsg = document.getElementById('dog-limit-msg');
+  if (limitMsg) {
+    if (dogProfiles.length >= limit) {
+      limitMsg.textContent = limit === 1 ? 'Free plan: 1 dog max. Upgrade to add more.' : `Max dogs for ${currentTier} tier reached. Upgrade to add more.`;
+      limitMsg.style.display = 'block';
+    } else {
+      limitMsg.style.display = 'none';
+    }
+  }
+}
+
+function setActiveDog(id) {
+  activeDogId = id;
+  const dog = dogProfiles.find(d => d.id === id);
+  if (dog) {
+    currentPetSize = dog.size;
+    // Update prefs to match active dog
+    if (userPrefs && currentUser) {
+      savePrefs(currentUser.id, { pet_name: dog.name, pet_size: dog.size, pet_breed: dog.breed || '' });
+    }
+    try { localStorage.setItem('paw_active_dog', id); } catch(_) {}
+  }
+  renderDogProfiles();
+  updateActiveDogBar();
+  syncSizeSelectors(currentPetSize);
+}
+
+function updateActiveDogBar() {
+  const dog = dogProfiles.find(d => d.id === activeDogId);
+  const nameEl = document.getElementById('active-dog-name');
+  const sizeEl = document.getElementById('active-dog-size');
+  if (dog && nameEl && sizeEl) {
+    nameEl.textContent = dog.name;
+    sizeEl.textContent = dog.size.charAt(0).toUpperCase() + dog.size.slice(1);
+  } else if (nameEl) {
+    nameEl.textContent = 'No dog selected';
+    if (sizeEl) sizeEl.textContent = '';
+  }
+}
+
+function showAddDogForm() {
+  const form = document.getElementById('add-dog-form');
+  if (form) form.style.display = 'block';
+  const nameInput = document.getElementById('new-dog-name');
+  if (nameInput) { nameInput.value = ''; nameInput.focus(); }
+  newDogSize = 'medium';
+  // Reset size buttons
+  document.querySelectorAll('#add-dog-form .size-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.size === 'medium');
+  });
+}
+
+function hideAddDogForm() {
+  const form = document.getElementById('add-dog-form');
+  if (form) form.style.display = 'none';
+}
+
+function selectNewDogSize(size, btn) {
+  newDogSize = size;
+  document.querySelectorAll('#add-dog-form .size-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function addDogProfile() {
+  const nameInput = document.getElementById('new-dog-name');
+  const name = nameInput ? nameInput.value.trim() : '';
+  if (!name) { showToast('Please enter a name'); return; }
+  
+  const limit = getDogLimit();
+  if (dogProfiles.length >= limit) {
+    showToast(`Max ${limit} dog${limit > 1 ? 's' : ''} for your tier. Upgrade to add more.`);
+    return;
+  }
+  
+  const newDog = {
+    id: 'dog_' + Date.now(),
+    name: name,
+    size: newDogSize,
+    breed: ''
+  };
+  dogProfiles.push(newDog);
+  saveDogProfiles();
+  
+  // Auto-select the new dog
+  setActiveDog(newDog.id);
+  hideAddDogForm();
+  showToast('✅ ' + name + ' added!');
+}
+
+function removeDogProfile(id) {
+  if (dogProfiles.length <= 1) {
+    showToast('Keep at least one dog profile.');
+    return;
+  }
+  if (!confirm('Remove this dog profile?')) return;
+  dogProfiles = dogProfiles.filter(d => d.id !== id);
+  if (activeDogId === id && dogProfiles.length > 0) {
+    setActiveDog(dogProfiles[0].id);
+  }
+  saveDogProfiles();
+  renderDogProfiles();
+  updateActiveDogBar();
+  showToast('Dog profile removed.');
+}
+
 function renderProfileDisplay() {
   if (!userPrefs && !currentUser) return;
   const petName = userPrefs?.pet_name || '—';
@@ -2069,6 +2281,7 @@ function loadMainScreen() {
   document.getElementById('pet-welcome-msg').textContent = `Ready to run ${petName}'s report?`;
   document.getElementById('header-sub').textContent = `Ground temp & walk safety for ${petName}`;
   syncSizeSelectors(currentPetSize); updateUserBar(); updateNotifBtn();
+  if (typeof loadDogProfiles === 'function') loadDogProfiles();
   // Show notif prompt if not asked yet
   if (!localStorage.getItem('paw_notif_asked') && 'Notification' in window) {
     document.getElementById('notif-banner').style.display = 'flex';
@@ -2959,8 +3172,9 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v228';
+const APP_VERSION = 'v229';
 const WHATS_NEW = {
+  'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
   'v227': '🌪️ Fixed weather tip showing wrong condition — now correctly detects storms, dark skies, and tornado warnings instead of showing "Clear and sunny" during bad weather.',
   'v226': '🔔 Notifications fixed: tray widget now stays persistent in your notification bar, Warm/Hot temps trigger alerts, and the notification icon is corrected.',
@@ -3218,7 +3432,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=228').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=229').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
