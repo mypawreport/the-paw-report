@@ -669,22 +669,17 @@
         <div id="hydration-alert" class="alert-banner alert-hydration" style="display:none;"></div>
         <div id="humidity-alert" style="display:none;background:#e0f2fe;border:1px solid #38bdf8;border-radius:10px;padding:10px;font-size:0.8rem;color:#0369a1;margin-top:8px;"></div>
         <div class="divider"></div>
-        <!-- Ground temp - BIG hero box -->
-        <div class="stat-box ground-temp-hero" style="grid-column:span 2;text-align:center;padding:16px 8px;border-radius:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);">
-          <div class="stat-value" id="ground-temp" style="font-size:2.4rem;font-weight:800;">--°F</div>
-          <div class="stat-label" style="margin-top:2px;">Est. Ground Temp</div>
-          <div class="stat-sublabel" id="surface-label" style="font-size:0.65rem;color:var(--accent,#0d9488);margin-top:4px;font-weight:600;">Asphalt</div>
-        </div>
-        <!-- Surface picker -->
-        <div style="grid-column:span 2;margin:10px 0 4px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;" id="inline-surface-selector">
-          <button onclick="selectSurfaceInline('asphalt')" id="isrf-asphalt" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🖤 Asphalt</button>
-          <button onclick="selectSurfaceInline('concrete')" id="isrf-concrete" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">⬜ Concrete</button>
-          <button onclick="selectSurfaceInline('dirt')" id="isrf-dirt" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🟫 Dirt/Sand</button>
-          <button onclick="selectSurfaceInline('grass')" id="isrf-grass" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🌿 Grass</button>
-          <button onclick="selectSurfaceInline('shaded')" id="isrf-shaded" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🌳 Shaded</button>
-        </div>
-        <!-- Air temp + stats in 2x2 grid -->
-        <div class="stats-grid" style="grid-column:span 2;">
+        <!-- All stats same size, in order from photo -->
+        <div class="stats-grid">
+          <div class="stat-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.6rem;color:var(--accent,#0d9488);margin-top:2px;">Asphalt</div></div>
+          <!-- Surface picker -->
+          <div style="grid-column:span 2;margin:8px 0 4px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;" id="inline-surface-selector">
+            <button onclick="selectSurfaceInline('asphalt')" id="isrf-asphalt" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🖤 Asphalt</button>
+            <button onclick="selectSurfaceInline('concrete')" id="isrf-concrete" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">⬜ Concrete</button>
+            <button onclick="selectSurfaceInline('dirt')" id="isrf-dirt" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🟫 Dirt/Sand</button>
+            <button onclick="selectSurfaceInline('grass')" id="isrf-grass" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🌿 Grass</button>
+            <button onclick="selectSurfaceInline('shaded')" id="isrf-shaded" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🌳 Shaded</button>
+          </div>
           <div class="stat-box"><div class="stat-value" id="air-temp">--°F</div><div class="stat-label">Air Temp</div></div>
           <div class="stat-box"><div class="stat-value" id="uv-index">--</div><div class="stat-label">UV Index</div></div>
           <div class="stat-box"><div class="stat-value" id="wind-speed">--</div><div class="stat-label">Wind Speed</div></div>
@@ -3172,7 +3167,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v229';
+const APP_VERSION = 'v230';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3432,7 +3427,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=229').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=230').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
