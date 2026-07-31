@@ -546,7 +546,7 @@
           <button class="billing-btn active" onclick="selectBilling('weekly',this)">Weekly</button>
           <button class="billing-btn" onclick="selectBilling('monthly',this)">Monthly</button>
           <button class="billing-btn" onclick="selectBilling('yearly',this)">Yearly</button>
-          <button class="billing-btn" id="lifetime-btn" onclick="selectBilling('lifetime',this)" style="display:none">Lifetime</button>
+          
         </div>
         <div id="tier-display"></div>
         <div class="referral-section">
@@ -1286,12 +1286,12 @@ let notificationsEnabled = false;
 const PRICES = {
   bronze: { weekly:{launch:'$0.99',regular:'$1.99',period:'/wk'}, monthly:{launch:'$2.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$24.99',regular:'$39.99',period:'/yr'} },
   silver: { weekly:{launch:'$1.99',regular:'$3.99',period:'/wk'}, monthly:{launch:'$3.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$29.99',regular:'$49.99',period:'/yr'} },
-  gold:   { weekly:{launch:'$3.99',regular:'$6.99',period:'/wk'}, monthly:{launch:'$6.99',regular:'$12.99',period:'/mo'}, yearly:{launch:'$59.99',regular:'$99.99',period:'/yr'}, lifetime:{launch:'$129',regular:'$199',period:' one-time'} }
+  gold:   { weekly:{launch:'$3.99',regular:'$6.99',period:'/wk'}, monthly:{launch:'$6.99',regular:'$12.99',period:'/mo'}, yearly:{launch:'$59.99',regular:'$99.99',period:'/yr'} }
 };
 const FEATURES = {
   bronze: ['✅ Ground temperature checker','✅ Basic paw safety rating','✅ Area safety overview','✅ Best time to walk (today)','✅ Nearby pet wash stations','🔒 Walk history (7 days)','🔒 Multiple pet profiles','🔒 Detailed safety reports'],
   silver: ['✅ Everything in Bronze','✅ Walk history (30 days)','✅ Multiple pet profiles (up to 3)','✅ Detailed safety reports','✅ Route safety scanner','🔒 Unlimited pet profiles','🔒 Pro walker dashboard','🔒 Priority support'],
-  gold:   ['✅ Everything in Silver','✅ Unlimited pet profiles','✅ Pro walker dashboard','✅ Walk sharing & client reports','✅ Priority support','✅ Save favourite wash stations','✅ Lifetime access option','✅ Early access to new features']
+  gold:   ['✅ Everything in Silver','✅ Unlimited pet profiles','✅ Pro walker dashboard','✅ Walk sharing & client reports','✅ Priority support','✅ Save favourite wash stations','✅ Early access to new features']
 };
 function renderTierDisplay() {
   const p = PRICES[activeTierTab][activeBilling];
@@ -1309,8 +1309,8 @@ function renderTierDisplay() {
       <div class="tier-card-header">
         <div class="tier-card-name" style="color:${color}">${tierEmojis[activeTierTab]} ${activeTierTab.charAt(0).toUpperCase()+activeTierTab.slice(1)}</div>
         <div class="tier-card-price">
-          ${isLaunch && p.regular ? `<span class="tier-price-orig">${p.regular}</span>` : ''}
-          <span class="tier-price-main" style="color:${color}">${isLaunch && p.launch ? p.launch : p.regular}</span>
+          
+          <span class="tier-price-main" style="color:${color}">${p.launch || p.regular}</span>
           <span class="tier-price-period">${p.period}</span>
           ${savings}
         </div>
@@ -1319,7 +1319,7 @@ function renderTierDisplay() {
         ${feats.map(f => `<li class="${f.startsWith('🔒')?'locked':''}"><span class="fi">${f.charAt(0)==='✅'?'✅':'🔒'}</span>${f.slice(2)}</li>`).join('')}
       </ul>
       <button class="btn btn-primary" onclick="handleSubscribe('${activeTierTab}','${activeBilling}')">
-        ${activeBilling==='lifetime'?'Get Lifetime Access ♾️':`Start ${activeTierTab.charAt(0).toUpperCase()+activeTierTab.slice(1)} — ${isLaunch&&p.launch?p.launch:p.regular}${p.period}`}
+        Start ${activeTierTab.charAt(0).toUpperCase()+activeTierTab.slice(1)} — ${isLaunch&&p.launch?p.launch:p.regular}${p.period}
       </button>
     </div>`;
 }
@@ -1327,8 +1327,7 @@ function selectTierTab(tier, el) {
   activeTierTab = tier;
   document.querySelectorAll('.tier-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('lifetime-btn').style.display = tier==='gold' ? 'block' : 'none';
-  if (activeBilling==='lifetime' && tier!=='gold') { activeBilling='monthly'; document.querySelectorAll('.billing-btn').forEach((b,i)=>b.classList.toggle('active',i===1)); }
+  if (activeBilling==='lifetime') { activeBilling='monthly'; document.querySelectorAll('.billing-btn').forEach((b,i)=>b.classList.toggle('active',i===1)); }
   renderTierDisplay();
 }
 function selectBilling(b, el) {
@@ -2054,7 +2053,7 @@ function renderSubStatus() {
   const tierFeatures = {
     bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
     silver: ['✅ Everything in Bronze','📍 Save up to 5 locations','🚗 Hot car reminder','📈 Detailed safety reports','🗺️ Route safety scanner'],
-    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support','💎 Lifetime access option']
+    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support',]
   };
   const BILLING_LABELS = {weekly:'Weekly',monthly:'Monthly',yearly:'Yearly'};
   let subBilling = 'monthly';
@@ -2095,7 +2094,7 @@ function renderSubStatus() {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
         <div id="sub-detail-name" style="font-weight:800;font-size:0.9rem;color:#1e293b;">${initialTier.charAt(0).toUpperCase()+initialTier.slice(1)}</div>
         <div>
-          ${p && p.launch ? `<span style="font-size:0.72rem;text-decoration:line-through;color:#9ca3af;margin-right:4px;">${p.regular}</span>` : ''}
+          
           <span id="sub-detail-price" style="font-weight:900;font-size:1.1rem;color:#0d9488;">${p?((p.launch||p.regular)+p.period):'—'}</span>
         </div>
       </div>
@@ -2142,7 +2141,7 @@ function updateSubDetail() {
   const tierFeatures = {
     bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
     silver: ['✅ Everything in Bronze','📍 Save up to 5 locations','🚗 Hot car reminder','📈 Detailed safety reports','🗺️ Route safety scanner'],
-    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support','💎 Lifetime access option']
+    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support',]
   };
   const p = PRICES[tier]?.[billing] || PRICES[tier]?.monthly;
   const nameEl = document.getElementById('sub-detail-name');
@@ -3234,7 +3233,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v236';
+const APP_VERSION = 'v237';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3494,7 +3493,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=236').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=237').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
