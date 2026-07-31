@@ -960,10 +960,14 @@
 
       <!-- 🐕 Dog Profiles -->
       <div class="card" id="dog-profiles-card">
-        <div class="card-title acc-title" onclick="toggleAcc('dog-profiles-body')">🐕 My Dogs <span id="dog-count-badge" style="font-size:0.7rem;opacity:0.6;font-weight:400;"></span><i class="acc-arrow" id="arr-dog-profiles-body">▾</i></div>
+        <div class="card-title acc-title" onclick="toggleAcc('dog-profiles-body')">🐕 My Dogs — Tap to Select <span id="dog-count-badge" style="font-size:0.7rem;opacity:0.6;font-weight:400;"></span><i class="acc-arrow" id="arr-dog-profiles-body">▾</i></div>
         <div id="dog-profiles-body" class="acc-body"><div>
           <div id="dog-profiles-list"></div>
-          <button class="btn btn-primary" id="add-dog-btn" onclick="showAddDogForm()" style="margin-top:12px;font-size:0.82rem;padding:10px;width:100%;">➕ Add Dog Profile</button>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button onclick="selectAllDogs()" style="flex:1;background:rgba(13,148,136,0.12);border:1px solid rgba(13,148,136,0.2);color:var(--accent,#0d9488);border-radius:8px;padding:8px;font-size:0.72rem;cursor:pointer;font-weight:600;">✓ Select All</button>
+            <button onclick="deselectAllDogs()" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;border-radius:8px;padding:8px;font-size:0.72rem;cursor:pointer;">✗ Clear</button>
+          </div>
+          <button class="btn btn-primary" id="add-dog-btn" onclick="showAddDogForm()" style="margin-top:8px;font-size:0.82rem;padding:10px;width:100%;">➕ Add Dog Profile</button>
           <div id="add-dog-form" style="display:none;margin-top:12px;">
             <div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:14px;">
               <input type="text" id="new-dog-name" placeholder="Dog's name" style="width:100%;background:#fff;border:1px solid #d1d5db;border-radius:8px;padding:10px;color:#1e293b;font-size:0.9rem;margin-bottom:8px;box-sizing:border-box;" maxlength="30"/>
@@ -989,7 +993,7 @@
               <span id="walk-dog-name" style="font-weight:400;color:var(--accent,#0d9488);font-size:0.78rem;"></span>
             </div>
             <div style="display:flex;gap:6px;margin-bottom:10px;">
-              <button id="walk-filter-active" onclick="setWalkFilter('active')" style="padding:5px 12px;border-radius:16px;font-size:0.72rem;border:1.5px solid rgba(13,148,136,0.3);background:rgba(13,148,136,0.15);color:var(--accent,#0d9488);cursor:pointer;font-weight:600;">Selected Dog</button>
+              <button id="walk-filter-active" onclick="setWalkFilter('active')" style="padding:5px 12px;border-radius:16px;font-size:0.72rem;border:1.5px solid rgba(13,148,136,0.3);background:rgba(13,148,136,0.15);color:var(--accent,#0d9488);cursor:pointer;font-weight:600;">Selected Dogs</button>
               <button id="walk-filter-all" onclick="setWalkFilter('all')" style="padding:5px 12px;border-radius:16px;font-size:0.72rem;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#94a3b8;cursor:pointer;">All Dogs</button>
             </div>
             <div id="walk-history-lock" class="locked-feature" style="display:none;">
@@ -1743,14 +1747,21 @@ function updateUserBar() {
 
 // ===== DOG PROFILES SYSTEM =====
 let dogProfiles = [];
-let activeDogId = null;
+let selectedDogIds = []; // multi-select array
 let newDogSize = 'medium';
 
 const DOG_LIMITS = { free: 1, bronze: 3, silver: 5, gold: 30 };
 
 function loadDogProfiles() {
   try { dogProfiles = JSON.parse(localStorage.getItem('paw_dogs') || '[]'); } catch(_) { dogProfiles = []; }
-  if (!activeDogId && dogProfiles.length > 0) activeDogId = dogProfiles[0].id;
+  // Restore selected dogs from localStorage
+  try { selectedDogIds = JSON.parse(localStorage.getItem('paw_selected_dogs') || '[]'); } catch(_) { selectedDogIds = []; }
+  // Clean up any stale IDs
+  selectedDogIds = selectedDogIds.filter(id => dogProfiles.some(d => d.id === id));
+  // If nothing selected, auto-select first dog
+  if (selectedDogIds.length === 0 && dogProfiles.length > 0) {
+    selectedDogIds = [dogProfiles[0].id];
+  }
   // If no dogs exist, create a default one from existing prefs
   if (dogProfiles.length === 0 && userPrefs) {
     const defaultDog = {
@@ -1760,11 +1771,35 @@ function loadDogProfiles() {
       breed: userPrefs.pet_breed || ''
     };
     dogProfiles.push(defaultDog);
-    activeDogId = defaultDog.id;
+    selectedDogIds = [defaultDog.id];
     saveDogProfiles();
+    saveSelectedDogIds();
   }
   renderDogProfiles();
-  updateActiveDogBar();
+  updateSelectedDogsBar();
+}
+
+function saveSelectedDogIds() {
+  try { localStorage.setItem('paw_selected_dogs', JSON.stringify(selectedDogIds)); } catch(_) {}
+}
+
+function selectAllDogs() {
+  selectedDogIds = dogProfiles.map(d => d.id);
+  saveSelectedDogIds();
+  renderDogProfiles();
+  updateSelectedDogsBar();
+  renderWalkHistory();
+}
+
+function deselectAllDogs() {
+  // Keep at least one selected
+  if (dogProfiles.length > 0) {
+    selectedDogIds = [dogProfiles[0].id];
+  }
+  saveSelectedDogIds();
+  renderDogProfiles();
+  updateSelectedDogsBar();
+  renderWalkHistory();
 }
 
 function saveDogProfiles() {
@@ -1785,19 +1820,19 @@ function renderDogProfiles() {
     list.innerHTML = '<div style="text-align:center;color:#94a3b8;font-size:0.82rem;padding:12px;">No dogs added yet. Tap "Add Dog Profile" to get started.</div>';
   } else {
     list.innerHTML = dogProfiles.map(dog => {
-      const isActive = dog.id === activeDogId;
-      const sizeEmoji = dog.size === 'small' ? '🐩' : dog.size === 'large' ? '🦮' : '🐕';
+      const isSelected = selectedDogIds.includes(dog.id);
+      const sizeEmoji = dog.size === 'small' ? '\u{1f429}' : dog.size === 'large' ? '\u{1f9ae}' : '\u{1f415}';
       return `
-        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1px solid ${isActive ? 'rgba(13,148,136,0.3)' : 'rgba(255,255,255,0.08)'};">
-          <div style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1;" onclick="setActiveDog('${dog.id}')">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1.5px solid ${isSelected ? 'rgba(13,148,136,0.4)' : 'rgba(255,255,255,0.08)'};${isSelected ? 'background:rgba(13,148,136,0.08);' : ''}">
+          <div style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1;" onclick="toggleDogSelection('${dog.id}')">
+            <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${isSelected ? 'var(--accent,#0d9488)' : 'rgba(255,255,255,0.2)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${isSelected ? 'var(--accent,#0d9488)' : 'transparent'};font-size:0.75rem;color:#fff;font-weight:700;">${isSelected ? '\u2713' : ''}</div>
             <span style="font-size:1.3rem;">${sizeEmoji}</span>
             <div>
               <div style="font-weight:600;color:#fff;font-size:0.88rem;">${dog.name}</div>
-              <div style="font-size:0.7rem;color:#94a3b8;">${dog.size.charAt(0).toUpperCase()+dog.size.slice(1)}${dog.breed ? ' · ' + dog.breed : ''}</div>
+              <div style="font-size:0.7rem;color:#94a3b8;">${dog.size.charAt(0).toUpperCase()+dog.size.slice(1)}${dog.breed ? ' \u00b7 ' + dog.breed : ''}</div>
             </div>
-            ${isActive ? '<span style="font-size:0.65rem;background:rgba(13,148,136,0.2);color:var(--accent,#0d9488);padding:2px 8px;border-radius:10px;font-weight:600;">ACTIVE</span>' : ''}
           </div>
-          <button onclick="removeDogProfile('${dog.id}')" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:none;border-radius:8px;padding:6px 10px;font-size:0.72rem;cursor:pointer;margin-left:8px;">🗑️</button>
+          <button onclick="removeDogProfile('${dog.id}')" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:none;border-radius:8px;padding:6px 10px;font-size:0.72rem;cursor:pointer;margin-left:8px;">\u{1f5d1}\u{fe0f}</button>
         </div>`;
     }).join('');
   }
@@ -1821,33 +1856,47 @@ function renderDogProfiles() {
   }
 }
 
-function setActiveDog(id) {
-  activeDogId = id;
-  const dog = dogProfiles.find(d => d.id === id);
-  if (dog) {
-    currentPetSize = dog.size;
-    // Update prefs to match active dog
-    if (userPrefs && currentUser) {
-      savePrefs(currentUser.id, { pet_name: dog.name, pet_size: dog.size, pet_breed: dog.breed || '' });
+function toggleDogSelection(id) {
+  const idx = selectedDogIds.indexOf(id);
+  if (idx >= 0) {
+    // Don't allow deselecting if it's the only one selected
+    if (selectedDogIds.length <= 1) {
+      showToast('At least one dog must be selected.');
+      return;
     }
-    try { localStorage.setItem('paw_active_dog', id); } catch(_) {}
+    selectedDogIds.splice(idx, 1);
+  } else {
+    selectedDogIds.push(id);
+  }
+  saveSelectedDogIds();
+  // Update currentPetSize to the first selected dog
+  const firstDog = dogProfiles.find(d => d.id === selectedDogIds[0]);
+  if (firstDog) {
+    currentPetSize = firstDog.size;
+    syncSizeSelectors(currentPetSize);
   }
   renderDogProfiles();
-  updateActiveDogBar();
-  syncSizeSelectors(currentPetSize);
+  updateSelectedDogsBar();
   renderWalkHistory();
 }
 
-function updateActiveDogBar() {
-  const dog = dogProfiles.find(d => d.id === activeDogId);
+function getSelectedDogs() {
+  return dogProfiles.filter(d => selectedDogIds.includes(d.id));
+}
+
+function getSelectedDogNames() {
+  return getSelectedDogs().map(d => d.name);
+}
+
+function updateSelectedDogsBar() {
+  const selected = getSelectedDogs();
   const nameEl = document.getElementById('active-dog-name');
   const sizeEl = document.getElementById('active-dog-size');
-  if (dog && nameEl && sizeEl) {
-    nameEl.textContent = dog.name;
-    sizeEl.textContent = dog.size.charAt(0).toUpperCase() + dog.size.slice(1);
-  } else if (nameEl) {
-    nameEl.textContent = 'No dog selected';
-    if (sizeEl) sizeEl.textContent = '';
+  if (nameEl) {
+    nameEl.textContent = selected.length > 0 ? selected.map(d => d.name).join(', ') : 'No dog selected';
+  }
+  if (sizeEl) {
+    sizeEl.textContent = selected.length > 0 ? selected.map(d => d.size.charAt(0).toUpperCase()+d.size.slice(1)).join(', ') : '';
   }
 }
 
@@ -1896,7 +1945,10 @@ function addDogProfile() {
   saveDogProfiles();
   
   // Auto-select the new dog
-  setActiveDog(newDog.id);
+  selectedDogIds.push(newDog.id);
+  saveSelectedDogIds();
+  renderDogProfiles();
+  updateSelectedDogsBar();
   hideAddDogForm();
   showToast('✅ ' + name + ' added!');
 }
@@ -1908,12 +1960,15 @@ function removeDogProfile(id) {
   }
   if (!confirm('Remove this dog profile?')) return;
   dogProfiles = dogProfiles.filter(d => d.id !== id);
-  if (activeDogId === id && dogProfiles.length > 0) {
-    setActiveDog(dogProfiles[0].id);
+  const idx = selectedDogIds.indexOf(id);
+  if (idx >= 0) selectedDogIds.splice(idx, 1);
+  if (selectedDogIds.length === 0 && dogProfiles.length > 0) {
+    selectedDogIds = [dogProfiles[0].id];
   }
+  saveSelectedDogIds();
   saveDogProfiles();
   renderDogProfiles();
-  updateActiveDogBar();
+  updateSelectedDogsBar();
   showToast('Dog profile removed.');
 }
 
@@ -3179,7 +3234,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v235';
+const APP_VERSION = 'v236';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3439,7 +3494,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=235').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=236').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3887,26 +3942,34 @@ function logCurrentWalk() {
   if (tier !== 'gold') { showToast('Walk history is a Gold feature. Upgrade to track every walk!'); return; }
   if (!lastPawData) { showToast('Run a report first to log a walk.'); return; }
   var hist = getWalkHistory();
-  // Get active dog info
-  var activeDog = (typeof dogProfiles !== 'undefined' && activeDogId)
-    ? dogProfiles.find(function(d){ return d.id === activeDogId; })
-    : null;
-  var entry = {
-    ts: new Date().toLocaleString(),
-    rating: lastPawData.rating,
-    groundTemp: lastPawData.groundTempF,
-    airTemp: lastPawData.airTempF,
-    surface: currentSurface || 'asphalt',
-    location: document.getElementById('report-location-text') ? document.getElementById('report-location-text').textContent : '',
-    petSize: activeDog ? activeDog.size : (currentPetSize || 'medium'),
-    dogName: activeDog ? activeDog.name : (userPrefs && userPrefs.pet_name ? userPrefs.pet_name : ''),
-    dogBreed: activeDog ? (activeDog.breed || '') : (userPrefs && userPrefs.pet_breed ? userPrefs.pet_breed : '')
-  };
-  hist.unshift(entry);
+  var loc = document.getElementById('report-location-text') ? document.getElementById('report-location-text').textContent : '';
+  var surf = currentSurface || 'asphalt';
+  var selected = (typeof getSelectedDogs === 'function') ? getSelectedDogs() : [];
+  if (selected.length === 0) {
+    showToast('Select at least one dog first.');
+    return;
+  }
+  // Create one entry per selected dog (group walk)
+  selected.forEach(function(dog) {
+    var entry = {
+      ts: new Date().toLocaleString(),
+      rating: lastPawData.rating,
+      groundTemp: lastPawData.groundTempF,
+      airTemp: lastPawData.airTempF,
+      surface: surf,
+      location: loc,
+      petSize: dog.size,
+      dogName: dog.name,
+      dogBreed: dog.breed || '',
+      walkGroupId: Date.now() // links entries from same walk
+    };
+    hist.unshift(entry);
+  });
   if (hist.length > MAX_HISTORY) hist = hist.slice(0, MAX_HISTORY);
   saveWalkHistory(hist);
   renderWalkHistory();
-  showToast('📝 Walk logged' + (entry.dogName ? ' for ' + entry.dogName + '!' : '!'));
+  var names = selected.map(function(d){ return d.name; }).join(', ');
+  showToast('\U0001f4dd Walk logged for ' + names + '!');
 }
 function clearWalkHistory() {
   if (!confirm('Clear all walk history?')) return;
@@ -3955,32 +4018,32 @@ function renderWalkHistory() {
   if (logBtn) logBtn.style.display = 'block';
   if (reportLogBtn) reportLogBtn.style.display = 'block';
   
-  // Update walk history title with active dog name
+  // Update walk history title with selected dog names
   var walkDogName = document.getElementById('walk-dog-name');
-  var activeDog = (typeof dogProfiles !== 'undefined' && activeDogId)
-    ? dogProfiles.find(function(d){ return d.id === activeDogId; })
-    : null;
+  var selected = (typeof getSelectedDogs === 'function') ? getSelectedDogs() : [];
+  var selNames = selected.map(function(d){ return d.name; }).join(', ');
   if (walkDogName) {
-    walkDogName.textContent = activeDog ? '\u2014 ' + activeDog.name : '';
+    walkDogName.textContent = selNames ? '\u2014 ' + selNames : '';
   }
-  if (logBtn && activeDog) {
-    logBtn.textContent = '\U0001f4dd Log Walk for ' + activeDog.name;
+  if (logBtn) {
+    logBtn.textContent = selNames ? '\U0001f4dd Log Walk for ' + selNames : '\U0001f4dd Log Walk';
   }
   
   var allHist = getWalkHistory();
-  // Filter by active dog if in 'active' mode
+  // Filter by selected dogs if in 'active' mode
   var hist = allHist;
-  if (walkFilter === 'active' && activeDog) {
-    hist = allHist.filter(function(e) { return e.dogName === activeDog.name; });
+  if (walkFilter === 'active' && selected.length > 0) {
+    var selNamesArr = selected.map(function(d){ return d.name; });
+    hist = allHist.filter(function(e) { return selNamesArr.indexOf(e.dogName) >= 0; });
   }
   
   if (hist.length === 0) {
     listEl.style.display = 'none';
     if (emptyEl) {
       emptyEl.style.display = 'block';
-      emptyEl.textContent = walkFilter === 'active' && activeDog
-        ? 'No walks logged for ' + activeDog.name + ' yet. Run a report and tap Log Walk!'
-        : 'No walks logged yet. Run a report and tap Log This Walk!';
+      emptyEl.textContent = walkFilter === 'active' && selNames
+        ? 'No walks logged for ' + selNames + ' yet. Run a report and tap Log Walk!'
+        : 'No walks logged yet. Run a report and tap Log Walk!';
     }
     if (clearBtn) clearBtn.style.display = walkFilter === 'all' && allHist.length > 0 ? 'block' : 'none';
     return;
