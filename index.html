@@ -293,12 +293,12 @@
        RULE: never animate `filter` on ANY element that has multiple animating children —
        not on the icons, not on their parent strip. Keep filter fully static everywhere
        in the edge-lighting system, animate only opacity/transform. */
-    .edge-paw-strip{position:fixed;display:flex;color:#7ED321;transition:color 0.6s ease}
+    .edge-paw-strip{position:fixed;display:flex;color:#7ED321;transition:color 0.6s ease;z-index:1;pointer-events:none}
     .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 0;gap:6px;overflow:hidden;contain:strict}
     .edge-paw-left{left:0}
     .edge-paw-right{right:0}
     .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:8px;overflow:hidden;contain:strict}
-    .edge-paw-top{top:0}
+    .edge-paw-top{top:0;z-index:1;pointer-events:none}
     .edge-paw-bottom{bottom:0}
     .edge-paw-strip svg{width:16px;height:16px;flex-shrink:0;animation:pawChase 8s linear infinite;will-change:opacity,transform}
     @keyframes pawChase{0%,6%,100%{opacity:.7;transform:scale(1)}3%{opacity:1;transform:scale(1.6)}}
@@ -367,7 +367,7 @@
     .avatar-picker-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:10px; }
     .avatar-option { width:44px; height:44px; border-radius:50%; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; transition:var(--c-transition); background:#f1f5f9; }
     .avatar-option:hover, .avatar-option.selected { border-color:var(--c-teal); background:#e6fffa; transform:scale(1.1); }
-    #app-root{position:relative;z-index:1;width:100%;max-width:480px;}
+    #app-root{position:relative;z-index:2;width:100%;max-width:480px;isolation:isolate;}
     /* Profile tab tinted background */
     #tab-profile {
       background: linear-gradient(160deg, rgba(var(--profile-tint-rgb,13,148,136),0.10) 0%, rgba(var(--profile-tint-rgb,13,148,136),0.04) 40%, transparent 70%);
@@ -1827,8 +1827,8 @@ function renderDogProfiles() {
             <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${isSelected ? 'var(--accent,#0d9488)' : 'rgba(255,255,255,0.2)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${isSelected ? 'var(--accent,#0d9488)' : 'transparent'};font-size:0.75rem;color:#fff;font-weight:700;">${isSelected ? '\u2713' : ''}</div>
             <span style="font-size:1.3rem;">${sizeEmoji}</span>
             <div>
-              <div style="font-weight:600;color:#fff;font-size:0.88rem;">${dog.name}</div>
-              <div style="font-size:0.7rem;color:#94a3b8;">${dog.size.charAt(0).toUpperCase()+dog.size.slice(1)}${dog.breed ? ' \u00b7 ' + dog.breed : ''}</div>
+              <div style="font-weight:600;color:var(--c-slate,#1e293b);font-size:0.88rem;">${dog.name}</div>
+              <div style="font-size:0.7rem;color:var(--c-slate-400,#64748b);">${dog.size.charAt(0).toUpperCase()+dog.size.slice(1)}${dog.breed ? ' \u00b7 ' + dog.breed : ''}</div>
             </div>
           </div>
           <button onclick="removeDogProfile('${dog.id}')" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:none;border-radius:8px;padding:6px 10px;font-size:0.72rem;cursor:pointer;margin-left:8px;">\u{1f5d1}\u{fe0f}</button>
@@ -3233,7 +3233,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v237';
+const APP_VERSION = 'v238';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3493,7 +3493,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=237').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=238').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3968,7 +3968,7 @@ function logCurrentWalk() {
   saveWalkHistory(hist);
   renderWalkHistory();
   var names = selected.map(function(d){ return d.name; }).join(', ');
-  showToast('\U0001f4dd Walk logged for ' + names + '!');
+  showToast('📝 Walk logged for ' + names + '!');
 }
 function clearWalkHistory() {
   if (!confirm('Clear all walk history?')) return;
@@ -4025,7 +4025,7 @@ function renderWalkHistory() {
     walkDogName.textContent = selNames ? '\u2014 ' + selNames : '';
   }
   if (logBtn) {
-    logBtn.textContent = selNames ? '\U0001f4dd Log Walk for ' + selNames : '\U0001f4dd Log Walk';
+    logBtn.textContent = selNames ? '📝 Log Walk for ' + selNames : '📝 Log Walk';
   }
   
   var allHist = getWalkHistory();
@@ -4053,7 +4053,7 @@ function renderWalkHistory() {
   var RATING_COLORS = {'Safe':'#4ade80','Warm':'#ff7a5a','Hot':'#f97316','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Extreme Cold':'#818cf8'};
   listEl.innerHTML = hist.slice(0,20).map(function(e) {
     var col = RATING_COLORS[e.rating] || '#94a3b8';
-    var sizeEmoji = e.petSize === 'small' ? '\U0001f429' : e.petSize === 'large' ? '\U0001f9ae' : '\U0001f415';
+    var sizeEmoji = e.petSize === 'small' ? '🐩' : e.petSize === 'large' ? '🦮' : '🐕';
     var dogLine = e.dogName
       ? '<span style="font-weight:700;color:#fff;">' + sizeEmoji + ' ' + e.dogName + '</span>' +
         (e.dogBreed ? ' <span style="color:#94a3b8;font-size:0.7rem;">(' + e.dogBreed + ')</span>' : '') +
@@ -4064,7 +4064,7 @@ function renderWalkHistory() {
       '<span style="font-size:0.82rem;font-weight:700;color:' + col + ';">' + e.rating + '</span>' +
       '<span style="font-size:0.68rem;color:#64748b;">' + e.ts + '</span></div>' +
       '<div style="font-size:0.78rem;margin-bottom:3px;">' + dogLine + '</div>' +
-      '<div style="font-size:0.75rem;color:#64748b;">\U0001f321\uFE0F ' + e.groundTemp + '\u00b0F ground \u00b7 ' + e.airTemp + '\u00b0F air \u00b7 ' + e.surface + (e.location ? ' \u00b7 \U0001f4cd ' + e.location : '') + '</div></div>';
+      '<div style="font-size:0.75rem;color:#64748b;">🌡️ ' + e.groundTemp + '°F ground · ' + e.airTemp + '°F air · ' + e.surface + (e.location ? ' · 📍 ' + e.location : '') + '</div></div>';
   }).join('');
 }
 function shareReport() {
