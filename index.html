@@ -930,30 +930,31 @@
       <!-- 👤 Profile -->
       <div class="card">
         <div class="card-title acc-title" onclick="toggleAcc('profile-body')">👤 Your Profile<i class="acc-arrow" id="arr-profile-body">▾</i></div>
-        <div id="profile-body" class="acc-body collapsed"><div>
-        <div class="profile-section" id="profile-display"></div>
-        <button class="btn btn-secondary" onclick="showEditProfile()" style="margin-top:10px;font-size:0.82rem;padding:10px">✏️ Edit Profile</button>
-        <div style="margin-top:14px;border-top:1px solid #e2e8f0;padding-top:12px;" class="avatar-edit-section">
-          <div style="font-size:0.78rem;color:#64748b;margin-bottom:6px;font-weight:600;">🎨 Avatar</div>
-          <div class="avatar-large" id="avatar-large-preview" onclick="toggleAvatarPicker()" style="background:linear-gradient(135deg,#0d9488,#4a7c59)"></div>
-          <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Tap to change</div>
-          <div class="avatar-picker-row" id="avatar-picker" style="display:none;">
-            <div class="avatar-option" onclick="setAvatar('emoji','🐶')" title="Dog">🐶</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🐾')" title="Paws"><svg viewBox="0 0 100 100" width="1.15em" height="1.15em" style="display:inline-block;vertical-align:-0.16em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🐕')" title="Dog 2">🐕</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🦮')" title="Guide Dog">🦮</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🐩')" title="Poodle">🐩</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🐈')" title="Cat">🐈</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','⭐')" title="Star">⭐</div>
-            <div class="avatar-option" onclick="setAvatar('emoji','🌿')" title="Nature">🌿</div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#0d9488')" style="background:#0d9488;" title="Teal"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#8b5cf6')" style="background:#8b5cf6;" title="Purple"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#f97316')" style="background:#f97316;" title="Amber"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#ef4444')" style="background:#ef4444;" title="Red"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#3b82f6')" style="background:#3b82f6;" title="Blue"></div>
-            <div class="avatar-option color-opt" onclick="setAvatar('color','#ec4899')" style="background:#ec4899;" title="Pink"></div>
+        <div id="profile-body" class="acc-body"><div>
+          <div class="profile-section" id="profile-display"></div>
+          <button class="btn btn-secondary" onclick="showEditProfile()" style="margin-top:10px;font-size:0.82rem;padding:10px">✏️ Edit Profile</button>
+          <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;" class="avatar-edit-section">
+            <div style="font-size:0.78rem;color:#94a3b8;margin-bottom:6px;font-weight:600;">🎨 Avatar</div>
+            <div class="avatar-large" id="avatar-large-preview" onclick="toggleAvatarPicker()" style="background:linear-gradient(135deg,#0d9488,#4a7c59)"></div>
+            <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Tap to change</div>
+            <div class="avatar-picker-row" id="avatar-picker" style="display:none;">
+              <div class="avatar-option" onclick="setAvatar('emoji','🐶')" title="Dog">🐶</div>
+              <div class="avatar-option" onclick="setAvatar('emoji','🐾')" title="Paws"><svg viewBox="0 0 100 100" width="1.15em" height="1.15em" style="display:inline-block;vertical-align:-0.16em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></div>
+              <div class="avatar-option" onclick="setAvatar('emoji','🐕')" title="Dog 2">🐕</div>
+              <div class="avatar-option" onclick="setAvatar('emoji','🦮')" title="Guide Dog">🦮</div>
+              <div class="avatar-option" onclick="setAvatar('emoji','🐩')" title="Poodle">🐩</div>
+              <div class="avatar-option" onclick="setAvatar('emoji','🐈')" title="Cat">🐈</div>
+              <div class="avatar-option" onclick="setAvatar('emoji','⭐')" title="Star">⭐</div>
+              <div class="avatar-option" onclick="setAvatar('emoji','🌿')" title="Nature">🌿</div>
+              <div class="avatar-option color-opt" onclick="setAvatar('color','#0d9488')" style="background:#0d9488;" title="Teal"></div>
+              <div class="avatar-option color-opt" onclick="setAvatar('color','#8b5cf6')" style="background:#8b5cf6;" title="Purple"></div>
+              <div class="avatar-option color-opt" onclick="setAvatar('color','#f97316')" style="background:#f97316;" title="Amber"></div>
+              <div class="avatar-option color-opt" onclick="setAvatar('color','#ef4444')" style="background:#ef4444;" title="Red"></div>
+              <div class="avatar-option color-opt" onclick="setAvatar('color','#3b82f6')" style="background:#3b82f6;" title="Blue"></div>
+              <div class="avatar-option color-opt" onclick="setAvatar('color','#ec4899')" style="background:#ec4899;" title="Pink"></div>
+            </div>
           </div>
-        </div>
+        </div></div>
       </div>
 
 
@@ -983,7 +984,6 @@
       </div>
 
       <!-- 💳 Subscription -->
-      </div></div>
       <div class="card" id="sub-card">
         <div class="card-title" onclick="toggleSubCard()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;">
           <span>💳 My Subscription</span>
@@ -993,7 +993,7 @@
           <div id="sub-status-display"></div>
           <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
             <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
-            <button id="manage-sub-btn" onclick="manageSubscription()" style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:11px;font-size:0.85rem;font-weight:600;color:#1e293b;cursor:pointer;display:none;">⚙️ Manage / Cancel Subscription</button>
+            <button id="manage-sub-btn" onclick="manageSubscription()" style="background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:11px;font-size:0.85rem;font-weight:600;color:#fff;cursor:pointer;display:none;">⚙️ Manage / Cancel Subscription</button>
           </div>
         </div>
       </div>
@@ -1595,6 +1595,7 @@ function showTab(tab) {
       renderFavLocations();
       renderProfileDisplay();
       renderSubStatus();
+      if (typeof loadDogProfiles === 'function') loadDogProfiles();
       // Show hot car test bar for Silver/Gold
       const _ut2 = (currentUser?.tier || getUserTier() || '').toLowerCase();
       const _htb2 = document.getElementById('hotcar-test-bar');
@@ -3167,7 +3168,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v230';
+const APP_VERSION = 'v231';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3427,7 +3428,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=230').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=231').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
