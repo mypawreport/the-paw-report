@@ -980,6 +980,28 @@
             </div>
           </div>
           <div id="dog-limit-msg" style="font-size:0.72rem;color:#94a3b8;text-align:center;margin-top:8px;"></div>
+          
+          <!-- Walk History per dog -->
+          <div style="margin-top:16px;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
+            <div style="font-size:0.85rem;font-weight:700;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+              🦮 <span id="walk-history-title">Walk History</span>
+              <span id="walk-dog-name" style="font-weight:400;color:var(--accent,#0d9488);font-size:0.78rem;"></span>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:10px;">
+              <button id="walk-filter-active" onclick="setWalkFilter('active')" style="padding:5px 12px;border-radius:16px;font-size:0.72rem;border:1.5px solid rgba(13,148,136,0.3);background:rgba(13,148,136,0.15);color:var(--accent,#0d9488);cursor:pointer;font-weight:600;">Selected Dog</button>
+              <button id="walk-filter-all" onclick="setWalkFilter('all')" style="padding:5px 12px;border-radius:16px;font-size:0.72rem;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#94a3b8;cursor:pointer;">All Dogs</button>
+            </div>
+            <div id="walk-history-lock" class="locked-feature" style="display:none;">
+              <div class="locked-icon">🔒</div>
+              <div class="locked-title">Walk History Log</div>
+              <div class="locked-sub">Gold members can track every walk with timestamp, temp, rating, and location.</div>
+              <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.82rem;padding:10px;margin-top:10px;">🚀 Upgrade to Gold</button>
+            </div>
+            <div id="walk-history-list" style="display:none;"></div>
+            <div id="walk-history-empty" style="display:none;font-size:0.82rem;color:#64748b;text-align:center;padding:12px;">No walks logged yet. Run a report and tap Log This Walk!</div>
+            <button id="log-walk-btn" onclick="logCurrentWalk()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;margin-top:10px;display:none;">📝 Log Walk for Active Dog</button>
+            <button id="clear-history-btn" onclick="clearWalkHistory()" style="display:none;background:none;border:none;color:#ef4444;font-size:0.75rem;cursor:pointer;margin-top:6px;text-align:center;width:100%;">🗑️ Clear History</button>
+          </div>
         </div></div>
       </div>
 
@@ -1029,22 +1051,6 @@
       </div>
 
 <!-- 🦮 Walk History (Gold) -->
-      <div class="card" id="walk-history-card">
-        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('walk-history-body')">🦮 Walk History<i class="acc-arrow" id="arr-walk-history-body">▾</i></div>
-        <div id="walk-history-body" class="acc-body collapsed"><div>
-        <div id="walk-history-lock" class="locked-feature" style="display:none;">
-          <div class="locked-icon">🔒</div>
-          <div class="locked-title">Walk History Log</div>
-          <div class="locked-sub">Gold members can track every walk with timestamp, temp, rating, and location.</div>
-          <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.82rem;padding:10px;margin-top:10px;">🚀 Upgrade to Gold</button>
-        </div>
-        <div id="walk-history-list" style="display:none;"></div>
-        <div id="walk-history-empty" style="display:none;font-size:0.82rem;color:#64748b;text-align:center;padding:12px;">No walks logged yet. Run a report and tap Log This Walk!</div>
-        <button id="log-walk-btn" onclick="logCurrentWalk()" class="btn btn-secondary" style="font-size:0.82rem;padding:10px;margin-top:10px;display:none;">📝 Log This Walk</button>
-        <button id="clear-history-btn" onclick="clearWalkHistory()" style="display:none;background:none;border:none;color:#ef4444;font-size:0.75rem;cursor:pointer;margin-top:6px;text-align:center;width:100%;">🗑️ Clear History</button>
-        </div></div>
-      </div>
-
 <!-- 🔔 Notifications (single consolidated card) -->
       <div class="card settings-card">
         <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('notif-body')">🔔 Notifications<i class="acc-arrow" id="arr-notif-body">▾</i></div>
@@ -1826,6 +1832,7 @@ function setActiveDog(id) {
   renderDogProfiles();
   updateActiveDogBar();
   syncSizeSelectors(currentPetSize);
+  renderWalkHistory();
 }
 
 function updateActiveDogBar() {
@@ -3168,7 +3175,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v233';
+const APP_VERSION = 'v234';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3428,7 +3435,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=233').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=234').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3903,6 +3910,24 @@ function clearWalkHistory() {
   renderWalkHistory();
   showToast('History cleared.');
 }
+var walkFilter = 'active'; // 'active' or 'all'
+
+function setWalkFilter(mode) {
+  walkFilter = mode;
+  var activeBtn = document.getElementById('walk-filter-active');
+  var allBtn = document.getElementById('walk-filter-all');
+  if (activeBtn) {
+    if (mode === 'active') {
+      activeBtn.style.cssText = 'padding:5px 12px;border-radius:16px;font-size:0.72rem;border:1.5px solid rgba(13,148,136,0.3);background:rgba(13,148,136,0.15);color:var(--accent,#0d9488);cursor:pointer;font-weight:600;';
+      allBtn.style.cssText = 'padding:5px 12px;border-radius:16px;font-size:0.72rem;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#94a3b8;cursor:pointer;';
+    } else {
+      allBtn.style.cssText = 'padding:5px 12px;border-radius:16px;font-size:0.72rem;border:1.5px solid rgba(13,148,136,0.3);background:rgba(13,148,136,0.15);color:var(--accent,#0d9488);cursor:pointer;font-weight:600;';
+      activeBtn.style.cssText = 'padding:5px 12px;border-radius:16px;font-size:0.72rem;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#94a3b8;cursor:pointer;';
+    }
+  }
+  renderWalkHistory();
+}
+
 function renderWalkHistory() {
   var tier = getUserTier();
   var isGold = tier === 'gold';
@@ -3925,11 +3950,35 @@ function renderWalkHistory() {
   lockEl.style.display = 'none';
   if (logBtn) logBtn.style.display = 'block';
   if (reportLogBtn) reportLogBtn.style.display = 'block';
-  var hist = getWalkHistory();
+  
+  // Update walk history title with active dog name
+  var walkDogName = document.getElementById('walk-dog-name');
+  var activeDog = (typeof dogProfiles !== 'undefined' && activeDogId)
+    ? dogProfiles.find(function(d){ return d.id === activeDogId; })
+    : null;
+  if (walkDogName) {
+    walkDogName.textContent = activeDog ? '\u2014 ' + activeDog.name : '';
+  }
+  if (logBtn && activeDog) {
+    logBtn.textContent = '\U0001f4dd Log Walk for ' + activeDog.name;
+  }
+  
+  var allHist = getWalkHistory();
+  // Filter by active dog if in 'active' mode
+  var hist = allHist;
+  if (walkFilter === 'active' && activeDog) {
+    hist = allHist.filter(function(e) { return e.dogName === activeDog.name; });
+  }
+  
   if (hist.length === 0) {
     listEl.style.display = 'none';
-    if (emptyEl) emptyEl.style.display = 'block';
-    if (clearBtn) clearBtn.style.display = 'none';
+    if (emptyEl) {
+      emptyEl.style.display = 'block';
+      emptyEl.textContent = walkFilter === 'active' && activeDog
+        ? 'No walks logged for ' + activeDog.name + ' yet. Run a report and tap Log Walk!'
+        : 'No walks logged yet. Run a report and tap Log This Walk!';
+    }
+    if (clearBtn) clearBtn.style.display = walkFilter === 'all' && allHist.length > 0 ? 'block' : 'none';
     return;
   }
   if (emptyEl) emptyEl.style.display = 'none';
@@ -3938,7 +3987,7 @@ function renderWalkHistory() {
   var RATING_COLORS = {'Safe':'#4ade80','Warm':'#ff7a5a','Hot':'#f97316','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Extreme Cold':'#818cf8'};
   listEl.innerHTML = hist.slice(0,20).map(function(e) {
     var col = RATING_COLORS[e.rating] || '#94a3b8';
-    var sizeEmoji = e.petSize === 'small' ? '🐩' : e.petSize === 'large' ? '🦮' : '🐕';
+    var sizeEmoji = e.petSize === 'small' ? '\U0001f429' : e.petSize === 'large' ? '\U0001f9ae' : '\U0001f415';
     var dogLine = e.dogName
       ? '<span style="font-weight:700;color:#fff;">' + sizeEmoji + ' ' + e.dogName + '</span>' +
         (e.dogBreed ? ' <span style="color:#94a3b8;font-size:0.7rem;">(' + e.dogBreed + ')</span>' : '') +
@@ -3949,7 +3998,7 @@ function renderWalkHistory() {
       '<span style="font-size:0.82rem;font-weight:700;color:' + col + ';">' + e.rating + '</span>' +
       '<span style="font-size:0.68rem;color:#64748b;">' + e.ts + '</span></div>' +
       '<div style="font-size:0.78rem;margin-bottom:3px;">' + dogLine + '</div>' +
-      '<div style="font-size:0.75rem;color:#64748b;">🌡️ ' + e.groundTemp + '°F ground · ' + e.airTemp + '°F air · ' + e.surface + (e.location ? ' · 📍 ' + e.location : '') + '</div></div>';
+      '<div style="font-size:0.75rem;color:#64748b;">\U0001f321\uFE0F ' + e.groundTemp + '\u00b0F ground \u00b7 ' + e.airTemp + '\u00b0F air \u00b7 ' + e.surface + (e.location ? ' \u00b7 \U0001f4cd ' + e.location : '') + '</div></div>';
   }).join('');
 }
 function shareReport() {
