@@ -3174,7 +3174,7 @@ async function startTracking() {
     document.getElementById('location-info').textContent=`📍 ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
     await fetchAll(lat,lon);
     isTracking=true; btn.disabled=false; btn.textContent='⏹ Stop Report';
-    document.getElementById('pulse-dot').classList.remove('inactive');
+    const _pd=document.getElementById('pulse-dot'); if(_pd) _pd.classList.remove('inactive');
     trackingInterval=setInterval(async()=>{
       try{const{lat:nl,lon:no}=await getLocation();lastLat=nl;lastLon=no;document.getElementById('location-info').textContent=`📍 ${nl.toFixed(4)}, ${no.toFixed(4)}`;await fetchAll(nl,no);}catch(_){}
     },2*60*1000);
@@ -3189,7 +3189,7 @@ async function startTracking() {
         showToast('📍 GPS unavailable — using your last known location.');
         await fetchAll(cached.lat, cached.lon);
         isTracking = true; btn.disabled = false; btn.textContent = '⏹ Stop Report';
-        document.getElementById('pulse-dot').classList.remove('inactive');
+        const _pd=document.getElementById('pulse-dot'); if(_pd) _pd.classList.remove('inactive');
         trackingInterval = setInterval(async () => {
           try { const {lat:nl,lon:no}=await getLocation(); lastLat=nl; lastLon=no;
             try { localStorage.setItem('paw_last_coords', JSON.stringify({lat:nl, lon:no, ts:Date.now()})); } catch(_) {}
@@ -3210,7 +3210,7 @@ async function startTracking() {
           showToast('📍 GPS unavailable — using your saved location: ' + (favs[0].name || 'Home'));
           await fetchAll(favs[0].lat, favs[0].lon);
           isTracking = true; btn.disabled = false; btn.textContent = '⏹ Stop Report';
-          document.getElementById('pulse-dot').classList.remove('inactive');
+          const _pd=document.getElementById('pulse-dot'); if(_pd) _pd.classList.remove('inactive');
           usedFallback = true;
         }
       } catch(_) {}
@@ -3225,11 +3225,11 @@ async function startTracking() {
 function stopTracking() {
   isTracking=false; clearInterval(trackingInterval); trackingInterval=null;
   document.getElementById('main-btn').textContent='📍 Run My Paw Report';
-  document.getElementById('pulse-dot').classList.add('inactive');
+  const _pd2=document.getElementById('pulse-dot'); if(_pd2) _pd2.classList.add('inactive');
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v244';
+const APP_VERSION = 'v245';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3489,7 +3489,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=244').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=245').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
