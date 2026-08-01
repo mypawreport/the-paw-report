@@ -632,7 +632,7 @@
         <!-- 🚗 Hot car quick check -->
         <div id="hotcar-test-bar" style="display:none;margin-top:8px;text-align:center;">
           <button onclick="testHotCarAlert()" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;">🚗 Just Parked? Check Back Seat</button>
-          <div id="hotcar-gps-status" style="font-size:0.72rem;color:#64748b;margin-top:4px;"></div>
+          <div id="hotcar-gps-status" style="font-size:0.72rem;color:#64748b;margin-top:6px;text-align:center;"></div>
         </div>
 
         <!-- 🐾 Walk reminder (Gold) -->
@@ -644,7 +644,7 @@
 
         <div class="card-title acc-title" onclick="toggleAcc('paw-body')">🌡️ Right Now — Ground Temperature<i class="acc-arrow open" id="arr-paw-body">▾</i></div>
         <div id="paw-body" class="acc-body"><div>
-        <div id="report-location-line" style="font-size:0.72rem;color:#64748b;text-align:center;margin:-4px 0 10px;display:none;">📍 <span id="report-location-text">Detecting…</span></div>
+        <div id="report-location-line" style="font-size:0.72rem;color:#64748b;text-align:center;margin:8px 0 12px;display:none;">📍 <span id="report-location-text">Detecting…</span></div>
         <!-- Dog selector moved to Profile tab - shows active dog here -->
         <div id="active-dog-bar" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;font-size:0.78rem;color:#94a3b8;">
           <span id="active-dog-name" style="font-weight:600;color:#fff;"></span>
@@ -658,7 +658,7 @@
         <div class="paw-scale">
           <div class="scale-item scale-toocold" id="scale-extremecold">🧊 Extreme</div>
           <div class="scale-item scale-cold" id="scale-chilly">🌨️ Chilly</div>
-          <div class="scale-item scale-safe" id="scale-safe">✅ Safe</div>
+          <div class="scale-item scale-safe" id="scale-safe">🟢 Safe</div>
           <div class="scale-item scale-warm" id="scale-warm">🌶️ Warm</div>
           <div class="scale-item scale-caution" id="scale-caution">🔶 Hot</div>
           <div class="scale-item scale-danger" id="scale-danger">🔴 Danger</div>
@@ -670,7 +670,7 @@
         <div class="divider"></div>
         <!-- All stats same size, in order from photo -->
         <div class="stats-grid">
-          <div class="stat-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.6rem;color:var(--accent,#0d9488);margin-top:2px;">Asphalt</div></div>
+          <div class="stat-box" style="grid-column:span 2;text-align:center;padding:16px 12px;"><div class="stat-value" id="ground-temp" style="font-size:2.4rem;font-weight:900;">--°F</div><div class="stat-label" style="font-size:0.72rem;letter-spacing:1px;">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.72rem;color:var(--accent,#0d9488);margin-top:4px;font-weight:600;">Asphalt</div></div>
           <!-- Surface picker -->
           <div style="grid-column:span 2;margin:8px 0 4px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;" id="inline-surface-selector">
             <button onclick="selectSurfaceInline('asphalt')" id="isrf-asphalt" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🖤 Asphalt</button>
@@ -2692,7 +2692,7 @@ function getRatingFromTemp(tempF, size) {
 const PAW_RATING_INFO = {
   'Extreme Cold': { emoji: '🧊', color: '#818cf8', message: 'Dangerously cold! Ice, salt & frost can burn paws. Keep walks under 5 min.' },
   'Chilly':       { emoji: '🌨️', color: '#38bdf8', message: 'Chilly — short walks OK. Check for ice patches & salt on pavements.' },
-  'Safe':         { emoji: '✅', color: '#4ade80', message: 'Great walking conditions!' },
+  'Safe':         { emoji: '🟢', color: '#4ade80', message: 'Great walking conditions!' },
   'Warm':         { emoji: '🌶️', color: '#ff7a5a', message: 'Warm — keep walks short and bring water.' },
   'Hot':          { emoji: '🔶', color: '#f97316', message: 'Hot! Limit time on pavement.' },
   'Danger':       { emoji: '🚨', color: '#ef4444', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
@@ -3230,7 +3230,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v242';
+const APP_VERSION = 'v243';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3490,7 +3490,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=242').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=243').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
