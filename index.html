@@ -649,9 +649,8 @@
         <div id="active-dog-bar" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;font-size:0.78rem;color:#94a3b8;">
           <span id="active-dog-name" style="font-weight:600;color:#fff;"></span>
         </div>
-        <div class="status-bar"><div class="pulse inactive" id="pulse-dot"></div><span id="status-text">Ready</span></div>
         <div class="rating-display">
-          <span class="rating-emoji" id="rating-emoji">🟢</span>
+          <span class="rating-emoji" id="rating-emoji">🐾</span>
           <div class="rating-label" id="rating-label" style="display:flex;align-items:center;justify-content:center;gap:8px;">--</div>
           <div class="rating-message" id="rating-message"></div>
         </div>
@@ -2692,7 +2691,7 @@ function getRatingFromTemp(tempF, size) {
 const PAW_RATING_INFO = {
   'Extreme Cold': { emoji: '🧊', color: '#818cf8', message: 'Dangerously cold! Ice, salt & frost can burn paws. Keep walks under 5 min.' },
   'Chilly':       { emoji: '🌨️', color: '#38bdf8', message: 'Chilly — short walks OK. Check for ice patches & salt on pavements.' },
-  'Safe':         { emoji: '🟢', color: '#4ade80', message: 'Great walking conditions!' },
+  'Safe':         { emoji: '🐾', color: '#4ade80', message: 'Great walking conditions!' },
   'Warm':         { emoji: '🌶️', color: '#ff7a5a', message: 'Warm — keep walks short and bring water.' },
   'Hot':          { emoji: '🔶', color: '#f97316', message: 'Hot! Limit time on pavement.' },
   'Danger':       { emoji: '🚨', color: '#ef4444', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
@@ -3230,7 +3229,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v243';
+const APP_VERSION = 'v244';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3490,7 +3489,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=243').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=244').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
