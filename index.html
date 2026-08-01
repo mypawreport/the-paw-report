@@ -293,7 +293,7 @@
        RULE: never animate `filter` on ANY element that has multiple animating children —
        not on the icons, not on their parent strip. Keep filter fully static everywhere
        in the edge-lighting system, animate only opacity/transform. */
-    .edge-paw-strip{position:fixed;display:flex;color:#7ED321;transition:color 0.6s ease;z-index:1;pointer-events:none}
+    .edge-paw-strip{position:fixed;display:flex;color:#6be000;transition:color 0.6s ease;z-index:1;pointer-events:none}
     .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 0;gap:6px;overflow:hidden;contain:strict}
     .edge-paw-left{left:0}
     .edge-paw-right{right:0}
@@ -3519,8 +3519,8 @@ if ('serviceWorker' in navigator) {
 const EDGE_COLORS = {
   'Extreme Cold': { color: '#818cf8', shadow: '0 0 0 6px #818cf8, 0 0 0 16px rgba(129,140,248,0.5), inset 0 0 0 6px #818cf8, inset 0 0 0 14px rgba(129,140,248,0.35)' },
   'Chilly':       { color: '#38bdf8', shadow: '0 0 0 6px #38bdf8, 0 0 0 16px rgba(56,189,248,0.5), inset 0 0 0 6px #38bdf8, inset 0 0 0 14px rgba(56,189,248,0.35)' },
-  'Safe':         { color: '#4ade80', shadow: '0 0 0 6px #4ade80, 0 0 0 16px rgba(74,222,128,0.5), inset 0 0 0 6px #4ade80, inset 0 0 0 14px rgba(74,222,128,0.35)' },
-  'Low Risk':     { color: '#4ade80', shadow: '0 0 0 6px #4ade80, 0 0 0 14px rgba(74,222,128,0.5), inset 0 0 0 6px #4ade80, inset 0 0 0 14px rgba(74,222,128,0.35)' },
+  'Safe':         { color: '#6be000', shadow: '0 0 0 6px #6be000, 0 0 0 16px rgba(107,224,0,0.5), inset 0 0 0 6px #6be000, inset 0 0 0 14px rgba(107,224,0,0.35)' },
+  'Low Risk':     { color: '#6be000', shadow: '0 0 0 6px #6be000, 0 0 0 14px rgba(107,224,0,0.5), inset 0 0 0 6px #6be000, inset 0 0 0 14px rgba(107,224,0,0.35)' },
   'Moderate':     { color: '#ff7a5a', shadow: '0 0 0 6px #ff7a5a, 0 0 0 14px rgba(255,122,90,0.5), inset 0 0 0 6px #ff7a5a, inset 0 0 0 14px rgba(255,122,90,0.35)' },
   'Warm':         { color: '#ff7a5a', shadow: '0 0 0 6px #ff7a5a, 0 0 0 16px rgba(255,122,90,0.55), inset 0 0 0 6px #ff7a5a, inset 0 0 0 14px rgba(255,122,90,0.35)' },
   'Hot':          { color: '#f97316', shadow: '0 0 0 6px #f97316, 0 0 0 18px rgba(249,115,22,0.6), 0 0 0 28px rgba(249,115,22,0.25), inset 0 0 0 6px #f97316, inset 0 0 0 16px rgba(249,115,22,0.35)' },
