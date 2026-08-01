@@ -141,7 +141,7 @@
     .pulse.inactive{background:#9ca3af;animation:none}
     @keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
     .rating-display{text-align:center;margin-bottom:10px}
-    .rating-emoji ellipse{transition:fill 0.4s ease}
+    .rating-emoji{font-size:3.8rem;line-height:1;margin-bottom:8px;display:block;transition:filter 0.4s ease}
     .rating-label{font-size:1.7rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px;text-align:center}
     .rating-message{font-size:0.86rem;opacity:0.8;line-height:1.5;text-align:center}
     .paw-scale{display:flex;gap:3px;margin-top:10px}
@@ -650,24 +650,7 @@
           <span id="active-dog-name" style="font-weight:600;color:#fff;"></span>
         </div>
         <div class="rating-display">
-          <svg id="rating-emoji" class="rating-emoji" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg" style="width:80px;height:64px;display:block;margin:0 auto 8px;transition:fill 0.4s ease">
-  <!-- Left paw -->
-  <g transform="translate(10,8) rotate(-15,28,28)">
-    <ellipse cx="28" cy="38" rx="14" ry="17"/>
-    <ellipse cx="14" cy="22" rx="7" ry="9"/>
-    <ellipse cx="24" cy="17" rx="7" ry="9"/>
-    <ellipse cx="35" cy="17" rx="7" ry="9"/>
-    <ellipse cx="44" cy="22" rx="6" ry="8"/>
-  </g>
-  <!-- Right paw -->
-  <g transform="translate(42,24) rotate(10,28,28)">
-    <ellipse cx="28" cy="38" rx="14" ry="17"/>
-    <ellipse cx="14" cy="22" rx="7" ry="9"/>
-    <ellipse cx="24" cy="17" rx="7" ry="9"/>
-    <ellipse cx="35" cy="17" rx="7" ry="9"/>
-    <ellipse cx="44" cy="22" rx="6" ry="8"/>
-  </g>
-</svg>
+          <span class="rating-emoji" id="rating-emoji">🐾</span>
           <div class="rating-label" id="rating-label" style="display:flex;align-items:center;justify-content:center;gap:8px;">--</div>
           <div class="rating-message" id="rating-message"></div>
         </div>
@@ -2778,12 +2761,25 @@ function updatePawUI(d) {
   if (_emojiEl) {
     _emojiEl.textContent = d.emoji;
     // Apply rating color via CSS filter so the paw emoji actually shows the right color
-    // SVG paw - set fill directly to exact rating color
-    _emojiEl.querySelectorAll('ellipse').forEach(function(el) {
-      el.style.fill = d.color || '#4ade80';
-    });
+    // Chartreuse paw tint matching the label
+    const _ratingFilters = {
+      'Extreme Cold': 'invert(58%) sepia(100%) saturate(400%) hue-rotate(210deg) brightness(0.9)',
+      'Chilly':       'invert(58%) sepia(100%) saturate(600%) hue-rotate(175deg) brightness(1.0)',
+      'Safe':         'invert(72%) sepia(90%) saturate(350%) hue-rotate(60deg) brightness(0.95)',
+      'Warm':         'invert(65%) sepia(100%) saturate(500%) hue-rotate(330deg) brightness(1.0)',
+      'Hot':          'invert(65%) sepia(100%) saturate(700%) hue-rotate(10deg) brightness(1.0)',
+      'Danger':       'invert(30%) sepia(100%) saturate(700%) hue-rotate(340deg) brightness(0.95)',
+      'Fry Zone':     'invert(20%) sepia(100%) saturate(900%) hue-rotate(345deg) brightness(0.9)'
+    };
+    _emojiEl.style.filter = _ratingFilters[d.rating] || _ratingFilters['Safe'];
   }
-  const lbl = document.getElementById('rating-label'); if (lbl) { lbl.textContent = d.rating; lbl.style.color = d.color || '#4ade80'; lbl.style.textShadow = 'none'; }
+  const lbl = document.getElementById('rating-label'); if (lbl) { 
+      lbl.textContent = d.rating; 
+      // Use chartreuse for Safe to match the paw filter
+      var labelColors = {'Safe':'#7FFF00','Extreme Cold':'#818cf8','Chilly':'#38bdf8','Warm':'#ff7a5a','Hot':'#f97316','Danger':'#ef4444','Fry Zone':'#dc2626'};
+      lbl.style.color = labelColors[d.rating] || d.color || '#7FFF00'; 
+      lbl.style.textShadow = 'none'; 
+    }
   document.getElementById('rating-message').textContent = d.message;
   document.getElementById('ground-temp').textContent = d.groundTempF + '°F';
   document.getElementById('air-temp').textContent = d.airTempF + '°F';
@@ -3254,7 +3250,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v258';
+const APP_VERSION = 'v259';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3514,7 +3510,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=258').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=259').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
