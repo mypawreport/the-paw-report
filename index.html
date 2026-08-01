@@ -3226,10 +3226,10 @@ function stopTracking() {
   isTracking=false; clearInterval(trackingInterval); trackingInterval=null;
   document.getElementById('main-btn').textContent='📍 Run My Paw Report';
   const _pd2=document.getElementById('pulse-dot'); if(_pd2) _pd2.classList.add('inactive');
-  document.getElementById('status-text').textContent='Report stopped';
+  const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v245';
+const APP_VERSION = 'v246';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3489,7 +3489,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=245').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=246').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
