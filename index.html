@@ -858,8 +858,8 @@
 
     <div id="tab-safety" style="display:none;">
       <div class="card" id="crime-card-main">
-        <div class="card-title acc-title" onclick="toggleAcc('crime-body')">🚨 Area Safety<i class="acc-arrow" id="arr-crime-body">▾</i></div>
-      <div id="crime-body" class="acc-body collapsed"><div>
+        <div class="card-title acc-title" onclick="toggleAcc('crime-body')">🚨 Area Safety<i class="acc-arrow open" id="arr-crime-body">▾</i></div>
+      <div id="crime-body" class="acc-body"><div>
         <div class="loading-inline" id="crime-loading">Run your report first to see area safety.</div>
         <div id="crime-content" style="display:none;">
           <div class="crime-header">
@@ -896,8 +896,8 @@
 
     <div id="tab-wash" style="display:none;">
       <div class="card">
-        <div class="card-title acc-title" onclick="toggleAcc('wash-body')">🛁 Nearby Pet Wash Stations<i class="acc-arrow" id="arr-wash-body">▾</i></div>
-      <div id="wash-body" class="acc-body collapsed"><div>
+        <div class="card-title acc-title" onclick="toggleAcc('wash-body')">🛁 Nearby Pet Wash Stations<i class="acc-arrow open" id="arr-wash-body">▾</i></div>
+      <div id="wash-body" class="acc-body"><div>
         <div class="loading-inline" id="wash-loading">Run your report first to find nearby stations.</div>
         <div id="wash-content" style="display:none;"><div class="stations-list" id="stations-list"></div></div>
       </div>
@@ -928,7 +928,7 @@
       <!-- 👤 Profile -->
       <div class="card">
         <div class="card-title acc-title" onclick="toggleAcc('profile-body')">👤 Your Profile<i class="acc-arrow" id="arr-profile-body">▾</i></div>
-        <div id="profile-body" class="acc-body"><div>
+        <div id="profile-body" class="acc-body collapsed"><div>
           <div class="profile-section" id="profile-display"></div>
           <button class="btn btn-secondary" onclick="showEditProfile()" style="margin-top:10px;font-size:0.82rem;padding:10px">✏️ Edit Profile</button>
           <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;" class="avatar-edit-section">
@@ -959,7 +959,7 @@
       <!-- 🐕 Dog Profiles -->
       <div class="card" id="dog-profiles-card">
         <div class="card-title acc-title" onclick="toggleAcc('dog-profiles-body')">🐕 My Dogs — Tap to Select <span id="dog-count-badge" style="font-size:0.7rem;opacity:0.6;font-weight:400;"></span><i class="acc-arrow" id="arr-dog-profiles-body">▾</i></div>
-        <div id="dog-profiles-body" class="acc-body"><div>
+        <div id="dog-profiles-body" class="acc-body collapsed"><div>
           <div id="dog-profiles-list"></div>
           <div style="display:flex;gap:8px;margin-top:10px;">
             <button onclick="selectAllDogs()" style="flex:1;background:rgba(13,148,136,0.12);border:1px solid rgba(13,148,136,0.2);color:var(--accent,#0d9488);border-radius:8px;padding:8px;font-size:0.72rem;cursor:pointer;font-weight:600;">✓ Select All</button>
@@ -1012,9 +1012,9 @@
       <div class="card" id="sub-card">
         <div class="card-title" onclick="toggleSubCard()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;">
           <span>💳 My Subscription</span>
-          <span id="sub-card-arrow" style="font-size:0.85rem;transition:transform 0.25s;display:inline-block;">▾</span>
+          <span id="sub-card-arrow" style="font-size:0.85rem;transition:transform 0.25s;display:inline-block;transform:rotate(-90deg);">▾</span>
         </div>
-        <div id="sub-card-body">
+        <div id="sub-card-body" style="display:none;">
           <div id="sub-status-display"></div>
           <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
             <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
@@ -3250,7 +3250,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v262';
+const APP_VERSION = 'v263';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3510,7 +3510,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=262').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=263').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
