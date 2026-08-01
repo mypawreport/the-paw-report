@@ -648,8 +648,8 @@
         <!-- Dog selector moved to Profile tab - shows active dog here -->
         <div id="active-dog-bar" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;font-size:0.78rem;color:#94a3b8;">
           <span id="active-dog-name" style="font-weight:600;color:#fff;"></span>
-          <span id="active-dog-size" style="background:rgba(13,148,136,0.15);color:var(--accent,#0d9488);padding:2px 10px;border-radius:12px;font-size:0.7rem;font-weight:600;"></span>
         </div>
+        <div class="status-bar"><div class="pulse inactive" id="pulse-dot"></div><span id="status-text">Ready</span></div>
         <div class="rating-display">
           <span class="rating-emoji" id="rating-emoji">🟢</span>
           <div class="rating-label" id="rating-label" style="display:flex;align-items:center;justify-content:center;gap:8px;">--</div>
@@ -670,7 +670,7 @@
         <div class="divider"></div>
         <!-- All stats same size, in order from photo -->
         <div class="stats-grid">
-          <div class="stat-box" style="grid-column:span 2;background:var(--c-bg);border:2px solid var(--accent,#0d9488);border-radius:18px;padding:18px 12px;text-align:center;box-shadow:0 4px 16px rgba(13,148,136,0.13);"><div class="stat-value" id="ground-temp" style="font-size:2.6rem;font-weight:900;">--°F</div><div class="stat-label" style="font-size:0.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px;">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.72rem;color:var(--accent,#0d9488);margin-top:4px;font-weight:600;">Asphalt</div></div>
+          <div class="stat-box"><div class="stat-value" id="ground-temp">--°F</div><div class="stat-label">Est. Ground Temp</div><div class="stat-sublabel" id="surface-label" style="font-size:0.6rem;color:var(--accent,#0d9488);margin-top:2px;">Asphalt</div></div>
           <!-- Surface picker -->
           <div style="grid-column:span 2;margin:8px 0 4px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;" id="inline-surface-selector">
             <button onclick="selectSurfaceInline('asphalt')" id="isrf-asphalt" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🖤 Asphalt</button>
@@ -685,7 +685,6 @@
           <div class="stat-box"><div class="stat-value" id="cloud-cover">--%</div><div class="stat-label">Cloud Cover</div></div>
           <div class="stat-box"><div class="stat-value" id="humidity-display">--%</div><div class="stat-label">Humidity</div></div>
         </div>
-        <div class="status-bar" style="margin-top:6px;margin-bottom:2px;"><div class="pulse inactive" id="pulse-dot"></div><span id="status-text">Ready</span></div>
         <div class="last-updated" id="last-updated"></div>
         <div style="display:flex;gap:8px;margin-top:10px;">
           <button onclick="shareReport()" class="btn btn-secondary" style="flex:1;font-size:0.82rem;padding:10px;">📤 Share Report</button>
@@ -1894,9 +1893,7 @@ function updateSelectedDogsBar() {
   if (nameEl) {
     nameEl.textContent = selected.length > 0 ? selected.map(d => d.name).join(', ') : 'No dog selected';
   }
-  if (sizeEl) {
-    sizeEl.textContent = selected.length > 0 ? [...new Set(selected.map(d => d.size.charAt(0).toUpperCase()+d.size.slice(1)))].join(', ') : '';
-  }
+
 }
 
 function showAddDogForm() {
@@ -3233,7 +3230,7 @@ function stopTracking() {
   document.getElementById('status-text').textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v241';
+const APP_VERSION = 'v242';
 const WHATS_NEW = {
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
@@ -3493,7 +3490,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=241').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=242').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
