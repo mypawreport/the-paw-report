@@ -423,7 +423,23 @@
 .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:26px;transition:.3s;}
 .toggle-slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
 .toggle-switch input:checked + .toggle-slider{background:var(--accent,#0d9488);}
-.toggle-switch input:checked + .toggle-slider:before{transform:translateX(22px);}</style>
+.toggle-switch input:checked + .toggle-slider:before{transform:translateX(22px);}
+/* Onboarding Walkthrough */
+.onboard-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9998;display:none;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;}
+.onboard-overlay.active{display:flex;animation:fadeIn 0.3s ease;}
+.onboard-card{background:var(--c-bg,#fff);border-radius:18px;padding:28px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.25);}
+.onboard-icon{font-size:3rem;margin-bottom:12px;}
+.onboard-title{font-size:1.1rem;font-weight:800;color:var(--c-text,#1e293b);margin-bottom:8px;}
+.onboard-desc{font-size:0.85rem;color:var(--c-text-secondary,#64748b);line-height:1.5;margin-bottom:20px;}
+.onboard-dots{display:flex;gap:6px;justify-content:center;margin-bottom:16px;}
+.onboard-dot{width:8px;height:8px;border-radius:50%;background:var(--c-border,#e2e8f0);transition:background 0.2s;}
+.onboard-dot.active{background:var(--accent,#0d9488);}
+.onboard-btns{display:flex;gap:8px;}
+.onboard-btn{flex:1;padding:12px;border:none;border-radius:12px;font-size:0.88rem;font-weight:700;cursor:pointer;}
+.onboard-skip{background:transparent;color:var(--c-text-secondary,#94a3b8);}
+.onboard-next{background:var(--accent,#0d9488);color:#fff;}
+
+</style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5J1Q90B15"></script>
   <script>
@@ -455,7 +471,23 @@
     .acc-arrow{font-style:normal;opacity:0.4;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.2s;transform:rotate(-90deg)}
     .acc-arrow.open{transform:rotate(0deg);opacity:0.6}
     .card{cursor:default}
-  </style>
+  
+/* Onboarding Walkthrough */
+.onboard-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9998;display:none;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;}
+.onboard-overlay.active{display:flex;animation:fadeIn 0.3s ease;}
+.onboard-card{background:var(--c-bg,#fff);border-radius:18px;padding:28px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.25);}
+.onboard-icon{font-size:3rem;margin-bottom:12px;}
+.onboard-title{font-size:1.1rem;font-weight:800;color:var(--c-text,#1e293b);margin-bottom:8px;}
+.onboard-desc{font-size:0.85rem;color:var(--c-text-secondary,#64748b);line-height:1.5;margin-bottom:20px;}
+.onboard-dots{display:flex;gap:6px;justify-content:center;margin-bottom:16px;}
+.onboard-dot{width:8px;height:8px;border-radius:50%;background:var(--c-border,#e2e8f0);transition:background 0.2s;}
+.onboard-dot.active{background:var(--accent,#0d9488);}
+.onboard-btns{display:flex;gap:8px;}
+.onboard-btn{flex:1;padding:12px;border:none;border-radius:12px;font-size:0.88rem;font-weight:700;cursor:pointer;}
+.onboard-skip{background:transparent;color:var(--c-text-secondary,#94a3b8);}
+.onboard-next{background:var(--accent,#0d9488);color:#fff;}
+
+</style>
 
 <div class="edge-glow" id="edgeGlow">
   <div class="edge-paw-strip edge-paw-left" id="edgePawLeft"></div>
@@ -1130,6 +1162,17 @@
         </div></div>
       <div style="text-align:center;font-size:0.68rem;color:#94a3b8;padding:4px 16px 12px;">
         © 2026 The Paw Report · <a href="legal.html" style="color:#0d9488;text-decoration:none;">Terms & Privacy</a> · <a href="mailto:mypawreport@gmail.com" style="color:#0d9488;text-decoration:none;">Contact</a>
+      </div>
+
+      <!-- Sign out -->
+      <!-- Rate & Feedback -->
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button class="btn btn-secondary" onclick="rateAppInSettings()" style="flex:1;font-size:0.82rem;padding:11px;color:var(--accent,#0d9488);border-color:var(--accent,#0d9488);">
+          ⭐ Rate App
+        </button>
+        <button class="btn btn-secondary" onclick="showFeedbackForm()" style="flex:1;font-size:0.82rem;padding:11px;color:var(--accent,#0d9488);border-color:var(--accent,#0d9488);">
+          💬 Feedback
+        </button>
       </div>
 
       <!-- Sign out -->
@@ -3249,8 +3292,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v270';
+const APP_VERSION = 'v271';
 const WHATS_NEW = {
+  'v271': '✨ New user walkthrough! First-time users get a guided tour of the app. Plus a Rate App button and Feedback form in Profile settings.',
   'v229': '🐕 Dog Profiles: Save multiple dogs with names and sizes! Free=1, Bronze=3, Silver=5, Gold=30. 📍 Report layout cleaned up, rotary tabs, and the user bar moved to Profile.',
   'v228': '📍 GPS fix: app now uses your last known location or saved location if GPS times out, instead of showing an error.',
   'v227': '🌪️ Fixed weather tip showing wrong condition — now correctly detects storms, dark skies, and tornado warnings instead of showing "Clear and sunny" during bad weather.',
@@ -3310,6 +3354,7 @@ function showWhatsNewToast() {
   // Auto-dismiss after 8 seconds
   setTimeout(() => dismissToast(), 9500);
   localStorage.setItem('paw_seen_version', APP_VERSION);
+  setTimeout(startOnboarding, 1000);
 }
 function dismissToast() {
   const toast = document.getElementById('whats-new-toast');
@@ -3509,7 +3554,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=270').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=271').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -4137,6 +4182,104 @@ function dismissRateApp() {
   var m = document.getElementById('rate-app-modal');
   if (m) m.remove();
 }
+
+// ═══ ONBOARDING WALKTHROUGH ═══
+var onboardSteps = [
+  {icon:'🌡️', title:'Check Ground Temp', desc:'See if the pavement is safe for your dog's paws before every walk. We calculate real ground temperature, not just air temp.'},
+  {icon:'🐕', title:'Save Your Dogs', desc:'Add multiple dog profiles with names and sizes — the app adjusts safety thresholds based on your dog's size.'},
+  {icon:'📍', title:'Safety Ratings', desc:'Get crime and safety ratings for your area using FBI data (US) and global safety indices (international).'},
+  {icon:'🚿', title:'Find Pet Washes', desc:'Locate nearby pet wash stations and dog-friendly spots on the map.'},
+  {icon:'🔔', title:'Smart Notifications', desc:'Get alerts when ground temp reaches dangerous levels — before your dog gets burned.'},
+  {icon:'🎨', title:'Themes & More', desc:'Customize with themes, track walk history (Silver/Gold), and use the home screen widget (Gold).'}
+];
+var onboardStep = 0;
+function startOnboarding() {
+  if (localStorage.getItem('paw_onboarded')) return;
+  onboardStep = 0;
+  showOnboardStep();
+  document.getElementById('onboard-overlay').classList.add('active');
+}
+function showOnboardStep() {
+  var s = onboardSteps[onboardStep];
+  document.getElementById('onboard-icon').textContent = s.icon;
+  document.getElementById('onboard-title').textContent = s.title;
+  document.getElementById('onboard-desc').textContent = s.desc;
+  var dotsHtml = '';
+  for (var i = 0; i < onboardSteps.length; i++) {
+    dotsHtml += '<div class="onboard-dot' + (i === onboardStep ? ' active' : '') + '"></div>';
+  }
+  document.getElementById('onboard-dots').innerHTML = dotsHtml;
+  var btn = document.getElementById('onboard-next-btn');
+  btn.textContent = onboardStep === onboardSteps.length - 1 ? 'Get Started' : 'Next';
+}
+function nextOnboardingStep() {
+  onboardStep++;
+  if (onboardStep >= onboardSteps.length) {
+    finishOnboarding();
+  } else {
+    showOnboardStep();
+  }
+}
+function skipOnboarding() { finishOnboarding(); }
+function finishOnboarding() {
+  localStorage.setItem('paw_onboarded', '1');
+  var o = document.getElementById('onboard-overlay');
+  if (o) o.classList.remove('active');
+}
+
+// ═══ RATE APP IN SETTINGS ═══
+function rateAppInSettings() {
+  var modal = document.createElement('div');
+  modal.id = 'rate-settings-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9997;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+  modal.innerHTML = '<div style="background:#fff;border-radius:18px;padding:24px;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
+    '<div style="font-size:2rem;margin-bottom:8px;">⭐⭐⭐⭐⭐</div>' +
+    '<div style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:8px;">Rate The Paw Report</div>' +
+    '<div style="font-size:0.82rem;color:#475569;margin-bottom:16px;line-height:1.5;">Your rating helps other dog owners discover the app. It takes less than a minute!</div>' +
+    '<button onclick="openPlayStoreRating()" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;">📋 Rate on Google Play</button>' +
+    '<button onclick="shareRateApp()" style="background:#f4f7f2;border:1.5px solid #e2e8f0;color:#475569;border-radius:12px;padding:12px 20px;font-size:0.88rem;font-weight:600;cursor:pointer;width:100%;margin-bottom:8px;">🎵 Share on TikTok</button>' +
+    '<button onclick="document.getElementById(\'rate-settings-modal\').remove()" style="background:none;border:none;color:#94a3b8;font-size:0.78rem;cursor:pointer;width:100%;">Close</button></div>';
+  document.body.appendChild(modal);
+}
+function openPlayStoreRating() {
+  var url = 'https://play.google.com/store/apps/details?id=com.mypawreport.thepawreport';
+  window.open(url, '_blank');
+  var m = document.getElementById('rate-settings-modal');
+  if (m) m.remove();
+  showToast('Thanks for rating! 🐾');
+}
+
+// ═══ FEEDBACK FORM ═══
+function showFeedbackForm() {
+  var modal = document.createElement('div');
+  modal.id = 'feedback-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9997;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+  modal.innerHTML = '<div style="background:#fff;border-radius:18px;padding:24px;max-width:340px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
+    '<div style="font-size:1.5rem;margin-bottom:4px;">💬</div>' +
+    '<div style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:4px;">Send Feedback</div>' +
+    '<div style="font-size:0.78rem;color:#94a3b8;margin-bottom:14px;">Tell us what you think or suggest a feature.</div>' +
+    '<textarea id="feedback-text" placeholder="Your feedback..." style="width:100%;min-height:100px;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px;font-size:0.85rem;font-family:inherit;resize:vertical;box-sizing:border-box;margin-bottom:8px;"></textarea>' +
+    '<input id="feedback-email" type="email" placeholder="Email (optional)" style="width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px;font-size:0.85rem;font-family:inherit;box-sizing:border-box;margin-bottom:12px;">' +
+    '<div style="display:flex;gap:8px;">' +
+    '<button onclick="document.getElementById(\'feedback-modal\').remove()" style="flex:1;padding:11px;border:none;border-radius:10px;background:#f1f5f9;color:#64748b;font-weight:600;font-size:0.88rem;cursor:pointer;">Cancel</button>' +
+    '<button onclick="submitFeedback()" style="flex:1;padding:11px;border:none;border-radius:10px;background:var(--accent,#0d9488);color:#fff;font-weight:700;font-size:0.88rem;cursor:pointer;">Send</button>' +
+    '</div></div>';
+  document.body.appendChild(modal);
+}
+function submitFeedback() {
+  var text = document.getElementById('feedback-text').value.trim();
+  var email = document.getElementById('feedback-email').value.trim();
+  if (!text) { showToast('Please write your feedback first.'); return; }
+  // Send via mailto
+  var subject = 'App Feedback - The Paw Report';
+  var body = text + (email ? '\n\nFrom: ' + email : '');
+  window.location.href = 'mailto:mypawreport@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  var m = document.getElementById('feedback-modal');
+  if (m) m.remove();
+  showToast('Thanks for your feedback! 🐾');
+}
+
+
 var deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
