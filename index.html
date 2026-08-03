@@ -3292,7 +3292,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v273';
+const APP_VERSION = 'v274';
 const WHATS_NEW = {
   'v273': '🔧 Fixed login crash — onboarding trigger removed.',
   'v272': '🔧 Fixed a login issue where the screen could freeze after signing in.',
@@ -3555,7 +3555,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=273').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=274').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -4186,8 +4186,8 @@ function dismissRateApp() {
 
 // ═══ ONBOARDING WALKTHROUGH ═══
 var onboardSteps = [
-  {icon:'🌡️', title:'Check Ground Temp', desc:'See if the pavement is safe for your dog's paws before every walk. We calculate real ground temperature, not just air temp.'},
-  {icon:'🐕', title:'Save Your Dogs', desc:'Add multiple dog profiles with names and sizes — the app adjusts safety thresholds based on your dog's size.'},
+  {icon:'🌡️', title:'Check Ground Temp', desc:'See if the pavement is safe for your dog\'s paws before every walk. We calculate real ground temperature, not just air temp.'},
+  {icon:'🐕', title:'Save Your Dogs', desc:'Add multiple dog profiles with names and sizes — the app adjusts safety thresholds based on your dog\'s size.'},
   {icon:'📍', title:'Safety Ratings', desc:'Get crime and safety ratings for your area using FBI data (US) and global safety indices (international).'},
   {icon:'🚿', title:'Find Pet Washes', desc:'Locate nearby pet wash stations and dog-friendly spots on the map.'},
   {icon:'🔔', title:'Smart Notifications', desc:'Get alerts when ground temp reaches dangerous levels — before your dog gets burned.'},
