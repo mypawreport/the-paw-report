@@ -357,12 +357,118 @@
   body[data-theme="ocean"]    { --accent: #0891b2; --accent2: #22d3ee; --glow: 8,145,178; }
   body[data-theme="forest"]   { --accent: #16a34a; --accent2: #4ade80; --glow: 22,163,74; }
   body[data-theme="blush"]    { --accent: #db2777; --accent2: #f472b6; --glow: 219,39,119; }
-  body[data-theme="frost"]    { --accent: var(--c-muted); --accent2: #60a5fa; --glow: 37,99,235; background:#0f172a; }
-  /* Frost is a dark-background theme — the default header text/icon color (--c-slate, near-black)
-     was nearly invisible against it. Brighten just the header title/icon/subtitle for Frost. */
+  /* ===== FROST DARK THEME — comprehensive dark override ===== */
+  body[data-theme="frost"] {
+    --accent: #60a5fa;
+    --accent2: #93c5fd;
+    --glow: 96,165,250;
+    --c-slate: #e2e8f0;
+    --c-muted: #94a3b8;
+    --c-border: rgba(148,163,184,0.18);
+    --c-bg: rgba(255,255,255,0.05);
+    --c-card: rgba(255,255,255,0.07);
+    background: #0f172a;
+    color: #e2e8f0;
+  }
+  /* Frost: body & layout */
+  body[data-theme="frost"] .container { color: #e2e8f0; }
+  /* Frost: header */
   body[data-theme="frost"] .header h1 { color: #93c5fd; }
   body[data-theme="frost"] .header .title-gradient { background: linear-gradient(90deg, #bfdbfe, #60a5fa); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
-  body[data-theme="frost"] .header p { color: #94a3b8; opacity: 0.9; }
+  body[data-theme="frost"] .header p { color: #94a3b8; opacity: 0.85; }
+  /* Frost: cards — glassmorphic dark */
+  body[data-theme="frost"] .card { background: rgba(255,255,255,0.07); border: 1px solid rgba(148,163,184,0.12); box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+  body[data-theme="frost"] .card-title { color: #94a3b8; }
+  body[data-theme="frost"] .divider { background: rgba(148,163,184,0.12); }
+  /* Frost: nav buttons */
+  body[data-theme="frost"] .nav-btn { background: rgba(255,255,255,0.04); color: #94a3b8; }
+  body[data-theme="frost"] .nav-btn.active { background: rgba(96,165,250,0.22); color: #60a5fa; box-shadow: 0 2px 12px rgba(96,165,250,0.25); }
+  /* Frost: stat boxes */
+  body[data-theme="frost"] .stat-box { background: rgba(255,255,255,0.04); }
+  body[data-theme="frost"] .stat-value { color: #f1f5f9; }
+  body[data-theme="frost"] .stat-label { color: #64748b; }
+  body[data-theme="frost"] .ground-temp-box { background: rgba(255,255,255,0.04); border: 1px solid rgba(148,163,184,0.15); }
+  /* Frost: rating display */
+  body[data-theme="frost"] .rating-label { color: #f1f5f9; }
+  body[data-theme="frost"] .rating-message { color: #cbd5e1; }
+  body[data-theme="frost"] .scale-item { opacity: 0.35; }
+  body[data-theme="frost"] .scale-item.active { opacity: 1; }
+  /* Frost: auth screen */
+  body[data-theme="frost"] .auth-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(148,163,184,0.12); }
+  body[data-theme="frost"] .auth-input { background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); color: #e2e8f0; }
+  body[data-theme="frost"] .auth-input::placeholder { color: #64748b; opacity: 0.5; }
+  body[data-theme="frost"] .auth-input:focus { border-color: rgba(96,165,250,0.6); }
+  body[data-theme="frost"] .auth-toggle { color: #94a3b8; }
+  body[data-theme="frost"] .auth-toggle span { color: #60a5fa; }
+  /* Frost: setup screen */
+  body[data-theme="frost"] .form-input { background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); color: #e2e8f0; }
+  body[data-theme="frost"] .form-input::placeholder { color: #64748b; opacity: 0.5; }
+  body[data-theme="frost"] .form-label { color: #94a3b8; }
+  /* Frost: size/surface buttons */
+  body[data-theme="frost"] .size-btn { background: rgba(255,255,255,0.05); border: 1.5px solid rgba(148,163,184,0.2); color: #cbd5e1; }
+  body[data-theme="frost"] .size-btn.active { background: var(--accent); border-color: var(--accent); color: #0f172a; }
+  /* Frost: profile sections */
+  body[data-theme="frost"] .profile-section { background: rgba(255,255,255,0.04); }
+  body[data-theme="frost"] #tab-profile { background: linear-gradient(160deg, rgba(96,165,250,0.08) 0%, rgba(96,165,250,0.03) 40%, transparent 70%); }
+  /* Frost: avatar */
+  body[data-theme="frost"] .avatar-option { background: rgba(255,255,255,0.06); border-color: rgba(148,163,184,0.2); }
+  body[data-theme="frost"] .avatar-option:hover, body[data-theme="frost"] .avatar-option.selected { border-color: #60a5fa; background: rgba(96,165,250,0.15); }
+  body[data-theme="frost"] .avatar-large { border-color: rgba(148,163,184,0.2); }
+  /* Frost: alerts */
+  body[data-theme="frost"] .alert-banner { border-radius: 12px; }
+  body[data-theme="frost"] .alert-cold { background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); color: #7dd3fc; }
+  body[data-theme="frost"] .alert-hydration { background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.25); color: #bae6fd; }
+  body[data-theme="frost"] #humidity-alert { background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.25); color: #7dd3fc; }
+  body[data-theme="frost"] #cold-field-guide { background: rgba(129,140,248,0.1); border: 1px solid rgba(129,140,248,0.25); }
+  /* Frost: weather tip */
+  body[data-theme="frost"] .weather-tip { background: rgba(96,165,250,0.1); border: 1.5px solid rgba(96,165,250,0.25); color: #93c5fd; }
+  /* Frost: crime section */
+  body[data-theme="frost"] .crime-message { background: rgba(255,255,255,0.04); color: #cbd5e1; }
+  body[data-theme="frost"] .crime-stat { background: rgba(255,255,255,0.04); }
+  body[data-theme="frost"] .crime-stat-val { color: #f1f5f9; }
+  body[data-theme="frost"] .crime-stat-label { color: #64748b; }
+  /* Frost: stations */
+  body[data-theme="frost"] .station-item { background: rgba(255,255,255,0.04); }
+  body[data-theme="frost"] .station-name { color: #e2e8f0; }
+  body[data-theme="frost"] .station-type { color: #94a3b8; }
+  body[data-theme="frost"] .station-tag { background: rgba(255,255,255,0.06); color: #94a3b8; }
+  body[data-theme="frost"] .station-link { color: #60a5fa; }
+  /* Frost: forecast cards */
+  body[data-theme="frost"] .forecast-day-card { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(148,163,184,0.15); }
+  body[data-theme="frost"] .forecast-day-card.active { border-color: #60a5fa; background: rgba(96,165,250,0.1); }
+  body[data-theme="frost"] .forecast-day-card .fdc-day { color: #94a3b8; }
+  body[data-theme="frost"] .forecast-day-card .fdc-temp { color: #64748b; }
+  body[data-theme="frost"] .f7-day { color: #cbd5e1; }
+  /* Frost: best time */
+  body[data-theme="frost"] .best-time-rec { color: #94a3b8; }
+  body[data-theme="frost"] .hourly-label { color: #64748b; }
+  /* Frost: paywall */
+  body[data-theme="frost"] #screen-paywall { background: #0f172a; }
+  body[data-theme="frost"] .paywall-hero { background: rgba(255,255,255,0.05); }
+  body[data-theme="frost"] .paywall-hero-title { color: #f1f5f9; }
+  body[data-theme="frost"] .paywall-hero-sub { color: #94a3b8; }
+  body[data-theme="frost"] .tier-tabs { background: rgba(255,255,255,0.04); border: 1px solid rgba(148,163,184,0.12); }
+  body[data-theme="frost"] .tier-tab { color: #64748b; }
+  body[data-theme="frost"] .tier-tab.active { color: #e2e8f0; }
+  body[data-theme="frost"] .tier-tab.t-bronze.active, body[data-theme="frost"] .tier-tab.t-silver.active, body[data-theme="frost"] .tier-tab.t-gold.active { background: rgba(255,255,255,0.08); color: #e2e8f0; box-shadow: none; }
+  body[data-theme="frost"] .billing-btn { color: #64748b; }
+  body[data-theme="frost"] .billing-btn.active { background: var(--accent); color: #0f172a; }
+  body[data-theme="frost"] .referral-input { background: rgba(255,255,255,0.05); border: 1.5px solid rgba(148,163,184,0.2); color: #e2e8f0; }
+  /* Frost: whats-new toast */
+  body[data-theme="frost"] .whats-new-toast { background: linear-gradient(135deg, rgba(30,41,59,0.95), rgba(30,41,59,0.9)); border: 1px solid rgba(96,165,250,0.3); color: #e2e8f0; }
+  body[data-theme="frost"] .whats-new-toast .toast-title { color: #60a5fa; }
+  /* Frost: btn-secondary */
+  body[data-theme="frost"] .btn-secondary { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(148,163,184,0.2); color: #e2e8f0; }
+  /* Frost: walk history */
+  body[data-theme="frost"] #walk-history-empty { color: #64748b; }
+  /* Frost: theme buttons grid in profile */
+  body[data-theme="frost"] .theme-btn { color: #fff; }
+  /* Frost: modals (disclaimer etc) */
+  body[data-theme="frost"] #disclaimer-modal { background: rgba(0,0,0,0.8); }
+  /* Frost: surface label */
+  body[data-theme="frost"] #surface-label { color: var(--accent); }
+  /* Frost: user avatar in profile header */
+  body[data-theme="frost"] .user-avatar { color: #0f172a; }
     /* Avatar editor */
     .avatar-picker-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:10px; }
     .avatar-option { width:44px; height:44px; border-radius:50%; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; transition:var(--c-transition); background:#f1f5f9; }
@@ -3291,7 +3397,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v276';
+const APP_VERSION = 'v277';
 const WHATS_NEW = {
   'v273': '🔧 Fixed login crash — onboarding trigger removed.',
   'v272': '🔧 Fixed a login issue where the screen could freeze after signing in.',
@@ -3421,7 +3527,7 @@ function playBarkSound() {
     { id: 'ocean',    label: 'Ocean',    emoji: '🌊', tier: 'silver', colors: ['#e8f0e8','#0891b2'] },
     { id: 'forest',   label: 'Forest',   emoji: '🌿', tier: 'gold',   colors: ['#f0fdf4','#16a34a'] },
     { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#fdf2f8','#db2777'] },
-    { id: 'frost',    label: 'Frost',    emoji: '❄️',  tier: 'gold',   colors: ['#0f172a','#64748b'] },
+    { id: 'frost',    label: 'Frost',    emoji: '❄️',  tier: 'gold',   colors: ['#93c5fd','#60a5fa'] },
   ];
   const TIER_RANK = { bronze: 1, silver: 2, gold: 3 };
   function applyTheme(themeId) {
@@ -3554,7 +3660,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=276').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=277').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
