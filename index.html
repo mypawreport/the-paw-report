@@ -246,7 +246,7 @@
     .bottom-nav{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:14px;padding:0;position:relative;height:64px}
     .nav-btn{position:relative;width:56px;height:56px;border-radius:50%;border:none;background:rgba(255,255,255,0.06);color:var(--c-slate);font-size:0.6rem;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);opacity:0.5;flex:none;margin:0 -4px;z-index:1}
     .nav-btn .nav-icon{font-size:1.15rem;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1)}
-    .nav-btn.active{background:rgba(13,148,136,0.25);opacity:1;color:var(--accent,#0d9488);transform:scale(1.15);z-index:3;box-shadow:0 2px 12px rgba(13,148,136,0.3)}
+    .nav-btn.active{background:rgba(var(--glow,13,148,136),0.25);opacity:1;color:var(--accent,#0d9488);transform:scale(1.15);z-index:3;box-shadow:0 2px 12px rgba(var(--glow,13,148,136),0.3)}
     .nav-btn.active .nav-icon{font-size:1.4rem}
     .nav-btn:not(.active):hover{opacity:0.75;transform:scale(1.05)}
     .nav-btn:active:not(.active){transform:scale(0.95)}
@@ -1862,7 +1862,7 @@ function renderDogProfiles() {
       const isSelected = selectedDogIds.includes(dog.id);
       const sizeEmoji = dog.size === 'small' ? '\u{1f429}' : dog.size === 'large' ? '\u{1f9ae}' : '\u{1f415}';
       return `
-        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1.5px solid ${isSelected ? 'rgba(13,148,136,0.4)' : 'rgba(255,255,255,0.08)'};${isSelected ? 'background:rgba(13,148,136,0.08);' : ''}">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1.5px solid ${isSelected ? 'rgba(var(--glow,13,148,136),0.4)' : 'rgba(255,255,255,0.08)'};${isSelected ? 'background:rgba(var(--glow,13,148,136),0.08);' : ''}">
           <div style="display:flex;align-items:center;gap:6px;cursor:pointer;flex:1;" onclick="toggleDogSelection('${dog.id}')">
             <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${isSelected ? 'var(--accent,#0d9488)' : 'rgba(255,255,255,0.2)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${isSelected ? 'var(--accent,#0d9488)' : 'transparent'};font-size:0.75rem;color:#fff;font-weight:700;">${isSelected ? '\u2713' : ''}</div>
             <span style="font-size:1.1rem;line-height:1;margin-right:-3px;">${sizeEmoji}</span>
@@ -3292,7 +3292,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v274';
+const APP_VERSION = 'v275';
 const WHATS_NEW = {
   'v273': '🔧 Fixed login crash — onboarding trigger removed.',
   'v272': '🔧 Fixed a login issue where the screen could freeze after signing in.',
@@ -3555,7 +3555,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=274').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=275').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
