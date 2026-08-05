@@ -141,7 +141,7 @@
     .pulse.inactive{background:#9ca3af;animation:none}
     @keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
     .rating-display{text-align:center;margin-bottom:10px}
-    .rating-emoji{font-size:3.8rem;line-height:1;margin-bottom:8px;display:block;transition:filter 0.4s ease}
+    .rating-emoji{font-size:3.8rem;line-height:1;margin-bottom:8px;display:block;transition:color 0.4s ease}
     .rating-label{font-size:1.7rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px;text-align:center}
     .rating-message{font-size:0.86rem;opacity:0.8;line-height:1.5;text-align:center}
     .paw-scale{display:flex;gap:3px;margin-top:10px}
@@ -682,7 +682,7 @@
           <span id="active-dog-name" style="font-weight:600;color:#fff;"></span>
         </div>
         <div class="rating-display">
-          <span class="rating-emoji" id="rating-emoji">🐾</span>
+          <span class="rating-emoji" id="rating-emoji"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.08em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></span>
           <div class="rating-label" id="rating-label" style="display:flex;align-items:center;justify-content:center;gap:8px;">--</div>
           <div class="rating-message" id="rating-message"></div>
         </div>
@@ -2801,19 +2801,18 @@ function updatePawUI(d) {
   requestAnimationFrame(function() {
   const _emojiEl = document.getElementById('rating-emoji');
   if (_emojiEl) {
-    _emojiEl.textContent = d.emoji;
-    // Apply rating color via CSS filter so the paw emoji actually shows the right color
-    // Chartreuse paw tint matching the label
-    const _ratingFilters = {
-      'Extreme Cold': 'invert(58%) sepia(100%) saturate(400%) hue-rotate(210deg) brightness(0.9)',
-      'Chilly':       'invert(58%) sepia(100%) saturate(600%) hue-rotate(175deg) brightness(1.0)',
-      'Safe':         'invert(72%) sepia(90%) saturate(350%) hue-rotate(60deg) brightness(0.95)',
-      'Warm':         'invert(65%) sepia(100%) saturate(500%) hue-rotate(330deg) brightness(1.0)',
-      'Hot':          'invert(65%) sepia(100%) saturate(700%) hue-rotate(10deg) brightness(1.0)',
-      'Danger':       'invert(30%) sepia(100%) saturate(700%) hue-rotate(340deg) brightness(0.95)',
-      'Fry Zone':     'invert(20%) sepia(100%) saturate(900%) hue-rotate(345deg) brightness(0.9)'
+    // SVG paw icon uses currentColor - set exact hex to match the label/tier color precisely (no filter approximation)
+    const _ratingColors = {
+      'Extreme Cold': '#818cf8',
+      'Chilly':       '#38bdf8',
+      'Safe':         '#6be000',
+      'Warm':         '#ff7a5a',
+      'Hot':          '#f97316',
+      'Danger':       '#ef4444',
+      'Fry Zone':     '#dc2626'
     };
-    _emojiEl.style.filter = _ratingFilters[d.rating] || _ratingFilters['Safe'];
+    _emojiEl.style.color = _ratingColors[d.rating] || _ratingColors['Safe'];
+    _emojiEl.style.filter = 'none';
   }
   const lbl = document.getElementById('rating-label'); if (lbl) { 
       lbl.textContent = d.rating; 
@@ -3292,7 +3291,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v275';
+const APP_VERSION = 'v276';
 const WHATS_NEW = {
   'v273': '🔧 Fixed login crash — onboarding trigger removed.',
   'v272': '🔧 Fixed a login issue where the screen could freeze after signing in.',
@@ -3555,7 +3554,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=275').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=276').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
