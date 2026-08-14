@@ -1694,6 +1694,15 @@ async function authMe() {
   return profile;
 }
 async function authLogout() {
+
+  const token = localStorage.getItem(LS_TOKEN);
+  localStorage.removeItem(LS_TOKEN);
+  localStorage.removeItem(LS_CUR_USER);
+  if (token) {
+    fetch(`${AUTH_API}/authLogout`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token }) }).catch(()=>{});
+  }
+}
+
 // ---- Google Sign-In ----
 const GOOGLE_CLIENT_ID = '653224619384-g4fm4v2nkrv08jgd02friumi3epavgbn.apps.googleusercontent.com';
 let googleInitialized = false;
@@ -1751,14 +1760,6 @@ window.addEventListener('load', () => {
   // Stop trying after 10 seconds
   setTimeout(() => clearInterval(tryInit), 10000);
 });
-
-  const token = localStorage.getItem(LS_TOKEN);
-  localStorage.removeItem(LS_TOKEN);
-  localStorage.removeItem(LS_CUR_USER);
-  if (token) {
-    fetch(`${AUTH_API}/authLogout`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token }) }).catch(()=>{});
-  }
-}
 // Sync a full_name change to the server (fire-and-forget)
 function syncProfileToServer(full_name) {
   const token = localStorage.getItem(LS_TOKEN);
@@ -3458,7 +3459,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v279';
+const APP_VERSION = 'v280';
 const WHATS_NEW = {
   'v279': '🔑 Google Sign-In now available! Sign in faster with your Google account.',,
   'v273': '🔧 Fixed login crash — onboarding trigger removed.',
@@ -3722,7 +3723,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=279').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=280').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
