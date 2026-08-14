@@ -3459,9 +3459,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v280';
+const APP_VERSION = 'v281';
 const WHATS_NEW = {
-  'v279': '🔑 Google Sign-In now available! Sign in faster with your Google account.',,
+  'v281': '🔑 Google Sign-In now available! Sign in faster with your Google account.',
   'v273': '🔧 Fixed login crash — onboarding trigger removed.',
   'v272': '🔧 Fixed a login issue where the screen could freeze after signing in.',
   'v271': '✨ New user walkthrough! First-time users get a guided tour of the app. Plus a Rate App button and Feedback form in Profile settings.',
@@ -3723,7 +3723,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=280').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=281').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
