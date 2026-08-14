@@ -547,7 +547,6 @@
 
 </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5J1Q90B15"></script>
   <script>
@@ -624,7 +623,6 @@
       <button class="btn btn-primary" id="auth-btn" onclick="submitAuth()">Sign In</button>
       <div style="display:flex;align-items:center;gap:10px;margin:14px 0 10px;"><div style="flex:1;height:1px;background:rgba(255,255,255,0.1);"></div><span style="font-size:0.75rem;color:#94a3b8;">or</span><div style="flex:1;height:1px;background:rgba(255,255,255,0.1);"></div></div>
       <div id="g-btn-wrapper" style="display:flex;justify-content:center;margin-bottom:8px;"></div>
-      <button id="fb-login-btn" onclick="handleFacebookLogin()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px 16px;border-radius:20px;border:none;background:#1877F2;color:#fff;font-size:0.88rem;font-weight:600;cursor:pointer;transition:opacity 0.2s;"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>Continue with Facebook</button>
       <div class="auth-toggle" onclick="toggleAuthMode()">
         Don't have an account? <span id="auth-toggle-label">Sign up</span>
       </div>
@@ -1696,69 +1694,6 @@ async function authMe() {
   return profile;
 }
 async function authLogout() {
-// ---- Facebook Sign-In ----
-const FB_APP_ID = '1234567890123456'; // Placeholder — needs real FB App ID
-let fbInitialized = false;
-
-function initFacebookSDK() {
-  if (fbInitialized || !window.FB) return;
-  fbInitialized = true;
-  FB.init({
-    appId: FB_APP_ID,
-    cookie: true,
-    xfbml: true,
-    version: 'v18.0'
-  });
-}
-
-function handleFacebookLogin() {
-  if (!window.FB) {
-    showAuthError('Facebook SDK is still loading. Please try again in a moment.');
-    return;
-  }
-  FB.login(function(response) {
-    if (response.status === 'connected') {
-      const accessToken = response.authResponse.accessToken;
-      handleFacebookCredential(accessToken);
-    } else {
-      // User cancelled or didn't authorize
-    }
-  }, { scope: 'email' });
-}
-
-async function handleFacebookCredential(accessToken) {
-  try {
-    const res = await fetch(`${AUTH_API}/authFacebookSignIn`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ accessToken })
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || 'Facebook sign-in failed.');
-    localStorage.setItem(LS_TOKEN, data.token);
-    localStorage.setItem(LS_LAST_EMAIL, data.email);
-    const profile = { id: data.id, email: data.email, full_name: data.full_name || '' };
-    localStorage.setItem(LS_CUR_USER, JSON.stringify(profile));
-    if (data.prefs) savePrefs(data.id, data.prefs, true);
-    if (data.is_new_user) setTimeout(() => trackAppEvent('signup', { email: data.email }), 500);
-    currentUser = await authMe();
-    await onLoggedIn();
-  } catch (e) {
-    showAuthError(e.message || 'Facebook sign-in failed. Please try again.');
-  }
-}
-
-// Initialize FB SDK when it loads
-window.addEventListener('load', () => {
-  const tryInitFB = setInterval(() => {
-    if (window.FB) {
-      clearInterval(tryInitFB);
-      initFacebookSDK();
-    }
-  }, 200);
-  setTimeout(() => clearInterval(tryInitFB), 10000);
-});
-
 // ---- Google Sign-In ----
 const GOOGLE_CLIENT_ID = '653224619384-g4fm4v2nkrv08jgd02friumi3epavgbn.apps.googleusercontent.com';
 let googleInitialized = false;
@@ -3523,9 +3458,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v278';
+const APP_VERSION = 'v279';
 const WHATS_NEW = {
-  'v278': '🔑 Google & Facebook Sign-In now available! Sign in faster with your social account.',,
+  'v279': '🔑 Google Sign-In now available! Sign in faster with your Google account.',,
   'v273': '🔧 Fixed login crash — onboarding trigger removed.',
   'v272': '🔧 Fixed a login issue where the screen could freeze after signing in.',
   'v271': '✨ New user walkthrough! First-time users get a guided tour of the app. Plus a Rate App button and Feedback form in Profile settings.',
@@ -3787,7 +3722,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=278').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=279').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
