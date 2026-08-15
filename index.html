@@ -728,7 +728,7 @@
             <circle class="paw-gauge-track" cx="100" cy="100" r="90"></circle>
             <circle class="paw-gauge-fill" id="paw-gauge-fill" cx="100" cy="100" r="90"></circle>
           </svg>
-          <span class="rating-emoji rating-emoji-big" id="rating-emoji"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.08em;fill:currentColor" aria-hidden="true"><ellipse cx="50" cy="64" rx="25" ry="20"/><circle cx="28" cy="38" r="13"/><circle cx="50" cy="27" r="14"/><circle cx="72" cy="38" r="13"/></svg></span>
+          <span class="rating-emoji rating-emoji-big" id="rating-emoji"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.08em;fill:currentColor" aria-hidden="true"><ellipse cx="50" cy="66" rx="24" ry="19"/><circle cx="22" cy="42" r="11"/><circle cx="40" cy="25" r="12.5"/><circle cx="60" cy="25" r="12.5"/><circle cx="78" cy="42" r="11"/></svg></span>
         </div>
         <div class="rating-display">
           <div class="rating-label" id="rating-label" style="display:flex;align-items:center;justify-content:center;gap:8px;">--</div>
@@ -3437,10 +3437,10 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v284';
+const APP_VERSION = 'v285';
 const WHATS_NEW = {
-  'v284': '🐾 Refined safety paw — cleaner single paw shape in the gauge.
-',
+  'v285': '🐾 Updated safety paw to 4-toe design.',
+  'v284': '🐾 Refined safety paw — cleaner single paw shape in the gauge.',
   'v283': '🐾 Fixed login crash, bigger safety paw with a curved gauge ring, and a real walk-time timeline.',
   'v282': '🎨 Dark theme (Gold-tier), map views for pet wash & crime, upgraded UI, removed edge lighting.',
   'v281': '🔑 Google Sign-In now available! Sign in faster with your Google account.',
@@ -3708,7 +3708,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=284').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=285').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
