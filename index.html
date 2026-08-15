@@ -155,13 +155,13 @@
     .paw-scale{display:flex;gap:3px;margin-top:10px}
     .scale-item{flex:1;padding:4px 2px;border-radius:6px;font-size:0.52rem;text-align:center;opacity:0.3;transition:opacity 0.3s;font-weight:600}.scale-item span{font-size:0.9rem;display:block;margin-bottom:2px}
     .scale-item.active{opacity:1}
-    .scale-safe{background:rgba(74,222,128,0.2);color:#4ade80}
+    .scale-safe{background:rgba(34,197,94,0.2);color:#22C55E}
     .scale-warm{background:rgba(249,115,22,0.18);color:#f97316}
     .scale-caution{background:rgba(255,122,90,0.2);color:#ff7a5a}
     .scale-danger{background:rgba(239,68,68,0.2);color:#ef4444}
     .scale-fry{background:rgba(220,38,38,0.2);color:#dc2626}
     .scale-cold{background:rgba(56,189,248,0.2);color:#38bdf8}
-    .scale-toocold{background:rgba(129,140,248,0.2);color:#818cf8}
+    .scale-toocold{background:rgba(14,165,233,0.2);color:#0EA5E9}
     .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .stat-box{background:var(--c-bg);border-radius:10px;padding:8px 7px;text-align:center}
     .stat-value{font-size:1.25rem;font-weight:800;margin-bottom:2px}
@@ -169,7 +169,7 @@
     .ground-temp-box{grid-column:span 2;background:var(--c-bg);border:1px solid #d1d5db}
     .ground-temp-box .stat-value{font-size:1.9rem}
     .alert-banner{border-radius:12px;padding:10px 13px;font-size:0.82rem;line-height:1.5;margin-top:10px}
-    .alert-cold{background:#eff6ff;border:1px solid #93c5fd;color:#1e40af;font-weight:600}
+    .alert-cold{background:#f0f9ff;border:1px solid #7dd3fc;color:#075985;font-weight:600}
     .alert-hydration{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-weight:600}
     /* Crime */
     .crime-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -364,7 +364,7 @@
   body[data-theme="dark"] .toggle-slider:before { background: #fff; }
   body[data-theme="dark"] .user-bar { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); }
   body[data-theme="dark"] .user-name { color: #fff; }
-  body[data-theme="dark"] .alert-cold { background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.35); color: #7dd3fc; font-weight: 600; }
+  body[data-theme="dark"] .alert-cold { background: rgba(14,165,233,0.15); border: 1px solid rgba(14,165,233,0.4); color: #38bdf8; font-weight: 600; }
   body[data-theme="dark"] .alert-hydration { background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.4); color: #fdba74; font-weight: 600; }
   body[data-theme="dark"] #humidity-alert { background: rgba(56,189,248,0.15) !important; border-color: rgba(56,189,248,0.4) !important; color: #7dd3fc !important; }
   body[data-theme="dark"] .user-email { color: rgba(255,255,255,0.4); }
@@ -2681,9 +2681,9 @@ function toggleNotifications() {
 }
 function getStatusColor(status) {
   const map = {
-    'Extreme Cold': '#818cf8',
+    'Extreme Cold': '#0EA5E9',
     'Chilly': '#38bdf8',
-    'Safe': '#4ade80',
+    'Safe': '#22C55E',
     'Warm': '#f97316',
     'Hot': '#ff7a5a',
     'Danger': '#ef4444',
@@ -2828,9 +2828,9 @@ function getRatingFromTemp(tempF, size) {
   return 'Fry Zone';
 }
 const PAW_RATING_INFO = {
-  'Extreme Cold': { emoji: '🐾', color: '#818cf8', message: 'Dangerously cold! Ice, salt & frost can burn paws. Keep walks under 5 min.' },
+  'Extreme Cold': { emoji: '🐾', color: '#0EA5E9', message: 'Dangerously cold! Ice, salt & frost can burn paws. Keep walks under 5 min.' },
   'Chilly':       { emoji: '🐾', color: '#38bdf8', message: 'Chilly — short walks OK. Check for ice patches & salt on pavements.' },
-  'Safe':         { emoji: '🐾', color: '#4ade80', message: 'Great walking conditions!' },
+  'Safe':         { emoji: '🐾', color: '#22C55E', message: 'Great walking conditions!' },
   'Warm':         { emoji: '🐾', color: '#f97316', message: 'Warm — keep walks short and bring water.' },
   'Hot':          { emoji: '🐾', color: '#ff7a5a', message: 'Hot! Limit time on pavement.' },
   'Danger':       { emoji: '🐾', color: '#ef4444', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
@@ -2843,7 +2843,7 @@ function updatePawScale(rating) {
 }
 function getRatingColor(rating) {
   const map = {
-    'Extreme Cold': '#818cf8',
+    'Extreme Cold': '#0EA5E9',
     'Chilly':       '#38bdf8',
     'Safe':         '#0d9488',
     'Warm':         '#f97316',
@@ -2912,7 +2912,7 @@ function updatePawUI(d) {
   }
   // Update pill badge
   var pill = document.getElementById('rating-pill');
-  var labelColors = {'Safe':'#6be000','Extreme Cold':'#818cf8','Chilly':'#38bdf8','Warm':'#f97316','Hot':'#ff7a5a','Danger':'#ef4444','Fry Zone':'#dc2626'};
+  var labelColors = {'Safe':'#6be000','Extreme Cold':'#0EA5E9','Chilly':'#38bdf8','Warm':'#f97316','Hot':'#ff7a5a','Danger':'#ef4444','Fry Zone':'#dc2626'};
   if (pill) {
     pill.textContent = d.rating.replace(' Zone','').replace('Extreme ','').toUpperCase();
     pill.style.background = labelColors[d.rating] || d.color || '#f97316';
@@ -2931,7 +2931,7 @@ function updatePawUI(d) {
 
     // Update gradient colors based on current tier
     var tierGradients = {
-      'Extreme Cold': ['#818cf8', '#6366f1'],
+      'Extreme Cold': ['#0EA5E9', '#0284c7'],
       'Chilly':       ['#38bdf8', '#0ea5e9'],
       'Safe':         ['#6be000', '#22c55e'],
       'Hot':          ['#ff7a5a', '#f97316'],
@@ -3064,7 +3064,7 @@ function updateCrimeUI(d) {
     /* edge lighting removed */
   }
 }
-function scoreToColor(s){ if(s<10)return'#4ade80'; if(s<25)return'#86efac'; if(s<45)return'#ff7a5a'; if(s<65)return'#14b8a6'; return'#f87171'; }
+function scoreToColor(s){ if(s<10)return'#22C55E'; if(s<25)return'#86efac'; if(s<45)return'#ff7a5a'; if(s<65)return'#14b8a6'; return'#f87171'; }
 function buildForecastDays(apiData) {
   // apiData may have .days (multi-day) or just .hours (today only)
   const allDays = apiData.days || [{ date: null, hours: apiData.hours || [] }];
@@ -3466,7 +3466,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v295';
+const APP_VERSION = 'v296';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -3746,7 +3746,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=295').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=296').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -4125,7 +4125,7 @@ function renderWalkHistory() {
   if (emptyEl) emptyEl.style.display = 'none';
   if (clearBtn) clearBtn.style.display = 'block';
   listEl.style.display = 'block';
-  var RATING_COLORS = {'Safe':'#4ade80','Warm':'#f97316','Hot':'#ff7a5a','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Extreme Cold':'#818cf8'};
+  var RATING_COLORS = {'Safe':'#22C55E','Warm':'#f97316','Hot':'#ff7a5a','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Extreme Cold':'#0EA5E9'};
   listEl.innerHTML = hist.slice(0,20).map(function(e) {
     var col = RATING_COLORS[e.rating] || '#94a3b8';
     var sizeEmoji = e.petSize === 'small' ? '🐩' : e.petSize === 'large' ? '🦮' : '🐕';
