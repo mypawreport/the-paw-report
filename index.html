@@ -2931,20 +2931,42 @@ function updatePawUI(d) {
   // Update circular paw gauge (curved bar around the big paw)
   var gaugeFill = document.getElementById('paw-gauge-fill');
   var gaugeTick = document.getElementById('gauge-tick');
+  var gaugeGrad = document.getElementById('gauge-grad');
   if (gaugeFill) {
-    var tierOrder = ['Extreme Cold','Chilly','Safe','Warm','Hot','Danger','Fry Zone'];
-    var tIdx = tierOrder.indexOf(d.rating);
-    var pct = tIdx >= 0 ? ((tIdx + 1) / tierOrder.length) * 100 : 40;
+    // Map actual ground temp to gauge position: 0°F = 0%, 130°F = 100%
+    var tempF = d.groundTempF || 70;
+    var minTemp = 0, maxTemp = 130;
+    var pct = Math.max(0, Math.min(100, ((tempF - minTemp) / (maxTemp - minTemp)) * 100));
     var circumference = 2 * Math.PI * 90; // r=90
     var fillLen = (pct / 100) * circumference;
-    // Use gradient stroke defined in SVG
+
+    // Update gradient colors based on current tier
+    var tierGradients = {
+      'Extreme Cold': ['#818cf8', '#6366f1'],
+      'Chilly':       ['#38bdf8', '#0ea5e9'],
+      'Safe':         ['#6be000', '#22c55e'],
+      'Warm':         ['#ff7a5a', '#f97316'],
+      'Hot':          ['#FF8C00', '#FF4500'],
+      'Danger':       ['#ef4444', '#dc2626'],
+      'Fry Zone':     ['#dc2626', '#991b1b']
+    };
+    var gradColors = tierGradients[d.rating] || tierGradients['Safe'];
+    if (gaugeGrad) {
+      var stops = gaugeGrad.querySelectorAll('stop');
+      if (stops.length >= 2) {
+        stops[0].setAttribute('stop-color', gradColors[0]);
+        stops[1].setAttribute('stop-color', gradColors[1]);
+      }
+    }
+
     gaugeFill.setAttribute('stroke', 'url(#gauge-grad)');
     gaugeFill.style.stroke = '';
     gaugeFill.style.strokeDasharray = fillLen.toFixed(1) + ' ' + circumference.toFixed(1);
-    // Position tick mark at end of fill arc
+
+    // Position tick mark at end of fill arc (accounting for SVG rotate(-90))
     if (gaugeTick) {
-      var angle = (pct / 100) * 360 - 90; // -90 because SVG is rotated
-      var rad = (angle - 90) * Math.PI / 180; // adjust for SVG internal rotation
+      var angleDeg = (pct / 100) * 360;
+      var rad = (angleDeg - 90) * Math.PI / 180;
       var tx = 100 + 90 * Math.cos(rad);
       var ty = 100 + 90 * Math.sin(rad);
       gaugeTick.setAttribute('cx', tx.toFixed(1));
@@ -3455,8 +3477,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v288';
+const APP_VERSION = 'v289';
 const WHATS_NEW = {
+  'v289': '🐾 Gauge fill now maps to actual ground temperature (0-130°F scale).',
   'v288': '🐾 Safety gauge redesigned — cream paw, gradient ring, pill badge, tick mark.',
   'v287': '🐾 Temperature now shown inside gauge ring with the paw icon.',
   'v286': '🐾 Refined safety paw — teardrop toes matching promo design.',
@@ -3729,7 +3752,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=288').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=289').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
