@@ -3,51 +3,174 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{margin:0;padding:40px;background:#1a1a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:Arial,sans-serif}
-.paw-container{width:200px;height:200px}
+body{margin:0;padding:30px 10px;background:#0d1117;display:flex;flex-direction:column;align-items:center;gap:24px;font-family:Arial,sans-serif}
+h2{color:rgba(255,255,255,0.6);font-size:0.9rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin:0}
+.row{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+.card{display:flex;flex-direction:column;align-items:center;gap:8px}
+.label{color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:600}
+.paw-wrap{width:140px;height:140px;position:relative;display:flex;align-items:center;justify-content:center}
+.paw-svg{width:100px;height:100px}
 </style>
 </head>
 <body>
-<div class="paw-container">
-  <svg viewBox="0 0 200 200" width="200" height="200" style="display:block">
-    <defs>
-      <radialGradient id="paw3d" cx="38%" cy="28%" r="80%">
-        <stop offset="0%" stop-color="#ffffff"/>
-        <stop offset="50%" stop-color="#f5ecdb"/>
-        <stop offset="100%" stop-color="#d6c8a8"/>
-      </radialGradient>
-      <filter id="emboss">
-        <feGaussianBlur stdDeviation="2" in="SourceAlpha" result="blur"/>
-        <feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.8" specularExponent="20" lighting-color="#ffffff" result="spec">
-          <fePointLight x="80" y="50" z="80"/>
-        </feSpecularLighting>
-        <feComposite in="spec" in2="SourceAlpha" operator="in" result="specOnly"/>
-        <feMerge>
-          <feMergeNode in="SourceGraphic"/>
-          <feMergeNode in="specOnly"/>
-        </feMerge>
-      </filter>
-    </defs>
+<h2>Safe — #6be000</h2>
+<div class="row">
+  <div class="card">
+    <div class="paw-wrap">
+      <svg class="paw-svg" viewBox="0 0 200 200">
+        <defs>
+          <radialGradient id="paw-safe" cx="38%" cy="28%" r="80%">
+            <stop offset="0%" stop-color="#b8f5a0"/>
+            <stop offset="50%" stop-color="#6be000"/>
+            <stop offset="100%" stop-color="#3d8c00"/>
+          </radialGradient>
+          <filter id="emboss1">
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="blur"/>
+            <feSpecularLighting in="blur" surfaceScale="4" specularConstant="0.7" specularExponent="18" lighting-color="#ffffff" result="spec">
+              <fePointLight x="80" y="50" z="70"/>
+            </feSpecularLighting>
+            <feComposite in="spec" in2="SourceAlpha" operator="in" result="specOnly"/>
+            <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="specOnly"/></feMerge>
+          </filter>
+        </defs>
+        <g fill="url(#paw-safe)" filter="url(#emboss1)">
+          <ellipse cx="42" cy="78" rx="18" ry="22" transform="rotate(-22 42 78)"/>
+          <ellipse cx="78" cy="52" rx="18" ry="23" transform="rotate(-8 78 52)"/>
+          <ellipse cx="122" cy="52" rx="18" ry="23" transform="rotate(8 122 52)"/>
+          <ellipse cx="158" cy="78" rx="18" ry="22" transform="rotate(22 158 78)"/>
+          <path d="M 56,120 C 56,100 78,90 100,90 C 122,90 144,100 144,120 C 144,148 124,165 100,165 C 76,165 56,148 56,120 Z"/>
+        </g>
+        <g fill="rgba(255,255,255,0.35)" opacity="0.6">
+          <ellipse cx="38" cy="72" rx="7" ry="8" transform="rotate(-22 42 78)"/>
+          <ellipse cx="74" cy="46" rx="7" ry="8" transform="rotate(-8 78 52)"/>
+          <ellipse cx="118" cy="46" rx="7" ry="8" transform="rotate(8 122 52)"/>
+          <ellipse cx="154" cy="72" rx="7" ry="8" transform="rotate(22 158 78)"/>
+          <ellipse cx="86" cy="108" rx="18" ry="10"/>
+        </g>
+      </svg>
+    </div>
+    <div class="label">Safe</div>
+  </div>
+</div>
 
-    <!-- Four toe pads - clearly separated, egg/oval shaped, arranged in arc -->
-    <g fill="url(#paw3d)" filter="url(#emboss)">
-      <ellipse cx="42" cy="78" rx="18" ry="22" transform="rotate(-22 42 78)"/>
-      <ellipse cx="78" cy="52" rx="18" ry="23" transform="rotate(-8 78 52)"/>
-      <ellipse cx="122" cy="52" rx="18" ry="23" transform="rotate(8 122 52)"/>
-      <ellipse cx="158" cy="78" rx="18" ry="22" transform="rotate(22 158 78)"/>
-      <!-- Main palm pad - wide, rounded, clearly separated from toes -->
-      <path d="M 56,120 C 56,100 78,90 100,90 C 122,90 144,100 144,120 C 144,148 124,165 100,165 C 76,165 56,148 56,120 Z"/>
-    </g>
+<h2>Hot — #FF8C42</h2>
+<div class="row">
+  <div class="card">
+    <div class="paw-wrap">
+      <svg class="paw-svg" viewBox="0 0 200 200">
+        <defs>
+          <radialGradient id="paw-hot" cx="38%" cy="28%" r="80%">
+            <stop offset="0%" stop-color="#FFD4A8"/>
+            <stop offset="50%" stop-color="#FF8C42"/>
+            <stop offset="100%" stop-color="#cc5a10"/>
+          </radialGradient>
+          <filter id="emboss2">
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="blur"/>
+            <feSpecularLighting in="blur" surfaceScale="4" specularConstant="0.7" specularExponent="18" lighting-color="#ffffff" result="spec">
+              <fePointLight x="80" y="50" z="70"/>
+            </feSpecularLighting>
+            <feComposite in="spec" in2="SourceAlpha" operator="in" result="specOnly"/>
+            <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="specOnly"/></feMerge>
+          </filter>
+        </defs>
+        <g fill="url(#paw-hot)" filter="url(#emboss2)">
+          <ellipse cx="42" cy="78" rx="18" ry="22" transform="rotate(-22 42 78)"/>
+          <ellipse cx="78" cy="52" rx="18" ry="23" transform="rotate(-8 78 52)"/>
+          <ellipse cx="122" cy="52" rx="18" ry="23" transform="rotate(8 122 52)"/>
+          <ellipse cx="158" cy="78" rx="18" ry="22" transform="rotate(22 158 78)"/>
+          <path d="M 56,120 C 56,100 78,90 100,90 C 122,90 144,100 144,120 C 144,148 124,165 100,165 C 76,165 56,148 56,120 Z"/>
+        </g>
+        <g fill="rgba(255,255,255,0.35)" opacity="0.6">
+          <ellipse cx="38" cy="72" rx="7" ry="8" transform="rotate(-22 42 78)"/>
+          <ellipse cx="74" cy="46" rx="7" ry="8" transform="rotate(-8 78 52)"/>
+          <ellipse cx="118" cy="46" rx="7" ry="8" transform="rotate(8 122 52)"/>
+          <ellipse cx="154" cy="72" rx="7" ry="8" transform="rotate(22 158 78)"/>
+          <ellipse cx="86" cy="108" rx="18" ry="10"/>
+        </g>
+      </svg>
+    </div>
+    <div class="label">Hot</div>
+  </div>
+</div>
 
-    <!-- Subtle highlight on each pad for 3D pop -->
-    <g fill="rgba(255,255,255,0.4)" opacity="0.7">
-      <ellipse cx="38" cy="72" rx="7" ry="8" transform="rotate(-22 42 78)"/>
-      <ellipse cx="74" cy="46" rx="7" ry="8" transform="rotate(-8 78 52)"/>
-      <ellipse cx="118" cy="46" rx="7" ry="8" transform="rotate(8 122 52)"/>
-      <ellipse cx="154" cy="72" rx="7" ry="8" transform="rotate(22 158 78)"/>
-      <ellipse cx="86" cy="108" rx="18" ry="10"/>
-    </g>
-  </svg>
+<h2>Danger — #ef4444</h2>
+<div class="row">
+  <div class="card">
+    <div class="paw-wrap">
+      <svg class="paw-svg" viewBox="0 0 200 200">
+        <defs>
+          <radialGradient id="paw-danger" cx="38%" cy="28%" r="80%">
+            <stop offset="0%" stop-color="#ffcccc"/>
+            <stop offset="50%" stop-color="#ef4444"/>
+            <stop offset="100%" stop-color="#a52020"/>
+          </radialGradient>
+          <filter id="emboss3">
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="blur"/>
+            <feSpecularLighting in="blur" surfaceScale="4" specularConstant="0.7" specularExponent="18" lighting-color="#ffffff" result="spec">
+              <fePointLight x="80" y="50" z="70"/>
+            </feSpecularLighting>
+            <feComposite in="spec" in2="SourceAlpha" operator="in" result="specOnly"/>
+            <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="specOnly"/></feMerge>
+          </filter>
+        </defs>
+        <g fill="url(#paw-danger)" filter="url(#emboss3)">
+          <ellipse cx="42" cy="78" rx="18" ry="22" transform="rotate(-22 42 78)"/>
+          <ellipse cx="78" cy="52" rx="18" ry="23" transform="rotate(-8 78 52)"/>
+          <ellipse cx="122" cy="52" rx="18" ry="23" transform="rotate(8 122 52)"/>
+          <ellipse cx="158" cy="78" rx="18" ry="22" transform="rotate(22 158 78)"/>
+          <path d="M 56,120 C 56,100 78,90 100,90 C 122,90 144,100 144,120 C 144,148 124,165 100,165 C 76,165 56,148 56,120 Z"/>
+        </g>
+        <g fill="rgba(255,255,255,0.35)" opacity="0.6">
+          <ellipse cx="38" cy="72" rx="7" ry="8" transform="rotate(-22 42 78)"/>
+          <ellipse cx="74" cy="46" rx="7" ry="8" transform="rotate(-8 78 52)"/>
+          <ellipse cx="118" cy="46" rx="7" ry="8" transform="rotate(8 122 52)"/>
+          <ellipse cx="154" cy="72" rx="7" ry="8" transform="rotate(22 158 78)"/>
+          <ellipse cx="86" cy="108" rx="18" ry="10"/>
+        </g>
+      </svg>
+    </div>
+    <div class="label">Danger</div>
+  </div>
+</div>
+
+<h2>Chilly — #38bdf8</h2>
+<div class="row">
+  <div class="card">
+    <div class="paw-wrap">
+      <svg class="paw-svg" viewBox="0 0 200 200">
+        <defs>
+          <radialGradient id="paw-chilly" cx="38%" cy="28%" r="80%">
+            <stop offset="0%" stop-color="#c0ecff"/>
+            <stop offset="50%" stop-color="#38bdf8"/>
+            <stop offset="100%" stop-color="#1a7ab0"/>
+          </radialGradient>
+          <filter id="emboss4">
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="blur"/>
+            <feSpecularLighting in="blur" surfaceScale="4" specularConstant="0.7" specularExponent="18" lighting-color="#ffffff" result="spec">
+              <fePointLight x="80" y="50" z="70"/>
+            </feSpecularLighting>
+            <feComposite in="spec" in2="SourceAlpha" operator="in" result="specOnly"/>
+            <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="specOnly"/></feMerge>
+          </filter>
+        </defs>
+        <g fill="url(#paw-chilly)" filter="url(#emboss4)">
+          <ellipse cx="42" cy="78" rx="18" ry="22" transform="rotate(-22 42 78)"/>
+          <ellipse cx="78" cy="52" rx="18" ry="23" transform="rotate(-8 78 52)"/>
+          <ellipse cx="122" cy="52" rx="18" ry="23" transform="rotate(8 122 52)"/>
+          <ellipse cx="158" cy="78" rx="18" ry="22" transform="rotate(22 158 78)"/>
+          <path d="M 56,120 C 56,100 78,90 100,90 C 122,90 144,100 144,120 C 144,148 124,165 100,165 C 76,165 56,148 56,120 Z"/>
+        </g>
+        <g fill="rgba(255,255,255,0.35)" opacity="0.6">
+          <ellipse cx="38" cy="72" rx="7" ry="8" transform="rotate(-22 42 78)"/>
+          <ellipse cx="74" cy="46" rx="7" ry="8" transform="rotate(-8 78 52)"/>
+          <ellipse cx="118" cy="46" rx="7" ry="8" transform="rotate(8 122 52)"/>
+          <ellipse cx="154" cy="72" rx="7" ry="8" transform="rotate(22 158 78)"/>
+          <ellipse cx="86" cy="108" rx="18" ry="10"/>
+        </g>
+      </svg>
+    </div>
+    <div class="label">Chilly</div>
+  </div>
 </div>
 </body>
 </html>
