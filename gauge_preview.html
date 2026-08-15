@@ -5,14 +5,15 @@
 <style>
 body{margin:0;padding:20px;background:#0d1117;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:Arial,sans-serif}
 .gauge-wrap{display:flex;flex-direction:column;align-items:center}
-.paw-gauge-wrap{position:relative;width:230px;height:230px;margin:4px auto 10px;display:flex;align-items:center;justify-content:center}
+.paw-gauge-wrap{position:relative;width:230px;height:230px;margin:4px auto 10px}
 .paw-gauge-svg{position:absolute;top:0;left:0;width:100%;height:100%;transform:rotate(-90deg)}
 .paw-gauge-track{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:14}
 .paw-gauge-fill{fill:none;stroke-width:14;stroke-linecap:round}
-.gauge-inner-disc{position:absolute;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 50% 40%, #1c2128 0%, #12161c 70%, #0a0d12 100%);box-shadow: inset 0 3px 8px rgba(0,0,0,0.5), inset 0 -2px 4px rgba(255,255,255,0.03), 0 0 22px rgba(255,140,0,0.35);display:flex;align-items:center;justify-content:center;top:50%;left:50%;transform:translate(-50%,-50%);margin-top:22px}
-.gauge-temp-text{font-size:1.85rem;font-weight:900;letter-spacing:-0.5px;line-height:1;color:#fff;position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:3}
+.gauge-thumb{position:absolute;width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 0 4px rgba(0,0,0,0.4);transform:translate(-50%,-50%);z-index:4}
+.gauge-inner-disc{position:absolute;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 50% 40%, #1c2128 0%, #12161c 70%, #0a0d12 100%);box-shadow: inset 0 3px 8px rgba(0,0,0,0.5), 0 0 22px rgba(255,140,0,0.3);display:flex;align-items:center;justify-content:center;top:50%;left:50%;transform:translate(-50%,-50%)}
+.gauge-temp-text{font-size:1.9rem;font-weight:900;letter-spacing:-0.5px;line-height:1;color:#fff;position:absolute;top:32px;left:50%;transform:translateX(-50%);z-index:3;text-shadow:0 1px 4px rgba(0,0,0,0.4)}
 .rating-pill{display:inline-block;padding:5px 20px;border-radius:999px;font-size:0.95rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:#fff;margin-bottom:6px;box-shadow:0 3px 10px rgba(255,69,0,0.4)}
-.gauge-sublabel{font-size:0.8rem;color:rgba(255,255,255,0.55);letter-spacing:0.5px;margin-bottom:2px;margin-top:4px}
+.gauge-sublabel{font-size:0.8rem;color:rgba(255,255,255,0.55);letter-spacing:0.5px;margin-bottom:2px;margin-top:6px}
 .rating-message{font-size:0.9rem;opacity:0.85;line-height:1.5;text-align:center;color:rgba(255,255,255,0.9)}
 </style>
 </head>
@@ -29,24 +30,28 @@ body{margin:0;padding:20px;background:#0d1117;display:flex;justify-content:cente
       </defs>
       <circle class="paw-gauge-track" cx="100" cy="100" r="88"></circle>
       <circle class="paw-gauge-fill" cx="100" cy="100" r="88" stroke="url(#gauge-grad)" stroke-dasharray="370 553"></circle>
-      <circle cx="171" cy="46" r="5" fill="#fff" stroke="rgba(0,0,0,0.25)" stroke-width="1.5"></circle>
     </svg>
+    <!-- thumb dot placed with real math, not inside the rotated svg -->
+    <div class="gauge-thumb" style="left:26.6px;top:164.3px;"></div>
     <div class="gauge-temp-text">87°F</div>
     <div class="gauge-inner-disc">
-      <svg viewBox="0 0 200 200" width="86" height="86" style="display:block" aria-hidden="true">
+      <svg viewBox="0 0 200 200" width="130" height="130" style="display:block;filter:drop-shadow(0 3px 5px rgba(0,0,0,0.35))" aria-hidden="true">
         <defs>
-          <radialGradient id="paw3d" cx="42%" cy="30%" r="75%">
+          <radialGradient id="paw3d" cx="38%" cy="28%" r="80%">
             <stop offset="0%" stop-color="#ffffff"/>
-            <stop offset="45%" stop-color="#f3ead8"/>
-            <stop offset="100%" stop-color="#d9cbae"/>
+            <stop offset="50%" stop-color="#f5ecdb"/>
+            <stop offset="100%" stop-color="#d6c8a8"/>
           </radialGradient>
         </defs>
         <g fill="url(#paw3d)">
-          <ellipse cx="52" cy="72" rx="21" ry="24"/>
-          <ellipse cx="85" cy="45" rx="21" ry="25"/>
-          <ellipse cx="122" cy="45" rx="21" ry="25"/>
-          <ellipse cx="155" cy="72" rx="21" ry="24"/>
-          <path d="M 66,108 C 66,88 84,76 105,76 C 126,76 144,88 144,108 C 144,132 124,150 105,150 C 86,150 66,132 66,108 Z"/>
+          <ellipse cx="102" cy="128" rx="64" ry="56"/>
+          <circle cx="46" cy="76" r="23"/>
+          <circle cx="82" cy="47" r="25"/>
+          <circle cx="122" cy="47" r="25"/>
+          <circle cx="158" cy="76" r="23"/>
+        </g>
+        <g fill="rgba(255,255,255,0.35)" opacity="0.6">
+          <ellipse cx="88" cy="112" rx="26" ry="18"/>
         </g>
       </svg>
     </div>
