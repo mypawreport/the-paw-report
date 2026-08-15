@@ -146,7 +146,7 @@
     .paw-gauge-svg{position:absolute;top:0;left:0;width:100%;height:100%;transform:rotate(-90deg);}
     .paw-gauge-track{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:11;}
     .paw-gauge-fill{fill:none;stroke-width:11;stroke-linecap:round;stroke-dasharray:0 566;transition:stroke-dasharray 0.7s ease,stroke 0.4s ease;}
-    .rating-emoji-big{font-size:5rem !important;position:relative;z-index:2;margin-bottom:0 !important;}
+    .rating-emoji-big{font-size:7.2rem !important;position:relative;z-index:2;margin-bottom:0 !important;}
     .gauge-temp-text{font-size:1.7rem;font-weight:900;letter-spacing:-0.5px;line-height:1.2;color:#2D3436;position:relative;z-index:2;}
     .rating-pill{display:inline-block;padding:4px 18px;border-radius:999px;font-size:0.95rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:#fff;margin-bottom:4px;}
     .gauge-sublabel{font-size:0.78rem;color:rgba(255,255,255,0.5);letter-spacing:0.5px;margin-bottom:2px;}
@@ -169,8 +169,8 @@
     .ground-temp-box{grid-column:span 2;background:var(--c-bg);border:1px solid #d1d5db}
     .ground-temp-box .stat-value{font-size:1.9rem}
     .alert-banner{border-radius:12px;padding:10px 13px;font-size:0.82rem;line-height:1.5;margin-top:10px}
-    .alert-cold{background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.35);color:#38bdf8}
-    .alert-hydration{background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#7dd3fc}
+    .alert-cold{background:#eff6ff;border:1px solid #93c5fd;color:#1e40af;font-weight:600}
+    .alert-hydration{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-weight:600}
     /* Crime */
     .crime-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
     .crime-emoji-big{font-size:2rem}
@@ -364,6 +364,9 @@
   body[data-theme="dark"] .toggle-slider:before { background: #fff; }
   body[data-theme="dark"] .user-bar { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); }
   body[data-theme="dark"] .user-name { color: #fff; }
+  body[data-theme="dark"] .alert-cold { background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.35); color: #7dd3fc; font-weight: 600; }
+  body[data-theme="dark"] .alert-hydration { background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.4); color: #fdba74; font-weight: 600; }
+  body[data-theme="dark"] #humidity-alert { background: rgba(56,189,248,0.15) !important; border-color: rgba(56,189,248,0.4) !important; color: #7dd3fc !important; }
   body[data-theme="dark"] .user-email { color: rgba(255,255,255,0.4); }
   body[data-theme="dark"] .logout-btn { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.15); }
   body[data-theme="dark"] .crime-message { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
@@ -742,7 +745,7 @@
           <div class="gauge-inner" style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
             <div id="gauge-temp" class="gauge-temp-text">--°F</div>
             <span class="rating-emoji rating-emoji-big" id="rating-emoji">
-<img id="paw-tier-img" src="https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/8a1fe39c7_safe_final.png" alt="Paw safety rating" style="width:1em;height:1em;display:inline-block;object-fit:contain;vertical-align:-0.08em" />
+<img id="paw-tier-img" src="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/e28f0eb89_8a1fe39c7_safe_final.png" alt="Paw safety rating" style="width:1em;height:1em;display:inline-block;object-fit:contain;vertical-align:-0.08em" />
 </span>
           </div>
         </div>
@@ -762,7 +765,7 @@
         </div>
         <div id="cold-alert" class="alert-banner alert-cold" style="display:none;"></div>
         <div id="hydration-alert" class="alert-banner alert-hydration" style="display:none;"></div>
-        <div id="humidity-alert" style="display:none;background:#e0f2fe;border:1px solid #38bdf8;border-radius:10px;padding:10px;font-size:0.8rem;color:#0369a1;margin-top:8px;"></div>
+        <div id="humidity-alert" style="display:none;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:10px;padding:10px;font-size:0.8rem;color:#075985;font-weight:600;margin-top:8px;"></div>
         <div class="divider"></div>
         <!-- All stats same size, in order from photo -->
         <div class="stats-grid">
@@ -2896,13 +2899,13 @@ function updatePawUI(d) {
   var _pawImg = document.getElementById('paw-tier-img');
   if (_pawImg) {
     var pawImages = {
-      'Extreme Cold': 'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/eea3ac518_extreme_cold_final.png',
-      'Chilly':       'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/09809bc8b_chilly_final.png',
-      'Safe':         'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/8a1fe39c7_safe_final.png',
-      'Warm':         'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/83cc34a40_hot_v3.png',
-      'Hot':          'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/727faba08_warm_v3.png',
-      'Danger':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/3931e193d_bfeb2faae_danger_final.png',
-      'Fry Zone':     'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/eba123142_fryzone_final.png'
+      'Extreme Cold': 'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/e36c4cffb_eea3ac518_extreme_cold_final.png',
+      'Chilly':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/c41c2c868_09809bc8b_chilly_final.png',
+      'Safe':         'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/e28f0eb89_8a1fe39c7_safe_final.png',
+      'Warm':         'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/b397e67a5_83cc34a40_hot_v3.png',
+      'Hot':          'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/63d92c175_727faba08_warm_v3.png',
+      'Danger':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/23c4153af_3931e193d_bfeb2faae_danger_final.png',
+      'Fry Zone':     'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/53b361a11_eba123142_fryzone_final.png'
     };
     var pawUrl = pawImages[d.rating] || pawImages['Safe'];
     if (_pawImg.src !== pawUrl) _pawImg.src = pawUrl;
@@ -3463,7 +3466,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v294';
+const APP_VERSION = 'v295';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -3743,7 +3746,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=294').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=295').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
