@@ -143,7 +143,7 @@
     .rating-display{text-align:center;margin-bottom:10px}
     .rating-emoji{font-size:5rem;line-height:1;margin-bottom:8px;display:block;transition:color 0.4s ease}
     .paw-gauge-wrap{position:relative;width:220px;height:220px;margin:4px auto 6px;display:flex;align-items:center;justify-content:center;}
-    .paw-gauge-svg{position:absolute;top:0;left:0;width:100%;height:100%;transform:rotate(-90deg);}
+    .paw-gauge-svg{position:absolute;top:0;left:0;width:100%;height:100%;transform:rotate(90deg);}
     .paw-gauge-track{fill:none;stroke:rgba(0,0,0,0.08);stroke-width:8;}
     .paw-gauge-fill{fill:none;stroke-width:8;stroke-linecap:round;stroke-dasharray:0 566;transition:stroke-dasharray 0.7s ease,stroke 0.4s ease;}
     .rating-emoji-big{font-size:7.2rem !important;position:relative;z-index:2;margin-bottom:0 !important;}
@@ -744,7 +744,7 @@
             </defs>
             <circle class="paw-gauge-track" cx="100" cy="100" r="90"></circle>
             <circle class="paw-gauge-fill" id="paw-gauge-fill" cx="100" cy="100" r="90" stroke="url(#gauge-grad)"></circle>
-            <circle id="gauge-tick" cx="100" cy="10" r="4" fill="#fff" stroke="rgba(0,0,0,0.3)" stroke-width="1" style="transition: all 0.7s ease;"></circle>
+            <circle id="gauge-tick" cx="190" cy="100" r="4" fill="#fff" stroke="rgba(0,0,0,0.3)" stroke-width="1" style="transition: all 0.7s ease;"></circle>
           </svg>
           <div class="gauge-inner" style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
             <div id="gauge-temp" class="gauge-temp-text">--°F</div>
@@ -2956,10 +2956,10 @@ function updatePawUI(d) {
     gaugeFill.style.stroke = '';
     gaugeFill.style.strokeDasharray = fillLen.toFixed(1) + ' ' + circumference.toFixed(1);
 
-    // Position tick mark at end of fill arc (accounting for SVG rotate(-90))
+    // Position tick mark at end of fill arc (SVG rotated 90deg = starts at bottom, clockwise)
     if (gaugeTick) {
       var angleDeg = (pct / 100) * 360;
-      var rad = (angleDeg - 90) * Math.PI / 180;
+      var rad = angleDeg * Math.PI / 180;
       var tx = 100 + 90 * Math.cos(rad);
       var ty = 100 + 90 * Math.sin(rad);
       gaugeTick.setAttribute('cx', tx.toFixed(1));
@@ -3470,7 +3470,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v297';
+const APP_VERSION = 'v298';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -3750,7 +3750,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=297').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=298').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
