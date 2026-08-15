@@ -156,8 +156,8 @@
     .scale-item{flex:1;padding:4px 2px;border-radius:6px;font-size:0.52rem;text-align:center;opacity:0.3;transition:opacity 0.3s;font-weight:600}.scale-item span{font-size:0.9rem;display:block;margin-bottom:2px}
     .scale-item.active{opacity:1}
     .scale-safe{background:rgba(74,222,128,0.2);color:#4ade80}
-    .scale-warm{background:rgba(255,122,90,0.2);color:#ff7a5a}
-    .scale-caution{background:rgba(249,115,22,0.18);color:#f97316}
+    .scale-warm{background:rgba(249,115,22,0.18);color:#f97316}
+    .scale-caution{background:rgba(255,122,90,0.2);color:#ff7a5a}
     .scale-danger{background:rgba(239,68,68,0.2);color:#ef4444}
     .scale-fry{background:rgba(220,38,38,0.2);color:#dc2626}
     .scale-cold{background:rgba(56,189,248,0.2);color:#38bdf8}
@@ -731,8 +731,8 @@
           <svg class="paw-gauge-svg" viewBox="0 0 200 200" aria-hidden="true">
             <defs>
               <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#FF8C00"/>
-                <stop offset="100%" stop-color="#FF4500"/>
+                <stop offset="0%" stop-color="#f97316"/>
+                <stop offset="100%" stop-color="#FF8C00"/>
               </linearGradient>
             </defs>
             <circle class="paw-gauge-track" cx="100" cy="100" r="90"></circle>
@@ -755,8 +755,8 @@
           <div class="scale-item scale-toocold" id="scale-extremecold"><span style="filter:grayscale(1) brightness(0.7) sepia(1) hue-rotate(210deg) saturate(3);">🐾</span> Extreme</div>
           <div class="scale-item scale-cold" id="scale-chilly"><span style="filter:grayscale(1) brightness(0.8) sepia(1) hue-rotate(175deg) saturate(3);">🐾</span> Chilly</div>
           <div class="scale-item scale-safe" id="scale-safe"><span style="filter:grayscale(1) brightness(0.9) sepia(1) hue-rotate(60deg) saturate(3);">🐾</span> Safe</div>
-          <div class="scale-item scale-warm" id="scale-warm"><span style="filter:grayscale(1) brightness(0.9) sepia(1) hue-rotate(330deg) saturate(3);">🐾</span> Warm</div>
-          <div class="scale-item scale-caution" id="scale-caution"><span style="filter:grayscale(1) brightness(0.9) sepia(1) hue-rotate(10deg) saturate(4);">🐾</span> Hot</div>
+          <div class="scale-item scale-warm" id="scale-warm"><span style="filter:grayscale(1) brightness(0.9) sepia(1) hue-rotate(10deg) saturate(4);">🐾</span> Warm</div>
+          <div class="scale-item scale-caution" id="scale-caution"><span style="filter:grayscale(1) brightness(0.9) sepia(1) hue-rotate(330deg) saturate(3);">🐾</span> Hot</div>
           <div class="scale-item scale-danger" id="scale-danger"><span style="filter:grayscale(1) brightness(0.7) sepia(1) hue-rotate(340deg) saturate(4);">🐾</span> Danger</div>
           <div class="scale-item scale-fry" id="scale-fry"><span style="filter:grayscale(1) brightness(0.6) sepia(1) hue-rotate(345deg) saturate(5);">🐾</span> Fry</div>
         </div>
@@ -2681,8 +2681,8 @@ function getStatusColor(status) {
     'Extreme Cold': '#818cf8',
     'Chilly': '#38bdf8',
     'Safe': '#4ade80',
-    'Warm': '#ff7a5a',
-    'Hot': '#f97316',
+    'Warm': '#f97316',
+    'Hot': '#ff7a5a',
     'Danger': '#ef4444',
     'Fry Zone': '#dc2626'
   };
@@ -2828,8 +2828,8 @@ const PAW_RATING_INFO = {
   'Extreme Cold': { emoji: '🐾', color: '#818cf8', message: 'Dangerously cold! Ice, salt & frost can burn paws. Keep walks under 5 min.' },
   'Chilly':       { emoji: '🐾', color: '#38bdf8', message: 'Chilly — short walks OK. Check for ice patches & salt on pavements.' },
   'Safe':         { emoji: '🐾', color: '#4ade80', message: 'Great walking conditions!' },
-  'Warm':         { emoji: '🐾', color: '#ff7a5a', message: 'Warm — keep walks short and bring water.' },
-  'Hot':          { emoji: '🐾', color: '#f97316', message: 'Hot! Limit time on pavement.' },
+  'Warm':         { emoji: '🐾', color: '#f97316', message: 'Warm — keep walks short and bring water.' },
+  'Hot':          { emoji: '🐾', color: '#ff7a5a', message: 'Hot! Limit time on pavement.' },
   'Danger':       { emoji: '🐾', color: '#ef4444', message: 'Dangerous! Pavement can burn paws within 60 seconds.' },
   'Fry Zone':     { emoji: '🐾', color: '#dc2626', message: 'Fry Zone! Stay off pavement entirely.' }
 };
@@ -2844,6 +2844,7 @@ function getRatingColor(rating) {
     'Chilly':       '#38bdf8',
     'Safe':         '#0d9488',
     'Warm':         '#f97316',
+    'Hot':          '#ff7a5a',
     'Danger':       '#ef4444',
     'Fry Zone':     '#dc2626'
   };
@@ -2898,9 +2899,9 @@ function updatePawUI(d) {
       'Extreme Cold': 'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/eea3ac518_extreme_cold_final.png',
       'Chilly':       'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/09809bc8b_chilly_final.png',
       'Safe':         'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/8a1fe39c7_safe_final.png',
-      'Warm':         'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/727faba08_warm_v3.png',
-      'Hot':          'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/83cc34a40_hot_v3.png',
-      'Danger':       'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/bfeb2faae_danger_final.png',
+      'Warm':         'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/83cc34a40_hot_v3.png',
+      'Hot':          'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/727faba08_warm_v3.png',
+      'Danger':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/3931e193d_bfeb2faae_danger_final.png',
       'Fry Zone':     'https://media.base44.com/images/public/6a1c6fbdd48b351a9eb7455e/eba123142_fryzone_final.png'
     };
     var pawUrl = pawImages[d.rating] || pawImages['Safe'];
@@ -2908,7 +2909,7 @@ function updatePawUI(d) {
   }
   // Update pill badge
   var pill = document.getElementById('rating-pill');
-  var labelColors = {'Safe':'#6be000','Extreme Cold':'#818cf8','Chilly':'#38bdf8','Warm':'#ff7a5a','Hot':'#f97316','Danger':'#ef4444','Fry Zone':'#dc2626'};
+  var labelColors = {'Safe':'#6be000','Extreme Cold':'#818cf8','Chilly':'#38bdf8','Warm':'#f97316','Hot':'#ff7a5a','Danger':'#ef4444','Fry Zone':'#dc2626'};
   if (pill) {
     pill.textContent = d.rating.replace(' Zone','').replace('Extreme ','').toUpperCase();
     pill.style.background = labelColors[d.rating] || d.color || '#f97316';
@@ -2930,8 +2931,8 @@ function updatePawUI(d) {
       'Extreme Cold': ['#818cf8', '#6366f1'],
       'Chilly':       ['#38bdf8', '#0ea5e9'],
       'Safe':         ['#6be000', '#22c55e'],
-      'Warm':         ['#ff7a5a', '#f97316'],
-      'Hot':          ['#FF8C00', '#FF4500'],
+      'Hot':          ['#ff7a5a', '#f97316'],
+      'Warm':         ['#FF8C00', '#FF4500'],
       'Danger':       ['#ef4444', '#dc2626'],
       'Fry Zone':     ['#dc2626', '#991b1b']
     };
@@ -3462,11 +3463,12 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v293';
+const APP_VERSION = 'v294';
 const WHATS_NEW = {
+    'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
   'v292': '🐾 AI-generated tier-colored paw prints in safety gauge.',
-  'v291': '🐾 New 3D embossed paw with teardrop toes in gauge.',,
+  'v291': '🐾 New 3D embossed paw with teardrop toes in gauge.',
   'v290': '🐾 Fixed invisible gauge temperature text on light theme.',
   'v289': '🐾 Gauge fill now maps to actual ground temperature (0-130°F scale).',
   'v288': '🐾 Safety gauge redesigned — cream paw, gradient ring, pill badge, tick mark.',
@@ -3741,7 +3743,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=293').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=294').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -4120,7 +4122,7 @@ function renderWalkHistory() {
   if (emptyEl) emptyEl.style.display = 'none';
   if (clearBtn) clearBtn.style.display = 'block';
   listEl.style.display = 'block';
-  var RATING_COLORS = {'Safe':'#4ade80','Warm':'#ff7a5a','Hot':'#f97316','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Extreme Cold':'#818cf8'};
+  var RATING_COLORS = {'Safe':'#4ade80','Warm':'#f97316','Hot':'#ff7a5a','Danger':'#ef4444','Fry Zone':'#dc2626','Chilly':'#93c5fd','Extreme Cold':'#818cf8'};
   listEl.innerHTML = hist.slice(0,20).map(function(e) {
     var col = RATING_COLORS[e.rating] || '#94a3b8';
     var sizeEmoji = e.petSize === 'small' ? '🐩' : e.petSize === 'large' ? '🦮' : '🐕';
