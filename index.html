@@ -141,7 +141,7 @@
     .pulse.inactive{background:#9ca3af;animation:none}
     @keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
     .rating-display{text-align:center;margin-bottom:10px}
-    .rating-emoji{font-size:3.8rem;line-height:1;margin-bottom:8px;display:block;transition:color 0.4s ease}
+    .rating-emoji{font-size:5rem;line-height:1;margin-bottom:8px;display:block;transition:color 0.4s ease}
     .rating-label{font-size:1.7rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px;text-align:center}
     .rating-message{font-size:0.86rem;opacity:0.8;line-height:1.5;text-align:center}
     .paw-scale{display:flex;gap:3px;margin-top:10px}
@@ -193,13 +193,13 @@
     /* Walk time */
     .best-time-hero{text-align:center;margin-bottom:14px}
     .best-time-icon{font-size:2.8rem;display:block;margin-bottom:6px}
-    .best-time-window{font-size:1.55rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:var(--accent,var(--c-teal))}
+    .best-time-window{font-size:1.8rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:5px;color:var(--accent,var(--c-teal))}
     .best-time-rec{font-size:0.86rem;opacity:0.8;line-height:1.5;max-width:300px;margin:0 auto}
     .hourly-chart{margin-top:14px;overflow-x:auto;padding-bottom:4px}
-    .hourly-bars{display:flex;gap:3px;align-items:flex-end;height:65px;min-width:max-content}
+    .hourly-bars{display:flex;gap:3px;align-items:flex-end;height:80px;min-width:max-content}
     .hourly-col{display:flex;flex-direction:column;align-items:center;gap:2px}
-    .hourly-bar-wrap{height:50px;display:flex;align-items:flex-end}
-    .hourly-bar{width:19px;border-radius:4px 4px 0 0;transition:opacity 0.2s;min-height:4px}
+    .hourly-bar-wrap{height:60px;display:flex;align-items:flex-end}
+    .hourly-bar{width:22px;border-radius:4px 4px 0 0;transition:opacity 0.2s;min-height:4px}
     .hourly-bar.past{opacity:0.22}
     .hourly-bar.best-bar{outline:2px solid var(--accent,var(--c-teal));outline-offset:2px}
     .hourly-label{font-size:0.53rem;opacity:0.45;white-space:nowrap}
@@ -259,49 +259,6 @@
     .nav-btn .nav-label{font-size:0.55rem;opacity:0;transition:opacity 0.3s}
     .nav-btn.active .nav-label{opacity:0.9}
     /* Edge glow system */
-    .edge-glow {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      pointer-events: none;
-      z-index: 9999;
-      transition: opacity 2s ease;
-      opacity: 0;
-    }
-    .edge-glow.active {
-      opacity: 1;
-    }
-    @keyframes edge-pulse {
-      0%   { opacity: 0.5; }
-      50%  { opacity: 1; }
-      100% { opacity: 0.5; }
-    }
-    .edge-glow.pulsing {
-      animation: edge-pulse 2.5s ease-in-out infinite;
-    }
-    /* PERF: previously this animated `filter` (hue-rotate/brightness/saturate/drop-shadow x2)
-       on the parent strip AND every single paw icon, continuously, forever, on every screen.
-       Animating `filter` is one of the most expensive things a browser can do per-frame —
-       with 100+ icons tiling the screen edges this caused real jank/lag on mid-range phones.
-       Fix: filter is now STATIC (computed once, cached as a layer) and the only animated
-       properties are opacity/transform, which are cheap and GPU-compositable. */
-    /* v144: REMOVED the container-level hue-rotate shimmer added in v143. Turns out
-       applying `filter` to a container that wraps 25-30 actively-animating child icons
-       forces the browser to flatten/rasterize the whole strip into an offscreen buffer
-       and re-apply the filter every frame, regardless of how few elements have the
-       filter animation declared on them. That re-introduced the same class of lag as
-       the pre-v140 bug (entry 44) even though only 4 elements technically animated.
-       RULE: never animate `filter` on ANY element that has multiple animating children —
-       not on the icons, not on their parent strip. Keep filter fully static everywhere
-       in the edge-lighting system, animate only opacity/transform. */
-    .edge-paw-strip{position:fixed;display:flex;color:#6be000;transition:color 0.6s ease;z-index:1;pointer-events:none}
-    .edge-paw-left,.edge-paw-right{top:0;bottom:0;width:28px;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 0;gap:6px;overflow:hidden;contain:strict}
-    .edge-paw-left{left:0}
-    .edge-paw-right{right:0}
-    .edge-paw-top,.edge-paw-bottom{left:28px;right:28px;height:28px;flex-direction:row;justify-content:flex-start;align-items:center;padding:0 6px;gap:8px;overflow:hidden;contain:strict}
-    .edge-paw-top{top:0;z-index:1;pointer-events:none}
-    .edge-paw-bottom{bottom:0}
-    .edge-paw-strip svg{width:16px;height:16px;flex-shrink:0;animation:pawChase 8s linear infinite;will-change:opacity,transform}
-    @keyframes pawChase{0%,6%,100%{opacity:.7;transform:scale(1)}3%{opacity:1;transform:scale(1.6)}}
     /* Temp color wheel indicator */
     .temp-wheel {
       width: 52px; height: 52px;
@@ -352,124 +309,84 @@
   .theme-btn span { display:block; font-size:1.2rem; margin-bottom:4px; }
   .theme-btn.locked { opacity:0.45; cursor:not-allowed; }
   /* Theme variables */
-  body[data-theme="midnight"] { --accent: var(--c-teal); --accent2: #4a7c59; --glow: 13,148,136; }
-  body[data-theme="violet"]   { --accent: #7c3aed; --accent2: #a78bfa; --glow: 124,58,237; }
-  body[data-theme="ocean"]    { --accent: #0891b2; --accent2: #22d3ee; --glow: 8,145,178; }
-  body[data-theme="forest"]   { --accent: #16a34a; --accent2: #4ade80; --glow: 22,163,74; }
-  body[data-theme="blush"]    { --accent: #db2777; --accent2: #f472b6; --glow: 219,39,119; }
-  /* ===== FROST DARK THEME — comprehensive dark override ===== */
-  body[data-theme="frost"] {
-    --accent: #60a5fa;
-    --accent2: #93c5fd;
-    --glow: 96,165,250;
-    --c-slate: #e2e8f0;
-    --c-muted: #94a3b8;
-    --c-border: rgba(148,163,184,0.18);
-    --c-bg: rgba(255,255,255,0.05);
-    --c-card: rgba(255,255,255,0.07);
-    background: #0f172a;
-    color: #e2e8f0;
+  /* ===== DARK THEME (Gold-tier only) ===== */
+  body[data-theme="dark"] {
+    --accent: #0d9488; --accent2: #4a7c59; --glow: 13,148,136;
+    --c-slate: #ffffff; --c-muted: rgba(255,255,255,0.5);
+    --c-border: rgba(255,255,255,0.1); --c-bg: rgba(255,255,255,0.06);
+    --c-card: rgba(255,255,255,0.08);
+    background-color: #0d1117; color: #ffffff;
   }
-  /* Frost: body & layout */
-  body[data-theme="frost"] .container { color: #e2e8f0; }
-  /* Frost: header */
-  body[data-theme="frost"] .header h1 { color: #93c5fd; }
-  body[data-theme="frost"] .header .title-gradient { background: linear-gradient(90deg, #bfdbfe, #60a5fa); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
-  body[data-theme="frost"] .header p { color: #94a3b8; opacity: 0.85; }
-  /* Frost: cards — glassmorphic dark */
-  body[data-theme="frost"] .card { background: rgba(255,255,255,0.07); border: 1px solid rgba(148,163,184,0.12); box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
-  body[data-theme="frost"] .card-title { color: #94a3b8; }
-  body[data-theme="frost"] .divider { background: rgba(148,163,184,0.12); }
-  /* Frost: nav buttons */
-  body[data-theme="frost"] .nav-btn { background: rgba(255,255,255,0.04); color: #94a3b8; }
-  body[data-theme="frost"] .nav-btn.active { background: rgba(96,165,250,0.22); color: #60a5fa; box-shadow: 0 2px 12px rgba(96,165,250,0.25); }
-  /* Frost: stat boxes */
-  body[data-theme="frost"] .stat-box { background: rgba(255,255,255,0.04); }
-  body[data-theme="frost"] .stat-value { color: #f1f5f9; }
-  body[data-theme="frost"] .stat-label { color: #64748b; }
-  body[data-theme="frost"] .ground-temp-box { background: rgba(255,255,255,0.04); border: 1px solid rgba(148,163,184,0.15); }
-  /* Frost: rating display */
-  body[data-theme="frost"] .rating-label { color: #f1f5f9; }
-  body[data-theme="frost"] .rating-message { color: #cbd5e1; }
-  body[data-theme="frost"] .scale-item { opacity: 0.35; }
-  body[data-theme="frost"] .scale-item.active { opacity: 1; }
-  /* Frost: auth screen */
-  body[data-theme="frost"] .auth-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(148,163,184,0.12); }
-  body[data-theme="frost"] .auth-input { background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); color: #e2e8f0; }
-  body[data-theme="frost"] .auth-input::placeholder { color: #64748b; opacity: 0.5; }
-  body[data-theme="frost"] .auth-input:focus { border-color: rgba(96,165,250,0.6); }
-  body[data-theme="frost"] .auth-toggle { color: #94a3b8; }
-  body[data-theme="frost"] .auth-toggle span { color: #60a5fa; }
-  /* Frost: setup screen */
-  body[data-theme="frost"] .form-input { background: rgba(255,255,255,0.05); border: 1px solid rgba(148,163,184,0.2); color: #e2e8f0; }
-  body[data-theme="frost"] .form-input::placeholder { color: #64748b; opacity: 0.5; }
-  body[data-theme="frost"] .form-label { color: #94a3b8; }
-  /* Frost: size/surface buttons */
-  body[data-theme="frost"] .size-btn { background: rgba(255,255,255,0.05); border: 1.5px solid rgba(148,163,184,0.2); color: #cbd5e1; }
-  body[data-theme="frost"] .size-btn.active { background: var(--accent); border-color: var(--accent); color: #0f172a; }
-  /* Frost: profile sections */
-  body[data-theme="frost"] .profile-section { background: rgba(255,255,255,0.04); }
-  body[data-theme="frost"] #tab-profile { background: linear-gradient(160deg, rgba(96,165,250,0.08) 0%, rgba(96,165,250,0.03) 40%, transparent 70%); }
-  /* Frost: avatar */
-  body[data-theme="frost"] .avatar-option { background: rgba(255,255,255,0.06); border-color: rgba(148,163,184,0.2); }
-  body[data-theme="frost"] .avatar-option:hover, body[data-theme="frost"] .avatar-option.selected { border-color: #60a5fa; background: rgba(96,165,250,0.15); }
-  body[data-theme="frost"] .avatar-large { border-color: rgba(148,163,184,0.2); }
-  /* Frost: alerts */
-  body[data-theme="frost"] .alert-banner { border-radius: 12px; }
-  body[data-theme="frost"] .alert-cold { background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); color: #7dd3fc; }
-  body[data-theme="frost"] .alert-hydration { background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.25); color: #bae6fd; }
-  body[data-theme="frost"] #humidity-alert { background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.25); color: #7dd3fc; }
-  body[data-theme="frost"] #cold-field-guide { background: rgba(129,140,248,0.1); border: 1px solid rgba(129,140,248,0.25); }
-  /* Frost: weather tip */
-  body[data-theme="frost"] .weather-tip { background: rgba(96,165,250,0.1); border: 1.5px solid rgba(96,165,250,0.25); color: #93c5fd; }
-  /* Frost: crime section */
-  body[data-theme="frost"] .crime-message { background: rgba(255,255,255,0.04); color: #cbd5e1; }
-  body[data-theme="frost"] .crime-stat { background: rgba(255,255,255,0.04); }
-  body[data-theme="frost"] .crime-stat-val { color: #f1f5f9; }
-  body[data-theme="frost"] .crime-stat-label { color: #64748b; }
-  /* Frost: stations */
-  body[data-theme="frost"] .station-item { background: rgba(255,255,255,0.04); }
-  body[data-theme="frost"] .station-name { color: #e2e8f0; }
-  body[data-theme="frost"] .station-type { color: #94a3b8; }
-  body[data-theme="frost"] .station-tag { background: rgba(255,255,255,0.06); color: #94a3b8; }
-  body[data-theme="frost"] .station-link { color: #60a5fa; }
-  /* Frost: forecast cards */
-  body[data-theme="frost"] .forecast-day-card { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(148,163,184,0.15); }
-  body[data-theme="frost"] .forecast-day-card.active { border-color: #60a5fa; background: rgba(96,165,250,0.1); }
-  body[data-theme="frost"] .forecast-day-card .fdc-day { color: #94a3b8; }
-  body[data-theme="frost"] .forecast-day-card .fdc-temp { color: #64748b; }
-  body[data-theme="frost"] .f7-day { color: #cbd5e1; }
-  /* Frost: best time */
-  body[data-theme="frost"] .best-time-rec { color: #94a3b8; }
-  body[data-theme="frost"] .hourly-label { color: #64748b; }
-  /* Frost: paywall */
-  body[data-theme="frost"] #screen-paywall { background: #0f172a; }
-  body[data-theme="frost"] .paywall-hero { background: rgba(255,255,255,0.05); }
-  body[data-theme="frost"] .paywall-hero-title { color: #f1f5f9; }
-  body[data-theme="frost"] .paywall-hero-sub { color: #94a3b8; }
-  body[data-theme="frost"] .tier-tabs { background: rgba(255,255,255,0.04); border: 1px solid rgba(148,163,184,0.12); }
-  body[data-theme="frost"] .tier-tab { color: #64748b; }
-  body[data-theme="frost"] .tier-tab.active { color: #e2e8f0; }
-  body[data-theme="frost"] .tier-tab.t-bronze.active, body[data-theme="frost"] .tier-tab.t-silver.active, body[data-theme="frost"] .tier-tab.t-gold.active { background: rgba(255,255,255,0.08); color: #e2e8f0; box-shadow: none; }
-  body[data-theme="frost"] .billing-btn { color: #64748b; }
-  body[data-theme="frost"] .billing-btn.active { background: var(--accent); color: #0f172a; }
-  body[data-theme="frost"] .referral-input { background: rgba(255,255,255,0.05); border: 1.5px solid rgba(148,163,184,0.2); color: #e2e8f0; }
-  /* Frost: whats-new toast */
-  body[data-theme="frost"] .whats-new-toast { background: linear-gradient(135deg, rgba(30,41,59,0.95), rgba(30,41,59,0.9)); border: 1px solid rgba(96,165,250,0.3); color: #e2e8f0; }
-  body[data-theme="frost"] .whats-new-toast .toast-title { color: #60a5fa; }
-  /* Frost: btn-secondary */
-  body[data-theme="frost"] .btn-secondary { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(148,163,184,0.2); color: #e2e8f0; }
-  /* Frost: walk history */
-  body[data-theme="frost"] #walk-history-empty { color: #64748b; }
-  /* Frost: theme buttons grid in profile */
-  body[data-theme="frost"] .theme-btn { color: #fff; }
-  /* Frost: modals (disclaimer etc) */
-  body[data-theme="frost"] #disclaimer-modal { background: rgba(0,0,0,0.8); }
-  /* Frost: surface label */
-  body[data-theme="frost"] #surface-label { color: var(--accent); }
-  /* Frost: user avatar in profile header */
-  body[data-theme="frost"] .user-avatar { color: #0f172a; }
-    /* Avatar editor */
+  body[data-theme="dark"] .header h1 { color: #fff; }
+  body[data-theme="dark"] .header p { color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); box-shadow: none; }
+  body[data-theme="dark"] .card-title { color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .divider { background: rgba(255,255,255,0.1); }
+  body[data-theme="dark"] .nav-btn { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .nav-btn.active { background: rgba(13,148,136,0.25); color: #0d9488; }
+  body[data-theme="dark"] .stat-box { background: rgba(255,255,255,0.06); }
+  body[data-theme="dark"] .stat-value { color: #fff; }
+  body[data-theme="dark"] .stat-label { color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .rating-label { color: #fff; }
+  body[data-theme="dark"] .rating-message { color: rgba(255,255,255,0.8); }
+  body[data-theme="dark"] .scale-item { opacity: 0.35; }
+  body[data-theme="dark"] .scale-item.active { opacity: 1; }
+  body[data-theme="dark"] .auth-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #fff; }
+  body[data-theme="dark"] .auth-input::placeholder { color: rgba(255,255,255,0.4); }
+  body[data-theme="dark"] .auth-toggle { color: rgba(255,255,255,0.6); }
+  body[data-theme="dark"] .auth-title { color: #fff; }
+  body[data-theme="dark"] .auth-sub { color: rgba(255,255,255,0.6); }
+  body[data-theme="dark"] .form-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #fff; }
+  body[data-theme="dark"] .form-label { color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .setup-sub { color: rgba(255,255,255,0.6); }
+  body[data-theme="dark"] .size-btn { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
+  body[data-theme="dark"] .btn-secondary { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
+  body[data-theme="dark"] .toggle-slider { background: rgba(255,255,255,0.2); }
+  body[data-theme="dark"] .toggle-slider:before { background: #fff; }
+  body[data-theme="dark"] .user-bar { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); }
+  body[data-theme="dark"] .user-name { color: #fff; }
+  body[data-theme="dark"] .user-email { color: rgba(255,255,255,0.4); }
+  body[data-theme="dark"] .logout-btn { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.15); }
+  body[data-theme="dark"] .crime-message { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+  body[data-theme="dark"] .crime-stat { background: rgba(255,255,255,0.06); }
+  body[data-theme="dark"] .crime-stat-val { color: #fff; }
+  body[data-theme="dark"] .crime-stat-label { color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .station-item { background: rgba(255,255,255,0.06); }
+  body[data-theme="dark"] .station-name { color: #fff; }
+  body[data-theme="dark"] .station-type { color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .station-tag { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); }
+  body[data-theme="dark"] .forecast-day-card { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); }
+  body[data-theme="dark"] .forecast-day-card.active { border-color: #0d9488; background: rgba(13,148,136,0.15); }
+  body[data-theme="dark"] .hourly-label { color: rgba(255,255,255,0.45); }
+  body[data-theme="dark"] .forecast-tab { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+  body[data-theme="dark"] #screen-paywall { background: #0d1117; }
+  body[data-theme="dark"] .paywall-hero { background: rgba(255,255,255,0.06); }
+  body[data-theme="dark"] .paywall-hero-title { color: #fff; }
+  body[data-theme="dark"] .paywall-hero-sub { color: rgba(255,255,255,0.6); }
+  body[data-theme="dark"] .tier-tab { color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .tier-tab.active { color: #fff; }
+  body[data-theme="dark"] .tier-tab.t-bronze.active, body[data-theme="dark"] .tier-tab.t-silver.active, body[data-theme="dark"] .tier-tab.t-gold.active { background: rgba(255,255,255,0.08); color: #fff; box-shadow: none; }
+  body[data-theme="dark"] .billing-btn { color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .billing-btn.active { background: var(--accent); color: #fff; }
+  body[data-theme="dark"] .tier-card-bronze, body[data-theme="dark"] .tier-card-silver, body[data-theme="dark"] .tier-card-gold { background: rgba(255,255,255,0.06); }
+  body[data-theme="dark"] .tier-price-main { color: #fff; }
+  body[data-theme="dark"] .tier-features li { color: rgba(255,255,255,0.7); }
+  body[data-theme="dark"] .referral-section { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
+  body[data-theme="dark"] .referral-title { color: #fff; }
+  body[data-theme="dark"] .referral-input { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
+  body[data-theme="dark"] .whats-new-toast { background: rgba(255,255,255,0.08); border: 1px solid rgba(13,148,136,0.3); color: #fff; }
+  body[data-theme="dark"] .setting-label { color: #fff; }
+  body[data-theme="dark"] .setting-sublabel { color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .setting-row { border-bottom-color: rgba(255,255,255,0.08); }
+  body[data-theme="dark"] .loading-inline { color: rgba(255,255,255,0.5); }
+  body[data-theme="dark"] .share-card { background: rgba(255,255,255,0.06); }
+  body[data-theme="dark"] .notif-banner { background: rgba(255,255,255,0.06); }
+  body[data-theme="dark"] .acc-arrow { color: rgba(255,255,255,0.4); }
+  body[data-theme="dark"] #tab-profile { background: linear-gradient(160deg, rgba(13,148,136,0.10) 0%, rgba(13,148,136,0.04) 40%, transparent 70%); }
+  body[data-theme="dark"] #disclaimer-modal { background: rgba(0,0,0,0.8); }
+  body[data-theme="dark"] .locked-title { color: #fff; }
+  body[data-theme="dark"] .locked-sub { color: rgba(255,255,255,0.5); }
+      /* Avatar editor */
     .avatar-picker-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:10px; }
     .avatar-option { width:44px; height:44px; border-radius:50%; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; transition:var(--c-transition); background:#f1f5f9; }
     .avatar-option:hover, .avatar-option.selected { border-color:var(--c-teal); background:#e6fffa; transform:scale(1.1); }
@@ -596,12 +513,6 @@
 
 </style>
 
-<div class="edge-glow" id="edgeGlow">
-  <div class="edge-paw-strip edge-paw-left" id="edgePawLeft"></div>
-  <div class="edge-paw-strip edge-paw-right" id="edgePawRight"></div>
-  <div class="edge-paw-strip edge-paw-top" id="edgePawTop"></div>
-  <div class="edge-paw-strip edge-paw-bottom" id="edgePawBottom"></div>
-</div>
   <div class="container">
   <div class="header">
     <h1><svg viewBox="0 0 100 100" width="1.15em" height="1.15em" style="display:inline-block;vertical-align:-0.16em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg> <span class="title-gradient">The Paw Report</span></h1>
@@ -790,6 +701,7 @@
         <div id="active-dog-bar" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;font-size:0.78rem;color:#94a3b8;">
           <span id="active-dog-name" style="font-weight:600;color:#fff;"></span>
         </div>
+        <div id="safety-rating-bar" style="width:100%;height:6px;border-radius:3px;background:rgba(0,0,0,0.08);margin-bottom:14px;overflow:hidden;"><div id="safety-rating-bar-fill" style="height:100%;width:0%;border-radius:3px;transition:width 0.6s ease,background 0.4s ease;"></div></div>
         <div class="rating-display">
           <span class="rating-emoji" id="rating-emoji"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;vertical-align:-0.08em;fill:currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg></span>
           <div class="rating-label" id="rating-label" style="display:flex;align-items:center;justify-content:center;gap:8px;">--</div>
@@ -1002,7 +914,7 @@
         <div class="card-title acc-title" onclick="toggleAcc('crime-body')">🚨 Area Safety<i class="acc-arrow open" id="arr-crime-body">▾</i></div>
       <div id="crime-body" class="acc-body"><div>
         <div class="loading-inline" id="crime-loading">Run your report first to see area safety.</div>
-        <div id="crime-content" style="display:none;">
+        <div id="crime-content" style="display:none;"><div id="crime-map-container" style="display:none;margin-bottom:12px;"><iframe id="crime-map-iframe" style="width:100%;height:200px;border:none;border-radius:12px;" loading="lazy" allowfullscreen></iframe></div>
           <div class="crime-header">
             <div class="crime-emoji-big" id="crime-emoji" style="width:2.2rem;height:2.2rem;border-radius:50%;background:#ccc;flex-shrink:0"></div>
             <div class="crime-info">
@@ -1040,7 +952,7 @@
         <div class="card-title acc-title" onclick="toggleAcc('wash-body')">🛁 Nearby Pet Wash Stations<i class="acc-arrow open" id="arr-wash-body">▾</i></div>
       <div id="wash-body" class="acc-body"><div>
         <div class="loading-inline" id="wash-loading">Run your report first to find nearby stations.</div>
-        <div id="wash-content" style="display:none;"><div class="stations-list" id="stations-list"></div></div>
+        <div id="wash-content" style="display:none;"><div id="wash-map-container" style="display:none;margin-bottom:12px;"><iframe id="wash-map-iframe" style="width:100%;height:200px;border:none;border-radius:12px;" loading="lazy" allowfullscreen></iframe></div><div class="stations-list" id="stations-list"></div></div>
       </div>
       <div id="wash-lock" class="locked-feature" style="display:none;">
         <div class="locked-icon">🔒</div>
@@ -1225,16 +1137,6 @@
           </div>
           <label class="toggle-switch">
             <input type="checkbox" id="toggle-walk-reminder" checked onchange="saveAlertSetting('walkReminder', this.checked)">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <div class="setting-row" style="margin-top:10px;" id="edge-lighting-row">
-          <div>
-            <div class="setting-label">✨ Edge lighting <span class="setting-badge">Gold</span></div>
-            <div class="setting-sublabel">Animated paw border that glows with your safety rating</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-edge-lighting" checked onchange="handleEdgeLightingToggle(this.checked)">
             <span class="toggle-slider"></span>
           </label>
         </div>
@@ -1824,7 +1726,7 @@ function showTab(tab) {
     document.getElementById('nav-'+t).classList.toggle('active', t===tab);
   });
   currentActiveTab = tab;
-  syncGlowToActiveTab();
+  /* edge lighting removed */
   // Auto-fetch safety/wash data when switching tabs if we have coords but haven't loaded yet
   if (tab === 'safety' && lastLat && lastLon) {
     const crimeContent = document.getElementById('crime-content');
@@ -2929,8 +2831,8 @@ function updateDynamicColors(rating) {
   // Don't force the edge glow to the temperature rating here — if the Safety tab is
   // open, this used to override the crime-rating glow every time a report refreshed
   // in the background, causing the edge lighting to mismatch whatever tab was showing.
-  // syncGlowToActiveTab() picks the right source (report vs crime) based on the tab.
-  syncGlowToActiveTab();
+  
+  /* edge lighting removed */
   const color = getRatingColor(rating);
   // NOTE: previously this force-set document.body.style.background to a hardcoded
   // light gradient here, which stomped over the user's selected theme (e.g. Frost,
@@ -2989,6 +2891,13 @@ function updatePawUI(d) {
       lbl.style.color = labelColors[d.rating] || d.color || '#7FFF00'; 
       lbl.style.textShadow = 'none'; 
     }
+  // Update safety rating bar
+  var barFill = document.getElementById('safety-rating-bar-fill');
+  if (barFill) {
+    var barColors = {'Safe':'#6be000','Extreme Cold':'#818cf8','Chilly':'#38bdf8','Warm':'#ff7a5a','Hot':'#f97316','Danger':'#ef4444','Fry Zone':'#dc2626'};
+    barFill.style.background = barColors[d.rating] || d.color || '#0d9488';
+    barFill.style.width = '100%';
+  }
   document.getElementById('rating-message').textContent = d.message;
   document.getElementById('ground-temp').textContent = d.groundTempF + '°F';
   document.getElementById('air-temp').textContent = d.airTempF + '°F';
@@ -3010,7 +2919,7 @@ function updatePawUI(d) {
   var humAlert = document.getElementById('humidity-alert');
   if (humAlert) { if (d.humidityWarning) { humAlert.textContent = d.humidityWarning; humAlert.style.display = 'block'; } else humAlert.style.display = 'none'; }
   // Danger notification
-  // Defer edge-glow update so it never blocks the data render
+  // Edge lighting removed in v282
   setTimeout(function(){ updateDynamicColors(d.rating); }, 60);
   }); // end requestAnimationFrame
   const dangerRatings = ['Danger','Fry Zone','Extreme Cold'];
@@ -3055,6 +2964,11 @@ async function fetchPawAndUpdate(lat, lon) {
 function updateCrimeUI(d) {
   document.getElementById('crime-loading').style.display = 'none';
   document.getElementById('crime-content').style.display = 'block';
+  // Show crime map
+  if (lastLat && lastLon) {
+    var cmc = document.getElementById('crime-map-container');
+    if (cmc) { cmc.style.display='block'; document.getElementById('crime-map-iframe').src='https://www.google.com/maps?q='+lastLat+','+lastLon+'&z=14&output=embed'; }
+  }
   const emojiEl = document.getElementById('crime-emoji');
   emojiEl.textContent = '';
   emojiEl.style.background = d.crimeColor || '#ccc';
@@ -3081,7 +2995,7 @@ function updateCrimeUI(d) {
     document.getElementById('cs-5').classList.toggle('active',s>=75);
     lastCrimeScore=s; lastCrimeData=d;
     // Sync edge glow to crime rating when Safety tab is active
-    syncGlowToActiveTab();
+    /* edge lighting removed */
   }
 }
 function scoreToColor(s){ if(s<10)return'#4ade80'; if(s<25)return'#86efac'; if(s<45)return'#ff7a5a'; if(s<65)return'#14b8a6'; return'#f87171'; }
@@ -3222,6 +3136,11 @@ function renderSelectedDay() {
 function updateWashUI(d) {
   document.getElementById('wash-loading').style.display='none';
   document.getElementById('wash-content').style.display='block';
+  // Show pet wash map
+  if (lastLat && lastLon) {
+    var wmc = document.getElementById('wash-map-container');
+    if (wmc) { wmc.style.display='block'; document.getElementById('wash-map-iframe').src='https://www.google.com/maps?q='+encodeURIComponent('pet wash dog grooming')+'&center='+lastLat+','+lastLon+'&z=13&output=embed'; }
+  }
   const list=document.getElementById('stations-list');
   if(!d.stations||d.stations.length===0){
   var mapsQ = encodeURIComponent('pet wash near me dog wash grooming');
@@ -3459,8 +3378,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v281';
+const APP_VERSION = 'v282';
 const WHATS_NEW = {
+  'v282': '🎨 Dark theme (Gold-tier), map views for pet wash & crime, upgraded UI, removed edge lighting.',
   'v281': '🔑 Google Sign-In now available! Sign in faster with your Google account.',
   'v273': '🔧 Fixed login crash — onboarding trigger removed.',
   'v272': '🔧 Fixed a login issue where the screen could freeze after signing in.',
@@ -3585,12 +3505,8 @@ function playBarkSound() {
   }
   // ===== THEME SYSTEM =====
   const THEMES = [
-    { id: 'midnight', label: 'Midnight', emoji: '🌑', tier: 'bronze', colors: ['#F1F5F9','#0d9488'] },
-    { id: 'violet',   label: 'Violet',   emoji: '💜', tier: 'silver', colors: ['#f1e9fc','#7c3aed'] },
-    { id: 'ocean',    label: 'Ocean',    emoji: '🌊', tier: 'silver', colors: ['#e8f0e8','#0891b2'] },
-    { id: 'forest',   label: 'Forest',   emoji: '🌿', tier: 'gold',   colors: ['#f0fdf4','#16a34a'] },
-    { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#fdf2f8','#db2777'] },
-    { id: 'frost',    label: 'Frost',    emoji: '❄️',  tier: 'gold',   colors: ['#93c5fd','#60a5fa'] },
+    { id: 'light', label: 'Light', emoji: '☀️', tier: 'bronze', colors: ['#eaf0e8','#0d9488'] },
+    { id: 'dark',  label: 'Dark',  emoji: '🌑', tier: 'gold',   colors: ['#0d1117','#0d9488'] },
   ];
   const TIER_RANK = { bronze: 1, silver: 2, gold: 3 };
   function applyTheme(themeId) {
@@ -3617,7 +3533,7 @@ function playBarkSound() {
       // Tint profile tab background to match theme
       if (t) applyProfileTint(t.colors[1]);
       // Update edge glow if on profile tab
-      if (currentActiveTab === 'profile' && t) { setTimeout(function(){ updateEdgeGlowColor(t.colors[1]); }, 20); }
+
     } catch(e) { console.warn('Theme apply error:', e); }
   }
   function hexToRgb(hex) {
@@ -3639,7 +3555,7 @@ function renderThemeGrid() {
     if (!grid) return;
     const userTier = (currentUser?.tier || currentTier || 'bronze').toLowerCase();
     const userRank = TIER_RANK[userTier] || 1;
-    const savedTheme = localStorage.getItem(LS_THEME) || 'midnight';
+    const savedTheme = localStorage.getItem(LS_THEME) || 'light';
     let hasLocked = false;
     grid.innerHTML = THEMES.map(t => {
       const requiredRank = TIER_RANK[t.tier] || 1;
@@ -3657,7 +3573,8 @@ function renderThemeGrid() {
   }
   function initTheme() {
     try {
-      const saved = localStorage.getItem(LS_THEME) || 'midnight';
+      var saved = localStorage.getItem(LS_THEME) || 'light';
+      if (!THEMES.find(t => t.id === saved)) saved = 'light';
       // Defer slightly so DOM is ready
       setTimeout(() => { applyTheme(saved); setTimeout(() => syncInlineSurface(window.currentSurface || 'asphalt'), 50); }, 0);
     } catch(e) { console.warn('initTheme error:', e); }
@@ -3723,7 +3640,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=281').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=282').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -3740,35 +3657,6 @@ const EDGE_COLORS = {
   'Danger':       { color: '#ef4444', shadow: '0 0 0 7px #ef4444, 0 0 0 18px rgba(239,68,68,0.6), 0 0 0 32px rgba(239,68,68,0.2), inset 0 0 0 7px #ef4444, inset 0 0 0 18px rgba(239,68,68,0.45)' },
   'Fry Zone':     { color: '#dc2626', shadow: '0 0 0 9px #dc2626, 0 0 0 22px rgba(220,38,38,0.65), inset 0 0 0 9px #dc2626, inset 0 0 0 20px rgba(220,38,38,0.55)' },
 };
-function syncGlowToActiveTab() {
-  if (currentActiveTab === 'safety' && lastCrimeData) {
-    // Map crime rating string to an edge glow key
-    const crimeRatingMap = {
-      'Very Safe':      'Safe',
-      'Generally Safe':  'Low Risk',
-      'Safe':       'Safe',
-      'Low Risk':   'Low Risk',
-      'Moderate':   'Moderate',
-      'Elevated':   'Hot',
-      'Elevated Risk': 'Hot',
-      'High Risk':  'Danger',
-      'Very High':  'Fry Zone'
-    };
-    const glowKey = crimeRatingMap[lastCrimeData.crimeRating] || 'Moderate';
-    updateEdgeGlow(glowKey);
-  } else if (currentActiveTab === 'report' && lastPawData) {
-    updateEdgeGlow(lastPawData.rating);
-  }
-  // wash: fade glow to neutral; profile: use theme accent color
-  if (currentActiveTab === 'wash') {
-    updateEdgeGlow('Safe');
-  }
-  if (currentActiveTab === 'profile') {
-    // Use the active theme accent as the edge glow color
-    var _themeAccent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0d9488';
-    updateEdgeGlowColor(_themeAccent);
-  }
-}
 const PAW_ICON_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg>';
 // ── Edge-lighting on/off (Gold pref) ─────────────────────────────────────
 let edgeLightingEnabled = (function(){
@@ -3779,7 +3667,7 @@ let edgeLightingEnabled = (function(){
 })();
 
 function applyEdgeLightingState() {
-  var strips = document.querySelectorAll('.edge-paw-strip');
+
   strips.forEach(function(el) {
     el.style.opacity = edgeLightingEnabled ? '1' : '0';
     el.style.pointerEvents = edgeLightingEnabled ? '' : 'none';
@@ -3788,126 +3676,8 @@ function applyEdgeLightingState() {
   if (toggle) toggle.checked = edgeLightingEnabled;
 }
 
-function handleEdgeLightingToggle(checked) {
-  // Gold only
-  const tier = getUserTier().toLowerCase();
-  if (tier !== 'gold') {
-    showToast('✨ Edge lighting customisation is a Gold feature. Upgrade to control it!');
-    var toggle = document.getElementById('toggle-edge-lighting');
-    if (toggle) toggle.checked = edgeLightingEnabled; // revert
-    return;
-  }
-  edgeLightingEnabled = checked;
-  saveAlertSetting('edgeLighting', checked);
-  applyEdgeLightingState();
-  showToast(checked ? '✨ Edge lighting enabled' : '✨ Edge lighting disabled');
-}
 
-let edgePawsBuilt = false;
-function initEdgePaws(force) {
-  const left = document.getElementById('edgePawLeft');
-  const right = document.getElementById('edgePawRight');
-  const top = document.getElementById('edgePawTop');
-  const bottom = document.getElementById('edgePawBottom');
-  if (!left || !right || !top || !bottom) return;
-  if (edgePawsBuilt && !force) return;
 
-  // Build enough icons to fill each strip. Mobile viewport height can be measured
-  // BEFORE the browser/webview chrome (status bar, notch, dynamic toolbars) fully
-  // settles, so window.innerHeight at first-run time can under-report the true
-  // visible height — leaving a visible gap at the bottom of the side strips.
-  // Fix: take the max of several viewport signals AND over-provision a small
-  // buffer of extra icons (harmless — overflow:hidden clips any excess).
-  // GAP_SIDE/GAP_TOPBOT must match the actual CSS `gap` values on .edge-paw-strip
-  // (6px / 8px) - they had drifted to 10/12, causing this formula to assume more
-  // space per icon than icons actually consume, under-counting icons and leaving
-  // a visible gap at the bottom of the side strips. Fixed 2026-07-09.
-  const ICON = 15, GAP_SIDE = 6, GAP_TOPBOT = 8, PAD = 6, CORNER = 28, BUFFER = 4;
-  const vh = Math.max(
-    window.innerHeight || 0,
-    document.documentElement.clientHeight || 0,
-    (window.visualViewport && window.visualViewport.height) || 0,
-    screen.height || 0
-  );
-  const vw = Math.max(
-    window.innerWidth || 0,
-    document.documentElement.clientWidth || 0,
-    (window.visualViewport && window.visualViewport.width) || 0
-  );
-  const sideCount = Math.max(4, Math.ceil((vh - PAD * 2) / (ICON + GAP_SIDE))) + BUFFER;
-  const topBotSpan = Math.max(0, vw - CORNER * 2 - PAD * 2);
-  const topCount = Math.max(4, Math.ceil(topBotSpan / (ICON + GAP_TOPBOT))) + BUFFER;
-
-  left.innerHTML = PAW_ICON_SVG.repeat(sideCount);
-  right.innerHTML = PAW_ICON_SVG.repeat(sideCount);
-  top.innerHTML = PAW_ICON_SVG.repeat(topCount);
-  bottom.innerHTML = PAW_ICON_SVG.repeat(topCount);
-  edgePawsBuilt = true;
-  assignChaseDelays();
-}
-function assignChaseDelays() {
-  const left = document.getElementById('edgePawLeft');
-  const right = document.getElementById('edgePawRight');
-  const top = document.getElementById('edgePawTop');
-  const bottom = document.getElementById('edgePawBottom');
-  if (!left || !right || !top || !bottom) return;
-  // Clockwise order: top L->R, right T->B, bottom R->L (reversed), left B->T (reversed)
-  const topArr    = Array.from(top.children);
-  const rightArr  = Array.from(right.children);
-  const bottomArr = Array.from(bottom.children).reverse(); // R->L
-  const leftArr   = Array.from(left.children).reverse();   // B->T
-  const order = [...topArr, ...rightArr, ...bottomArr, ...leftArr];
-  const N = order.length;
-  // Use a speed of ~80px/s. Estimate perimeter in icon-units.
-  // Each icon step = ICON+GAP = ~21px for sides, ~23px for top/bottom
-  // Simple approach: fix duration to 12s for a natural speed across all screen sizes
-  const duration = 12;
-  order.forEach(function(el, i) {
-    el.style.animationDuration = duration + 's';
-    // Negative delay = start mid-animation so icons are pre-distributed around the loop
-    el.style.animationDelay = (-((i / N) * duration)).toFixed(3) + 's';
-  });
-  // Also make all icons visible immediately (no cold-start fade-in gap)
-  order.forEach(function(el) { el.style.opacity = ''; });
-}
-let edgePawsResizeTimer = null;
-window.addEventListener('resize', function() {
-  clearTimeout(edgePawsResizeTimer);
-  edgePawsResizeTimer = setTimeout(function() { initEdgePaws(true); }, 300);
-});
-// Safety net: re-measure once shortly after load in case the viewport was still
-// settling (status bar/notch/toolbar) when initEdgePaws first ran.
-window.addEventListener('load', function() {
-  setTimeout(function() { initEdgePaws(true); }, 1200);
-});
-
-function updateEdgeGlowColor(hex) {
-  if (!edgeLightingEnabled) return;
-  // Recolor the edge paw strips to match theme (no box-shadow ring)
-  if (!hex) return;
-  document.querySelectorAll('.edge-paw-strip').forEach(function(el){ el.style.color = hex; });
-}
-function updateEdgeGlow(status) {
-  if (!edgeLightingEnabled) return;
-  const glow = document.getElementById('edgeGlow');
-  if (!glow) return;
-  initEdgePaws();
-  const cfg = EDGE_COLORS[status] || EDGE_COLORS['Safe'];
-  document.querySelectorAll('.edge-paw-strip').forEach(function(el) {
-    el.style.color = cfg.color;
-    el.style.boxShadow = ''; // never set box-shadow on strips
-  });
-  // Clear any box-shadow from app-root (no solid ring border)
-  var root = document.getElementById('app-root');
-  if (root) root.style.boxShadow = '';
-  glow.classList.add('active');
-  // Pulse for danger zones
-  if (status === 'Danger' || status === 'Fry Zone') {
-    glow.classList.add('pulsing');
-  } else {
-    glow.classList.remove('pulsing');
-  }
-}
 function showRecoveryModal() {
   const modal = document.getElementById('recovery-modal');
   if (modal) {
