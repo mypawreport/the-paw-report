@@ -386,7 +386,14 @@
   body[data-theme="dark"] #disclaimer-modal { background: rgba(0,0,0,0.8); }
   body[data-theme="dark"] .locked-title { color: #fff; }
   body[data-theme="dark"] .locked-sub { color: rgba(255,255,255,0.5); }
-      /* Avatar editor */
+    
+  /* ===== COLOR THEMES ===== */
+  body[data-theme="midnight"] { --accent: var(--c-teal); --accent2: #4a7c59; --glow: 13,148,136; }
+  body[data-theme="violet"]   { --accent: #7c3aed; --accent2: #a78bfa; --glow: 124,58,237; }
+  body[data-theme="ocean"]    { --accent: #0891b2; --accent2: #22d3ee; --glow: 8,145,178; }
+  body[data-theme="forest"]   { --accent: #16a34a; --accent2: #4ade80; --glow: 22,163,74; }
+  body[data-theme="blush"]    { --accent: #db2777; --accent2: #f472b6; --glow: 219,39,119; }
+  /* Avatar editor */
     .avatar-picker-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:10px; }
     .avatar-option { width:44px; height:44px; border-radius:50%; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; transition:var(--c-transition); background:#f1f5f9; }
     .avatar-option:hover, .avatar-option.selected { border-color:var(--c-teal); background:#e6fffa; transform:scale(1.1); }
@@ -3505,8 +3512,13 @@ function playBarkSound() {
   }
   // ===== THEME SYSTEM =====
   const THEMES = [
-    { id: 'light', label: 'Light', emoji: '☀️', tier: 'bronze', colors: ['#eaf0e8','#0d9488'] },
-    { id: 'dark',  label: 'Dark',  emoji: '🌑', tier: 'gold',   colors: ['#0d1117','#0d9488'] },
+    { id: 'light',    label: 'Light',    emoji: '☀️', tier: 'bronze', colors: ['#eaf0e8','#0d9488'] },
+    { id: 'dark',     label: 'Dark',     emoji: '🌑', tier: 'gold',   colors: ['#0d1117','#0d9488'] },
+    { id: 'midnight', label: 'Midnight', emoji: '🌙', tier: 'bronze', colors: ['#F1F5F9','#0d9488'] },
+    { id: 'violet',   label: 'Violet',   emoji: '💜', tier: 'silver', colors: ['#f1e9fc','#7c3aed'] },
+    { id: 'ocean',    label: 'Ocean',    emoji: '🌊', tier: 'silver', colors: ['#e8f0e8','#0891b2'] },
+    { id: 'forest',   label: 'Forest',   emoji: '🌿', tier: 'gold',   colors: ['#f0fdf4','#16a34a'] },
+    { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#fdf2f8','#db2777'] },
   ];
   const TIER_RANK = { bronze: 1, silver: 2, gold: 3 };
   function applyTheme(themeId) {
@@ -3574,6 +3586,7 @@ function renderThemeGrid() {
   function initTheme() {
     try {
       var saved = localStorage.getItem(LS_THEME) || 'light';
+      if (saved === 'frost') saved = 'dark';
       if (!THEMES.find(t => t.id === saved)) saved = 'light';
       // Defer slightly so DOM is ready
       setTimeout(() => { applyTheme(saved); setTimeout(() => syncInlineSurface(window.currentSurface || 'asphalt'), 50); }, 0);
