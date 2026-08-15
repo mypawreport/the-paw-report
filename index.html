@@ -3659,37 +3659,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-const EDGE_COLORS = {
-  'Extreme Cold': { color: '#818cf8', shadow: '0 0 0 6px #818cf8, 0 0 0 16px rgba(129,140,248,0.5), inset 0 0 0 6px #818cf8, inset 0 0 0 14px rgba(129,140,248,0.35)' },
-  'Chilly':       { color: '#38bdf8', shadow: '0 0 0 6px #38bdf8, 0 0 0 16px rgba(56,189,248,0.5), inset 0 0 0 6px #38bdf8, inset 0 0 0 14px rgba(56,189,248,0.35)' },
-  'Safe':         { color: '#6be000', shadow: '0 0 0 6px #6be000, 0 0 0 16px rgba(107,224,0,0.5), inset 0 0 0 6px #6be000, inset 0 0 0 14px rgba(107,224,0,0.35)' },
-  'Low Risk':     { color: '#6be000', shadow: '0 0 0 6px #6be000, 0 0 0 14px rgba(107,224,0,0.5), inset 0 0 0 6px #6be000, inset 0 0 0 14px rgba(107,224,0,0.35)' },
-  'Moderate':     { color: '#ff7a5a', shadow: '0 0 0 6px #ff7a5a, 0 0 0 14px rgba(255,122,90,0.5), inset 0 0 0 6px #ff7a5a, inset 0 0 0 14px rgba(255,122,90,0.35)' },
-  'Warm':         { color: '#ff7a5a', shadow: '0 0 0 6px #ff7a5a, 0 0 0 16px rgba(255,122,90,0.55), inset 0 0 0 6px #ff7a5a, inset 0 0 0 14px rgba(255,122,90,0.35)' },
-  'Hot':          { color: '#f97316', shadow: '0 0 0 6px #f97316, 0 0 0 18px rgba(249,115,22,0.6), 0 0 0 28px rgba(249,115,22,0.25), inset 0 0 0 6px #f97316, inset 0 0 0 16px rgba(249,115,22,0.35)' },
-  'Danger':       { color: '#ef4444', shadow: '0 0 0 7px #ef4444, 0 0 0 18px rgba(239,68,68,0.6), 0 0 0 32px rgba(239,68,68,0.2), inset 0 0 0 7px #ef4444, inset 0 0 0 18px rgba(239,68,68,0.45)' },
-  'Fry Zone':     { color: '#dc2626', shadow: '0 0 0 9px #dc2626, 0 0 0 22px rgba(220,38,38,0.65), inset 0 0 0 9px #dc2626, inset 0 0 0 20px rgba(220,38,38,0.55)' },
-};
-const PAW_ICON_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><g transform="translate(-6,22) scale(0.62)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g><g transform="translate(46,-4) scale(0.55)"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></g></svg>';
-// ── Edge-lighting on/off (Gold pref) ─────────────────────────────────────
-let edgeLightingEnabled = (function(){
-  try {
-    var s = JSON.parse(localStorage.getItem('pawAlertSettings') || '{}');
-    return s.edgeLighting !== false; // default ON
-  } catch(_) { return true; }
-})();
-
-function applyEdgeLightingState() {
-
-  strips.forEach(function(el) {
-    el.style.opacity = edgeLightingEnabled ? '1' : '0';
-    el.style.pointerEvents = edgeLightingEnabled ? '' : 'none';
-  });
-  var toggle = document.getElementById('toggle-edge-lighting');
-  if (toggle) toggle.checked = edgeLightingEnabled;
-}
-
-
 
 function showRecoveryModal() {
   const modal = document.getElementById('recovery-modal');
@@ -4407,14 +4376,6 @@ function loadAlertSettingToggles() {
   if (hotCarEl) hotCarEl.checked = s.hotCar !== false;
 
   // Dangerous condition alerts toggle
-  // Edge lighting state
-  const edgeLightToggle = document.getElementById('toggle-edge-lighting');
-  const edgeLightRow = document.getElementById('edge-lighting-row');
-  const _edgeTier = getUserTier().toLowerCase();
-  if (edgeLightRow) edgeLightRow.style.display = (_edgeTier === 'gold') ? '' : 'none';
-  if (edgeLightToggle) edgeLightToggle.checked = s.edgeLighting !== false;
-  edgeLightingEnabled = (_edgeTier === 'gold') ? (s.edgeLighting !== false) : true;
-  applyEdgeLightingState();
   const dangerToggle = document.getElementById('toggle-danger-alerts');
   if (dangerToggle) dangerToggle.checked = s.weatherTips === true;
 
