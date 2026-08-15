@@ -1307,12 +1307,11 @@
         <p style="margin:0 0 10px;">Before every walk, place the back of your hand flat on the pavement for 7 seconds. If you cannot hold it comfortably, it is <strong>too hot for your dog's paws</strong>. This manual check is <strong>always the final word</strong> — the app is a guide only.</p>
         <p style="font-weight:700;color:#1e293b;margin:0 0 8px;">✅ YOUR RESPONSIBILITY</p>
         <p style="margin:0;">By using this app, you agree that <strong>you are solely responsible</strong> for your pet's safety. You will not hold The Paw Report or its creators liable for any damages arising from your use of this application.</p>
-        <p style="font-weight:700;color:#1e293b;margin:8px 0 8px;">🌈 EDGE LIGHTING — DISPLAY DISCLAIMER</p>
-        <p style="margin:0;">The coloured border (edge lighting) displayed around the screen is a <strong>visual aid only</strong>. Its appearance — including brightness, colour accuracy, and visibility — may vary significantly depending on your device model, screen settings, brightness level, or power-saving mode. <strong>Edge lighting must not be relied upon as your sole safety indicator.</strong> Always read the temperature value and safety rating text shown on screen, and perform the 7-second hand test before every walk.</p>
+
       </div>
       <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:16px;font-size:0.82rem;color:#374151;line-height:1.5;">
         <input type="checkbox" id="disclaimer-checkbox" onchange="toggleDisclaimerBtn()" style="width:18px;height:18px;margin-top:2px;accent-color:var(--accent,#0d9488);flex-shrink:0;">
-        <span>I have read and understood the disclaimer above. I agree that ground temperatures are estimates only, that edge lighting is a visual aid and may vary by device, and I accept full responsibility for my pet's safety. I will not hold The Paw Report, its owners, or its developers liable for any injury or harm.</span>
+        <span>I have read and understood the disclaimer above. I agree that ground temperatures are estimates only, and I accept full responsibility for my pet's safety. I will not hold The Paw Report, its owners, or its developers liable for any injury or harm.</span>
       </label>
       <button id="disclaimer-agree-btn" onclick="agreeDisclaimer()" disabled style="width:100%;padding:14px;border-radius:10px;border:none;background:#94a3b8;color:#fff;font-size:0.95rem;font-weight:700;cursor:not-allowed;transition:all 0.2s;">
         ✅ I Agree — Continue to App
@@ -2432,33 +2431,9 @@ async function saveProfile() {
     showToast('⚠️ Could not save profile. Please try again.');
   }
 }
-function showEdgeLightingNotice() {
-  if (localStorage.getItem('paw_edge_notice_seen')) return;
-  const modal = document.createElement('div');
-  modal.id = 'edge-notice-modal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
-  modal.innerHTML = `
-    <div style="background:#fff;border-radius:18px;padding:24px;max-width:340px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2);text-align:center;">
-      <div style="font-size:2rem;margin-bottom:10px;">🌈</div>
-      <div style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:10px;">About the Edge Lighting</div>
-      <div style="font-size:0.83rem;color:#475569;line-height:1.55;margin-bottom:16px;">
-        The coloured border around the screen shows your current safety level at a glance —
-        <strong>green = safe, yellow = warm, orange = hot, red = danger.</strong>
-        <br><br>
-        Edge lighting appearance may vary depending on your phone model, screen brightness, or power-saving settings.
-        <br><br>
-        <strong>Always check the temperature reading and rating text</strong> to confirm conditions before walking your pet.
-      </div>
-      <button onclick="document.getElementById('edge-notice-modal').remove();localStorage.setItem('paw_edge_notice_seen','1');"
-        style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:0.9rem;font-weight:700;cursor:pointer;width:100%;">
-        Got it! 🐾
-      </button>
-    </div>`;
-  document.body.appendChild(modal);
-}
+// Edge lighting notice removed — feature deprecated
 function loadMainScreen() {
   showWhatsNewToast();
-  setTimeout(showEdgeLightingNotice, 1200);
   setTimeout(initTrayWidget, 500);
   setTimeout(startVehicleDetection, 2000);
   renderFavLocations();
@@ -2879,7 +2854,7 @@ function getRatingColor(rating) {
 function updateDynamicColors(rating) {
   // Don't force the edge glow to the temperature rating here — if the Safety tab is
   // open, this used to override the crime-rating glow every time a report refreshed
-  // in the background, causing the edge lighting to mismatch whatever tab was showing.
+  // Background tab throttling note.
   
   /* edge lighting removed */
   const color = getRatingColor(rating);
@@ -3487,9 +3462,10 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v292';
+const APP_VERSION = 'v293';
 const WHATS_NEW = {
-    'v292': '🐾 AI-generated tier-colored paw prints in safety gauge.',
+    'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
+  'v292': '🐾 AI-generated tier-colored paw prints in safety gauge.',
   'v291': '🐾 New 3D embossed paw with teardrop toes in gauge.',,
   'v290': '🐾 Fixed invisible gauge temperature text on light theme.',
   'v289': '🐾 Gauge fill now maps to actual ground temperature (0-130°F scale).',
@@ -3765,7 +3741,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=292').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=293').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -4478,7 +4454,7 @@ function saveAlertSetting(key, val) {
 function loadAlertSettingToggles() {
   const s = getAlertSettings();
   // Apply defaults on first run
-  const defaults = { weatherTips: true, hotCar: true, walkReminder: true, trayWidget: false, edgeLighting: true };
+  const defaults = { weatherTips: true, hotCar: true, walkReminder: true, trayWidget: false };
   let changed = false;
   Object.entries(defaults).forEach(([k, def]) => { if (s[k] === undefined) { s[k] = def; changed = true; } });
   if (changed) localStorage.setItem('pawAlertSettings', JSON.stringify(s));
