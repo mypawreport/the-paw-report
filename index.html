@@ -312,6 +312,15 @@
       box-shadow: 0 0 4px rgba(0,0,0,0.8);
     }
   /* ===== THEMES ===== */
+  
+  /* Dark mode toggle slider */
+  #dark-mode-toggle + .toggle-slider { background: #cbd5e1; border-radius: 13px; }
+  #dark-mode-toggle + .toggle-slider:before { position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s; }
+  #dark-mode-toggle:checked + .toggle-slider { background: var(--accent,#0d9488); }
+  #dark-mode-toggle:checked + .toggle-slider:before { transform: translateX(20px); }
+  body.dark-mode .toggle-slider { background: rgba(255,255,255,0.2); }
+  body.dark-mode #dark-mode-toggle:checked + .toggle-slider { background: var(--accent,#0d9488); }
+
   .theme-btn {
     border-radius: 12px;
     padding: 10px 6px;
@@ -328,90 +337,90 @@
   .theme-btn.locked { opacity:0.45; cursor:not-allowed; }
   /* Theme variables */
   /* ===== DARK THEME (Gold-tier only) ===== */
-  body[data-theme="dark"] {
+  body.dark-mode {
     --accent: #0d9488; --accent2: #4a7c59; --glow: 13,148,136;
     --c-slate: #ffffff; --c-muted: rgba(255,255,255,0.5);
     --c-border: rgba(255,255,255,0.1); --c-bg: rgba(255,255,255,0.06);
     --c-card: rgba(255,255,255,0.08);
     background-color: #0d1117; color: #ffffff;
   }
-  body[data-theme="dark"] .header h1 { color: #fff; }
-  body[data-theme="dark"] .header p { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); box-shadow: none; }
-  body[data-theme="dark"] .card-title { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .divider { background: rgba(255,255,255,0.1); }
-  body[data-theme="dark"] .nav-btn { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .nav-btn.active { background: rgba(13,148,136,0.25); color: #0d9488; }
-  body[data-theme="dark"] .stat-box { background: rgba(255,255,255,0.06); }
-  body[data-theme="dark"] .stat-value { color: #fff; }
-  body[data-theme="dark"] .stat-label { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .rating-pill { color: #fff; }
-  body[data-theme="dark"] .gauge-temp-text { color: #fff; }
-  body[data-theme="dark"] .paw-gauge-track { stroke: rgba(255,255,255,0.08); }
-  body[data-theme="dark"] .gauge-sublabel { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .rating-message { color: rgba(255,255,255,0.8); }
-  body[data-theme="dark"] .rating-display { color: rgba(255,255,255,0.8); }
-  body[data-theme="dark"] .rating-message { color: rgba(255,255,255,0.8); }
-  body[data-theme="dark"] .scale-item { opacity: 0.35; }
-  body[data-theme="dark"] .scale-item.active { opacity: 1; }
-  body[data-theme="dark"] .auth-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #fff; }
-  body[data-theme="dark"] .auth-input::placeholder { color: rgba(255,255,255,0.4); }
-  body[data-theme="dark"] .auth-toggle { color: rgba(255,255,255,0.6); }
-  body[data-theme="dark"] .auth-title { color: #fff; }
-  body[data-theme="dark"] .auth-sub { color: rgba(255,255,255,0.6); }
-  body[data-theme="dark"] .form-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #fff; }
-  body[data-theme="dark"] .form-label { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .setup-sub { color: rgba(255,255,255,0.6); }
-  body[data-theme="dark"] .size-btn { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
-  body[data-theme="dark"] .btn-secondary { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
-  body[data-theme="dark"] .toggle-slider { background: rgba(255,255,255,0.2); }
-  body[data-theme="dark"] .toggle-slider:before { background: #fff; }
-  body[data-theme="dark"] .user-bar { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); }
-  body[data-theme="dark"] .user-name { color: #fff; }
-  body[data-theme="dark"] .alert-cold { background: rgba(14,165,233,0.15); border: 1px solid rgba(14,165,233,0.4); color: #38bdf8; font-weight: 600; }
-  body[data-theme="dark"] .alert-hydration { background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.4); color: #fdba74; font-weight: 600; }
-  body[data-theme="dark"] #humidity-alert { background: rgba(56,189,248,0.15) !important; border-color: rgba(56,189,248,0.4) !important; color: #7dd3fc !important; }
-  body[data-theme="dark"] .user-email { color: rgba(255,255,255,0.4); }
-  body[data-theme="dark"] .logout-btn { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.15); }
-  body[data-theme="dark"] .crime-message { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
-  body[data-theme="dark"] .crime-stat { background: rgba(255,255,255,0.06); }
-  body[data-theme="dark"] .crime-stat-val { color: #fff; }
-  body[data-theme="dark"] .crime-stat-label { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .station-item { background: rgba(255,255,255,0.06); }
-  body[data-theme="dark"] .station-name { color: #fff; }
-  body[data-theme="dark"] .station-type { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .station-tag { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); }
-  body[data-theme="dark"] .forecast-day-card { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); }
-  body[data-theme="dark"] .forecast-day-card.active { border-color: #0d9488; background: rgba(13,148,136,0.15); }
-  body[data-theme="dark"] .hourly-label { color: rgba(255,255,255,0.45); }
-  body[data-theme="dark"] .forecast-tab { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
-  body[data-theme="dark"] #screen-paywall { background: #0d1117; }
-  body[data-theme="dark"] .paywall-hero { background: rgba(255,255,255,0.06); }
-  body[data-theme="dark"] .paywall-hero-title { color: #fff; }
-  body[data-theme="dark"] .paywall-hero-sub { color: rgba(255,255,255,0.6); }
-  body[data-theme="dark"] .tier-tab { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .tier-tab.active { color: #fff; }
-  body[data-theme="dark"] .tier-tab.t-bronze.active, body[data-theme="dark"] .tier-tab.t-silver.active, body[data-theme="dark"] .tier-tab.t-gold.active { background: rgba(255,255,255,0.08); color: #fff; box-shadow: none; }
-  body[data-theme="dark"] .billing-btn { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .billing-btn.active { background: var(--accent); color: #fff; }
-  body[data-theme="dark"] .tier-card-bronze, body[data-theme="dark"] .tier-card-silver, body[data-theme="dark"] .tier-card-gold { background: rgba(255,255,255,0.06); }
-  body[data-theme="dark"] .tier-price-main { color: #fff; }
-  body[data-theme="dark"] .tier-features li { color: rgba(255,255,255,0.7); }
-  body[data-theme="dark"] .referral-section { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
-  body[data-theme="dark"] .referral-title { color: #fff; }
-  body[data-theme="dark"] .referral-input { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
-  body[data-theme="dark"] .whats-new-toast { background: rgba(255,255,255,0.08); border: 1px solid rgba(13,148,136,0.3); color: #fff; }
-  body[data-theme="dark"] .setting-label { color: #fff; }
-  body[data-theme="dark"] .setting-sublabel { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .setting-row { border-bottom-color: rgba(255,255,255,0.08); }
-  body[data-theme="dark"] .loading-inline { color: rgba(255,255,255,0.5); }
-  body[data-theme="dark"] .share-card { background: rgba(255,255,255,0.06); }
-  body[data-theme="dark"] .notif-banner { background: rgba(255,255,255,0.06); }
-  body[data-theme="dark"] .acc-arrow { color: rgba(255,255,255,0.4); }
-  body[data-theme="dark"] #tab-profile { background: linear-gradient(160deg, rgba(13,148,136,0.10) 0%, rgba(13,148,136,0.04) 40%, transparent 70%); }
-  body[data-theme="dark"] #disclaimer-modal { background: rgba(0,0,0,0.8); }
-  body[data-theme="dark"] .locked-title { color: #fff; }
-  body[data-theme="dark"] .locked-sub { color: rgba(255,255,255,0.5); }
+  body.dark-mode .header h1 { color: #fff; }
+  body.dark-mode .header p { color: rgba(255,255,255,0.5); }
+  body.dark-mode .card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); box-shadow: none; }
+  body.dark-mode .card-title { color: rgba(255,255,255,0.5); }
+  body.dark-mode .divider { background: rgba(255,255,255,0.1); }
+  body.dark-mode .nav-btn { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
+  body.dark-mode .nav-btn.active { background: var(--glow,13,148,136); background: rgba(var(--glow,13,148,136),0.25); color: var(--accent,#0d9488); }
+  body.dark-mode .stat-box { background: rgba(255,255,255,0.06); }
+  body.dark-mode .stat-value { color: #fff; }
+  body.dark-mode .stat-label { color: rgba(255,255,255,0.5); }
+  body.dark-mode .rating-pill { color: #fff; }
+  body.dark-mode .gauge-temp-text { color: #fff; }
+  body.dark-mode .paw-gauge-track { stroke: rgba(255,255,255,0.08); }
+  body.dark-mode .gauge-sublabel { color: rgba(255,255,255,0.5); }
+  body.dark-mode .rating-message { color: rgba(255,255,255,0.8); }
+  body.dark-mode .rating-display { color: rgba(255,255,255,0.8); }
+  body.dark-mode .rating-message { color: rgba(255,255,255,0.8); }
+  body.dark-mode .scale-item { opacity: 0.35; }
+  body.dark-mode .scale-item.active { opacity: 1; }
+  body.dark-mode .auth-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #fff; }
+  body.dark-mode .auth-input::placeholder { color: rgba(255,255,255,0.4); }
+  body.dark-mode .auth-toggle { color: rgba(255,255,255,0.6); }
+  body.dark-mode .auth-title { color: #fff; }
+  body.dark-mode .auth-sub { color: rgba(255,255,255,0.6); }
+  body.dark-mode .form-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #fff; }
+  body.dark-mode .form-label { color: rgba(255,255,255,0.5); }
+  body.dark-mode .setup-sub { color: rgba(255,255,255,0.6); }
+  body.dark-mode .size-btn { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
+  body.dark-mode .btn-secondary { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
+  body.dark-mode .toggle-slider { background: rgba(255,255,255,0.2); }
+  body.dark-mode .toggle-slider:before { background: #fff; }
+  body.dark-mode .user-bar { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); }
+  body.dark-mode .user-name { color: #fff; }
+  body.dark-mode .alert-cold { background: rgba(14,165,233,0.15); border: 1px solid rgba(14,165,233,0.4); color: #38bdf8; font-weight: 600; }
+  body.dark-mode .alert-hydration { background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.4); color: #fdba74; font-weight: 600; }
+  body.dark-mode #humidity-alert { background: rgba(56,189,248,0.15) !important; border-color: rgba(56,189,248,0.4) !important; color: #7dd3fc !important; }
+  body.dark-mode .user-email { color: rgba(255,255,255,0.4); }
+  body.dark-mode .logout-btn { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.15); }
+  body.dark-mode .crime-message { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+  body.dark-mode .crime-stat { background: rgba(255,255,255,0.06); }
+  body.dark-mode .crime-stat-val { color: #fff; }
+  body.dark-mode .crime-stat-label { color: rgba(255,255,255,0.5); }
+  body.dark-mode .station-item { background: rgba(255,255,255,0.06); }
+  body.dark-mode .station-name { color: #fff; }
+  body.dark-mode .station-type { color: rgba(255,255,255,0.5); }
+  body.dark-mode .station-tag { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); }
+  body.dark-mode .forecast-day-card { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); }
+  body.dark-mode .forecast-day-card.active { border-color: var(--accent,#0d9488); background: rgba(var(--glow,13,148,136),0.15); }
+  body.dark-mode .hourly-label { color: rgba(255,255,255,0.45); }
+  body.dark-mode .forecast-tab { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+  body.dark-mode #screen-paywall { background: #0d1117; }
+  body.dark-mode .paywall-hero { background: rgba(255,255,255,0.06); }
+  body.dark-mode .paywall-hero-title { color: #fff; }
+  body.dark-mode .paywall-hero-sub { color: rgba(255,255,255,0.6); }
+  body.dark-mode .tier-tab { color: rgba(255,255,255,0.5); }
+  body.dark-mode .tier-tab.active { color: #fff; }
+  body.dark-mode .tier-tab.t-bronze.active, body.dark-mode .tier-tab.t-silver.active, body.dark-mode .tier-tab.t-gold.active { background: rgba(255,255,255,0.08); color: #fff; box-shadow: none; }
+  body.dark-mode .billing-btn { color: rgba(255,255,255,0.5); }
+  body.dark-mode .billing-btn.active { background: var(--accent); color: #fff; }
+  body.dark-mode .tier-card-bronze, body.dark-mode .tier-card-silver, body.dark-mode .tier-card-gold { background: rgba(255,255,255,0.06); }
+  body.dark-mode .tier-price-main { color: #fff; }
+  body.dark-mode .tier-features li { color: rgba(255,255,255,0.7); }
+  body.dark-mode .referral-section { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
+  body.dark-mode .referral-title { color: #fff; }
+  body.dark-mode .referral-input { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
+  body.dark-mode .whats-new-toast { background: rgba(255,255,255,0.08); border: 1px solid rgba(var(--glow,13,148,136),0.3); color: #fff; }
+  body.dark-mode .setting-label { color: #fff; }
+  body.dark-mode .setting-sublabel { color: rgba(255,255,255,0.5); }
+  body.dark-mode .setting-row { border-bottom-color: rgba(255,255,255,0.08); }
+  body.dark-mode .loading-inline { color: rgba(255,255,255,0.5); }
+  body.dark-mode .share-card { background: rgba(255,255,255,0.06); }
+  body.dark-mode .notif-banner { background: rgba(255,255,255,0.06); }
+  body.dark-mode .acc-arrow { color: rgba(255,255,255,0.4); }
+  body.dark-mode #tab-profile { background: linear-gradient(160deg, rgba(var(--glow,13,148,136),0.10) 0%, rgba(var(--glow,13,148,136),0.04) 40%, transparent 70%); }
+  body.dark-mode #disclaimer-modal { background: rgba(0,0,0,0.8); }
+  body.dark-mode .locked-title { color: #fff; }
+  body.dark-mode .locked-sub { color: rgba(255,255,255,0.5); }
     
   /* ===== COLOR THEMES ===== */
   body[data-theme="midnight"] { --accent: var(--c-teal); --accent2: #4a7c59; --glow: 13,148,136; }
@@ -1203,6 +1212,13 @@
       <div class="card" id="theme-card">
         <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleAcc('theme-body')">🎨 App Theme<i class="acc-arrow" id="arr-theme-body">▾</i></div>
         <div id="theme-body" class="acc-body collapsed"><div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:10px 14px;border-radius:10px;background:rgba(0,0,0,0.04);">
+          <div><span style="font-size:1.1rem;">🌑</span> <span style="font-size:0.88rem;font-weight:700;">Dark Mode</span></div>
+          <label style="position:relative;display:inline-block;width:46px;height:26px;cursor:pointer;">
+            <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()" style="opacity:0;width:0;height:0;">
+            <span class="toggle-slider" style="position:absolute;top:0;left:0;right:0;bottom:0;border-radius:13px;transition:0.3s;"></span>
+          </label>
+        </div>
         <div style="font-size:0.75rem;color:#64748b;margin-bottom:12px;">Personalise your Paw Report look</div>
         <div id="theme-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;"></div>
         <div id="theme-locked-msg" style="display:none;font-size:0.72rem;color:#64748b;margin-top:10px;text-align:center;">🔒 Upgrade to Silver or Gold to unlock more themes</div>
@@ -1378,6 +1394,7 @@ const LS_LAST_EMAIL = 'paw_last_email';
 const LS_PREFS      = 'paw_prefs';
 const LS_USER2      = 'pawreport_user';
 const LS_THEME      = 'paw_theme';
+const LS_DARK_MODE   = 'paw_dark_mode';
 function getReferralCount() {
   return parseInt(localStorage.getItem('paw_referral_count') || '0');
 }
@@ -3623,11 +3640,13 @@ function playBarkSound() {
   }
   // ===== THEME SYSTEM =====
   const THEMES = [
+    // Free / Bronze tier
     { id: 'light',    label: 'Light',    emoji: '☀️', tier: 'bronze', colors: ['#eaf0e8','#0d9488'] },
-    { id: 'dark',     label: 'Dark',     emoji: '🌑', tier: 'gold',   colors: ['#0d1117','#0d9488'] },
     { id: 'midnight', label: 'Midnight', emoji: '🌙', tier: 'bronze', colors: ['#F1F5F9','#0d9488'] },
+    // Silver tier
     { id: 'violet',   label: 'Violet',   emoji: '💜', tier: 'silver', colors: ['#f1e9fc','#7c3aed'] },
     { id: 'ocean',    label: 'Ocean',    emoji: '🌊', tier: 'silver', colors: ['#e8f0e8','#0891b2'] },
+    // Gold tier
     { id: 'forest',   label: 'Forest',   emoji: '🌿', tier: 'gold',   colors: ['#f0fdf4','#16a34a'] },
     { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#fdf2f8','#db2777'] },
   ];
@@ -3672,6 +3691,22 @@ function playBarkSound() {
       document.documentElement.style.setProperty('--profile-tint-rgb', hexToRgb(accent || '#0d9488'));
     } catch(e) {}
   }
+function toggleDarkMode() {
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem(LS_DARK_MODE, isDark ? 'true' : 'false');
+    // Update toggle UI
+    const toggle = document.getElementById('dark-mode-toggle');
+    if (toggle) toggle.checked = isDark;
+    // Re-apply current theme accent on top of dark mode
+    const savedTheme = localStorage.getItem(LS_THEME) || 'light';
+    applyTheme(savedTheme);
+  }
+  function initDarkMode() {
+    const saved = localStorage.getItem(LS_DARK_MODE) === 'true';
+    if (saved) document.body.classList.add('dark-mode');
+    const toggle = document.getElementById('dark-mode-toggle');
+    if (toggle) toggle.checked = saved;
+  }
 function renderThemeGrid() {
     const grid = document.getElementById('theme-grid');
     const lockedMsg = document.getElementById('theme-locked-msg');
@@ -3697,8 +3732,11 @@ function renderThemeGrid() {
   function initTheme() {
     try {
       var saved = localStorage.getItem(LS_THEME) || 'light';
-      if (saved === 'frost') saved = 'dark';
+      if (saved === 'frost') { saved = 'light'; localStorage.setItem(LS_DARK_MODE, 'true'); }
+      if (saved === 'dark') { saved = 'light'; localStorage.setItem(LS_DARK_MODE, 'true'); }
       if (!THEMES.find(t => t.id === saved)) saved = 'light';
+      // Apply dark mode first
+      initDarkMode();
       // Defer slightly so DOM is ready
       setTimeout(() => { applyTheme(saved); setTimeout(() => syncInlineSurface(window.currentSurface || 'asphalt'), 50); }, 0);
     } catch(e) { console.warn('initTheme error:', e); }
