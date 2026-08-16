@@ -1,4 +1,4 @@
-const CACHE_NAME = 'paw-report-v306';
+const CACHE_NAME = 'paw-report-v307';
 const ASSETS = [
   '/',
   '/index.html',
@@ -45,7 +45,7 @@ self.addEventListener('fetch', event => {
   // immediately while online), and only fall back to the cached copy if the network
   // request fails (offline support).
   event.respondWith(
-    fetch(event.request).then(function(response) {
+    fetch(event.request, { cache: 'no-store' }).then(function(response) {
       const copy = response.clone();
       caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, copy).catch(() => {}); });
       return response;
