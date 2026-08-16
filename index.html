@@ -42,7 +42,7 @@
     .container{max-width:440px;width:100%;text-align:center}
     .header{margin-bottom:14px}
     .header h1{font-size:1.9rem;font-weight:800;margin-bottom:3px;letter-spacing:-0.5px}
-    .title-gradient{background:linear-gradient(90deg,var(--accent,#0d9488),var(--accent2,#4a7c59));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--accent,#0d9488)}
+    .title-gradient{color:var(--accent,#0d9488)}
     .header p{font-size:0.82rem;opacity:0.55}
     /* Cards */
     .card{background:#ffffff;border:1px solid var(--c-border);border-radius:16px;padding:14px 14px;margin-bottom:8px;text-align:left;box-shadow:none;position:relative;z-index:2}
@@ -3507,7 +3507,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v312';
+const APP_VERSION = 'v313';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -3817,7 +3817,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=312').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=313').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
