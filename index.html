@@ -848,13 +848,13 @@
           <div class="forecast-strip" id="forecast-strip"></div>
           <!-- Hourly detail for selected day -->
           <div class="best-time-hero">
-            <span class="best-time-icon" id="best-time-icon"><img id="walk-paw-img" src="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/011717dc9_paw_safe_noshadow.png" alt="Paw safety rating" style="width:1em;height:1em;display:inline-block;object-fit:contain;vertical-align:-0.08em" /></span>
+            <span class="best-time-icon" id="best-time-icon"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;object-fit:contain;fill:var(--accent,#0d9488)" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg></span>
             <div class="best-time-window" id="best-time-window">--</div>
             <div class="best-time-rec" id="best-time-rec"></div>
           </div>
           <div class="walk-timeline" id="walk-timeline">
             <div class="wt-pin wt-now" id="wt-now-pin" style="display:none;"><div class="wt-now-label">Now</div></div>
-            <div class="wt-pin wt-best" id="wt-best-pin"><img id="walk-best-paw-img" src="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/011717dc9_paw_safe_noshadow.png" alt="Best walk time" style="width:1em;height:1em;display:inline-block;object-fit:contain" /></div>
+            <div class="wt-pin wt-best" id="wt-best-pin"><svg viewBox="0 0 100 100" width="1em" height="1em" style="display:inline-block;object-fit:contain;fill:var(--accent,#0d9488)" aria-hidden="true"><ellipse cx="50" cy="66" rx="23" ry="19"/><circle cx="19" cy="36" r="10.5"/><circle cx="40" cy="17" r="11.5"/><circle cx="62" cy="17" r="11.5"/><circle cx="83" cy="36" r="10.5"/></svg></div>
             <div class="wt-track" id="wt-track"></div>
             <div class="wt-labels" id="wt-labels"></div>
           </div>
@@ -3216,11 +3216,8 @@ function renderSelectedDay() {
   rec = result.rec;
   displayTime = best.timeLabel || '--';
   // Paw prints reflect the SELECTED DAY's best-hour tier, not the live current gauge
-  var _walkPawUrl = scoreToPawImage(best.totalScore);
-  var _walkPaw = document.getElementById('walk-paw-img');
-  var _walkBestPaw = document.getElementById('walk-best-paw-img');
-  if (_walkPaw) _walkPaw.src = _walkPawUrl;
-  if (_walkBestPaw) _walkBestPaw.src = _walkPawUrl;
+  // Paw prints above walk meter now use theme accent color (inline SVG)
+  // No longer swapped based on safety tier — they follow the active theme
   document.getElementById('best-time-window').textContent = displayTime;
   document.getElementById('best-time-rec').textContent = rec;
   // Visual timeline: continuous strip of hour segments highlighting the optimal walk window
