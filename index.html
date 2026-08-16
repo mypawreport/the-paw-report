@@ -3504,7 +3504,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v316';
+const APP_VERSION = 'v317';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -3814,7 +3814,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=316').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=317').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
