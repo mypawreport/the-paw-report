@@ -3461,61 +3461,7 @@ async function startTracking() {
         await fetchAll(cached.lat, cached.lon);
         isTracking = true; btn.disabled = false; btn.textContent = '⏹ Stop Report';
         const _pd=document.getElementById('pulse-dot'); if(_pd) _pd.classList.remove('inactive');
-        trackingInterval = setInterval  // ===== THEME SYSTEM =====
-  const THEMES = [
-    // Free / Bronze tier
-    { id: 'light',    label: 'Light',    emoji: '☀️', tier: 'bronze', colors: ['#eaf0e8','#0d9488'] },
-    { id: 'midnight', label: 'Midnight', emoji: '🌙', tier: 'bronze', colors: ['#F1F5F9','#0d9488'] },
-    // Silver tier
-    { id: 'violet',   label: 'Violet',   emoji: '💜', tier: 'silver', colors: ['#f1e9fc','#7c3aed'] },
-    { id: 'ocean',    label: 'Ocean',    emoji: '🌊', tier: 'silver', colors: ['#e8f0e8','#0891b2'] },
-    // Gold tier
-    { id: 'forest',   label: 'Forest',   emoji: '🌿', tier: 'gold',   colors: ['#f0fdf4','#16a34a'] },
-    { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#fdf2f8','#db2777'] },
-  ];
-  const TIER_RANK = { bronze: 1, silver: 2, gold: 3 };
-  function applyTheme(themeId) {
-    try {
-      document.body.setAttribute('data-theme', themeId);
-      localStorage.setItem(LS_THEME, themeId);
-      const t = THEMES.find(x => x.id === themeId);
-      if (t) {
-        document.documentElement.style.setProperty('--accent', t.colors[1]);
-        document.documentElement.style.setProperty('--accent2', t.colors[0]);
-        // Only update DOM elements if they exist (not during early init)
-        const btns = document.querySelectorAll('.btn-primary');
-        if (btns.length) btns.forEach(b => {
-          b.style.removeProperty('background');
-          b.style.setProperty('--btn-accent', t.colors[1]);
-        });
-        const themeBtns = document.querySelectorAll('.theme-btn');
-        if (themeBtns.length) themeBtns.forEach(b => b.classList.toggle('active', b.dataset.theme === themeId));
-      }
-      // Sync inline surface buttons to new theme accent
-      if (typeof syncInlineSurface === 'function') { setTimeout(function(){ syncInlineSurface(window.currentSurface || 'asphalt'); }, 20); }
-      // Re-render avatar so gradient uses new --accent/--accent2 immediately
-      if (typeof renderAvatar === 'function') renderAvatar();
-      // Tint profile tab background to match theme
-      if (t) applyProfileTint(t.colors[1]);
-      // Update edge glow if on profile tab
-
-    } catch(e) { console.warn('Theme apply error:', e); }
-  }
-  function hexToRgb(hex) {
-    hex = hex.replace('#','');
-    if (hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
-    var r = parseInt(hex.slice(0,2),16);
-    var g = parseInt(hex.slice(2,4),16);
-    var b = parseInt(hex.slice(4,6),16);
-    return r+','+g+','+b;
-  }
-  function applyProfileTint(accent) {
-    try {
-      document.documentElement.style.setProperty('--profile-tint-rgb', hexToRgb(accent || '#0d9488'));
-    } catch(e) {}
-  }
-
-(async () => {
+        trackingInterval = setInterval(async () => {
           try { const {lat:nl,lon:no}=await getLocation(); lastLat=nl; lastLon=no;
             try { localStorage.setItem('paw_last_coords', JSON.stringify({lat:nl, lon:no, ts:Date.now()})); } catch(_) {}
             document.getElementById('location-info').textContent=`📍 ${nl.toFixed(4)}, ${no.toFixed(4)}`;
@@ -3554,7 +3500,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v310';
+const APP_VERSION = 'v311';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -3691,6 +3637,59 @@ function playBarkSound() {
       btn.textContent = '👁️';
     }
   }
+  // ===== THEME SYSTEM =====
+  const THEMES = [
+    // Free / Bronze tier
+    { id: 'light',    label: 'Light',    emoji: '☀️', tier: 'bronze', colors: ['#eaf0e8','#0d9488'] },
+    { id: 'midnight', label: 'Midnight', emoji: '🌙', tier: 'bronze', colors: ['#F1F5F9','#0d9488'] },
+    // Silver tier
+    { id: 'violet',   label: 'Violet',   emoji: '💜', tier: 'silver', colors: ['#f1e9fc','#7c3aed'] },
+    { id: 'ocean',    label: 'Ocean',    emoji: '🌊', tier: 'silver', colors: ['#e8f0e8','#0891b2'] },
+    // Gold tier
+    { id: 'forest',   label: 'Forest',   emoji: '🌿', tier: 'gold',   colors: ['#f0fdf4','#16a34a'] },
+    { id: 'blush',    label: 'Blush',    emoji: '🌸', tier: 'gold',   colors: ['#fdf2f8','#db2777'] },
+  ];
+  const TIER_RANK = { bronze: 1, silver: 2, gold: 3 };
+  function applyTheme(themeId) {
+    try {
+      document.body.setAttribute('data-theme', themeId);
+      localStorage.setItem(LS_THEME, themeId);
+      const t = THEMES.find(x => x.id === themeId);
+      if (t) {
+        document.documentElement.style.setProperty('--accent', t.colors[1]);
+        document.documentElement.style.setProperty('--accent2', t.colors[0]);
+        // Only update DOM elements if they exist (not during early init)
+        const btns = document.querySelectorAll('.btn-primary');
+        if (btns.length) btns.forEach(b => {
+          b.style.removeProperty('background');
+          b.style.setProperty('--btn-accent', t.colors[1]);
+        });
+        const themeBtns = document.querySelectorAll('.theme-btn');
+        if (themeBtns.length) themeBtns.forEach(b => b.classList.toggle('active', b.dataset.theme === themeId));
+      }
+      // Sync inline surface buttons to new theme accent
+      if (typeof syncInlineSurface === 'function') { setTimeout(function(){ syncInlineSurface(window.currentSurface || 'asphalt'); }, 20); }
+      // Re-render avatar so gradient uses new --accent/--accent2 immediately
+      if (typeof renderAvatar === 'function') renderAvatar();
+      // Tint profile tab background to match theme
+      if (t) applyProfileTint(t.colors[1]);
+      // Update edge glow if on profile tab
+
+    } catch(e) { console.warn('Theme apply error:', e); }
+  }
+  function hexToRgb(hex) {
+    hex = hex.replace('#','');
+    if (hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+    var r = parseInt(hex.slice(0,2),16);
+    var g = parseInt(hex.slice(2,4),16);
+    var b = parseInt(hex.slice(4,6),16);
+    return r+','+g+','+b;
+  }
+  function applyProfileTint(accent) {
+    try {
+      document.documentElement.style.setProperty('--profile-tint-rgb', hexToRgb(accent || '#0d9488'));
+    } catch(e) {}
+  }
 function toggleDarkMode() {
     const isDark = document.body.classList.toggle('dark-mode');
     localStorage.setItem(LS_DARK_MODE, isDark ? 'true' : 'false');
@@ -3734,15 +3733,20 @@ function renderThemeGrid() {
       var saved = localStorage.getItem(LS_THEME) || 'light';
       if (saved === 'frost') { saved = 'light'; localStorage.setItem(LS_DARK_MODE, 'true'); }
       if (saved === 'dark') { saved = 'light'; localStorage.setItem(LS_DARK_MODE, 'true'); }
-      // Apply dark mode FIRST — before any THEMES reference, so dark mode
-      // is applied even if the THEMES const isn't initialized yet (temporal
-      // dead zone). Previously this was AFTER the THEMES.find() line, which
-      // threw a ReferenceError when the IIFE ran before THEMES was defined,
-      // silently skipping initDarkMode() entirely.
+      // Apply dark mode immediately (doesn't depend on THEMES const)
       initDarkMode();
-      if (!THEMES.find(t => t.id === saved)) saved = 'light';
-      // Defer slightly so DOM is ready
-      setTimeout(() => { applyTheme(saved); setTimeout(() => syncInlineSurface(window.currentSurface || 'asphalt'), 50); }, 0);
+      // Defer ALL theme work to the next microtask — by then all top-level
+      // const definitions (including THEMES) are fully initialized, avoiding
+      // the temporal dead zone ReferenceError that previously prevented
+      // applyTheme from running on page load.
+      setTimeout(() => {
+        try {
+          if (typeof THEMES !== 'undefined' && !THEMES.find(t => t.id === saved)) saved = 'light';
+          applyTheme(saved);
+          setTimeout(() => syncInlineSurface(window.currentSurface || 'asphalt'), 50);
+          if (typeof renderThemeGrid === 'function') renderThemeGrid();
+        } catch(e) { console.warn('deferred theme apply error:', e); }
+      }, 0);
     } catch(e) { console.warn('initTheme error:', e); }
   }
 function showDisclaimerIfNeeded(userEmail, userName) {
@@ -3806,7 +3810,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=310').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=311').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
