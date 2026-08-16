@@ -1412,6 +1412,162 @@ const PRICES = {
   silver: { weekly:{launch:'$1.99',regular:'$3.99',period:'/wk'}, monthly:{launch:'$3.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$29.99',regular:'$49.99',period:'/yr'} },
   gold:   { weekly:{launch:'$3.99',regular:'$6.99',period:'/wk'}, monthly:{launch:'$6.99',regular:'$12.99',period:'/mo'}, yearly:{launch:'$59.99',regular:'$99.99',period:'/yr'} }
 };
+
+// Google Play Billing SKU mapping (for Android TWA)
+const PLAY_BILLING_SKUS = {
+  bronze: { weekly:'paw_bronze_weekly', monthly:'paw_bronze_monthly', yearly:'paw_bronze_yearly' },
+  silver: { weekly:'paw_silver_weekly', monthly:'paw_silver_monthly', yearly:'paw_silver_yearly' },
+  gold:   { weekly:'paw_gold_weekly', monthly:'paw_gold_monthly', yearly:'paw_gold_yearly' }
+};
+
+// Detect if running inside Android TWA with Digital Goods API support
+let _playBillingAvailable = null;
+async function isPlayBillingAvailable() {
+  if (_playBillingAvailable !== null) return _playBillingAvailable;
+  try {
+    if ('getDigitalGoodsService' in window) {
+      const service = await window.getDigitalGoodsService('https://play.google.com/billing');
+      _playBillingAvailable = !!service;
+    } else if ('PaymentRequest' in window) {
+      const supports = await new PaymentRequest(
+        [{ supportedMethods: 'https://play.google.com/billing' }],
+        [{ label: 'Test', amount: { value: '0', currency: 'USD' } }]
+      ).canMakePayment();
+      _playBillingAvailable = supports;
+    } else {
+      _playBillingAvailable = false;
+    }
+  } catch(e) {
+    _playBillingAvailable = false;
+  }
+  return _playBillingAvailable;
+}
+
+// Get the Digital Goods service for Play Billing
+async function getPlayBillingService() {
+  try {
+    if ('getDigitalGoodsService' in window) {
+      return await window.getDigitalGoodsService('https://play.google.com/billing');
+    }
+    return null;
+  } catch(e) {
+    return null;
+  }
+}
+
+// Handle subscription via Google Play Billing (Android TWA)
+async function handlePlayBillingSubscribe(tier, billing) {
+  const sku = PLAY_BILLING_SKUS[tier]?.[billing];
+  if (!sku) throw new Error('Invalid subscription selection');
+
+  const service = await getPlayBillingService();
+  if (!service) throw new Error('Google Play Billing not available');
+
+  // Fetch SKU details from Play Store
+  const skuDetails = await service.getDetails([sku]);
+  if (!skuDetails || !skuDetails[sku]) throw new Error('Could not load product details');
+
+  const detail = skuDetails[sku];
+
+  // Initiate purchase through Play Billing
+  const purchaseResult = await service.buy(sku);
+
+  if (purchaseResult && purchaseResult.purchaseToken) {
+    // Verify purchase on backend
+    const verifyRes = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/verifyPlayBilling', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        purchaseToken: purchaseResult.purchaseToken,
+        productId: sku,
+        userId: currentUser?.id || '',
+        userEmail: currentUser?.email || ''
+      })
+    });
+    const verifyData = await verifyRes.json();
+
+    if (verifyData.verified) {
+      // Auto-cancel old Stripe subs if migrating
+      if (currentUser && currentUser.email) {
+        try {
+          await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/cancelActiveSubscriptions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: currentUser.email })
+          });
+        } catch(e) { /* silent */ }
+      }
+      // Activate subscription locally
+      localStorage.setItem(LS_SUB_TIER, verifyData.tier);
+      localStorage.setItem('paw_sub_period', verifyData.period);
+      localStorage.setItem('paw_sub_start', new Date().toISOString());
+      currentTier = verifyData.tier;
+
+      if (currentUser) {
+        const existing = getPrefs(currentUser.id) || {};
+        userPrefs = savePrefs(currentUser.id, { ...existing, subscription_tier: verifyData.tier, subscription_period: verifyData.period, subscription_start: new Date().toISOString() });
+        try {
+          const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
+          if (currentUser.email && users[currentUser.email]) {
+            users[currentUser.email].tier = verifyData.tier;
+            users[currentUser.email].subscriptionActive = true;
+            localStorage.setItem(LS_USERS, JSON.stringify(users));
+          }
+          currentUser.tier = verifyData.tier;
+          currentUser.subscriptionActive = true;
+          localStorage.setItem(LS_CUR_USER, JSON.stringify(currentUser));
+        } catch(_) {}
+        updateUserBar();
+      }
+      const tierName = verifyData.tier.charAt(0).toUpperCase() + verifyData.tier.slice(1);
+      showToast('🎉 Welcome to ' + tierName + '! Your subscription is active.');
+      if (!userPrefs?.pet_name || userPrefs.pet_name === 'My Dog') showScreen('setup');
+      else loadMainScreen();
+    } else {
+      throw new Error(verifyData.error || 'Purchase verification failed');
+    }
+  } else {
+    throw new Error('Purchase incomplete');
+  }
+}
+
+// Check for existing Play Billing subscriptions on app launch
+async function checkPlayBillingSubscriptions() {
+  if (!await isPlayBillingAvailable()) return;
+  const service = await getPlayBillingService();
+  if (!service) return;
+
+  const allSkus = Object.values(PLAY_BILLING_SKUS).flatMap(tier => Object.values(tier));
+  try {
+    const existingPurchases = await service.listPurchases();
+    if (existingPurchases && existingPurchases.length > 0) {
+      for (const purchase of existingPurchases) {
+        if (allSkus.includes(purchase.itemId) && purchase.purchaseToken) {
+          // Verify with backend
+          const verifyRes = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/verifyPlayBilling', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              purchaseToken: purchase.purchaseToken,
+              productId: purchase.itemId,
+              userId: currentUser?.id || '',
+              userEmail: currentUser?.email || ''
+            })
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyData.verified) {
+            localStorage.setItem(LS_SUB_TIER, verifyData.tier);
+            localStorage.setItem('paw_sub_period', verifyData.period);
+            currentTier = verifyData.tier;
+          }
+        }
+      }
+    }
+  } catch(e) {
+    console.warn('[PAW] Play Billing subscription check failed:', e);
+  }
+}
+
 const FEATURES = {
   bronze: ['✅ Ground temperature checker','✅ Basic paw safety rating','✅ Area safety overview','✅ Best time to walk (today)','✅ Nearby pet wash stations','🔒 Walk history (7 days)','🔒 Multiple pet profiles','🔒 Detailed safety reports'],
   silver: ['✅ Everything in Bronze','✅ Walk history (30 days)','✅ Multiple pet profiles (up to 3)','✅ Detailed safety reports','✅ Route safety scanner','🔒 Unlimited pet profiles','🔒 Pro walker dashboard','🔒 Priority support'],
@@ -3504,7 +3660,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v317';
+const APP_VERSION = 'v318';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -3589,6 +3745,7 @@ function dismissToast() {
 }
 (async () => {
   try { handleCheckoutReturn(); } catch(e) { console.warn('checkout return error:', e); }
+  try { checkPlayBillingSubscriptions(); } catch(e) { console.warn('play billing check error:', e); }
   try {
     initTheme();
   } catch(e) { console.warn('theme init error:', e); }
@@ -3814,7 +3971,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=317').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=318').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
