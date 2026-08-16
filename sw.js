@@ -1,14 +1,14 @@
-const CACHE_NAME = 'paw-report-v316';
+const CACHE_NAME = 'paw-report-v317';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/legal.html',
-  '/bark.mp3',
-  '/bark.wav',
-  '/badge-96.png'
+  'https://mypawreport.github.io/the-paw-report/',
+  'https://mypawreport.github.io/the-paw-report/index.html',
+  'https://mypawreport.github.io/the-paw-report/manifest.json',
+  'https://mypawreport.github.io/the-paw-report/icon-192.png',
+  'https://mypawreport.github.io/the-paw-report/icon-512.png',
+  'https://mypawreport.github.io/the-paw-report/legal.html',
+  'https://mypawreport.github.io/the-paw-report/bark.mp3',
+  'https://mypawreport.github.io/the-paw-report/bark.wav',
+  'https://mypawreport.github.io/the-paw-report/badge-96.png'
 ];
 
 self.addEventListener('install', event => {
@@ -59,13 +59,13 @@ self.addEventListener('push', event => {
   const data = event.data ? event.data.json() : {};
   event.waitUntil(self.registration.showNotification(data.title || 'The Paw Report', {
     body: data.body || 'Check your walk safety now!',
-    icon: '/icon-192.png',
-    badge: '/badge-96.png',
-    data: { url: data.url || '/' }
+    icon: 'https://mypawreport.github.io/the-paw-report/icon-192.png',
+    badge: 'https://mypawreport.github.io/the-paw-report/badge-96.png',
+    data: { url: data.url || 'https://mypawreport.github.io/the-paw-report/' }
   }));
 });
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data.url || '/'));
+  event.waitUntil(clients.openWindow(event.notification.data.url || 'https://mypawreport.github.io/the-paw-report/'));
 });
