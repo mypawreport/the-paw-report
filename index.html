@@ -210,7 +210,7 @@
     .wt-labels{display:flex;margin-top:6px;}
     .wt-labels > div{flex:1;text-align:center;font-size:0.6rem;color:#94a3b8;white-space:nowrap;}
     .wt-pin{position:absolute;transform:translateX(-50%);text-align:center;white-space:nowrap;z-index:2;transition:left 0.5s ease;}
-    .wt-pin.wt-best{top:-6px;font-size:1.6rem;left:50%;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.25));}
+    .wt-pin.wt-best{top:-6px;font-size:1.6rem;left:50%;}
     .wt-pin.wt-now{top:0;left:50%;}
     .wt-now-label{font-size:0.6rem;font-weight:800;color:var(--accent,#0d9488);background:rgba(13,148,136,0.14);border-radius:6px;padding:1px 6px;margin-bottom:2px;}
     .wt-now::after{content:'';display:block;width:2px;height:10px;background:var(--accent,#0d9488);margin:0 auto;}
@@ -3484,7 +3484,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v302';
+const APP_VERSION = 'v303';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
