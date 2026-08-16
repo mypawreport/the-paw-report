@@ -749,7 +749,7 @@
           <div class="gauge-inner" style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
             <div id="gauge-temp" class="gauge-temp-text">--°F</div>
             <span class="rating-emoji rating-emoji-big" id="rating-emoji">
-<img id="paw-tier-img" src="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/2b1ede116_paw_safe_clean.png" alt="Paw safety rating" style="width:1em;height:1em;display:inline-block;object-fit:contain;vertical-align:-0.08em" />
+<img id="paw-tier-img" src="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/011717dc9_paw_safe_noshadow.png" alt="Paw safety rating" style="width:1em;height:1em;display:inline-block;object-fit:contain;vertical-align:-0.08em" />
 </span>
           </div>
         </div>
@@ -839,13 +839,13 @@
           <div class="forecast-strip" id="forecast-strip"></div>
           <!-- Hourly detail for selected day -->
           <div class="best-time-hero">
-            <span class="best-time-icon" id="best-time-icon"><img id="walk-paw-img" src="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/2b1ede116_paw_safe_clean.png" alt="Paw safety rating" style="width:1em;height:1em;display:inline-block;object-fit:contain;vertical-align:-0.08em" /></span>
+            <span class="best-time-icon" id="best-time-icon"><img id="walk-paw-img" src="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/011717dc9_paw_safe_noshadow.png" alt="Paw safety rating" style="width:1em;height:1em;display:inline-block;object-fit:contain;vertical-align:-0.08em" /></span>
             <div class="best-time-window" id="best-time-window">--</div>
             <div class="best-time-rec" id="best-time-rec"></div>
           </div>
           <div class="walk-timeline" id="walk-timeline">
             <div class="wt-pin wt-now" id="wt-now-pin" style="display:none;"><div class="wt-now-label">Now</div></div>
-            <div class="wt-pin wt-best" id="wt-best-pin"><img id="walk-best-paw-img" src="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/2b1ede116_paw_safe_clean.png" alt="Best walk time" style="width:1em;height:1em;display:inline-block;object-fit:contain" /></div>
+            <div class="wt-pin wt-best" id="wt-best-pin"><img id="walk-best-paw-img" src="https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/011717dc9_paw_safe_noshadow.png" alt="Best walk time" style="width:1em;height:1em;display:inline-block;object-fit:contain" /></div>
             <div class="wt-track" id="wt-track"></div>
             <div class="wt-labels" id="wt-labels"></div>
           </div>
@@ -2903,13 +2903,13 @@ function updatePawUI(d) {
   var _pawImg = document.getElementById('paw-tier-img');
   if (_pawImg) {
     var pawImages = {
-      'Extreme Cold': 'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/3f76e17f1_paw_extreme_cold_clean.png',
-      'Chilly':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/13d86cf90_paw_chilly_clean.png',
-      'Safe':         'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/2b1ede116_paw_safe_clean.png',
-      'Warm':         'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/6beb9101f_paw_warm_clean.png',
-      'Hot':          'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/161b79603_paw_hot_clean.png',
-      'Danger':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/c94a7de2b_paw_danger_clean.png',
-      'Fry Zone':     'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/9e523c8af_paw_fry_clean.png'
+      'Extreme Cold': 'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/c9a8319cb_paw_extreme_cold_noshadow.png',
+      'Chilly':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/612587968_paw_chilly_noshadow.png',
+      'Safe':         'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/011717dc9_paw_safe_noshadow.png',
+      'Warm':         'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/a5e7a728c_paw_warm_noshadow.png',
+      'Hot':          'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/bab384c44_paw_hot_noshadow.png',
+      'Danger':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/2306effb1_paw_danger_noshadow.png',
+      'Fry Zone':     'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/6136f0c91_paw_fry_zone_noshadow.png'
     };
     var pawUrl = pawImages[d.rating] || pawImages['Safe'];
     if (_pawImg.src !== pawUrl) _pawImg.src = pawUrl;
@@ -3069,13 +3069,13 @@ function updateCrimeUI(d) {
   }
 }
 var PAW_TIER_IMAGES = {
-  'Extreme Cold': 'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/3f76e17f1_paw_extreme_cold_clean.png',
-  'Chilly':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/13d86cf90_paw_chilly_clean.png',
-  'Safe':         'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/2b1ede116_paw_safe_clean.png',
-  'Warm':         'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/6beb9101f_paw_warm_clean.png',
-  'Hot':          'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/161b79603_paw_hot_clean.png',
-  'Danger':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/c94a7de2b_paw_danger_clean.png',
-  'Fry Zone':     'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/9e523c8af_paw_fry_clean.png'
+  'Extreme Cold': 'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/c9a8319cb_paw_extreme_cold_noshadow.png',
+  'Chilly':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/612587968_paw_chilly_noshadow.png',
+  'Safe':         'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/011717dc9_paw_safe_noshadow.png',
+  'Warm':         'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/a5e7a728c_paw_warm_noshadow.png',
+  'Hot':          'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/bab384c44_paw_hot_noshadow.png',
+  'Danger':       'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/2306effb1_paw_danger_noshadow.png',
+  'Fry Zone':     'https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/files/mp/public/6a1c6fbdd48b351a9eb7455e/6136f0c91_paw_fry_zone_noshadow.png'
 };
 function scoreToColor(s){ if(s<35)return'#22C55E'; if(s<70)return'#ff7a5a'; return'#DC2626'; }
 function scoreToPawImage(s){ if(s<35)return PAW_TIER_IMAGES['Safe']; if(s<70)return PAW_TIER_IMAGES['Warm']; return PAW_TIER_IMAGES['Fry Zone']; }
@@ -3484,7 +3484,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v301';
+const APP_VERSION = 'v302';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
