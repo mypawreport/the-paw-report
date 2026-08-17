@@ -2909,10 +2909,10 @@ function selectSize(size, el) {
 let currentSurface = 'asphalt';
 const SURFACE_MULTIPLIERS = {
   asphalt:  1.0,   // baseline — hottest
-  concrete: 0.88,  // ~12% cooler than asphalt
-  dirt:     0.78,  // ~22% cooler
-  grass:    0.68,  // ~32% cooler, closest to air temp
-  shaded:   0.72   // shaded area ~28% cooler than direct-sun asphalt
+  concrete: 0.94,  // ~6% cooler than asphalt
+  dirt:     0.88,  // ~12% cooler
+  grass:    0.80,  // ~20% cooler, closer to air temp
+  shaded:   0.84   // shaded area ~16% cooler than direct-sun asphalt
 };
 const SURFACE_LABELS = {
   asphalt: '🖤 Asphalt', concrete: '⬜ Concrete', dirt: '🟫 Dirt/Sand', grass: '🌿 Grass', shaded: '🌳 Shaded'
@@ -2969,7 +2969,7 @@ function applyPawUIWithSurface(d) {
   const rawGround = d.groundTempF || airF;
   // Interpolate: surface adjustment applied to how much hotter ground is vs air
   const heatAboveAir = rawGround - airF;
-  const adjustedGround = Math.round(airF + (heatAboveAir * mult));
+  const adjustedGround = Math.max(Math.round(airF + (heatAboveAir * mult)), Math.round(airF));
   const adjusted = { ...d, groundTempF: adjustedGround };
   // Recalculate rating based on adjusted temp
   adjusted.rating = getRatingFromTemp(adjustedGround, currentPetSize);
@@ -3716,7 +3716,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v322';
+const APP_VERSION = 'v323';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -4027,7 +4027,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=322').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=323').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
