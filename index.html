@@ -36,7 +36,11 @@
     --c-radius-lg: 14px;
     --c-shadow-sm: none;
     --c-transition: all 0.2s;
-  }
+    --c-body: #374151;
+  --c-gold: #92400e;
+  --c-green: #166534;
+  --c-info: #075985;
+}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#eaf0e8;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:10px;color:var(--c-slate);transition:background-color 1.2s ease}
     .container{max-width:440px;width:100%;text-align:center}
@@ -102,7 +106,7 @@
     .paywall-hero{text-align:center;padding:20px 10px 10px;background:#fff}
     .paywall-hero-icon{font-size:3rem;display:block;margin-bottom:8px}
     .paywall-hero-title{font-size:1.25rem;font-weight:800;margin-bottom:6px;color:#0f172a}
-    .paywall-hero-sub{font-size:0.84rem;color:#475569;line-height:1.5;margin-bottom:16px}
+    .paywall-hero-sub{font-size:0.84rem;color:var(--c-muted);line-height:1.5;margin-bottom:16px}
     .tier-tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--c-card);border-radius:12px;padding:4px;border:1px solid var(--c-border)}
     .tier-tab{flex:1;padding:8px 4px;border-radius:9px;border:none;background:none;color:var(--c-muted);font-size:0.78rem;font-weight:600;cursor:pointer;opacity:0.7;transition:var(--c-transition)}
     .tier-tab.active{opacity:1;color:var(--c-slate)}
@@ -150,7 +154,7 @@
     .gauge-temp-text{font-size:1.7rem;font-weight:900;letter-spacing:-0.5px;line-height:1.2;color:#2D3436;position:relative;z-index:2;}
     .rating-pill{display:inline-block;padding:4px 18px;border-radius:999px;font-size:0.95rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:#fff;margin-bottom:4px;}
     .gauge-sublabel{font-size:0.78rem;color:#64748b;letter-spacing:0.5px;margin-bottom:2px;}
-    .rating-message{font-size:0.86rem;color:#475569;line-height:1.5;text-align:center}
+    .rating-message{font-size:0.86rem;color:var(--c-muted);line-height:1.5;text-align:center}
     .rating-label{display:none !important;}
     .paw-scale{display:flex;gap:3px;margin-top:10px}
     .scale-item{flex:1;padding:4px 2px;border-radius:6px;font-size:0.52rem;text-align:center;opacity:0.35;transition:opacity 0.3s;font-weight:600;color:#64748b}.scale-item span{font-size:0.9rem;display:block;margin-bottom:2px}
@@ -169,7 +173,7 @@
     .ground-temp-box{grid-column:span 2;background:var(--c-bg);border:1px solid #d1d5db}
     .ground-temp-box .stat-value{font-size:1.9rem}
     .alert-banner{border-radius:12px;padding:10px 13px;font-size:0.82rem;line-height:1.5;margin-top:10px}
-    .alert-cold{background:#f0f9ff;border:1px solid #7dd3fc;color:#075985;font-weight:600}
+    .alert-cold{background:#f0f9ff;border:1px solid #7dd3fc;color:var(--c-info);font-weight:600}
     .alert-hydration{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;font-weight:600}
     /* Crime */
     .crime-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -339,37 +343,41 @@
   /* ===== DARK THEME (Gold-tier only) ===== */
   body.dark-mode {
     --accent: #0d9488; --accent2: #4a7c59; --glow: 13,148,136;
-    --c-slate: #ffffff; --c-muted: rgba(255,255,255,0.5);
+    --c-slate: #ffffff; --c-muted: rgba(255,255,255,0.65);
     --c-border: rgba(255,255,255,0.1); --c-bg: rgba(255,255,255,0.06);
     --c-card: rgba(255,255,255,0.08);
     background-color: #0d1117; color: #ffffff;
-  }
+    --c-body: rgba(255,255,255,0.75);
+  --c-gold: #fbbf24;
+  --c-green: #4ade80;
+  --c-info: #7dd3fc;
+}
   body.dark-mode .header h1 { color: var(--accent, #0d9488); }
-  body.dark-mode .header p { color: rgba(255,255,255,0.5); }
+  body.dark-mode .header p { color: rgba(255,255,255,0.65); }
   body.dark-mode .card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); box-shadow: none; }
-  body.dark-mode .card-title { color: rgba(255,255,255,0.5); }
+  body.dark-mode .card-title { color: rgba(255,255,255,0.65); }
   body.dark-mode .divider { background: rgba(255,255,255,0.1); }
-  body.dark-mode .nav-btn { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
+  body.dark-mode .nav-btn { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.65); }
   body.dark-mode .nav-btn.active { background: var(--glow,13,148,136); background: rgba(var(--glow,13,148,136),0.25); color: var(--accent,#0d9488); }
   body.dark-mode .stat-box { background: rgba(255,255,255,0.06); }
   body.dark-mode .stat-value { color: #fff; }
-  body.dark-mode .stat-label { color: rgba(255,255,255,0.5); }
+  body.dark-mode .stat-label { color: rgba(255,255,255,0.65); }
   body.dark-mode .rating-pill { color: #fff; }
   body.dark-mode .gauge-temp-text { color: #fff; }
   body.dark-mode .paw-gauge-track { stroke: rgba(255,255,255,0.08); }
-  body.dark-mode .gauge-sublabel { color: rgba(255,255,255,0.5); }
+  body.dark-mode .gauge-sublabel { color: rgba(255,255,255,0.65); }
   body.dark-mode .rating-message { color: rgba(255,255,255,0.8); }
   body.dark-mode .rating-display { color: rgba(255,255,255,0.8); }
   body.dark-mode .rating-message { color: rgba(255,255,255,0.8); }
   body.dark-mode .scale-item { opacity: 0.35; }
   body.dark-mode .scale-item.active { opacity: 1; }
   body.dark-mode .auth-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #fff; }
-  body.dark-mode .auth-input::placeholder { color: rgba(255,255,255,0.4); }
+  body.dark-mode .auth-input::placeholder { color: rgba(255,255,255,0.6); }
   body.dark-mode .auth-toggle { color: rgba(255,255,255,0.6); }
   body.dark-mode .auth-title { color: #fff; }
   body.dark-mode .auth-sub { color: rgba(255,255,255,0.6); }
   body.dark-mode .form-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #fff; }
-  body.dark-mode .form-label { color: rgba(255,255,255,0.5); }
+  body.dark-mode .form-label { color: rgba(255,255,255,0.65); }
   body.dark-mode .setup-sub { color: rgba(255,255,255,0.6); }
   body.dark-mode .size-btn { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
   body.dark-mode .btn-secondary { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
@@ -380,28 +388,41 @@
   body.dark-mode .alert-cold { background: rgba(14,165,233,0.15); border: 1px solid rgba(14,165,233,0.4); color: #38bdf8; font-weight: 600; }
   body.dark-mode .alert-hydration { background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.4); color: #fdba74; font-weight: 600; }
   body.dark-mode #humidity-alert { background: rgba(56,189,248,0.15) !important; border-color: rgba(56,189,248,0.4) !important; color: #7dd3fc !important; }
-  body.dark-mode .user-email { color: rgba(255,255,255,0.4); }
-  body.dark-mode .logout-btn { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.15); }
+  body.dark-mode .user-email { color: rgba(255,255,255,0.6); }
+  body.dark-mode .logout-btn { color: rgba(255,255,255,0.65); border-color: rgba(255,255,255,0.15); }
   body.dark-mode .crime-message { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
   body.dark-mode .crime-stat { background: rgba(255,255,255,0.06); }
   body.dark-mode .crime-stat-val { color: #fff; }
-  body.dark-mode .crime-stat-label { color: rgba(255,255,255,0.5); }
+  body.dark-mode .crime-stat-label { color: rgba(255,255,255,0.65); }
   body.dark-mode .station-item { background: rgba(255,255,255,0.06); }
   body.dark-mode .station-name { color: #fff; }
-  body.dark-mode .station-type { color: rgba(255,255,255,0.5); }
+  body.dark-mode .station-type { color: rgba(255,255,255,0.65); }
   body.dark-mode .station-tag { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); }
   body.dark-mode .forecast-day-card { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); }
   body.dark-mode .forecast-day-card.active { border-color: var(--accent,#0d9488); background: rgba(var(--glow,13,148,136),0.15); }
-  body.dark-mode .hourly-label { color: rgba(255,255,255,0.45); }
+  body.dark-mode .hourly-label { color: rgba(255,255,255,0.6); }
+
+  body.dark-mode .profile-label { color: rgba(255,255,255,0.65); }
+  body.dark-mode .profile-val { color: #fff; }
+  body.dark-mode .profile-row { border-bottom-color: rgba(255,255,255,0.1); }
+  body.dark-mode .setting-desc { color: rgba(255,255,255,0.6); }
+  body.dark-mode .acc-title { color: #fff; }
+  body.dark-mode .walk-reminder-title { color: var(--c-green); }
+  body.dark-mode .walk-reminder-sub { color: rgba(255,255,255,0.6); }
+  body.dark-mode .gold-tab { color: var(--c-gold); }
+  body.dark-mode .hot-car-alert { color: var(--c-gold); background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3); }
+  body.dark-mode .scale-fry { color: #ef4444; }
+  body.dark-mode .f7-day { color: rgba(255,255,255,0.65); }
+  body.dark-mode .fdc-day { color: rgba(255,255,255,0.65); }
   body.dark-mode .forecast-tab { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
   body.dark-mode #screen-paywall { background: #0d1117; }
   body.dark-mode .paywall-hero { background: rgba(255,255,255,0.06); }
   body.dark-mode .paywall-hero-title { color: #fff; }
   body.dark-mode .paywall-hero-sub { color: rgba(255,255,255,0.6); }
-  body.dark-mode .tier-tab { color: rgba(255,255,255,0.5); }
+  body.dark-mode .tier-tab { color: rgba(255,255,255,0.65); }
   body.dark-mode .tier-tab.active { color: #fff; }
   body.dark-mode .tier-tab.t-bronze.active, body.dark-mode .tier-tab.t-silver.active, body.dark-mode .tier-tab.t-gold.active { background: rgba(255,255,255,0.08); color: #fff; box-shadow: none; }
-  body.dark-mode .billing-btn { color: rgba(255,255,255,0.5); }
+  body.dark-mode .billing-btn { color: rgba(255,255,255,0.65); }
   body.dark-mode .billing-btn.active { background: var(--accent); color: #fff; }
   body.dark-mode .tier-card-bronze, body.dark-mode .tier-card-silver, body.dark-mode .tier-card-gold { background: rgba(255,255,255,0.06); }
   body.dark-mode .tier-price-main { color: #fff; }
@@ -411,17 +432,17 @@
   body.dark-mode .referral-input { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); color: #fff; }
   body.dark-mode .whats-new-toast { background: rgba(255,255,255,0.08); border: 1px solid rgba(var(--glow,13,148,136),0.3); color: #fff; }
   body.dark-mode .setting-label { color: #fff; }
-  body.dark-mode .setting-sublabel { color: rgba(255,255,255,0.5); }
+  body.dark-mode .setting-sublabel { color: rgba(255,255,255,0.65); }
   body.dark-mode .setting-row { border-bottom-color: rgba(255,255,255,0.08); }
-  body.dark-mode .loading-inline { color: rgba(255,255,255,0.5); }
+  body.dark-mode .loading-inline { color: rgba(255,255,255,0.65); }
   body.dark-mode .share-card { background: rgba(255,255,255,0.06); }
   body.dark-mode .notif-banner { background: rgba(255,255,255,0.06); }
-  body.dark-mode .acc-arrow { color: rgba(255,255,255,0.4); }
+  body.dark-mode .acc-arrow { color: rgba(255,255,255,0.6); }
   body.dark-mode .weather-tip { background: rgba(56,189,248,0.12); border: 1.5px solid rgba(56,189,248,0.35); color: #7dd3fc; }
   body.dark-mode #tab-profile { background: linear-gradient(160deg, rgba(var(--glow,13,148,136),0.10) 0%, rgba(var(--glow,13,148,136),0.04) 40%, transparent 70%); }
   body.dark-mode #disclaimer-modal { background: rgba(0,0,0,0.8); }
   body.dark-mode .locked-title { color: #fff; }
-  body.dark-mode .locked-sub { color: rgba(255,255,255,0.5); }
+  body.dark-mode .locked-sub { color: rgba(255,255,255,0.65); }
     
   /* ===== COLOR THEMES ===== */
   body[data-theme="midnight"] { --accent: var(--c-teal); --accent2: #4a7c59; --glow: 13,148,136; }
@@ -446,16 +467,16 @@
     .avatar-large:hover { border-color:var(--c-teal); transform:scale(1.05); }
 /* ── Forecast strip ───────────────────────────── */
 .forecast-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
-.forecast-tab{flex:1;min-width:60px;padding:6px 4px;border:1.5px solid var(--c-border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:#475569;cursor:pointer;text-align:center;transition:.2s;}
+.forecast-tab{flex:1;min-width:60px;padding:6px 4px;border:1.5px solid var(--c-border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:var(--c-muted);cursor:pointer;text-align:center;transition:.2s;}
 .forecast-tab.active{background:var(--accent,var(--c-teal));color:#fff;border-color:var(--accent,var(--c-teal));}
-.forecast-tab.gold-tab{border-color:#d97706;color:#92400e;}
+.forecast-tab.gold-tab{border-color:#d97706;color:var(--c-gold);}
 .forecast-tab.gold-tab.active{background:#d97706;border-color:#d97706;color:#fff;}
 .forecast-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
 .forecast-strip::-webkit-scrollbar{display:none;}
 .forecast-day-card{flex:0 0 auto;width:80px;background:#f8fafc;border:1.5px solid var(--c-border);border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;transition:.2s;}
 .forecast-day-card.active{border-color:var(--accent,var(--c-teal));background:rgba(var(--glow,13,148,136),0.07);}
 .forecast-day-card.gold-locked{opacity:.55;pointer-events:none;}
-.forecast-day-card .fdc-day{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;}
+.forecast-day-card .fdc-day{font-size:11px;font-weight:700;color:var(--c-muted);text-transform:uppercase;}
 .forecast-day-card .fdc-icon{font-size:22px;margin:4px 0;}
 .forecast-day-card .fdc-best{font-size:11px;font-weight:600;color:var(--accent,var(--c-teal));}
 .forecast-day-card .fdc-temp{font-size:10px;color:var(--c-muted);}
@@ -471,12 +492,12 @@
 .weather-tip-icon{font-size:1.1rem;flex-shrink:0;}
 .weather-tip-text{line-height:1.4;}
 /* Hot car alert banner */
-.hot-car-alert{display:none;background:#fef3c7;border:1.5px solid #f97316;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:0.83rem;color:#92400e;}
+.hot-car-alert{display:none;background:#fef3c7;border:1.5px solid #f97316;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:0.83rem;color:var(--c-gold);}
 .hot-car-alert-title{font-weight:700;font-size:0.88rem;margin-bottom:3px;}
 /* Walk reminder banner */
 .walk-reminder-banner{display:none;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:12px 14px;margin-bottom:12px;}
-.walk-reminder-title{font-weight:700;font-size:0.88rem;color:#166534;margin-bottom:3px;}
-.walk-reminder-sub{font-size:0.8rem;color:#15803d;margin-bottom:8px;}
+.walk-reminder-title{font-weight:700;font-size:0.88rem;color:var(--c-green);margin-bottom:3px;}
+.walk-reminder-sub{font-size:0.8rem;color:var(--c-green);margin-bottom:8px;}
 .just-walked-btn{background:#16a34a;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:0.82rem;font-weight:700;cursor:pointer;}
 /* Settings toggles in profile */
 .settings-card .setting-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f1f5f9;}
@@ -669,7 +690,7 @@
           </div>
           <div class="referral-success" id="paywall-referral-success">✅ Code applied! Discount will be applied at checkout.</div>
         </div>
-        <button onclick="startFree()" style="margin-top:10px;font-size:0.82rem;padding:10px 20px;background:#f4f7f2;border:1.5px solid #e2e8f0;border-radius:12px;color:#475569;font-weight:600;width:100%;cursor:pointer;">Continue with free preview (limited)</button>
+        <button onclick="startFree()" style="margin-top:10px;font-size:0.82rem;padding:10px 20px;background:#f4f7f2;border:1.5px solid #e2e8f0;border-radius:12px;color:var(--c-muted);font-weight:600;width:100%;cursor:pointer;">Continue with free preview (limited)</button>
         <div style="text-align:center;margin-top:14px;">
           <button onclick="showRecoveryModal()" style="background:none;border:none;color:#64748b;font-size:0.82rem;cursor:pointer;text-decoration:underline;">🔑 Already subscribed? Recover your access</button>
         </div>
@@ -714,7 +735,7 @@
     <div id="location-gate" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:9999;padding:32px 24px;text-align:center;flex-direction:column;align-items:center;justify-content:center;">
       <div style="font-size:56px;margin-bottom:16px;">📍</div>
       <h2 style="color:#0d9488;font-size:1.4rem;margin-bottom:12px;">Location Access Needed</h2>
-      <p style="color:#475569;font-size:0.95rem;line-height:1.5;margin-bottom:8px;">The Paw Report needs your location to check pavement temperature and safety conditions for your dog.</p>
+      <p style="color:var(--c-muted);font-size:0.95rem;line-height:1.5;margin-bottom:8px;">The Paw Report needs your location to check pavement temperature and safety conditions for your dog.</p>
       <p style="color:#64748b;font-size:0.85rem;line-height:1.5;margin-bottom:24px;">Tap <strong>Allow</strong> when your browser asks — your location is never stored or shared.</p>
       <button onclick="requestLocationPermission()" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:14px;padding:16px 32px;font-size:1.05rem;font-weight:700;cursor:pointer;width:100%;max-width:320px;margin-bottom:12px;">📍 Allow Location Access</button>
       <p id="location-gate-error" style="color:#ef4444;font-size:0.85rem;margin-top:8px;display:none;"></p>
@@ -796,7 +817,7 @@
         </div>
         <div id="cold-alert" class="alert-banner alert-cold" style="display:none;"></div>
         <div id="hydration-alert" class="alert-banner alert-hydration" style="display:none;"></div>
-        <div id="humidity-alert" style="display:none;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:10px;padding:10px;font-size:0.8rem;color:#075985;font-weight:600;margin-top:8px;"></div>
+        <div id="humidity-alert" style="display:none;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:10px;padding:10px;font-size:0.8rem;color:var(--c-info);font-weight:600;margin-top:8px;"></div>
         <div class="divider"></div>
         <!-- All stats same size, in order from photo -->
         <div class="stats-grid">
@@ -825,7 +846,7 @@
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
             <span style="font-size:1.5rem;">🖐️</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:1px;">The 7-Second Rule</div>
+              <div style="font-size:0.78rem;font-weight:800;color:var(--c-body);text-transform:uppercase;letter-spacing:1px;">The 7-Second Rule</div>
               <div style="font-size:0.68rem;color:#94a3b8;margin-top:1px;">Always do the manual check</div>
             </div>
           </div>
@@ -840,11 +861,11 @@
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
             <span style="font-size:1.5rem;">🧤</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:1px;">Cold Weather Paw Guide</div>
+              <div style="font-size:0.78rem;font-weight:800;color:var(--c-body);text-transform:uppercase;letter-spacing:1px;">Cold Weather Paw Guide</div>
               <div style="font-size:0.68rem;color:#94a3b8;margin-top:1px;">Keep paws safe in cold conditions</div>
             </div>
           </div>
-          <div style="font-size:0.82rem;line-height:1.7;color:#374151;">
+          <div style="font-size:0.82rem;line-height:1.7;color:var(--c-body);">
             🧊 <strong>The Cold Hand Test:</strong> Press the back of your hand to the pavement — if it feels uncomfortably cold within 7 seconds, it's too cold for bare paws.<br><br>
             🧂 <strong>Salt & Ice Melt:</strong> Road salts and chemical de-icers can burn and irritate paw pads. Always rinse paws after winter walks.<br><br>
             🐾 <strong>Paw Balm:</strong> Apply a protective balm before walks to create a barrier against ice, salt and frost.<br><br>
@@ -883,7 +904,7 @@
           </div>
           <!-- 7-day Gold lock -->
           <div id="forecast-7day" style="display:none;margin-top:12px;"></div>
-          <div id="forecast-gold-lock" style="display:none;margin-top:12px;text-align:center;padding:10px;background:#fef9c3;border-radius:10px;font-size:13px;color:#92400e;">
+          <div id="forecast-gold-lock" style="display:none;margin-top:12px;text-align:center;padding:10px;background:#fef9c3;border-radius:10px;font-size:13px;color:var(--c-gold);">
             🔒 <strong>7-Day Forecast</strong> is a Gold feature. <a href="#" onclick="showTab('profile');return false;" style="color:#d97706;">Upgrade</a> to unlock.
           </div>
         </div>
@@ -909,7 +930,7 @@
 
       </div></div>
       <div class="card" id="safety-tips-card" style="padding:0;overflow:hidden;">
-        <button onclick="toggleTips()" style="width:100%;background:none;border:none;color:#1e293b;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+        <button onclick="toggleTips()" style="width:100%;background:none;border:none;color:var(--c-slate);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
           <div style="display:flex;align-items:center;gap:10px;">
             <span style="font-size:1.2rem;">💡</span>
             <div style="text-align:left;">
@@ -925,7 +946,7 @@
           <div style="display:flex;gap:12px;margin-bottom:16px;">
             <span style="font-size:1.4rem;flex-shrink:0;">🌡️</span>
             <div>
-              <div style="font-size:0.78rem;font-weight:700;color:#374151;margin-bottom:3px;">Asphalt heats fast — and holds it</div>
+              <div style="font-size:0.78rem;font-weight:700;color:var(--c-body);margin-bottom:3px;">Asphalt heats fast — and holds it</div>
               <div style="font-size:0.8rem;line-height:1.55;opacity:0.8;">On a sunny 77°F day, asphalt can reach <strong>125°F</strong>. Damage to paw pads can happen in under 60 seconds. Shaded paths and grass are always cooler alternatives.</div>
             </div>
           </div>
@@ -1108,8 +1129,8 @@
           <button class="btn btn-primary" id="add-dog-btn" onclick="showAddDogForm()" style="margin-top:8px;font-size:0.82rem;padding:10px;width:100%;">➕ Add Dog Profile</button>
           <div id="add-dog-form" style="display:none;margin-top:12px;">
             <div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:14px;">
-              <input type="text" id="new-dog-name" placeholder="Dog's name" style="width:100%;background:#fff;border:1px solid #d1d5db;border-radius:8px;padding:10px;color:#1e293b;font-size:0.9rem;margin-bottom:8px;box-sizing:border-box;" maxlength="30"/>
-              <input type="text" id="new-dog-breed" placeholder="Breed (optional)" style="width:100%;background:#fff;border:1px solid #d1d5db;border-radius:8px;padding:10px;color:#1e293b;font-size:0.9rem;margin-bottom:8px;box-sizing:border-box;" maxlength="40"/>
+              <input type="text" id="new-dog-name" placeholder="Dog's name" style="width:100%;background:var(--c-card);border:1px solid #d1d5db;border-radius:8px;padding:10px;color:var(--c-slate);font-size:0.9rem;margin-bottom:8px;box-sizing:border-box;" maxlength="30"/>
+              <input type="text" id="new-dog-breed" placeholder="Breed (optional)" style="width:100%;background:var(--c-card);border:1px solid #d1d5db;border-radius:8px;padding:10px;color:var(--c-slate);font-size:0.9rem;margin-bottom:8px;box-sizing:border-box;" maxlength="40"/>
               <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Size:</div>
               <div class="size-selector" style="margin-bottom:10px;">
                 <button class="size-btn" data-size="small" onclick="selectNewDogSize('small',this)">🐩 Small</button>
@@ -1263,11 +1284,11 @@
       <div class="card" id="install-app-card" style="text-align:center;">
         <div class="card-title acc-title" onclick="toggleAcc('install-body')">📲 Install App<i class="acc-arrow" id="arr-install-body">▾</i></div>
         <div id="install-body" class="acc-body collapsed"><div>
-        <div style="font-size:0.82rem;color:#475569;margin-bottom:10px;">Add The Paw Report to your home screen for instant access — works like a native app!</div>
+        <div style="font-size:0.82rem;color:var(--c-muted);margin-bottom:10px;">Add The Paw Report to your home screen for instant access — works like a native app!</div>
         <div id="install-btn-wrap">
           <button id="install-app-btn" onclick="promptInstallApp()" class="btn btn-secondary" style="font-size:0.85rem;padding:11px;width:100%;">📲 Add to Home Screen</button>
         </div>
-        <div id="install-instructions" style="font-size:0.8rem;color:#475569;margin-top:10px;line-height:1.6;text-align:left;background:#f8fafc;border-radius:10px;padding:12px;display:none;">
+        <div id="install-instructions" style="font-size:0.8rem;color:var(--c-muted);margin-top:10px;line-height:1.6;text-align:left;background:#f8fafc;border-radius:10px;padding:12px;display:none;">
           <strong>Android Chrome:</strong><br>
           Tap the <strong>⋮ menu</strong> (top right) → <strong>"Add to Home screen"</strong><br><br>
           <strong>iPhone Safari:</strong><br>
@@ -1309,7 +1330,7 @@
     <div style="background:#f0fdf9;border-radius:18px;padding:28px 22px;max-width:340px;width:90%;box-shadow:none;">
       <div style="text-align:center;margin-bottom:16px;">
         <span style="font-size:2rem;">🔑</span>
-        <div style="font-size:1.1rem;font-weight:800;color:#1a1a1a;margin-top:6px;">Recover Your Access</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--c-slate);margin-top:6px;">Recover Your Access</div>
         <div style="font-size:0.83rem;color:#666;margin-top:4px;">Enter the email you used when you subscribed and we'll restore your account instantly — no payment needed.</div>
       </div>
       <input id="recovery-email" type="email" placeholder="your@email.com" style="width:100%;padding:12px;border:2px solid var(--accent,#0d9488);border-radius:10px;font-size:0.95rem;box-sizing:border-box;margin-bottom:10px;"/>
@@ -1324,7 +1345,7 @@
     <div style="background:#f0fdf9;border-radius:18px;padding:28px 22px;max-width:340px;width:90%;box-shadow:none;">
       <div style="text-align:center;margin-bottom:16px;">
         <span style="font-size:2rem;">🔒</span>
-        <div style="font-size:1.1rem;font-weight:800;color:#1a1a1a;margin-top:6px;">Reset Your Password</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--c-slate);margin-top:6px;">Reset Your Password</div>
         <div id="pwreset-sub" style="font-size:0.83rem;color:#666;margin-top:4px;">Enter your account email and we'll send you a reset code.</div>
       </div>
       <div id="pwreset-step1">
@@ -1352,21 +1373,21 @@
     <div style="background:#fff;border-radius:16px;max-width:480px;margin:20px auto;padding:24px;box-shadow:none;">
       <div style="text-align:center;margin-bottom:16px;">
         <div style="font-size:2rem;">⚠️</div>
-        <div style="font-size:1.1rem;font-weight:800;color:#1e293b;margin-top:6px;">Safety Disclaimer &amp; Agreement</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--c-slate);margin-top:6px;">Safety Disclaimer &amp; Agreement</div>
         <div style="font-size:0.75rem;color:#64748b;margin-top:4px;">Please read and agree before using The Paw Report</div>
       </div>
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;font-size:0.8rem;line-height:1.7;color:#374151;max-height:280px;overflow-y:auto;margin-bottom:16px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;font-size:0.8rem;line-height:1.7;color:var(--c-body);max-height:280px;overflow-y:auto;margin-bottom:16px;">
         <p style="font-weight:700;color:#dc2626;margin:0 0 8px;">📋 ESTIMATED TEMPERATURES — NOT GUARANTEED</p>
         <p style="margin:0 0 10px;">The ground temperature readings provided by <strong>The Paw Report</strong> are <strong>ESTIMATES ONLY</strong>, calculated using air temperature data, UV index, wind speed, and surface type algorithms. Actual pavement and ground temperatures may differ significantly based on local conditions, shade, cloud cover, and other environmental factors.</p>
         <p style="font-weight:700;color:#dc2626;margin:0 0 8px;">⚠️ LIMITATION OF LIABILITY</p>
         <p style="margin:0 0 10px;"><strong>The Paw Report, its owners, and its developers</strong> are <strong>NOT responsible or liable</strong> for any injury, harm, burns, illness, or death to any pet or person resulting from reliance on the temperature estimates or safety ratings provided by this application.</p>
-        <p style="font-weight:700;color:#1e293b;margin:0 0 8px;">🖐️ ALWAYS USE THE 7-SECOND HAND TEST</p>
+        <p style="font-weight:700;color:var(--c-slate);margin:0 0 8px;">🖐️ ALWAYS USE THE 7-SECOND HAND TEST</p>
         <p style="margin:0 0 10px;">Before every walk, place the back of your hand flat on the pavement for 7 seconds. If you cannot hold it comfortably, it is <strong>too hot for your dog's paws</strong>. This manual check is <strong>always the final word</strong> — the app is a guide only.</p>
-        <p style="font-weight:700;color:#1e293b;margin:0 0 8px;">✅ YOUR RESPONSIBILITY</p>
+        <p style="font-weight:700;color:var(--c-slate);margin:0 0 8px;">✅ YOUR RESPONSIBILITY</p>
         <p style="margin:0;">By using this app, you agree that <strong>you are solely responsible</strong> for your pet's safety. You will not hold The Paw Report or its creators liable for any damages arising from your use of this application.</p>
 
       </div>
-      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:16px;font-size:0.82rem;color:#374151;line-height:1.5;">
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:16px;font-size:0.82rem;color:var(--c-body);line-height:1.5;">
         <input type="checkbox" id="disclaimer-checkbox" onchange="toggleDisclaimerBtn()" style="width:18px;height:18px;margin-top:2px;accent-color:var(--accent,#0d9488);flex-shrink:0;">
         <span>I have read and understood the disclaimer above. I agree that ground temperatures are estimates only, and I accept full responsibility for my pet's safety. I will not hold The Paw Report, its owners, or its developers liable for any injury or harm.</span>
       </label>
@@ -2380,7 +2401,7 @@ function manageSubscription() {
   var box = document.createElement('div');
   box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;width:100%;max-width:340px;';
   var title = document.createElement('div');
-  title.style.cssText = 'font-weight:800;font-size:1.05rem;color:#1e293b;margin-bottom:4px;';
+  title.style.cssText = 'font-weight:800;font-size:1.05rem;color:var(--c-slate);margin-bottom:4px;';
   title.textContent = 'Manage Subscription';
   var planLine = document.createElement('div');
   planLine.style.cssText = 'font-size:0.82rem;color:#64748b;margin-bottom:16px;';
@@ -2461,24 +2482,24 @@ function renderSubStatus() {
 
   const initialTier = currentTier === 'free' ? 'bronze' : currentTier;
   const p = PRICES[initialTier]?.[subBilling] || PRICES[initialTier]?.monthly;
-  const featuresHtml = (tierFeatures[initialTier]||[]).map(f=>`<div style="font-size:0.78rem;color:#475569;padding:3px 0;">${f}</div>`).join('');
+  const featuresHtml = (tierFeatures[initialTier]||[]).map(f=>`<div style="font-size:0.78rem;color:var(--c-muted);padding:3px 0;">${f}</div>`).join('');
 
   document.getElementById('sub-status-display').innerHTML = `
     <div style="background:${tierColors[currentTier]||tierColors.free};border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
       <span style="font-size:1.4rem;">${tierEmoji[currentTier]||'🆓'}</span>
       <div>
-        <div style="font-size:0.92rem;font-weight:800;color:#1e293b;">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
+        <div style="font-size:0.92rem;font-weight:800;color:var(--c-slate);">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
         <div style="font-size:0.72rem;color:#64748b;">${currentTier==='free'?'Upgrade to unlock all features':currentPlanPrice ? currentPlanPrice+' · Active' : 'Active subscription'}</div>
       </div>
     </div>
-    <div style="font-size:0.8rem;font-weight:700;color:#1e293b;margin-bottom:8px;">Compare Plans</div>
+    <div style="font-size:0.8rem;font-weight:700;color:var(--c-slate);margin-bottom:8px;">Compare Plans</div>
     <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:12px;padding:4px;margin-bottom:10px;" id="sub-tier-tabs">${tabsHtml}</div>
     <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:10px;padding:3px;margin-bottom:10px;" id="sub-billing-tabs">
       ${['weekly','monthly','yearly'].map(b=>`<button onclick="subBillingSelect('${b}',this)" style="flex:1;padding:5px 2px;border-radius:8px;border:none;font-size:0.72rem;font-weight:600;cursor:pointer;background:${b==='monthly'?'#fff':'none'};color:${b==='monthly'?'#1e293b':'#94a3b8'};box-shadow:none;transition:all 0.2s;">${BILLING_LABELS[b]}</button>`).join('')}
     </div>
     <div id="sub-tier-detail" style="background:#fff;border-radius:10px;padding:12px;border:1px solid #e2e8f0;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div id="sub-detail-name" style="font-weight:800;font-size:0.9rem;color:#1e293b;">${initialTier.charAt(0).toUpperCase()+initialTier.slice(1)}</div>
+        <div id="sub-detail-name" style="font-weight:800;font-size:0.9rem;color:var(--c-slate);">${initialTier.charAt(0).toUpperCase()+initialTier.slice(1)}</div>
         <div>
           
           <span id="sub-detail-price" style="font-weight:900;font-size:1.1rem;color:#0d9488;">${p?((p.launch||p.regular)+p.period):'—'}</span>
@@ -2535,7 +2556,7 @@ function updateSubDetail() {
   const featEl = document.getElementById('sub-detail-features');
   if (nameEl) nameEl.textContent = tier.charAt(0).toUpperCase()+tier.slice(1);
   if (priceEl) priceEl.textContent = p ? ((p.launch||p.regular)+p.period) : '—';
-  if (featEl) featEl.innerHTML = (tierFeatures[tier]||[]).map(f=>`<div style="font-size:0.78rem;color:#475569;padding:3px 0;">${f}</div>`).join('');
+  if (featEl) featEl.innerHTML = (tierFeatures[tier]||[]).map(f=>`<div style="font-size:0.78rem;color:var(--c-muted);padding:3px 0;">${f}</div>`).join('');
 }
 function showEditProfile() {
   const petName = userPrefs?.pet_name || '';
@@ -2546,7 +2567,7 @@ function showEditProfile() {
   const modal = document.createElement('div');
   modal.id = 'edit-profile-modal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-start;justify-content:center;z-index:999;padding:20px;overflow-y:auto;';
-  modal.innerHTML = `<div style="background:#edf1eb;border:1px solid #d1d5db;border-radius:20px;padding:24px;max-width:360px;width:100%;color:#1e293b;margin:auto;">
+  modal.innerHTML = `<div style="background:#edf1eb;border:1px solid #d1d5db;border-radius:20px;padding:24px;max-width:360px;width:100%;color:var(--c-slate);margin:auto;">
     <div style="font-size:1rem;font-weight:800;margin-bottom:16px;">✏️ Edit Profile</div>
     <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" id="edit-full-name" value="${currentUser?.full_name||''}" placeholder="Your name"/></div>
     <div class="form-group"><label class="form-label">Pet Name</label><input class="form-input" id="edit-pet-name" value="${petName}" placeholder="Pet name"/></div>
@@ -2635,7 +2656,7 @@ function logout() {
   box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;width:100%;max-width:320px;text-align:center;';
   box.innerHTML = `
     <div style="font-size:2rem;margin-bottom:8px;">🚪</div>
-    <div style="font-weight:800;font-size:1rem;color:#1e293b;margin-bottom:6px;">Sign Out?</div>
+    <div style="font-weight:800;font-size:1rem;color:var(--c-slate);margin-bottom:6px;">Sign Out?</div>
     <div style="font-size:0.82rem;color:#64748b;margin-bottom:20px;">You'll need to sign back in to access your account.</div>
     <button onclick="doLogout()" style="width:100%;padding:11px;border:none;border-radius:10px;background:#ef4444;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:8px;">Yes, Sign Out</button>
     <button onclick="document.getElementById('logout-confirm-modal').remove()" style="width:100%;padding:11px;border:1.5px solid #e2e8f0;border-radius:10px;background:#f8fafc;color:#64748b;font-weight:600;font-size:0.9rem;cursor:pointer;">Cancel</button>
@@ -3522,7 +3543,7 @@ function updateWashUI(d) {
     '<div style="font-weight:700;font-size:0.92rem;margin-bottom:6px;color:var(--c-slate)">No stations found in our database nearby</div>' +
     '<div style="font-size:0.8rem;color:#64748b;margin-bottom:14px;line-height:1.5">OpenStreetMap data may be incomplete for your area — many truck stop pet washes (Love\'s, Pilot) and groomers aren\'t listed yet.</div>' +
     '<a href="' + mapsUrl + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:var(--accent,#0d9488);color:#fff;text-decoration:none;border-radius:12px;padding:11px 20px;font-size:0.86rem;font-weight:700;margin-bottom:10px;">📍 Search Google Maps</a>' +
-    '<br><a href="https://www.google.com/maps/search/Love\'s+Travel+Stop+pet+wash+near+me" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid #e2e8f0;color:#475569;text-decoration:none;border-radius:10px;padding:9px 16px;font-size:0.8rem;font-weight:600;margin-top:6px;">🚛 Find Love\'s Pet Wash Kiosks</a>' +
+    '<br><a href="https://www.google.com/maps/search/Love\'s+Travel+Stop+pet+wash+near+me" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:#f8fafc;border:1.5px solid #e2e8f0;color:var(--c-muted);text-decoration:none;border-radius:10px;padding:9px 16px;font-size:0.8rem;font-weight:600;margin-top:6px;">🚛 Find Love\'s Pet Wash Kiosks</a>' +
     '</div>';
   return;
 }
@@ -3644,13 +3665,7 @@ async function fetchAll(lat, lon) {
   ]);
   showResultCards(true);
   async function safeJson(r) { try { const ct=r.headers.get('content-type')||''; if(!ct.includes('json')) return null; return await r.json(); } catch(_) { return null; } }
-  if(pawRes.status==='fulfilled'&&pawRes.value.ok){
-    const d=await safeJson(pawRes.value);
-    if(d) applyPawUIWithSurface(d);
-    else if (lastRawGroundTempF != null) { showToast('⚠️ Could not refresh ground temp — showing last known reading.'); }
-    else document.getElementById('rating-message').innerHTML='⚠️ Could not load ground temp data. <button onclick="fetchAll(lat,lon)" style="background:var(--accent,#0d9488);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px">🔄 Retry</button>';
-  }
-  else if (lastRawGroundTempF != null) { showToast('⚠️ Could not refresh ground temp — showing last known reading.'); }
+  if(pawRes.status==='fulfilled'&&pawRes.value.ok){ const d=await safeJson(pawRes.value); if(d) applyPawUIWithSurface(d); else document.getElementById('rating-message').innerHTML='⚠️ Could not load ground temp data. <button onclick="fetchAll(lat,lon)" style="background:var(--accent,#0d9488);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px">🔄 Retry</button>'; }
   else document.getElementById('rating-message').innerHTML='⚠️ Could not load ground temp data. <button onclick="fetchAll(lat,lon)" style="background:var(--accent,#0d9488);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px">🔄 Retry</button>';
   if(crimeRes.status==='fulfilled'&&crimeRes.value.ok){ const d=await safeJson(crimeRes.value); if(d) updateCrimeUI(d); else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.'; }
   else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.';
@@ -3807,7 +3822,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v327';
+const APP_VERSION = 'v328';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -4118,7 +4133,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=327').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=328').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -4288,7 +4303,7 @@ function saveCurrentLocationAsFav() {
   var box = document.createElement('div');
   box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;width:100%;max-width:320px;';
   var title = document.createElement('div');
-  title.style.cssText = 'font-weight:700;font-size:1rem;color:#1e293b;margin-bottom:12px;';
+  title.style.cssText = 'font-weight:700;font-size:1rem;color:var(--c-slate);margin-bottom:12px;';
   title.textContent = '\u{1F4CD} Name this location';
   var inp = document.createElement('input');
   inp.id = 'save-loc-input';
@@ -4371,7 +4386,7 @@ function renderFavLocations() {
     var safeName = (f.name || '').replace(/'/g, '');
     return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0;">' +
       '<div onclick="useFavLocation(' + f.lat + ',' + f.lon + ',\'' + safeName + '\')" style="cursor:pointer;flex:1;">' +
-      '<div style="font-size:0.88rem;font-weight:600;color:#1e293b;">📍 ' + f.name + '</div>' +
+      '<div style="font-size:0.88rem;font-weight:600;color:var(--c-slate);">📍 ' + f.name + '</div>' +
       '<div style="font-size:0.72rem;color:#94a3b8;">Added ' + f.added + ' · tap to run report</div></div>' +
       '<button onclick="removeFavLocation(' + i + ')" style="background:none;border:none;color:#ef4444;font-size:1rem;cursor:pointer;padding:4px;">🗑️</button></div>';
   }).join('');
@@ -4550,8 +4565,8 @@ function showRateAppPrompt() {
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9997;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
   modal.innerHTML = '<div style="background:#fff;border-radius:18px;padding:24px;max-width:320px;width:100%;text-align:center;box-shadow:none;">' +
     '<div style="font-size:2rem;margin-bottom:8px;">⭐</div>' +
-    '<div style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:8px;">Enjoying The Paw Report?</div>' +
-    '<div style="font-size:0.82rem;color:#475569;margin-bottom:16px;line-height:1.5;">Help other pet owners find us! Share your experience on TikTok or tell a friend. 🐾</div>' +
+    '<div style="font-size:1rem;font-weight:800;color:var(--c-slate);margin-bottom:8px;">Enjoying The Paw Report?</div>' +
+    '<div style="font-size:0.82rem;color:var(--c-muted);margin-bottom:16px;line-height:1.5;">Help other pet owners find us! Share your experience on TikTok or tell a friend. 🐾</div>' +
     '<button onclick="shareRateApp()" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;">🎵 Share on TikTok</button>' +
     '<button onclick="dismissRateApp()" style="background:none;border:none;color:#94a3b8;font-size:0.78rem;cursor:pointer;width:100%;">Maybe later</button></div>';
   document.body.appendChild(modal);
@@ -4623,10 +4638,10 @@ function rateAppInSettings() {
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9997;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
   modal.innerHTML = '<div style="background:#fff;border-radius:18px;padding:24px;max-width:320px;width:100%;text-align:center;box-shadow:none;">' +
     '<div style="font-size:2rem;margin-bottom:8px;">⭐⭐⭐⭐⭐</div>' +
-    '<div style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:8px;">Rate The Paw Report</div>' +
-    '<div style="font-size:0.82rem;color:#475569;margin-bottom:16px;line-height:1.5;">Your rating helps other dog owners discover the app. It takes less than a minute!</div>' +
+    '<div style="font-size:1rem;font-weight:800;color:var(--c-slate);margin-bottom:8px;">Rate The Paw Report</div>' +
+    '<div style="font-size:0.82rem;color:var(--c-muted);margin-bottom:16px;line-height:1.5;">Your rating helps other dog owners discover the app. It takes less than a minute!</div>' +
     '<button onclick="openPlayStoreRating()" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:12px;padding:12px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;width:100%;margin-bottom:8px;">📋 Rate on Google Play</button>' +
-    '<button onclick="shareRateApp()" style="background:#f4f7f2;border:1.5px solid #e2e8f0;color:#475569;border-radius:12px;padding:12px 20px;font-size:0.88rem;font-weight:600;cursor:pointer;width:100%;margin-bottom:8px;">🎵 Share on TikTok</button>' +
+    '<button onclick="shareRateApp()" style="background:#f4f7f2;border:1.5px solid #e2e8f0;color:var(--c-muted);border-radius:12px;padding:12px 20px;font-size:0.88rem;font-weight:600;cursor:pointer;width:100%;margin-bottom:8px;">🎵 Share on TikTok</button>' +
     '<button onclick="document.getElementById(\'rate-settings-modal\').remove()" style="background:none;border:none;color:#94a3b8;font-size:0.78rem;cursor:pointer;width:100%;">Close</button></div>';
   document.body.appendChild(modal);
 }
@@ -4645,7 +4660,7 @@ function showFeedbackForm() {
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9997;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
   modal.innerHTML = '<div style="background:#fff;border-radius:18px;padding:24px;max-width:340px;width:100%;box-shadow:none;">' +
     '<div style="font-size:1.5rem;margin-bottom:4px;">💬</div>' +
-    '<div style="font-size:1rem;font-weight:800;color:#1e293b;margin-bottom:4px;">Send Feedback</div>' +
+    '<div style="font-size:1rem;font-weight:800;color:var(--c-slate);margin-bottom:4px;">Send Feedback</div>' +
     '<div style="font-size:0.78rem;color:#94a3b8;margin-bottom:14px;">Tell us what you think or suggest a feature.</div>' +
     '<textarea id="feedback-text" placeholder="Your feedback..." style="width:100%;min-height:100px;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px;font-size:0.85rem;font-family:inherit;resize:vertical;box-sizing:border-box;margin-bottom:8px;"></textarea>' +
     '<input id="feedback-email" type="email" placeholder="Email (optional)" style="width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px;font-size:0.85rem;font-family:inherit;box-sizing:border-box;margin-bottom:12px;">' +
