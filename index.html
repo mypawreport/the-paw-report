@@ -1015,8 +1015,12 @@
 
     <div id="tab-wash" style="display:none;">
       <div class="card">
-        <div class="card-title acc-title" onclick="toggleAcc('wash-body')">🛁 Nearby Pet Wash Stations<i class="acc-arrow open" id="arr-wash-body">▾</i></div>
+        <div class="card-title acc-title" onclick="toggleAcc('wash-body')">🛁 Nearby Pet Wash & Parks<i class="acc-arrow open" id="arr-wash-body">▾</i></div>
       <div id="wash-body" class="acc-body"><div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <button id="search-type-wash" onclick="switchSearchType('wash')" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--accent,#0d9488);background:var(--accent,#0d9488);color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;">🛁 Pet Wash</button>
+          <button id="search-type-park" onclick="switchSearchType('park')" style="flex:1;padding:10px;border-radius:10px;border:2px solid #e2e8f0;background:transparent;color:#64748b;font-size:0.85rem;font-weight:700;cursor:pointer;">🐕 Dog Parks</button>
+        </div>
         <div class="loading-inline" id="wash-loading">Run your report first to find nearby stations.</div>
         <div id="wash-content" style="display:none;"><div id="wash-map-container" style="display:none;margin-bottom:12px;"><iframe id="wash-map-iframe" style="width:100%;height:200px;border:none;border-radius:12px;" loading="lazy" allowfullscreen></iframe></div><div class="stations-list" id="stations-list"></div></div>
       </div>
@@ -1404,6 +1408,7 @@ let currentUser = null, userPrefs = null;
 let isTracking = false, trackingInterval = null;
 let currentPetSize = 'medium', currentTier = 'free';
 let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, lastCrimeScore = null;
+  var currentSearchType='wash';
 let isSignUp = false, setupSize = 'medium', activeBilling = 'weekly', activeTierTab = 'bronze';
 let notificationsEnabled = false;
 // Pricing data
@@ -3421,11 +3426,11 @@ function updateWashUI(d) {
   // Show pet wash map
   if (lastLat && lastLon) {
     var wmc = document.getElementById('wash-map-container');
-    if (wmc) { wmc.style.display='block'; document.getElementById('wash-map-iframe').src='https://www.google.com/maps?q='+encodeURIComponent('pet wash dog grooming')+'&center='+lastLat+','+lastLon+'&z=13&output=embed'; }
+    if (wmc) { wmc.style.display='block'; var mapQuery = currentSearchType==='park' ? 'dog park pet friendly park' : 'pet wash dog grooming'; document.getElementById('wash-map-iframe').src='https://www.google.com/maps?q='+encodeURIComponent(mapQuery)+'&center='+lastLat+','+lastLon+'&z=13&output=embed'; }
   }
   const list=document.getElementById('stations-list');
   if(!d.stations||d.stations.length===0){
-  var mapsQ = encodeURIComponent('pet wash near me dog wash grooming');
+  var mapsQ = encodeURIComponent(currentSearchType==='park' ? 'dog park near me' : 'pet wash near me dog wash grooming');
   var mapsUrl = 'https://www.google.com/maps/search/' + mapsQ;
   list.innerHTML = '<div style="text-align:center;padding:16px 8px">' +
     '<div style="font-size:2rem;margin-bottom:8px">🔍</div>' +
@@ -3501,12 +3506,52 @@ function showFetchError(msg) {
       '<br><br><button onclick="startTracking()" style="background:var(--accent,#0d9488);color:white;border:none;border-radius:8px;padding:10px 20px;font-size:0.9rem;cursor:pointer;margin-top:8px">🔄 Retry</button>';
   }
 }
+function switchSearchType(type) {
+  currentSearchType = type;
+  document.getElementById('search-type-wash').style.border = type === 'wash' ? '2px solid var(--accent,#0d9488)' : '2px solid #e2e8f0';
+  document.getElementById('search-type-wash').style.background = type === 'wash' ? 'var(--accent,#0d9488)' : 'transparent';
+  document.getElementById('search-type-wash').style.color = type === 'wash' ? '#fff' : '#64748b';
+  document.getElementById('search-type-park').style.border = type === 'park' ? '2px solid var(--accent,#0d9488)' : '2px solid #e2e8f0';
+  document.getElementById('search-type-park').style.background = type === 'park' ? 'var(--accent,#0d9488)' : 'transparent';
+  document.getElementById('search-type-park').style.color = type === 'park' ? '#fff' : '#64748b';
+  document.getElementById('wash-loading').style.display = 'block';
+  document.getElementById('wash-loading').textContent = 'Searching for ' + (type === 'park' ? 'dog parks' : 'pet wash stations') + '...';
+  document.getElementById('wash-content').style.display = 'none';
+  if (lastLat && lastLon) fetchWashStations(lastLat, lastLon);
+}
+
+async function fetchWashStations(lat, lon) {
+  const token = localStorage.getItem('paw_session_token');
+  try {
+    const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({latitude:lat, longitude:lon, radius:16093, searchType:currentSearchType, sessionToken:token})
+    });
+    const d = await res.json();
+    if (!res.ok) {
+      document.getElementById('wash-loading').style.display = 'none';
+      document.getElementById('wash-content').style.display = 'block';
+      if (d.upgrade_required) {
+        document.getElementById('stations-list').innerHTML = '<div style="text-align:center;padding:20px 8px"><div style="font-size:2rem;margin-bottom:8px">\u{1F513}</div><div style="font-weight:700;font-size:0.92rem;margin-bottom:6px;color:var(--c-slate)">' + (d.error || 'Upgrade required') + '</div><a href="#" onclick="switchTab(\'profile\');return false;" style="display:inline-flex;align-items:center;gap:7px;background:var(--accent,#0d9488);color:#fff;text-decoration:none;border-radius:12px;padding:11px 20px;font-size:0.86rem;font-weight:700;margin-top:10px;">\u2B06\uFE0F Upgrade to Silver</a></div>';
+      } else {
+        document.getElementById('stations-list').innerHTML = '<div style="text-align:center;padding:16px 8px;color:#64748b">Could not load results. Please try again.</div>';
+      }
+      return;
+    }
+    updateWashUI(d);
+  } catch(e) {
+    document.getElementById('wash-loading').style.display = 'none';
+    document.getElementById('wash-loading').textContent = 'Could not load results.';
+  }
+}
+
 async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:16000})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:16093,searchType:currentSearchType,sessionToken:localStorage.getItem('paw_session_token')})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
   ]);
   showResultCards(true);
@@ -3515,7 +3560,13 @@ async function fetchAll(lat, lon) {
   else document.getElementById('rating-message').innerHTML='⚠️ Could not load ground temp data. <button onclick="fetchAll(lat,lon)" style="background:var(--accent,#0d9488);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px">🔄 Retry</button>';
   if(crimeRes.status==='fulfilled'&&crimeRes.value.ok){ const d=await safeJson(crimeRes.value); if(d) updateCrimeUI(d); else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.'; }
   else document.getElementById('crime-loading').textContent='Safety data unavailable for this area.';
-  if(washRes.status==='fulfilled'&&washRes.value.ok){ const d=await safeJson(washRes.value); if(d) updateWashUI(d); else document.getElementById('wash-loading').textContent='Could not load wash stations.'; }
+  if(washRes.status==='fulfilled') {
+    if(washRes.value.ok) { const d=await safeJson(washRes.value); if(d) updateWashUI(d); else document.getElementById('wash-loading').textContent='Could not load wash stations.'; }
+    else { const d=await safeJson(washRes.value); document.getElementById('wash-loading').style.display='none'; document.getElementById('wash-content').style.display='block';
+      if(d&&d.upgrade_required) { document.getElementById('stations-list').innerHTML='<div style="text-align:center;padding:20px 8px;color:#64748b"><div style="font-size:1.6rem;margin-bottom:8px">'+(d.currentTier?'\u{1F512}':'\u{1F512}')+'</div><div style="font-weight:700;font-size:0.9rem;margin-bottom:8px">'+(d.error||'Upgrade required')+'</div><button onclick="switchTab(\'profile\')" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:0.85rem;font-weight:700;cursor:pointer;">\u2B06\uFE0F Upgrade to Silver</button></div>'; }
+      else document.getElementById('wash-loading').textContent='Could not load wash stations.';
+    }
+  }
   else document.getElementById('wash-loading').textContent='Could not load wash stations.';
   if(walkRes.status==='fulfilled'&&walkRes.value.ok){ const d=await safeJson(walkRes.value); if(d){ buildForecastDays(d); updateWalkTimeUI(d); } else document.getElementById('walk-time-loading').textContent='Could not load forecast.'; }
   else document.getElementById('walk-time-loading').textContent='Could not load forecast.';
@@ -3660,7 +3711,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v320';
+const APP_VERSION = 'v321';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -3971,7 +4022,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=320').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=321').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
