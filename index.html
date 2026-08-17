@@ -611,6 +611,22 @@
           <button class="size-btn" data-size="large" onclick="selectSetupSize('large',this)">🦮 Large<br><span style="font-size:0.62rem;color:#64748b">over 60 lbs</span></button>
         </div>
       </div>
+      <div class="form-group">
+        <label class="form-label">Coat Type</label>
+        <div class="size-selector">
+          <button class="size-btn" data-coat="short" onclick="selectSetupCoat('short',this)">Short<br><span style="font-size:0.58rem;color:#64748b">Pitbull, Chi</span></button>
+          <button class="size-btn active" data-coat="medium" onclick="selectSetupCoat('medium',this)">Medium<br><span style="font-size:0.58rem;color:#64748b">Lab, Spaniel</span></button>
+          <button class="size-btn" data-coat="long" onclick="selectSetupCoat('long',this)">Long<br><span style="font-size:0.58rem;color:#64748b">Collie, Sheltie</span></button>
+          <button class="size-btn" data-coat="double" onclick="selectSetupCoat('double',this)">Double<br><span style="font-size:0.58rem;color:#64748b">Husky, Shepherd</span></button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Face Shape</label>
+        <div class="size-selector">
+          <button class="size-btn active" data-face="normal" onclick="selectSetupFace('normal',this)">👃 Normal Snout</button>
+          <button class="size-btn" data-face="flat" onclick="selectSetupFace('flat',this)">😮‍💨 Flat-Faced<br><span style="font-size:0.58rem;color:#64748b">Pug, Bulldog, Frenchie</span></button>
+        </div>
+      </div>
       <button class="btn btn-primary" onclick="saveProfile()" style="margin-top:8px">Let's Go 🐾</button>
     </div>
     <div class="card" style="text-align:center;padding:16px 18px;">
@@ -767,6 +783,7 @@
           <div id="rating-pill" class="rating-pill" style="background:#f97316;">--</div>
           <div class="gauge-sublabel">Ground Temperature</div>
           <div class="rating-message" id="rating-message"></div>
+          <div id="breed-warning" style="display:none;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:8px 12px;margin-top:8px;font-size:0.78rem;color:#d97706;line-height:1.4;"></div>
         </div>
         <div class="paw-scale">
           <div class="scale-item scale-toocold" id="scale-extremecold"><span style="filter:grayscale(1) brightness(0.7) sepia(1) hue-rotate(210deg) saturate(3);">🐾</span> Extreme</div>
@@ -1099,6 +1116,18 @@
                 <button class="size-btn active" data-size="medium" onclick="selectNewDogSize('medium',this)">🐕 Medium</button>
                 <button class="size-btn" data-size="large" onclick="selectNewDogSize('large',this)">🦮 Large</button>
               </div>
+              <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Coat:</div>
+              <div class="size-selector" style="margin-bottom:10px;">
+                <button class="size-btn" data-coat="short" onclick="selectNewDogCoat('short',this)">Short</button>
+                <button class="size-btn active" data-coat="medium" onclick="selectNewDogCoat('medium',this)">Medium</button>
+                <button class="size-btn" data-coat="long" onclick="selectNewDogCoat('long',this)">Long</button>
+                <button class="size-btn" data-coat="double" onclick="selectNewDogCoat('double',this)">Double</button>
+              </div>
+              <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:6px;">Face:</div>
+              <div class="size-selector" style="margin-bottom:10px;">
+                <button class="size-btn active" data-face="normal" onclick="selectNewDogFace('normal',this)">👃 Normal</button>
+                <button class="size-btn" data-face="flat" onclick="selectNewDogFace('flat',this)">Flat-Faced</button>
+              </div>
               <div style="display:flex;gap:8px;">
                 <button class="btn btn-primary" onclick="addDogProfile()" style="flex:1;font-size:0.82rem;padding:9px;">✅ Save</button>
                 <button class="btn btn-secondary" onclick="hideAddDogForm()" style="flex:1;font-size:0.82rem;padding:9px;">❌ Cancel</button>
@@ -1406,7 +1435,7 @@ function getReferralCount() {
 const APP_ID = '6a1c6fbdd48b351a9eb7455e';
 let currentUser = null, userPrefs = null;
 let isTracking = false, trackingInterval = null;
-let currentPetSize = 'medium', currentTier = 'free';
+let currentPetSize = 'medium', currentCoatType = 'medium', currentFaceShape = 'normal', currentTier = 'free';
 let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, lastCrimeScore = null;
   var currentSearchType='wash';
 let isSignUp = false, setupSize = 'medium', activeBilling = 'weekly', activeTierTab = 'bronze';
@@ -1687,7 +1716,7 @@ function handleCheckoutReturn() {
     if (currentUser) {
       const existing = getPrefs(currentUser.id) || {};
       userPrefs = savePrefs(currentUser.id, { ...existing, subscription_tier: tier, subscription_period: period || 'monthly', subscription_start: new Date().toISOString() });
-      currentPetSize = userPrefs.pet_size || 'medium';
+      currentPetSize = userPrefs.pet_size || 'medium'; currentCoatType = userPrefs.pet_coat || 'medium'; currentFaceShape = userPrefs.pet_face || 'normal';
       // Persist tier to master user store so it survives session clears
       try {
         const users = JSON.parse(localStorage.getItem(LS_USERS) || '{}');
@@ -2061,12 +2090,12 @@ async function onLoggedIn() {
     showScreen('setup');
   } else if (currentTier !== 'free') {
     // Already subscribed — go straight to the app
-    currentPetSize = userPrefs.pet_size || 'medium';
+    currentPetSize = userPrefs.pet_size || 'medium'; currentCoatType = userPrefs.pet_coat || 'medium'; currentFaceShape = userPrefs.pet_face || 'normal';
     syncSizeSelectors(currentPetSize);
     loadMainScreen();
   } else {
     // No subscription — show paywall
-    currentPetSize = userPrefs.pet_size || 'medium';
+    currentPetSize = userPrefs.pet_size || 'medium'; currentCoatType = userPrefs.pet_coat || 'medium'; currentFaceShape = userPrefs.pet_face || 'normal';
     syncSizeSelectors(currentPetSize);
     showScreen('paywall');
     renderTierDisplay(); }
@@ -2093,7 +2122,7 @@ function updateUserBar() {
 // ===== DOG PROFILES SYSTEM =====
 let dogProfiles = [];
 let selectedDogIds = []; // multi-select array
-let newDogSize = 'medium';
+let newDogSize = 'medium', newDogCoat = 'medium', newDogFace = 'normal';
 
 const DOG_LIMITS = { free: 1, bronze: 3, silver: 5, gold: 30 };
 
@@ -2174,7 +2203,7 @@ function renderDogProfiles() {
             <span style="font-size:1.1rem;line-height:1;margin-right:-3px;">${sizeEmoji}</span>
             <div>
               <div style="font-weight:600;color:var(--c-slate,#1e293b);font-size:0.88rem;">${dog.name}</div>
-              <div style="font-size:0.7rem;color:var(--c-slate-400,#64748b);">${dog.size.charAt(0).toUpperCase()+dog.size.slice(1)}${dog.breed ? ' \u00b7 ' + dog.breed : ''}</div>
+              <div style="font-size:0.7rem;color:var(--c-slate-400,#64748b);">${dog.size.charAt(0).toUpperCase()+dog.size.slice(1)}${dog.breed ? ' \u00b7 ' + dog.breed : ''}${dog.coat && dog.coat !== 'medium' ? ' \u00b7 ' + (dog.coat==='double'?'Double coat':dog.coat.charAt(0).toUpperCase()+dog.coat.slice(1)+' coat') : ''}${dog.face === 'flat' ? ' \u00b7 Flat-faced' : ''}</div>
             </div>
           </div>
           <button onclick="removeDogProfile('${dog.id}')" style="background:rgba(239,68,68,0.15);color:#fca5a5;border:none;border-radius:8px;padding:6px 10px;font-size:0.72rem;cursor:pointer;margin-left:8px;">\u{1f5d1}\u{fe0f}</button>
@@ -2217,7 +2246,7 @@ function toggleDogSelection(id) {
   // Update currentPetSize to the first selected dog
   const firstDog = dogProfiles.find(d => d.id === selectedDogIds[0]);
   if (firstDog) {
-    currentPetSize = firstDog.size;
+    currentPetSize = firstDog.size; currentCoatType = firstDog.coat || 'medium'; currentFaceShape = firstDog.face || 'normal';
     syncSizeSelectors(currentPetSize);
   }
   renderDogProfiles();
@@ -2248,7 +2277,7 @@ function showAddDogForm() {
   if (form) form.style.display = 'block';
   const nameInput = document.getElementById('new-dog-name');
   if (nameInput) { nameInput.value = ''; nameInput.focus(); }
-  newDogSize = 'medium';
+  newDogSize = 'medium'; newDogCoat = 'medium'; newDogFace = 'normal';
   // Reset size buttons
   document.querySelectorAll('#add-dog-form .size-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.size === 'medium');
@@ -2262,10 +2291,14 @@ function hideAddDogForm() {
 
 function selectNewDogSize(size, btn) {
   newDogSize = size;
+  btn.closest('.size-selector').querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
   document.querySelectorAll('#add-dog-form .size-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
 }
 
+function selectNewDogCoat(coat, btn) { newDogCoat = coat; btn.closest('.size-selector').querySelectorAll('.size-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+function selectNewDogFace(face, btn) { newDogFace = face; btn.closest('.size-selector').querySelectorAll('.size-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
 function addDogProfile() {
   const nameInput = document.getElementById('new-dog-name');
   const name = nameInput ? nameInput.value.trim() : '';
@@ -2282,7 +2315,9 @@ function addDogProfile() {
     id: 'dog_' + Date.now(),
     name: name,
     size: newDogSize,
-    breed: breedInput ? breedInput.value.trim() : ''
+    breed: breedInput ? breedInput.value.trim() : '',
+    coat: newDogCoat,
+    face: newDogFace
   };
   dogProfiles.push(newDog);
   saveDogProfiles();
@@ -2320,12 +2355,18 @@ function renderProfileDisplay() {
   const petName = userPrefs?.pet_name || '—';
   const petBreed = userPrefs?.pet_breed || '—';
   const petSize = userPrefs?.pet_size ? userPrefs.pet_size.charAt(0).toUpperCase()+userPrefs.pet_size.slice(1) : '—';
+    const coatMap = {short:'Short/Thin', medium:'Medium', long:'Long/Thick', double:'Double Coat'};
+    const faceMap = {normal:'Normal Snout', flat:'Flat-Faced'};
+    const petCoat = coatMap[userPrefs?.pet_coat] || 'Medium';
+    const petFace = faceMap[userPrefs?.pet_face] || 'Normal Snout';
   document.getElementById('profile-display').innerHTML = `
     <div class="profile-row"><span class="profile-label">Name</span><span class="profile-val">${currentUser?.full_name||'—'}</span></div>
     <div class="profile-row"><span class="profile-label">Email</span><span class="profile-val">${currentUser?.email||'—'}</span></div>
     <div class="profile-row"><span class="profile-label">Pet Name</span><span class="profile-val">${petName}</span></div>
     <div class="profile-row"><span class="profile-label">Breed</span><span class="profile-val">${petBreed}</span></div>
     <div class="profile-row"><span class="profile-label">Size</span><span class="profile-val">${petSize}</span></div>
+    <div class="profile-row"><span class="profile-label">Coat</span><span class="profile-val">${petCoat}</span></div>
+    <div class="profile-row"><span class="profile-label">Face Shape</span><span class="profile-val">${petFace}</span></div>
   `;
 }
 function manageSubscription() {
@@ -2499,6 +2540,8 @@ function showEditProfile() {
   const petName = userPrefs?.pet_name || '';
   const breed = userPrefs?.pet_breed || '';
   const size = userPrefs?.pet_size || 'medium';
+  const coat = userPrefs?.pet_coat || 'medium';
+  const face = userPrefs?.pet_face || 'normal';
   const modal = document.createElement('div');
   modal.id = 'edit-profile-modal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-start;justify-content:center;z-index:999;padding:20px;overflow-y:auto;';
@@ -2514,6 +2557,20 @@ function showEditProfile() {
         <button class="size-btn ${size==='large'?'active':''}" data-size="large" onclick="editSelectSize('large',this)">🦮 Large</button>
       </div>
     </div>
+    <div class="form-group"><label class="form-label">Coat Type</label>
+      <div class="size-selector">
+        <button class="size-btn ${coat==='short'?'active':''}" data-coat="short" onclick="editSelectCoat('short',this)">Short</button>
+        <button class="size-btn ${coat==='medium'?'active':''}" data-coat="medium" onclick="editSelectCoat('medium',this)">Medium</button>
+        <button class="size-btn ${coat==='long'?'active':''}" data-coat="long" onclick="editSelectCoat('long',this)">Long</button>
+        <button class="size-btn ${coat==='double'?'active':''}" data-coat="double" onclick="editSelectCoat('double',this)">Double</button>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Face Shape</label>
+      <div class="size-selector">
+        <button class="size-btn ${face==='normal'?'active':''}" data-face="normal" onclick="editSelectFace('normal',this)">👃 Normal</button>
+        <button class="size-btn ${face==='flat'?'active':''}" data-face="flat" onclick="editSelectFace('flat',this)">😮‍💨 Flat-Faced</button>
+      </div>
+    </div>
     <div style="display:flex;gap:8px;margin-top:16px;">
       <button class="btn btn-secondary" style="padding:10px" onclick="document.getElementById('edit-profile-modal').remove()">Cancel</button>
       <button class="btn btn-primary" style="padding:10px" onclick="saveEditProfile(this.closest('div[style]'))">Save</button>
@@ -2521,13 +2578,17 @@ function showEditProfile() {
   </div>`;
   document.body.appendChild(modal);
 }
-let editSize = null;
+let editSize = null, editCoat = null, editFace = null;
 function editSelectSize(s, el) { editSize = s; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===s)); }
+function editSelectCoat(c, el) { editCoat = c; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.coat===c)); }
+function editSelectFace(f, el) { editFace = f; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.face===f)); }
 async function saveEditProfile(modal) {
   const fullName = document.getElementById('edit-full-name').value.trim();
   const petName = document.getElementById('edit-pet-name').value.trim();
   const breed = document.getElementById('edit-breed').value.trim();
   const size = editSize || userPrefs?.pet_size || 'medium';
+  const coat = editCoat || userPrefs?.pet_coat || 'medium';
+  const face = editFace || userPrefs?.pet_face || 'normal';
   try {
     if (currentUser) {
       // Update in-memory user
@@ -2539,9 +2600,9 @@ async function saveEditProfile(modal) {
       // Sync name to the real backend so it follows the account across devices
       if (fullName) syncProfileToServer(fullName);
     }
-    const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed };
+    const data = { pet_name: petName||'My Dog', pet_size: size, pet_breed: breed, pet_coat: coat, pet_face: face };
     userPrefs = savePrefs(currentUser.id, data);
-    currentPetSize = size; syncSizeSelectors(size); renderProfileDisplay(); updateUserBar();
+    currentPetSize = size; currentCoatType = coat; currentFaceShape = face; syncSizeSelectors(size); renderProfileDisplay(); updateUserBar();
     const m = document.getElementById('edit-profile-modal'); if(m) m.remove();
     showToast('✅ Profile saved!');
   } catch(e) {
@@ -2588,15 +2649,18 @@ async function doLogout() {
   try { await authLogout(); } catch(_) {}
   currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
 }
-function selectSetupSize(size, el) { setupSize = size; document.querySelectorAll('#screen-setup .size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+let setupCoat = 'medium', setupFace = 'normal';
+function selectSetupSize(size, el) { setupSize = size; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+function selectSetupCoat(coat, el) { setupCoat = coat; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+function selectSetupFace(face, el) { setupFace = face; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
 async function saveProfile() {
   const name = document.getElementById('setup-name').value.trim();
   const breed = document.getElementById('setup-breed').value.trim();
   try {
-    const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed };
+    const data = { pet_name: name||'My Dog', pet_size: setupSize, pet_breed: breed, pet_coat: setupCoat, pet_face: setupFace };
     const prefKey = (currentUser && (currentUser.id || currentUser.email)) || 'guest';
     userPrefs = savePrefs(prefKey, data);
-    currentPetSize = setupSize; syncSizeSelectors(currentPetSize);
+    currentPetSize = setupSize; currentCoatType = setupCoat; currentFaceShape = setupFace; syncSizeSelectors(currentPetSize);
     // Check multiple sources for lifetime/referral access
     const profile = JSON.parse(localStorage.getItem(LS_CUR_USER) || '{}');
     const referralApplied = localStorage.getItem(LS_REFERRAL);
@@ -2969,11 +3033,12 @@ function applyPawUIWithSurface(d) {
   const adjustedGround = Math.round(rawGround + offset);
   const adjusted = { ...d, groundTempF: adjustedGround };
   // Recalculate rating based on adjusted temp
-  adjusted.rating = getRatingFromTemp(adjustedGround, currentPetSize);
+  adjusted.rating = getRatingFromTemp(adjustedGround, currentPetSize, currentCoatType, currentFaceShape);
   const ratingInfo = PAW_RATING_INFO[adjusted.rating] || PAW_RATING_INFO['Safe'];
   adjusted.emoji = ratingInfo.emoji;
   adjusted.color = ratingInfo.color;
   adjusted.message = ratingInfo.message;
+  if (d.breedWarning) { adjusted.breedWarning = d.breedWarning; }
   // Cold tips banner
   const coldTips = {
     'Extreme Cold': '🧊 Danger: Ice, frost & road salt can chemically burn your dog\'s paws. Boots or paw balm strongly recommended. Limit exposure to 5 minutes max.',
@@ -2995,18 +3060,33 @@ function applyPawUIWithSurface(d) {
   const lbl = document.getElementById('surface-label');
   if (lbl) lbl.textContent = SURFACE_LABELS[currentSurface] || currentSurface;
 }
-function getRatingFromTemp(tempF, size) {
-  const thresholds = size === 'small'
+function getRatingFromTemp(tempF, size, coat, face) {
+  coat = coat || currentCoatType || 'medium';
+  face = face || currentFaceShape || 'normal';
+  let heatAdj = 0, coldAdj = 0;
+  if (coat === 'short') { coldAdj += 4; }
+  else if (coat === 'long') { heatAdj -= 3; coldAdj -= 3; }
+  else if (coat === 'double') { heatAdj -= 5; coldAdj -= 6; }
+  if (face === 'flat') { heatAdj -= 8; }
+  const base = size === 'small'
     ? { extremecold: 25, chilly: 40, safe: 72, warm: 79, danger: 95, fry: 110 }
     : size === 'large'
     ? { extremecold: 20, chilly: 35, safe: 75, warm: 79, danger: 98, fry: 113 }
     : { extremecold: 22, chilly: 38, safe: 74, warm: 79, danger: 97, fry: 112 };
-  if (tempF <= thresholds.extremecold) return 'Extreme Cold';
-  if (tempF <= thresholds.chilly) return 'Chilly';
-  if (tempF <= thresholds.safe) return 'Safe';
-  if (tempF <= thresholds.warm) return 'Warm';
-  if (tempF <= thresholds.danger) return 'Hot';
-  if (tempF <= thresholds.fry) return 'Danger';
+  const t = {
+    extremecold: base.extremecold + coldAdj,
+    chilly: base.chilly + coldAdj,
+    safe: base.safe,
+    warm: base.warm + heatAdj,
+    danger: base.danger + heatAdj,
+    fry: base.fry + heatAdj
+  };
+  if (tempF <= t.extremecold) return 'Extreme Cold';
+  if (tempF <= t.chilly) return 'Chilly';
+  if (tempF <= t.safe) return 'Safe';
+  if (tempF <= t.warm) return 'Safe';
+  if (tempF <= t.danger) return 'Hot';
+  if (tempF <= t.fry) return 'Danger';
   return 'Fry Zone';
 }
 const PAW_RATING_INFO = {
@@ -3145,6 +3225,8 @@ function updatePawUI(d) {
     }
   }
   document.getElementById('rating-message').textContent = d.message;
+    const bw = document.getElementById('breed-warning');
+    if (bw) { if (d.breedWarning) { bw.innerHTML = d.breedWarning; bw.style.display = 'block'; } else { bw.style.display = 'none'; } }
   var _gaugeT = document.getElementById('gauge-temp');
   if (_gaugeT) { _gaugeT.textContent = Math.round(d.groundTempF) + '°F'; _gaugeT.style.color = ''; }
   document.getElementById('ground-temp').textContent = d.groundTempF + '°F';
@@ -3207,7 +3289,7 @@ function updatePawUI(d) {
 }
 async function fetchPawAndUpdate(lat, lon) {
   checkRateAppPrompt();
-  try { const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) applyPawUIWithSurface(await res.json()); } } catch(_) {}
+  try { const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize,coatType:currentCoatType,faceShape:currentFaceShape})}); if(res.ok){ const ct=res.headers.get('content-type')||''; if(ct.includes('json')) applyPawUIWithSurface(await res.json()); } } catch(_) {}
 }
 function updateCrimeUI(d) {
   document.getElementById('crime-loading').style.display = 'none';
@@ -3549,7 +3631,7 @@ async function fetchWashStations(lat, lon) {
 async function fetchAll(lat, lon) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone||'America/New_York';
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize,coatType:currentCoatType,faceShape:currentFaceShape})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:40234,searchType:currentSearchType,sessionToken:localStorage.getItem('paw_session_token')})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
@@ -3713,7 +3795,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v324';
+const APP_VERSION = 'v325';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -4024,7 +4106,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=324').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=325').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
