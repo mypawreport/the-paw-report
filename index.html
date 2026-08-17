@@ -3526,7 +3526,7 @@ async function fetchWashStations(lat, lon) {
     const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({latitude:lat, longitude:lon, radius:16093, searchType:currentSearchType, sessionToken:token})
+      body: JSON.stringify({latitude:lat, longitude:lon, radius:40234, searchType:currentSearchType, sessionToken:token})
     });
     const d = await res.json();
     if (!res.ok) {
@@ -3551,7 +3551,7 @@ async function fetchAll(lat, lon) {
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:16093,searchType:currentSearchType,sessionToken:localStorage.getItem('paw_session_token')})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:40234,searchType:currentSearchType,sessionToken:localStorage.getItem('paw_session_token')})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
   ]);
   showResultCards(true);
