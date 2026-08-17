@@ -3532,7 +3532,10 @@ async function fetchWashStations(lat, lon) {
     if (!res.ok) {
       document.getElementById('wash-loading').style.display = 'none';
       document.getElementById('wash-content').style.display = 'block';
-      if (d.upgrade_required) {
+      const isSessionIssue = res.status === 403 && (!token || /session|sign in|authentication/i.test(d.error || ''));
+      if (isSessionIssue) {
+        document.getElementById('stations-list').innerHTML = '<div style="text-align:center;padding:20px 8px"><div style="font-size:2rem;margin-bottom:8px">\u{1F510}</div><div style="font-weight:700;font-size:0.92rem;margin-bottom:6px;color:var(--c-slate)">' + (d.error || 'Please sign in again.') + '</div><button onclick="showScreen(\'auth\')" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:12px;padding:11px 20px;font-size:0.86rem;font-weight:700;cursor:pointer;margin-top:10px;">\u{1F511} Sign In Again</button></div>';
+      } else if (d.upgrade_required) {
         document.getElementById('stations-list').innerHTML = '<div style="text-align:center;padding:20px 8px"><div style="font-size:2rem;margin-bottom:8px">\u{1F513}</div><div style="font-weight:700;font-size:0.92rem;margin-bottom:6px;color:var(--c-slate)">' + (d.error || 'Upgrade required') + '</div><a href="#" onclick="switchTab(\'profile\');return false;" style="display:inline-flex;align-items:center;gap:7px;background:var(--accent,#0d9488);color:#fff;text-decoration:none;border-radius:12px;padding:11px 20px;font-size:0.86rem;font-weight:700;margin-top:10px;">\u2B06\uFE0F Upgrade to Silver</a></div>';
       } else {
         document.getElementById('stations-list').innerHTML = '<div style="text-align:center;padding:16px 8px;color:#64748b">Could not load results. Please try again.</div>';
@@ -3563,7 +3566,9 @@ async function fetchAll(lat, lon) {
   if(washRes.status==='fulfilled') {
     if(washRes.value.ok) { const d=await safeJson(washRes.value); if(d) updateWashUI(d); else document.getElementById('wash-loading').textContent='Could not load wash stations.'; }
     else { const d=await safeJson(washRes.value); document.getElementById('wash-loading').style.display='none'; document.getElementById('wash-content').style.display='block';
-      if(d&&d.upgrade_required) { document.getElementById('stations-list').innerHTML='<div style="text-align:center;padding:20px 8px;color:#64748b"><div style="font-size:1.6rem;margin-bottom:8px">'+(d.currentTier?'\u{1F512}':'\u{1F512}')+'</div><div style="font-weight:700;font-size:0.9rem;margin-bottom:8px">'+(d.error||'Upgrade required')+'</div><button onclick="switchTab(\'profile\')" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:0.85rem;font-weight:700;cursor:pointer;">\u2B06\uFE0F Upgrade to Silver</button></div>'; }
+      const isSessionIssue = washRes.value.status === 403 && !d?.currentTier && /session|sign in|authentication/i.test(d?.error || '');
+      if(isSessionIssue) { document.getElementById('stations-list').innerHTML='<div style="text-align:center;padding:20px 8px;color:#64748b"><div style="font-size:1.6rem;margin-bottom:8px">\u{1F510}</div><div style="font-weight:700;font-size:0.9rem;margin-bottom:8px">'+(d?.error||'Please sign in again.')+'</div><button onclick="showScreen(\'auth\')" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:0.85rem;font-weight:700;cursor:pointer;">\u{1F511} Sign In Again</button></div>'; }
+      else if(d&&d.upgrade_required) { document.getElementById('stations-list').innerHTML='<div style="text-align:center;padding:20px 8px;color:#64748b"><div style="font-size:1.6rem;margin-bottom:8px">\u{1F512}</div><div style="font-weight:700;font-size:0.9rem;margin-bottom:8px">'+(d.error||'Upgrade required')+'</div><button onclick="switchTab(\'profile\')" style="background:var(--accent,#0d9488);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:0.85rem;font-weight:700;cursor:pointer;">\u2B06\uFE0F Upgrade to Silver</button></div>'; }
       else document.getElementById('wash-loading').textContent='Could not load wash stations.';
     }
   }
@@ -3711,7 +3716,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v321';
+const APP_VERSION = 'v322';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -4022,7 +4027,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=321').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=322').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
