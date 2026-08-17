@@ -1415,9 +1415,9 @@ const PRICES = {
 
 // Google Play Billing SKU mapping (for Android TWA)
 const PLAY_BILLING_SKUS = {
-  bronze: { weekly:'paw_bronze_weekly', monthly:'paw_bronze_monthly', yearly:'paw_bronze_yearly' },
-  silver: { weekly:'paw_silver_weekly', monthly:'paw_silver_monthly', yearly:'paw_silver_yearly' },
-  gold:   { weekly:'paw_gold_weekly', monthly:'paw_gold_monthly', yearly:'paw_gold_yearly' }
+  bronze: { weekly:'bronze_weekly', monthly:'bronze_monthly', yearly:'bronze_yearly' },
+  silver: { weekly:'silver_weekly', monthly:'silver_monthly', yearly:'silver_yearly' },
+  gold:   { weekly:'gold_weekly', monthly:'gold_monthly', yearly:'gold_yearly' }
 };
 
 // Detect if running inside Android TWA with Digital Goods API support
@@ -1577,7 +1577,7 @@ function renderTierDisplay() {
   const p = PRICES[activeTierTab][activeBilling];
   if (!p) return;
   const feats = FEATURES[activeTierTab];
-  const isLaunch = true; // launch pricing always active
+  const isLaunch = false; // launch pricing disabled
   const tierColors = {bronze:'#cd7f32',silver:'#c0c0c0',gold:'#ffd700'};
   const tierEmojis = {bronze:'🥉',silver:'🥈',gold:'🥇'};
   const color = tierColors[activeTierTab];
@@ -3660,7 +3660,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v318';
+const APP_VERSION = 'v319';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -3971,7 +3971,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=318').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=319').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
