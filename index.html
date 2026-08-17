@@ -1574,9 +1574,9 @@ async function checkPlayBillingSubscriptions() {
 }
 
 const FEATURES = {
-  bronze: ['✅ Ground temperature checker','✅ Basic paw safety rating','✅ Area safety overview','✅ Best time to walk (today)','✅ Nearby pet wash stations','🔒 Walk history','🔒 Multiple pet profiles','🔒 Area crime stats'],
-  silver: ['✅ Everything in Bronze','✅ Walk history (30 days)','✅ Multiple pet profiles (up to 5)','✅ Area crime stats','✅ Area safety advisory','🔒 Unlimited pet profiles','🔒 Pro walker dashboard','🔒 Priority support'],
-  gold:   ['✅ Everything in Silver','✅ Unlimited pet profiles','✅ Pro walker dashboard','✅ Share & export reports','✅ Priority support','✅ Save favourite wash stations','✅ Early access to new features']
+  bronze: ['✅ Ground temperature checker','✅ Basic paw safety rating','✅ Area safety overview','✅ Best time to walk (today)','🔒 Nearby pet wash & dog parks','🔒 Walk history','🔒 Multiple pet profiles','🔒 Area crime stats'],
+  silver: ['✅ Everything in Bronze','✅ Nearby pet wash & dog parks','✅ Walk history (30 days)','✅ Multiple pet profiles (up to 5)','✅ Area crime stats','✅ Area safety advisory','🔒 Unlimited pet profiles','🔒 Share & export reports','🔒 Priority support'],
+  gold:   ['✅ Everything in Silver','✅ Unlimited pet profiles','✅ Share & export reports','✅ Save favourite wash stations','✅ Priority support','✅ Early access to new features']
 };
 function renderTierDisplay() {
   const p = PRICES[activeTierTab][activeBilling];
@@ -2396,8 +2396,8 @@ function renderSubStatus() {
   const tierEmoji = {free:'🆓',bronze:'🥉',silver:'🥈',gold:'🥇'};
   const tierFeatures = {
     bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
-    silver: ['✅ Everything in Bronze','📍 Save up to 5 locations','🚗 Hot car reminder','📊 Area crime stats','🛡️ Area safety advisory'],
-    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support',]
+    silver: ['✅ Everything in Bronze','🛁 Nearby pet wash & dog parks','📍 Save up to 5 locations','🚗 Hot car reminder','📊 Area crime stats','🛡️ Area safety advisory'],
+    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support']
   };
   const BILLING_LABELS = {weekly:'Weekly',monthly:'Monthly',yearly:'Yearly'};
   let subBilling = 'monthly';
@@ -2484,8 +2484,8 @@ function updateSubDetail() {
   const billing = window._subBilling || 'monthly';
   const tierFeatures = {
     bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
-    silver: ['✅ Everything in Bronze','📍 Save up to 5 locations','🚗 Hot car reminder','📊 Area crime stats','🛡️ Area safety advisory'],
-    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support',]
+    silver: ['✅ Everything in Bronze','🛁 Nearby pet wash & dog parks','📍 Save up to 5 locations','🚗 Hot car reminder','📊 Area crime stats','🛡️ Area safety advisory'],
+    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support']
   };
   const p = PRICES[tier]?.[billing] || PRICES[tier]?.monthly;
   const nameEl = document.getElementById('sub-detail-name');
