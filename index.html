@@ -2489,15 +2489,15 @@ function renderSubStatus() {
       <span style="font-size:1.4rem;">${tierEmoji[currentTier]||'🆓'}</span>
       <div>
         <div style="font-size:0.92rem;font-weight:800;color:var(--c-slate);">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
-        <div style="font-size:0.72rem;color:#64748b;">${currentTier==='free'?'Upgrade to unlock all features':currentPlanPrice ? currentPlanPrice+' · Active' : 'Active subscription'}</div>
+        <div style="font-size:0.72rem;color:var(--c-muted);">${currentTier==='free'?'Upgrade to unlock all features':currentPlanPrice ? currentPlanPrice+' · Active' : 'Active subscription'}</div>
       </div>
     </div>
     <div style="font-size:0.8rem;font-weight:700;color:var(--c-slate);margin-bottom:8px;">Compare Plans</div>
-    <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:12px;padding:4px;margin-bottom:10px;" id="sub-tier-tabs">${tabsHtml}</div>
-    <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:10px;padding:3px;margin-bottom:10px;" id="sub-billing-tabs">
-      ${['weekly','monthly','yearly'].map(b=>`<button onclick="subBillingSelect('${b}',this)" style="flex:1;padding:5px 2px;border-radius:8px;border:none;font-size:0.72rem;font-weight:600;cursor:pointer;background:${b==='monthly'?'#fff':'none'};color:${b==='monthly'?'#1e293b':'#94a3b8'};box-shadow:none;transition:all 0.2s;">${BILLING_LABELS[b]}</button>`).join('')}
+    <div style="display:flex;gap:4px;background:var(--c-bg);border-radius:12px;padding:4px;margin-bottom:10px;" id="sub-tier-tabs">${tabsHtml}</div>
+    <div style="display:flex;gap:4px;background:var(--c-bg);border-radius:10px;padding:3px;margin-bottom:10px;" id="sub-billing-tabs">
+      ${['weekly','monthly','yearly'].map(b=>`<button onclick="subBillingSelect('${b}',this)" style="flex:1;padding:5px 2px;border-radius:8px;border:none;font-size:0.72rem;font-weight:600;cursor:pointer;background:${b==='monthly'?'var(--c-card)':'none'};color:${b==='monthly'?'var(--c-slate)':'#94a3b8'};box-shadow:none;transition:all 0.2s;">${BILLING_LABELS[b]}</button>`).join('')}
     </div>
-    <div id="sub-tier-detail" style="background:#fff;border-radius:10px;padding:12px;border:1px solid #e2e8f0;">
+    <div id="sub-tier-detail" style="background:var(--c-card);border-radius:10px;padding:12px;border:1px solid var(--c-border,#e2e8f0);">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
         <div id="sub-detail-name" style="font-weight:800;font-size:0.9rem;color:var(--c-slate);">${initialTier.charAt(0).toUpperCase()+initialTier.slice(1)}</div>
         <div>
@@ -2535,8 +2535,8 @@ function subBillingSelect(billing, btn) {
   const labels = {weekly:'Weekly',monthly:'Monthly',yearly:'Yearly'};
   document.querySelectorAll('#sub-billing-tabs button').forEach(b => {
     const isActive = b.textContent === labels[billing];
-    b.style.background = isActive ? '#fff' : 'none';
-    b.style.color = isActive ? '#1e293b' : '#94a3b8';
+    b.style.background = isActive ? 'var(--c-card)' : 'none';
+    b.style.color = isActive ? 'var(--c-slate)' : '#94a3b8';
     b.style.boxShadow = 'none';
   });
   updateSubDetail();
@@ -3822,7 +3822,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v328';
+const APP_VERSION = 'v329';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -4133,7 +4133,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=328').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=329').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
