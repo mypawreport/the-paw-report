@@ -1208,7 +1208,7 @@
           <div id="sub-status-display"></div>
           <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
             <button class="btn btn-primary" onclick="showScreen('paywall')" style="font-size:0.85rem;padding:11px" id="upgrade-btn">🚀 Upgrade Plan</button>
-            <button id="manage-sub-btn" onclick="manageSubscription()" style="background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:11px;font-size:0.85rem;font-weight:600;color:#fff;cursor:pointer;display:none;">⚙️ Manage / Cancel Subscription</button>
+            <button id="manage-sub-btn" onclick="manageSubscription()" style="background:var(--c-bg);border:1.5px solid var(--c-border);border-radius:10px;padding:11px;font-size:0.85rem;font-weight:600;color:var(--c-slate);cursor:pointer;display:none;">⚙️ Manage / Cancel Subscription</button>
           </div>
         </div>
       </div>
@@ -2506,8 +2506,8 @@ function renderSubStatus() {
     <div style="background:${tierColors[currentTier]||tierColors.free};border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
       <span style="font-size:1.4rem;">${tierEmoji[currentTier]||'🆓'}</span>
       <div>
-        <div style="font-size:0.92rem;font-weight:800;color:var(--c-slate);">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
-        <div style="font-size:0.72rem;color:var(--c-muted);">${currentTier==='free'?'Upgrade to unlock all features':currentPlanPrice ? currentPlanPrice+' · Active' : 'Active subscription'}</div>
+        <div style="font-size:0.92rem;font-weight:800;color:#1e293b;">${currentTier==='free'?'Free Plan':currentTier.charAt(0).toUpperCase()+currentTier.slice(1)+' Plan'}</div>
+        <div style="font-size:0.72rem;color:#475569;">${currentTier==='free'?'Upgrade to unlock all features':currentPlanPrice ? currentPlanPrice+' · Active' : 'Active subscription'}</div>
       </div>
     </div>
     <div style="font-size:0.8rem;font-weight:700;color:var(--c-slate);margin-bottom:8px;">Compare Plans</div>
@@ -3840,7 +3840,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v330';
+const APP_VERSION = 'v331';
 const WHATS_NEW = {
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -4151,7 +4151,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=330').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=331').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
