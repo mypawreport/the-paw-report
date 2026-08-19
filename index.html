@@ -340,7 +340,7 @@
   .theme-btn span { display:block; font-size:1.2rem; margin-bottom:4px; }
   .theme-btn.locked { opacity:0.45; cursor:not-allowed; }
   /* Theme variables */
-  /* ===== DARK THEME (Gold-tier only) ===== */
+  /* ===== DARK THEME (All Tiers) ===== */
   body.dark-mode {
     --accent: #0d9488; --accent2: #4a7c59; --glow: 13,148,136;
     --c-slate: #ffffff; --c-muted: rgba(255,255,255,0.65);
@@ -693,8 +693,7 @@
           <button class="tier-tab t-gold" onclick="selectTierTab('gold',this)">🥇 Gold</button>
         </div>
         <div class="billing-toggle">
-          <button class="billing-btn active" onclick="selectBilling('weekly',this)">Weekly</button>
-          <button class="billing-btn" onclick="selectBilling('monthly',this)">Monthly</button>
+          <button class="billing-btn active" onclick="selectBilling('monthly',this)">Monthly</button>
           <button class="billing-btn" onclick="selectBilling('yearly',this)">Yearly</button>
           
         </div>
@@ -1478,20 +1477,20 @@ let currentPetSize = 'medium', currentCoatType = 'medium', currentFaceShape = 'n
 let lastRawGroundTempF = null; // pristine, never-adjusted ground temp from backend
 let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, lastCrimeScore = null;
   var currentSearchType='wash';
-let isSignUp = false, setupSize = 'medium', activeBilling = 'weekly', activeTierTab = 'bronze';
+let isSignUp = false, setupSize = 'medium', activeBilling = 'monthly', activeTierTab = 'bronze';
 let notificationsEnabled = false;
 // Pricing data
 const PRICES = {
-  bronze: { weekly:{launch:'$0.99',regular:'$1.99',period:'/wk'}, monthly:{launch:'$2.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$24.99',regular:'$39.99',period:'/yr'} },
-  silver: { weekly:{launch:'$1.99',regular:'$3.99',period:'/wk'}, monthly:{launch:'$3.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$29.99',regular:'$49.99',period:'/yr'} },
-  gold:   { weekly:{launch:'$3.99',regular:'$6.99',period:'/wk'}, monthly:{launch:'$6.99',regular:'$12.99',period:'/mo'}, yearly:{launch:'$59.99',regular:'$99.99',period:'/yr'} }
+  bronze: { monthly:{launch:'$0.00',regular:'FREE',period:''}, yearly:{launch:'$0.00',regular:'FREE',period:''} },
+  silver: { monthly:{launch:'$5.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$44.99',regular:'$44.99',period:'/yr'} },
+  gold:   { monthly:{launch:'$9.99',regular:'$9.99',period:'/mo'}, yearly:{launch:'$79.99',regular:'$79.99',period:'/yr'} }
 };
 
 // Google Play Billing SKU mapping (for Android TWA)
 const PLAY_BILLING_SKUS = {
-  bronze: { weekly:'bronze_weekly', monthly:'bronze_monthly', yearly:'bronze_yearly' },
-  silver: { weekly:'silver_weekly', monthly:'silver_monthly', yearly:'silver_yearly' },
-  gold:   { weekly:'gold_weekly', monthly:'gold_monthly', yearly:'gold_yearly' }
+  bronze: {},
+  silver: { monthly:'silver_monthly', yearly:'silver_yearly' },
+  gold:   { monthly:'gold_monthly', yearly:'gold_yearly' }
 };
 
 // Detect if running inside Android TWA with Digital Goods API support
@@ -1643,9 +1642,9 @@ async function checkPlayBillingSubscriptions() {
 }
 
 const FEATURES = {
-  bronze: ['✅ Ground temperature checker','✅ Basic paw safety rating','✅ Area safety overview','✅ Best time to walk (today)','🔒 Nearby pet wash & dog parks','🔒 Walk history','🔒 Multiple pet profiles','🔒 Area crime stats'],
-  silver: ['✅ Everything in Bronze','✅ Nearby pet wash & dog parks','✅ Walk history (30 days)','✅ Multiple pet profiles (up to 5)','✅ Area crime stats','✅ Area safety advisory','🔒 Unlimited pet profiles','🔒 Share & export reports','🔒 Priority support'],
-  gold:   ['✅ Everything in Silver','✅ Unlimited pet profiles','✅ Share & export reports','✅ Save favourite wash stations','✅ Priority support','✅ Early access to new features']
+  bronze: ['✅ Real-time ground temp checker (MET Norway)','✅ Basic paw safety rating','✅ Surface type selector','✅ Area safety advisory (overview)','✅ Best time to walk (today)','✅ Places tab (teaser - maps locked)','✅ Dark theme'],
+  silver: ['✅ Everything in Bronze','✅ Full Places Locator (Google Maps)','✅ Pet wash & dog parks','✅ Area crime stats (FBI/Numbeo)','✅ Walk history (30 days)','✅ Up to 5 pet profiles','✅ Violet/Ocean themes','🔒 Unlimited pet profiles','🔒 Share & export reports'],
+  gold:   ['✅ Everything in Silver','✅ Unlimited pet profiles','✅ Share & export reports','✅ Android home screen widget','✅ Walk reminders','✅ 7-day multi-day forecast','✅ Custom push notifications (bark audio)','✅ Forest/Blush themes']
 };
 function renderTierDisplay() {
   const p = PRICES[activeTierTab][activeBilling];
@@ -1673,7 +1672,7 @@ function renderTierDisplay() {
         ${feats.map(f => `<li class="${f.startsWith('🔒')?'locked':''}"><span class="fi">${f.charAt(0)==='✅'?'✅':'🔒'}</span>${f.slice(2)}</li>`).join('')}
       </ul>
       <button class="btn btn-primary" onclick="handleSubscribe('${activeTierTab}','${activeBilling}')">
-        Start ${activeTierTab.charAt(0).toUpperCase()+activeTierTab.slice(1)} — ${isLaunch&&p.launch?p.launch:p.regular}${p.period}
+        ${activeTierTab==='bronze' ? 'Get Started Free' : 'Start ' + activeTierTab.charAt(0).toUpperCase()+activeTierTab.slice(1) + ' — ' + (isLaunch&&p.launch?p.launch:p.regular) + p.period}
       </button>
     </div>`;
 }
@@ -2164,7 +2163,7 @@ let dogProfiles = [];
 let selectedDogIds = []; // multi-select array
 let newDogSize = 'medium', newDogCoat = 'medium', newDogFace = 'normal';
 
-const DOG_LIMITS = { free: 1, bronze: 3, silver: 5, gold: 30 };
+const DOG_LIMITS = { free: 1, bronze: 1, silver: 5, gold: 999 };
 
 function loadDogProfiles() {
   try { dogProfiles = JSON.parse(localStorage.getItem('paw_dogs') || '[]'); } catch(_) { dogProfiles = []; }
@@ -2476,11 +2475,11 @@ function renderSubStatus() {
   const tierColors = {free:'#f1f5f9',bronze:'#fef3c7',silver:'#f1f5f9',gold:'#fefce8'};
   const tierEmoji = {free:'🆓',bronze:'🥉',silver:'🥈',gold:'🥇'};
   const tierFeatures = {
-    bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
-    silver: ['✅ Everything in Bronze','🛁 Nearby pet wash & dog parks','📍 Save up to 5 locations','🚗 Hot car reminder','📊 Area crime stats','🛡️ Area safety advisory'],
-    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support']
+    bronze: ['🌡️ Real-time ground temp (MET Norway)','🐾 Basic paw safety rating','🌍 Surface type selector','⚠️ Area safety overview','🕐 Best time to walk (today)','🗺️ Places tab (teaser mode)','🌑 Dark theme'],
+    silver: ['✅ Everything in Bronze','🗺️ Full Places Locator (Google Maps)','🛁 Pet wash & dog parks','📊 Area crime stats','📅 Walk history (30 days)','🐕 Up to 5 pet profiles','🎨 Violet/Ocean themes'],
+    gold:   ['✅ Everything in Silver','🐕 Unlimited pet profiles','📤 Share & export reports','🏠 Home screen widget','⏰ Walk reminders','🔮 7-day forecast','🔔 Custom push (bark audio)','🎨 Forest/Blush themes']
   };
-  const BILLING_LABELS = {weekly:'Weekly',monthly:'Monthly',yearly:'Yearly'};
+  const BILLING_LABELS = {monthly:'Monthly',yearly:'Yearly'};
   let subBilling = 'monthly';
   
   // Build subscription display
@@ -2514,7 +2513,7 @@ function renderSubStatus() {
     <div style="font-size:0.8rem;font-weight:700;color:var(--c-slate);margin-bottom:8px;">Compare Plans</div>
     <div style="display:flex;gap:4px;background:var(--c-bg);border-radius:12px;padding:4px;margin-bottom:10px;" id="sub-tier-tabs">${tabsHtml}</div>
     <div style="display:flex;gap:4px;background:var(--c-bg);border-radius:10px;padding:3px;margin-bottom:10px;" id="sub-billing-tabs">
-      ${['weekly','monthly','yearly'].map(b=>`<button onclick="subBillingSelect('${b}',this)" style="flex:1;padding:5px 2px;border-radius:8px;border:none;font-size:0.72rem;font-weight:600;cursor:pointer;background:${b==='monthly'?'var(--c-card)':'none'};color:${b==='monthly'?'var(--c-slate)':'#94a3b8'};box-shadow:none;transition:all 0.2s;">${BILLING_LABELS[b]}</button>`).join('')}
+      ${['monthly','yearly'].map(b=>`<button onclick="subBillingSelect('${b}',this)" style="flex:1;padding:5px 2px;border-radius:8px;border:none;font-size:0.72rem;font-weight:600;cursor:pointer;background:${b==='monthly'?'var(--c-card)':'none'};color:${b==='monthly'?'var(--c-slate)':'#94a3b8'};box-shadow:none;transition:all 0.2s;">${BILLING_LABELS[b]}</button>`).join('')}
     </div>
     <div id="sub-tier-detail" style="background:var(--c-card);border-radius:10px;padding:12px;border:1px solid var(--c-border,#e2e8f0);">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -2552,7 +2551,7 @@ function subTabSelect(tier, btn) {
 
 function subBillingSelect(billing, btn) {
   window._subBilling = billing;
-  const labels = {weekly:'Weekly',monthly:'Monthly',yearly:'Yearly'};
+  const labels = {monthly:'Monthly',yearly:'Yearly'};
   document.querySelectorAll('#sub-billing-tabs button').forEach(b => {
     const isActive = b.textContent === labels[billing];
     b.style.background = isActive ? 'var(--c-card)' : 'none';
@@ -2566,9 +2565,9 @@ function updateSubDetail() {
   const tier = window._subTier || 'bronze';
   const billing = window._subBilling || 'monthly';
   const tierFeatures = {
-    bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
-    silver: ['✅ Everything in Bronze','🛁 Nearby pet wash & dog parks','📍 Save up to 5 locations','🚗 Hot car reminder','📊 Area crime stats','🛡️ Area safety advisory'],
-    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support']
+    bronze: ['🌡️ Real-time ground temp (MET Norway)','🐾 Basic paw safety rating','🌍 Surface type selector','⚠️ Area safety overview','🕐 Best time to walk (today)','🗺️ Places tab (teaser mode)','🌑 Dark theme'],
+    silver: ['✅ Everything in Bronze','🗺️ Full Places Locator (Google Maps)','🛁 Pet wash & dog parks','📊 Area crime stats','📅 Walk history (30 days)','🐕 Up to 5 pet profiles','🎨 Violet/Ocean themes'],
+    gold:   ['✅ Everything in Silver','🐕 Unlimited pet profiles','📤 Share & export reports','🏠 Home screen widget','⏰ Walk reminders','🔮 7-day forecast','🔔 Custom push (bark audio)','🎨 Forest/Blush themes']
   };
   const p = PRICES[tier]?.[billing] || PRICES[tier]?.monthly;
   const nameEl = document.getElementById('sub-detail-name');
@@ -3842,8 +3841,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v332';
+const APP_VERSION = 'v333';
 const WHATS_NEW = {
+  'v333': '🎉 New freemium pricing! Bronze is now FREE. Silver $5.99/mo, Gold $9.99/mo. Weekly billing removed. Dark theme available to all users!',
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
   'v292': '🐾 AI-generated tier-colored paw prints in safety gauge.',
@@ -4153,7 +4153,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=332').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=333').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
