@@ -340,7 +340,7 @@
   .theme-btn span { display:block; font-size:1.2rem; margin-bottom:4px; }
   .theme-btn.locked { opacity:0.45; cursor:not-allowed; }
   /* Theme variables */
-  /* ===== DARK THEME (All Tiers) ===== */
+  /* ===== DARK THEME (Gold-tier only) ===== */
   body.dark-mode {
     --accent: #0d9488; --accent2: #4a7c59; --glow: 13,148,136;
     --c-slate: #ffffff; --c-muted: rgba(255,255,255,0.65);
@@ -693,7 +693,8 @@
           <button class="tier-tab t-gold" onclick="selectTierTab('gold',this)">🥇 Gold</button>
         </div>
         <div class="billing-toggle">
-          <button class="billing-btn active" onclick="selectBilling('monthly',this)">Monthly</button>
+          <button class="billing-btn active" onclick="selectBilling('weekly',this)">Weekly</button>
+          <button class="billing-btn" onclick="selectBilling('monthly',this)">Monthly</button>
           <button class="billing-btn" onclick="selectBilling('yearly',this)">Yearly</button>
           
         </div>
@@ -1477,20 +1478,20 @@ let currentPetSize = 'medium', currentCoatType = 'medium', currentFaceShape = 'n
 let lastRawGroundTempF = null; // pristine, never-adjusted ground temp from backend
 let lastLat = null, lastLon = null, lastPawData = null, lastCrimeData = null, lastCrimeScore = null;
   var currentSearchType='wash';
-let isSignUp = false, setupSize = 'medium', activeBilling = 'monthly', activeTierTab = 'bronze';
+let isSignUp = false, setupSize = 'medium', activeBilling = 'weekly', activeTierTab = 'bronze';
 let notificationsEnabled = false;
 // Pricing data
 const PRICES = {
-  bronze: { monthly:{launch:'$0.00',regular:'FREE',period:''}, yearly:{launch:'$0.00',regular:'FREE',period:''} },
-  silver: { monthly:{launch:'$5.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$44.99',regular:'$44.99',period:'/yr'} },
-  gold:   { monthly:{launch:'$9.99',regular:'$9.99',period:'/mo'}, yearly:{launch:'$79.99',regular:'$79.99',period:'/yr'} }
+  bronze: { weekly:{launch:'$0.99',regular:'$1.99',period:'/wk'}, monthly:{launch:'$2.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$24.99',regular:'$39.99',period:'/yr'} },
+  silver: { weekly:{launch:'$1.99',regular:'$3.99',period:'/wk'}, monthly:{launch:'$3.99',regular:'$5.99',period:'/mo'}, yearly:{launch:'$29.99',regular:'$49.99',period:'/yr'} },
+  gold:   { weekly:{launch:'$3.99',regular:'$6.99',period:'/wk'}, monthly:{launch:'$6.99',regular:'$12.99',period:'/mo'}, yearly:{launch:'$59.99',regular:'$99.99',period:'/yr'} }
 };
 
 // Google Play Billing SKU mapping (for Android TWA)
 const PLAY_BILLING_SKUS = {
-  bronze: {},
-  silver: { monthly:'silver_monthly', yearly:'silver_yearly' },
-  gold:   { monthly:'gold_monthly', yearly:'gold_yearly' }
+  bronze: { weekly:'bronze_weekly', monthly:'bronze_monthly', yearly:'bronze_yearly' },
+  silver: { weekly:'silver_weekly', monthly:'silver_monthly', yearly:'silver_yearly' },
+  gold:   { weekly:'gold_weekly', monthly:'gold_monthly', yearly:'gold_yearly' }
 };
 
 // Detect if running inside Android TWA with Digital Goods API support
@@ -1642,9 +1643,9 @@ async function checkPlayBillingSubscriptions() {
 }
 
 const FEATURES = {
-  bronze: ['✅ Real-time ground temp checker (MET Norway)','✅ Basic paw safety rating','✅ Surface type selector','✅ Area safety advisory (overview)','✅ Best time to walk (today)','✅ Places tab (teaser - maps locked)','✅ Dark theme'],
-  silver: ['✅ Everything in Bronze','✅ Full Places Locator (Google Maps)','✅ Pet wash & dog parks','✅ Area crime stats (FBI/Numbeo)','✅ Walk history (30 days)','✅ Up to 5 pet profiles','✅ Violet/Ocean themes','🔒 Unlimited pet profiles','🔒 Share & export reports'],
-  gold:   ['✅ Everything in Silver','✅ Unlimited pet profiles','✅ Share & export reports','✅ Android home screen widget','✅ Walk reminders','✅ 7-day multi-day forecast','✅ Custom push notifications (bark audio)','✅ Forest/Blush themes']
+  bronze: ['✅ Ground temperature checker','✅ Basic paw safety rating','✅ Area safety overview','✅ Best time to walk (today)','🔒 Nearby pet wash & dog parks','🔒 Walk history','🔒 Multiple pet profiles','🔒 Area crime stats'],
+  silver: ['✅ Everything in Bronze','✅ Nearby pet wash & dog parks','✅ Walk history (30 days)','✅ Multiple pet profiles (up to 5)','✅ Area crime stats','✅ Area safety advisory','🔒 Unlimited pet profiles','🔒 Share & export reports','🔒 Priority support'],
+  gold:   ['✅ Everything in Silver','✅ Unlimited pet profiles','✅ Share & export reports','✅ Save favourite wash stations','✅ Priority support','✅ Early access to new features']
 };
 function renderTierDisplay() {
   const p = PRICES[activeTierTab][activeBilling];
@@ -1672,7 +1673,7 @@ function renderTierDisplay() {
         ${feats.map(f => `<li class="${f.startsWith('🔒')?'locked':''}"><span class="fi">${f.charAt(0)==='✅'?'✅':'🔒'}</span>${f.slice(2)}</li>`).join('')}
       </ul>
       <button class="btn btn-primary" onclick="handleSubscribe('${activeTierTab}','${activeBilling}')">
-        ${activeTierTab==='bronze' ? 'Get Started Free' : 'Start ' + activeTierTab.charAt(0).toUpperCase()+activeTierTab.slice(1) + ' — ' + (isLaunch&&p.launch?p.launch:p.regular) + p.period}
+        Start ${activeTierTab.charAt(0).toUpperCase()+activeTierTab.slice(1)} — ${isLaunch&&p.launch?p.launch:p.regular}${p.period}
       </button>
     </div>`;
 }
@@ -2163,7 +2164,7 @@ let dogProfiles = [];
 let selectedDogIds = []; // multi-select array
 let newDogSize = 'medium', newDogCoat = 'medium', newDogFace = 'normal';
 
-const DOG_LIMITS = { free: 1, bronze: 1, silver: 5, gold: 999 };
+const DOG_LIMITS = { free: 1, bronze: 3, silver: 5, gold: 30 };
 
 function loadDogProfiles() {
   try { dogProfiles = JSON.parse(localStorage.getItem('paw_dogs') || '[]'); } catch(_) { dogProfiles = []; }
@@ -2475,11 +2476,11 @@ function renderSubStatus() {
   const tierColors = {free:'#f1f5f9',bronze:'#fef3c7',silver:'#f1f5f9',gold:'#fefce8'};
   const tierEmoji = {free:'🆓',bronze:'🥉',silver:'🥈',gold:'🥇'};
   const tierFeatures = {
-    bronze: ['🌡️ Real-time ground temp (MET Norway)','🐾 Basic paw safety rating','🌍 Surface type selector','⚠️ Area safety overview','🕐 Best time to walk (today)','🗺️ Places tab (teaser mode)','🌑 Dark theme'],
-    silver: ['✅ Everything in Bronze','🗺️ Full Places Locator (Google Maps)','🛁 Pet wash & dog parks','📊 Area crime stats','📅 Walk history (30 days)','🐕 Up to 5 pet profiles','🎨 Violet/Ocean themes'],
-    gold:   ['✅ Everything in Silver','🐕 Unlimited pet profiles','📤 Share & export reports','🏠 Home screen widget','⏰ Walk reminders','🔮 7-day forecast','🔔 Custom push (bark audio)','🎨 Forest/Blush themes']
+    bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
+    silver: ['✅ Everything in Bronze','🛁 Nearby pet wash & dog parks','📍 Save up to 5 locations','🚗 Hot car reminder','📊 Area crime stats','🛡️ Area safety advisory'],
+    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support']
   };
-  const BILLING_LABELS = {monthly:'Monthly',yearly:'Yearly'};
+  const BILLING_LABELS = {weekly:'Weekly',monthly:'Monthly',yearly:'Yearly'};
   let subBilling = 'monthly';
   
   // Build subscription display
@@ -2513,7 +2514,7 @@ function renderSubStatus() {
     <div style="font-size:0.8rem;font-weight:700;color:var(--c-slate);margin-bottom:8px;">Compare Plans</div>
     <div style="display:flex;gap:4px;background:var(--c-bg);border-radius:12px;padding:4px;margin-bottom:10px;" id="sub-tier-tabs">${tabsHtml}</div>
     <div style="display:flex;gap:4px;background:var(--c-bg);border-radius:10px;padding:3px;margin-bottom:10px;" id="sub-billing-tabs">
-      ${['monthly','yearly'].map(b=>`<button onclick="subBillingSelect('${b}',this)" style="flex:1;padding:5px 2px;border-radius:8px;border:none;font-size:0.72rem;font-weight:600;cursor:pointer;background:${b==='monthly'?'var(--c-card)':'none'};color:${b==='monthly'?'var(--c-slate)':'#94a3b8'};box-shadow:none;transition:all 0.2s;">${BILLING_LABELS[b]}</button>`).join('')}
+      ${['weekly','monthly','yearly'].map(b=>`<button onclick="subBillingSelect('${b}',this)" style="flex:1;padding:5px 2px;border-radius:8px;border:none;font-size:0.72rem;font-weight:600;cursor:pointer;background:${b==='monthly'?'var(--c-card)':'none'};color:${b==='monthly'?'var(--c-slate)':'#94a3b8'};box-shadow:none;transition:all 0.2s;">${BILLING_LABELS[b]}</button>`).join('')}
     </div>
     <div id="sub-tier-detail" style="background:var(--c-card);border-radius:10px;padding:12px;border:1px solid var(--c-border,#e2e8f0);">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -2551,7 +2552,7 @@ function subTabSelect(tier, btn) {
 
 function subBillingSelect(billing, btn) {
   window._subBilling = billing;
-  const labels = {monthly:'Monthly',yearly:'Yearly'};
+  const labels = {weekly:'Weekly',monthly:'Monthly',yearly:'Yearly'};
   document.querySelectorAll('#sub-billing-tabs button').forEach(b => {
     const isActive = b.textContent === labels[billing];
     b.style.background = isActive ? 'var(--c-card)' : 'none';
@@ -2565,9 +2566,9 @@ function updateSubDetail() {
   const tier = window._subTier || 'bronze';
   const billing = window._subBilling || 'monthly';
   const tierFeatures = {
-    bronze: ['🌡️ Real-time ground temp (MET Norway)','🐾 Basic paw safety rating','🌍 Surface type selector','⚠️ Area safety overview','🕐 Best time to walk (today)','🗺️ Places tab (teaser mode)','🌑 Dark theme'],
-    silver: ['✅ Everything in Bronze','🗺️ Full Places Locator (Google Maps)','🛁 Pet wash & dog parks','📊 Area crime stats','📅 Walk history (30 days)','🐕 Up to 5 pet profiles','🎨 Violet/Ocean themes'],
-    gold:   ['✅ Everything in Silver','🐕 Unlimited pet profiles','📤 Share & export reports','🏠 Home screen widget','⏰ Walk reminders','🔮 7-day forecast','🔔 Custom push (bark audio)','🎨 Forest/Blush themes']
+    bronze: ['🌡️ Ground temp & safety ratings','☀️ 3-day forecast','🔔 Dangerous condition alerts','📊 Basic safety reports'],
+    silver: ['✅ Everything in Bronze','🛁 Nearby pet wash & dog parks','📍 Save up to 5 locations','🚗 Hot car reminder','📊 Area crime stats','🛡️ Area safety advisory'],
+    gold:   ['✅ Everything in Silver','🏠 Home screen widget','🦮 Walk history (50 entries)','🐾 Walk reminders','🔮 7-day forecast','⭐ Priority support']
   };
   const p = PRICES[tier]?.[billing] || PRICES[tier]?.monthly;
   const nameEl = document.getElementById('sub-detail-name');
@@ -3559,8 +3560,8 @@ function updateWashUI(d) {
   var mapsUrl = 'https://www.google.com/maps/search/' + mapsQ;
   list.innerHTML = '<div style="text-align:center;padding:16px 8px">' +
     '<div style="font-size:2rem;margin-bottom:8px">🔍</div>' +
-    '<div style="font-weight:700;font-size:0.92rem;margin-bottom:6px;color:var(--c-slate)">No stations found in our database nearby</div>' +
-    '<div style="font-size:0.8rem;color:#64748b;margin-bottom:14px;line-height:1.5">OpenStreetMap data may be incomplete for your area — many truck stop pet washes (Love\'s, Pilot) and groomers aren\'t listed yet.</div>' +
+    '<div style="font-weight:700;font-size:0.92rem;margin-bottom:6px;color:var(--c-slate)">No pet wash stations found within 50 miles</div>' +
+    '<div style="font-size:0.8rem;color:#64748b;margin-bottom:14px;line-height:1.5">Your area may not have dedicated pet wash facilities nearby. Try searching Google Maps for groomers or truck stops with pet wash kiosks.</div>' +
     '<a href="' + mapsUrl + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:var(--accent,#0d9488);color:#fff;text-decoration:none;border-radius:12px;padding:11px 20px;font-size:0.86rem;font-weight:700;margin-bottom:10px;">📍 Search Google Maps</a>' +
     '<br><a href="https://www.google.com/maps/search/Love\'s+Travel+Stop+pet+wash+near+me" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:var(--c-bg);border:1.5px solid var(--c-border);color:var(--c-muted);text-decoration:none;border-radius:10px;padding:9px 16px;font-size:0.8rem;font-weight:600;margin-top:6px;">🚛 Find Love\'s Pet Wash Kiosks</a>' +
     '</div>';
@@ -3651,7 +3652,7 @@ async function fetchWashStations(lat, lon) {
     const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({latitude:lat, longitude:lon, radius:40234, searchType:currentSearchType, sessionToken:token})
+      body: JSON.stringify({latitude:lat, longitude:lon, radius:80467, searchType:currentSearchType, sessionToken:token})
     });
     const d = await res.json();
     if (!res.ok) {
@@ -3679,7 +3680,7 @@ async function fetchAll(lat, lon) {
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize,coatType:currentCoatType,faceShape:currentFaceShape})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:40234,searchType:currentSearchType,sessionToken:localStorage.getItem('paw_session_token')})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:80467,searchType:currentSearchType,sessionToken:localStorage.getItem('paw_session_token')})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
   ]);
   showResultCards(true);
@@ -3843,7 +3844,7 @@ function stopTracking() {
 // What's New toast
 const APP_VERSION = 'v333';
 const WHATS_NEW = {
-  'v333': '🎉 New freemium pricing! Bronze is now FREE. Silver $5.99/mo, Gold $9.99/mo. Weekly billing removed. Dark theme available to all users!',
+    'v333': '📍 Pet wash search now covers 50 miles (was 25), better filtering for rural areas, and updated empty message.'
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
   'v292': '🐾 AI-generated tier-colored paw prints in safety gauge.',
