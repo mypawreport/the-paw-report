@@ -1077,6 +1077,16 @@
           <button id="search-type-wash" onclick="switchSearchType('wash')" style="flex:1;padding:10px;border-radius:10px;border:2px solid var(--accent,#0d9488);background:var(--accent,#0d9488);color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;">🛁 Pet Wash</button>
           <button id="search-type-park" onclick="switchSearchType('park')" style="flex:1;padding:10px;border-radius:10px;border:2px solid #e2e8f0;background:transparent;color:#64748b;font-size:0.85rem;font-weight:700;cursor:pointer;">🐕 Dog Parks</button>
         </div>
+        <div id="route-search-section" style="margin-bottom:12px;padding:10px;border-radius:10px;background:rgba(0,0,0,0.04);border:1px solid var(--c-border);">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <input type="checkbox" id="route-toggle" onchange="toggleRouteSearch()" style="accent-color:var(--accent,#0d9488);cursor:pointer;width:18px;height:18px;">
+            <label for="route-toggle" style="font-size:0.82rem;font-weight:600;cursor:pointer;color:var(--c-slate,#1e293b);">🗺️ Search along a route</label>
+          </div>
+          <div id="route-destination-wrap" style="display:none;">
+            <input type="text" id="route-destination" placeholder="Enter destination city or address..." style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--c-border);font-size:0.85rem;box-sizing:border-box;margin-bottom:8px;" onkeydown="if(event.key==='Enter')searchRouteStations()">
+            <button onclick="searchRouteStations()" style="width:100%;padding:10px;border-radius:10px;border:none;background:var(--accent,#0d9488);color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;">🔍 Search Along Route</button>
+          </div>
+        </div>
         <div class="loading-inline" id="wash-loading">Run your report first to find nearby stations.</div>
         <div id="wash-content" style="display:none;"><div id="wash-map-container" style="display:none;margin-bottom:12px;"><iframe id="wash-map-iframe" style="width:100%;height:200px;border:none;border-radius:12px;" loading="lazy" allowfullscreen></iframe></div><div class="stations-list" id="stations-list"></div></div>
       </div>
@@ -3546,6 +3556,57 @@ function renderSelectedDay() {
     }
   }
 }
+
+let routeDestinationLat = null, routeDestinationLng = null;
+
+function toggleRouteSearch() {
+  const toggle = document.getElementById('route-toggle');
+  const wrap = document.getElementById('route-destination-wrap');
+  if (toggle.checked) {
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
+    routeDestinationLat = null;
+    routeDestinationLng = null;
+    document.getElementById('route-destination').value = '';
+    // Re-run normal search
+    if (lastLat && lastLon) fetchWashStations(lastLat, lastLon);
+  }
+}
+
+async function searchRouteStations() {
+  const dest = document.getElementById('route-destination').value.trim();
+  if (!dest) return;
+  if (!lastLat || !lastLon) {
+    document.getElementById('wash-loading').style.display = 'block';
+    document.getElementById('wash-loading').textContent = '⚠️ Run your report first to set your starting location.';
+    document.getElementById('wash-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('wash-loading').style.display = 'block';
+  document.getElementById('wash-loading').textContent = '🗺️ Geocoding destination...';
+  document.getElementById('wash-content').style.display = 'none';
+  
+  try {
+    // Geocode the destination using Google Maps Geocoding API
+    const geoUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(dest) + '&key=REDACTED_API_KEY';
+    const geoRes = await fetch(geoUrl);
+    const geoData = await geoRes.json();
+    if (geoData.status !== 'OK' || !geoData.results.length) {
+      document.getElementById('wash-loading').textContent = '❌ Could not find that destination. Try entering a city name or full address.';
+      return;
+    }
+    const loc = geoData.results[0].geometry.location;
+    routeDestinationLat = loc.lat;
+    routeDestinationLng = loc.lng;
+    
+    document.getElementById('wash-loading').textContent = '🗺️ Searching along route to ' + geoData.results[0].formatted_address.split(',')[0] + '...';
+    fetchWashStations(lastLat, lastLon);
+  } catch(e) {
+    document.getElementById('wash-loading').textContent = '❌ Error finding route. Please try again.';
+  }
+}
+
 function updateWashUI(d) {
   document.getElementById('wash-loading').style.display='none';
   document.getElementById('wash-content').style.display='block';
@@ -3560,7 +3621,7 @@ function updateWashUI(d) {
   var mapsUrl = 'https://www.google.com/maps/search/' + mapsQ;
   list.innerHTML = '<div style="text-align:center;padding:16px 8px">' +
     '<div style="font-size:2rem;margin-bottom:8px">🔍</div>' +
-    '<div style="font-weight:700;font-size:0.92rem;margin-bottom:6px;color:var(--c-slate)">No pet wash stations found within 50 miles</div>' +
+    '<div style="font-weight:700;font-size:0.92rem;margin-bottom:6px;color:var(--c-slate)">No stations found along this route</div>' +
     '<div style="font-size:0.8rem;color:#64748b;margin-bottom:14px;line-height:1.5">Your area may not have dedicated pet wash facilities nearby. Try searching Google Maps for groomers or truck stops with pet wash kiosks.</div>' +
     '<a href="' + mapsUrl + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:var(--accent,#0d9488);color:#fff;text-decoration:none;border-radius:12px;padding:11px 20px;font-size:0.86rem;font-weight:700;margin-bottom:10px;">📍 Search Google Maps</a>' +
     '<br><a href="https://www.google.com/maps/search/Love\'s+Travel+Stop+pet+wash+near+me" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:var(--c-bg);border:1.5px solid var(--c-border);color:var(--c-muted);text-decoration:none;border-radius:10px;padding:9px 16px;font-size:0.8rem;font-weight:600;margin-top:6px;">🚛 Find Love\'s Pet Wash Kiosks</a>' +
@@ -3573,8 +3634,9 @@ function updateWashUI(d) {
     const links=[s.website?`<a class="station-link" href="${s.website}" target="_blank">🌐 Website</a>`:'',s.phone?`<a class="station-link" href="tel:${s.phone}">📞 ${s.phone}</a>`:'',`<a class="station-link" href="${mapsUrl}" target="_blank">🗺 Directions</a>`].filter(Boolean).join('');
     const typeEmoji = s.type.startsWith('🚛') ? '🚛' : s.type.startsWith('✂️') ? '✂️' : s.type.startsWith('🛒') ? '🛒' : '🐾';
     const noteHtml = s.note ? `<div style="font-size:0.7rem;color:#d97706;margin-top:3px;line-height:1.4">⚠️ ${s.note}</div>` : '';
-    const distLabel = s.distanceMiles!=null ? s.distanceMiles+' mi' : '';
-    return `<div class="station-item"><div class="station-icon">${typeEmoji}</div><div class="station-info"><div class="station-name">${s.name}</div><div class="station-type">${s.type}</div>${s.address?`<div class="station-type" style="color:#94a3b8">${s.address}</div>`:''}<div class="station-meta">${tags.map(t=>`<span class="station-tag">${t}</span>`).join('')}</div>${noteHtml}${links?`<div class="station-links">${links}</div>`:''}</div><div class="station-dist">${distLabel}</div></div>`;
+    const distLabel = s.routeMile!=null ? '📍 Mile '+s.routeMile : (s.distanceMiles!=null ? s.distanceMiles+' mi' : '');
+    const routeOffLabel = s.routeMile!=null && s.distanceMiles!=null ? '<div style="font-size:0.68rem;color:#94a3b8;margin-top:1px">'+s.distanceMiles+'mi off route</div>' : '';
+    return `<div class="station-item"><div class="station-icon">${typeEmoji}</div><div class="station-info"><div class="station-name">${s.name}</div><div class="station-type">${s.type}</div>${s.address?`<div class="station-type" style="color:#94a3b8">${s.address}</div>`:''}<div class="station-meta">${tags.map(t=>`<span class="station-tag">${t}</span>`).join('')}</div>${noteHtml}${links?`<div class="station-links">${links}</div>`:''}</div><div class="station-dist">${distLabel}${routeOffLabel}</div></div>`;
   }).join('');
 }
 function buildShareText() {
@@ -3652,7 +3714,7 @@ async function fetchWashStations(lat, lon) {
     const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({latitude:lat, longitude:lon, radius:80467, searchType:currentSearchType, sessionToken:token})
+      body: JSON.stringify(Object.assign({latitude:lat, longitude:lon, radius:80467, searchType:currentSearchType, sessionToken:token}, routeDestinationLat ? {destinationLat:routeDestinationLat, destinationLng:routeDestinationLng} : {}))
     });
     const d = await res.json();
     if (!res.ok) {
@@ -3680,7 +3742,7 @@ async function fetchAll(lat, lon) {
   const [pawRes, crimeRes, washRes, walkRes] = await Promise.allSettled([
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPawSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,petSize:currentPetSize,coatType:currentCoatType,faceShape:currentFaceShape})}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getCrimeSafety',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon})}),
-    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,radius:80467,searchType:currentSearchType,sessionToken:localStorage.getItem('paw_session_token')})}),
+    fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({latitude:lat,longitude:lon,radius:80467,searchType:currentSearchType,sessionToken:localStorage.getItem('paw_session_token')},routeDestinationLat?{destinationLat:routeDestinationLat,destinationLng:routeDestinationLng}:{}))}),
     fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getBestWalkTime',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({latitude:lat,longitude:lon,timezone:tz,crimeScore:lastCrimeScore,days:7})}),
   ]);
   showResultCards(true);
@@ -3842,8 +3904,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v333';
+const APP_VERSION = 'v334';
 const WHATS_NEW = {
+    'v334': '🗺️ Route search! Find pet wash & dog parks along your travel route. Just enter your destination and see stops in driving order. Also: improved ground temp accuracy.',
     'v333': '📍 Pet wash search now covers 50 miles (was 25), better filtering for rural areas, and updated empty message.',
     'v294': '🐾 Fixed login bug, swapped Warm/Hot colors, normalized paw sizes.',
     'v293': '🐾 Scrubbed all edge lighting references from UI and disclaimer.',
@@ -4154,7 +4217,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=333').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=334').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
