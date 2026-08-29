@@ -3588,19 +3588,21 @@ async function searchRouteStations() {
   document.getElementById('wash-content').style.display = 'none';
   
   try {
-    // Geocode the destination using Google Maps Geocoding API
-    const geoUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(dest) + '&key=REDACTED_API_KEY';
-    const geoRes = await fetch(geoUrl);
+    // Geocode the destination via our own backend (never expose API key client-side)
+    const geoRes = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/geocodeAddress', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({address: dest})
+    });
     const geoData = await geoRes.json();
-    if (geoData.status !== 'OK' || !geoData.results.length) {
+    if (!geoRes.ok || geoData.error) {
       document.getElementById('wash-loading').textContent = '❌ Could not find that destination. Try entering a city name or full address.';
       return;
     }
-    const loc = geoData.results[0].geometry.location;
-    routeDestinationLat = loc.lat;
-    routeDestinationLng = loc.lng;
+    routeDestinationLat = geoData.lat;
+    routeDestinationLng = geoData.lng;
     
-    document.getElementById('wash-loading').textContent = '🗺️ Searching along route to ' + geoData.results[0].formatted_address.split(',')[0] + '...';
+    document.getElementById('wash-loading').textContent = '🗺️ Searching along route to ' + geoData.formattedAddress.split(',')[0] + '...';
     fetchWashStations(lastLat, lastLon);
   } catch(e) {
     document.getElementById('wash-loading').textContent = '❌ Error finding route. Please try again.';
