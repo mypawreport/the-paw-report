@@ -3023,12 +3023,14 @@ function selectSize(size, el) {
 }
 // Surface type adjustment
 let currentSurface = 'asphalt';
-const SURFACE_OFFSETS = {
-  asphalt:  0,    // baseline
-  concrete: -4,   // concrete stays a few degrees cooler than asphalt
-  dirt:     -7,   // dirt/sand cooler still
-  grass:    -10,  // grass coolest — transpiration + no heat absorption
-  shaded:   -8    // shaded areas lose direct solar gain
+// Surface solar retention: fraction of solar gain retained by each surface type.
+// asphalt = 1.0 (full sun, baseline). shaded = 0 (no direct sun). grass ~0.1 (transpiration cooling).
+const SURFACE_SOLAR_FACTOR = {
+  asphalt:  1.0,  // full sun baseline — absorbs max heat
+  concrete: 0.80,  // slightly less absorptive than asphalt
+  dirt:     0.50,  // partial absorption, loose surface
+  grass:    0.10,  // transpiration keeps grass near air temp
+  shaded:   0.0    // no direct solar gain — ground temp ≈ air temp
 };
 const SURFACE_LABELS = {
   asphalt: '🖤 Asphalt', concrete: '⬜ Concrete', dirt: '🟫 Dirt/Sand', grass: '🌿 Grass', shaded: '🌳 Shaded'
@@ -3079,7 +3081,6 @@ function syncInlineSurface(surface) {
   });
 }
 function applyPawUIWithSurface(d) {
-  const offset = SURFACE_OFFSETS[currentSurface] || 0;
   // CRITICAL: only capture a NEW pristine raw value when this data came fresh from the
   // backend (has no _isAdjusted flag). Never re-derive "raw" from an already-adjusted object —
   // that caused compounding offset bugs (e.g. -56°F after a few surface switches).
@@ -3087,7 +3088,17 @@ function applyPawUIWithSurface(d) {
     lastRawGroundTempF = d.groundTempF != null ? d.groundTempF : (d.airTempF || 70);
   }
   const rawGround = lastRawGroundTempF != null ? lastRawGroundTempF : (d.airTempF || 70);
-  const adjustedGround = Math.round(rawGround + offset);
+  const airTemp = d.airTempF || 70;
+  // Calculate solar component = total heating above air temp (solar gain - wind cooling + humidity penalty)
+  const solarComponent = Math.max(0, rawGround - airTemp);
+  // Apply surface-specific solar retention factor instead of flat offset
+  // This ensures shaded/grass surfaces don't show inflated temps from full-sun solar gain
+  const factor = SURFACE_SOLAR_FACTOR[currentSurface] !== undefined ? SURFACE_SOLAR_FACTOR[currentSurface] : 1.0;
+  // For shaded (factor=0): ground temp = airTemp + 2 (small residual like nighttime)
+  // For grass (factor=0.1): ground temp = airTemp + 10% of solar gain + 2
+  // For other surfaces: ground temp = airTemp + (factor × solar gain)
+  const residual = (factor === 0) ? 2 : 0; // small residual for fully shaded surfaces
+  const adjustedGround = Math.round(airTemp + (solarComponent * factor) + residual);
   const adjusted = { ...d, groundTempF: adjustedGround, _isAdjusted: true };
   // Recalculate rating based on adjusted temp
   adjusted.rating = getRatingFromTemp(adjustedGround, currentPetSize, currentCoatType, currentFaceShape);
@@ -3906,7 +3917,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v335';
+const APP_VERSION = 'v336';
 const WHATS_NEW = {
     'v334': '🗺️ Route search along your travel route.',
     'v335': '🐄 Tractor Supply locations now included in pet wash search. Route-mile display fix. Security & performance improvements.',
@@ -4220,7 +4231,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=335').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=336').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
