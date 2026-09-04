@@ -1478,7 +1478,6 @@ const LIFETIME_CODES = {
 const SINGLE_USE_LIFETIME_CODES = {
   'PAW-JSS-8WK4GQ': true
 };
-};
 const LS_LAST_EMAIL = 'paw_last_email';
 const LS_PREFS      = 'paw_prefs';
 const LS_USER2      = 'pawreport_user';
@@ -3938,7 +3937,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v337';
+const APP_VERSION = 'v338';
 const WHATS_NEW = {
     'v334': '🗺️ Route search along your travel route.',
     'v335': '🐄 Tractor Supply locations now included in pet wash search. Route-mile display fix. Security & performance improvements.',
@@ -4252,7 +4251,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=337').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=338').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
