@@ -1471,7 +1471,13 @@ const LIFETIME_CODES = {
   'PAW-SLV-4OEZSZ': { name: 'Husband Silver', tier: 'silver' },
   'PAW-SLV-I6ZD9T': { name: 'Daughter Silver', tier: 'silver' },
   'PAW-GOLD-RSQ31G': { name: 'Gold Lifetime', tier: 'gold' },
-  'PAW-GOLD-APRKY': { name: 'April Kentucky', tier: 'gold' }
+  'PAW-GOLD-APRKY': { name: 'April Kentucky', tier: 'gold' },
+  'PAW-JSS-8WK4GQ': { name: 'Jesse', tier: 'gold' }
+};
+// Single-use lifetime codes — validated server-side, one redemption only
+const SINGLE_USE_LIFETIME_CODES = {
+  'PAW-JSS-8WK4GQ': true
+};
 };
 const LS_LAST_EMAIL = 'paw_last_email';
 const LS_PREFS      = 'paw_prefs';
@@ -1790,12 +1796,27 @@ function handleCheckoutReturn() {
   }
 }
 function startFree() { loadMainScreen(); }
-function applyReferral(inputId) {
+async function applyReferral(inputId) {
   const val = document.getElementById(inputId).value.trim().toUpperCase();
   const successId = inputId === 'paywall-referral' ? 'paywall-referral-success' : 'setup-referral-success';
   // Family lifetime codes — uses global LIFETIME_CODES
   const usedCodes = JSON.parse(localStorage.getItem('paw_used_codes') || '[]');
   if (LIFETIME_CODES[val]) {
+    // Single-use codes must be validated server-side before granting (one redemption only)
+    if (SINGLE_USE_LIFETIME_CODES[val]) {
+      let chk;
+      try {
+        const r = await fetch(AUTH_API + '/redeemLifetimeCode', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: val, sessionToken: localStorage.getItem(LS_TOKEN) || '' })
+        });
+        chk = await r.json().catch(() => ({}));
+      } catch (_) { chk = { ok: false, error: 'Could not verify code — check your connection and try again.' }; }
+      if (!chk.ok) {
+        showToast('⚠️ ' + (chk.error || 'Code could not be redeemed.'), 4500);
+        return;
+      }
+    }
     // Lifetime/family codes always work — no used-code block
     const codeInfo = LIFETIME_CODES[val];
     const grantedTier = codeInfo.tier || 'bronze';
@@ -3917,7 +3938,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v336';
+const APP_VERSION = 'v337';
 const WHATS_NEW = {
     'v334': '🗺️ Route search along your travel route.',
     'v335': '🐄 Tractor Supply locations now included in pet wash search. Route-mile display fix. Security & performance improvements.',
@@ -4231,7 +4252,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=336').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=337').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
