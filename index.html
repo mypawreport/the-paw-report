@@ -3742,6 +3742,28 @@ function switchSearchType(type) {
 
 async function fetchWashStations(lat, lon) {
   const token = localStorage.getItem('paw_session_token');
+  // Refresh GPS before searching — wash/park searches must run from where the user
+  // actually is, not from the (possibly stale/low-accuracy) coords of the last report run.
+  try {
+    const fresh = await new Promise((resolve) => {
+      if (!navigator.geolocation) { resolve(null); return; }
+      navigator.geolocation.getCurrentPosition(
+        p => resolve({lat: p.coords.latitude, lon: p.coords.longitude}),
+        () => resolve(null),
+        {timeout: 8000, enableHighAccuracy: true, maximumAge: 15000}
+      );
+    });
+    if (fresh && typeof fresh.lat === 'number' && isFinite(fresh.lat)) {
+      const movedMeters = Math.hypot((fresh.lat - lat) * 111000, (fresh.lon - lon) * 89000);
+      if (movedMeters > 800) { // moved more than ~half a mile since last fix
+        lastLat = fresh.lat; lastLon = fresh.lon;
+        try { localStorage.setItem('paw_last_coords', JSON.stringify({lat: fresh.lat, lon: fresh.lon, ts: Date.now()})); } catch(_) {}
+        var _washLocLine = document.getElementById('location-info');
+        if (_washLocLine) _washLocLine.textContent = '📍 ' + fresh.lat.toFixed(4) + ', ' + fresh.lon.toFixed(4);
+        lat = fresh.lat; lon = fresh.lon;
+      }
+    }
+  } catch(_) { /* fall through with existing coords */ }
   try {
     const res = await fetch('https://base44.app/api/apps/6a1c6fbdd48b351a9eb7455e/functions/getPetWashStations', {
       method: 'POST',
@@ -3936,7 +3958,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v339';
+const APP_VERSION = 'v340';
 const WHATS_NEW = {
     'v334': '🗺️ Route search along your travel route.',
     'v335': '🐄 Tractor Supply locations now included in pet wash search. Route-mile display fix. Security & performance improvements.',
@@ -4250,7 +4272,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=339').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=340').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
