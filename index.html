@@ -739,7 +739,7 @@
           <button class="size-btn" data-surface="concrete" onclick="selectSurface('concrete',this)">⬜ Concrete</button>
           <button class="size-btn" data-surface="dirt" onclick="selectSurface('dirt',this)">🟫 Dirt/Sand</button>
           <button class="size-btn" data-surface="grass" onclick="selectSurface('grass',this)">🌿 Grass</button>
-          <button class="size-btn" data-surface="shaded" onclick="selectSurface('shaded',this)">🌳 Shaded</button>
+          <button class="size-btn" id="shade-toggle-top" onclick="toggleShade()">🌳 Shade</button>
         </div>
       </div>
       <div class="card" id="loading-card" style="display:none;text-align:center;">
@@ -844,7 +844,7 @@
             <button onclick="selectSurfaceInline('concrete')" id="isrf-concrete" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">⬜ Concrete</button>
             <button onclick="selectSurfaceInline('dirt')" id="isrf-dirt" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🟫 Dirt/Sand</button>
             <button onclick="selectSurfaceInline('grass')" id="isrf-grass" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🌿 Grass</button>
-            <button onclick="selectSurfaceInline('shaded')" id="isrf-shaded" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🌳 Shaded</button>
+            <button onclick="toggleShade()" id="isrf-shade" style="padding:6px 12px;border-radius:20px;font-size:0.72rem;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);color:#fff;cursor:pointer;">🌳 Shade</button>
           </div>
           <div class="stat-box"><div class="stat-value" id="air-temp">--°F</div><div class="stat-label">Air Temp</div></div>
           <div class="stat-box"><div class="stat-value" id="uv-index">--</div><div class="stat-label">UV Index</div></div>
@@ -3043,6 +3043,39 @@ function selectSize(size, el) {
 }
 // Surface type adjustment
 let currentSurface = 'asphalt';
+// Shade toggle — pairs with the selected ground type: Asphalt Shaded, Concrete Shaded,
+// Grass Shaded, etc. Persisted so it survives refreshes like the surface itself.
+let shadeOn = (localStorage.getItem('paw_shade_on') === '1');
+// Shaded variant of each surface: no direct solar gain, but the material still
+// releases a little of its stored subsurface heat (asphalt holds heat longest,
+// grass in shade is essentially air temp).
+const SHADED_SOLAR_FACTOR = { asphalt: 0.15, concrete: 0.10, dirt: 0.06, grass: 0.03 };
+function effectiveSurface() { return currentSurface === 'shaded' ? 'asphalt' : (currentSurface || 'asphalt'); }
+function getSurfaceName() {
+  const base = SURFACE_LABELS[effectiveSurface()] || effectiveSurface();
+  return (shadeOn || currentSurface === 'shaded') ? base + ' 🌳' : base;
+}
+function toggleShade() {
+  shadeOn = !shadeOn;
+  localStorage.setItem('paw_shade_on', shadeOn ? '1' : '0');
+  if (currentSurface === 'shaded') currentSurface = 'asphalt'; // migrate legacy selection
+  updateShadeButtons();
+  if (typeof lastPawData !== 'undefined' && lastPawData) applyPawUIWithSurface(lastPawData);
+  else { const lbl = document.getElementById('surface-label'); if (lbl) lbl.textContent = getSurfaceName(); }
+}
+function updateShadeButtons() {
+  const top = document.getElementById('shade-toggle-top');
+  if (top) top.classList.toggle('active', shadeOn);
+  const inl = document.getElementById('isrf-shade');
+  if (inl) {
+    if (shadeOn) {
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0d9488';
+      inl.style.background = accent; inl.style.borderColor = accent; inl.style.color = '#fff'; inl.style.fontWeight = '700';
+    } else {
+      inl.style.background = ''; inl.style.borderColor = '#e2e8f0'; inl.style.color = '#374151'; inl.style.fontWeight = '400';
+    }
+  }
+}
 // Surface solar retention: fraction of solar gain retained by each surface type.
 // asphalt = 1.0 (full sun, baseline). shaded = 0 (no direct sun). grass ~0.1 (transpiration cooling).
 const SURFACE_SOLAR_FACTOR = {
@@ -3056,19 +3089,21 @@ const SURFACE_LABELS = {
   asphalt: '🖤 Asphalt', concrete: '⬜ Concrete', dirt: '🟫 Dirt/Sand', grass: '🌿 Grass', shaded: '🌳 Shaded'
 };
 function selectSurface(surface, el) {
+  if (surface === 'shaded') { toggleShade(); return; } // legacy guard
   currentSurface = surface;
   // Update top selector button active states
   document.querySelectorAll('#surface-selector .size-btn').forEach(b => b.classList.remove('active'));
   if (el) el.classList.add('active');
-  // Also sync inline selector
+  // Also sync inline selector (also restores shade-toggle highlight)
   syncInlineSurface(surface);
   // Update surface label on stat box
   const lbl = document.getElementById('surface-label');
-  if (lbl) lbl.textContent = SURFACE_LABELS[surface] || surface;
+  if (lbl) lbl.textContent = getSurfaceName();
   // Re-render with adjusted temp if we have data
   if (lastPawData) applyPawUIWithSurface(lastPawData);
 }
 function selectSurfaceInline(surface) {
+  if (surface === 'shaded') { toggleShade(); return; } // legacy guard
   currentSurface = surface;
   // Sync top selector too
   document.querySelectorAll('#surface-selector .size-btn').forEach(b => {
@@ -3077,13 +3112,14 @@ function selectSurfaceInline(surface) {
   syncInlineSurface(surface);
   // Update surface label on stat box
   const lbl = document.getElementById('surface-label');
-  if (lbl) lbl.textContent = SURFACE_LABELS[surface] || surface;
+  if (lbl) lbl.textContent = getSurfaceName();
   // Re-render with adjusted temp if we have data
   if (lastPawData) applyPawUIWithSurface(lastPawData);
 }
 function syncInlineSurface(surface) {
   const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0d9488';
-  const surfaces = ['asphalt','concrete','dirt','grass','shaded'];
+  const surfaces = ['asphalt','concrete','dirt','grass'];
+  updateShadeButtons();
   surfaces.forEach(s => {
     const btn = document.getElementById('isrf-' + s);
     if (!btn) return;
@@ -3113,11 +3149,15 @@ function applyPawUIWithSurface(d) {
   const solarComponent = Math.max(0, rawGround - airTemp);
   // Apply surface-specific solar retention factor instead of flat offset
   // This ensures shaded/grass surfaces don't show inflated temps from full-sun solar gain
-  const factor = SURFACE_SOLAR_FACTOR[currentSurface] !== undefined ? SURFACE_SOLAR_FACTOR[currentSurface] : 1.0;
-  // For shaded (factor=0): ground temp = airTemp + 2 (small residual like nighttime)
-  // For grass (factor=0.1): ground temp = airTemp + 10% of solar gain + 2
-  // For other surfaces: ground temp = airTemp + (factor × solar gain)
-  const residual = (factor === 0) ? 2 : 0; // small residual for fully shaded surfaces
+  const isShaded = shadeOn || currentSurface === 'shaded';
+  // Shade toggle: surface keeps only a sliver of the solar component (stored subsurface
+  // heat radiating back) — asphalt holds the most, grass in shade essentially none.
+  // Full sun: per-surface retention factor as before.
+  const factor = isShaded
+    ? (SHADED_SOLAR_FACTOR[effectiveSurface()] !== undefined ? SHADED_SOLAR_FACTOR[effectiveSurface()] : 0.10)
+    : (SURFACE_SOLAR_FACTOR[currentSurface] !== undefined ? SURFACE_SOLAR_FACTOR[currentSurface] : 1.0);
+  // Small residual for shaded surfaces (ground in shade runs slightly above air temp)
+  const residual = (isShaded || factor === 0) ? 2 : 0;
   const adjustedGround = Math.round(airTemp + (solarComponent * factor) + residual);
   const adjusted = { ...d, groundTempF: adjustedGround, _isAdjusted: true };
   // Recalculate rating based on adjusted temp
@@ -3146,7 +3186,7 @@ function applyPawUIWithSurface(d) {
   if (trayWidgetEnabled) showTrayNotification();
   // Update surface label
   const lbl = document.getElementById('surface-label');
-  if (lbl) lbl.textContent = SURFACE_LABELS[currentSurface] || currentSurface;
+  if (lbl) lbl.textContent = getSurfaceName();
 }
 function getRatingFromTemp(tempF, size, coat, face) {
   coat = coat || currentCoatType || 'medium';
@@ -3972,7 +4012,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v341';
+const APP_VERSION = 'v342';
 const WHATS_NEW = {
     'v334': '🗺️ Route search along your travel route.',
     'v335': '🐄 Tractor Supply locations now included in pet wash search. Route-mile display fix. Security & performance improvements.',
@@ -4286,7 +4326,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=341').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=342').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
@@ -4557,7 +4597,7 @@ function logCurrentWalk() {
   if (!lastPawData) { showToast('Run a report first to log a walk.'); return; }
   var hist = getWalkHistory();
   var loc = document.getElementById('report-location-text') ? document.getElementById('report-location-text').textContent : '';
-  var surf = currentSurface || 'asphalt';
+  var surf = getSurfaceName();
   var selected = (typeof getSelectedDogs === 'function') ? getSelectedDogs() : [];
   if (selected.length === 0) {
     showToast('Select at least one dog first.');
@@ -4686,7 +4726,7 @@ function shareReport() {
   if (!lastPawData) { showToast('Run a report first!'); return; }
   var locEl = document.getElementById('report-location-text');
   var loc = locEl ? locEl.textContent : 'your area';
-  var surface = currentSurface ? currentSurface.charAt(0).toUpperCase() + currentSurface.slice(1) : 'Asphalt';
+  var surface = getSurfaceName();
   var text = '🐾 The Paw Report — ' + loc + '\n' +
     '🌡️ Ground Temp: ' + lastPawData.groundTempF + '°F (' + surface + ')\n' +
     '🌤️ Air Temp: ' + lastPawData.airTempF + '°F\n' +
