@@ -3701,11 +3701,19 @@ function updateWashUI(d) {
   var _emptyTitle = routeDestinationLat
     ? 'No stations found along this route'
     : (currentSearchType === 'park' ? 'No dog parks found near you' : 'No pet wash stations found near you');
+  var _emptyIcon = '🔍';
+  var _emptyBody = 'Your area may not have dedicated pet wash facilities nearby. Try searching Google Maps for groomers or truck stops with pet wash kiosks.';
+  // Provider failure (billing/key/quota) — the backend tells us so we don't lie to the user
+  if (d.searchError) {
+    _emptyIcon = '🛠️';
+    _emptyTitle = 'Search temporarily unavailable';
+    _emptyBody = d.searchError;
+  }
   list.innerHTML = '<div style="text-align:center;padding:16px 8px">' +
-    '<div style="font-size:2rem;margin-bottom:8px">🔍</div>' +
+    '<div style="font-size:2rem;margin-bottom:8px">' + _emptyIcon + '</div>' +
     (_staleBanner ? '<div style="text-align:left;margin-bottom:10px;">' + _staleBanner + '</div>' : '') +
     '<div style="font-weight:700;font-size:0.92rem;margin-bottom:6px;color:var(--c-slate)">' + _emptyTitle + '</div>' +
-    '<div style="font-size:0.8rem;color:#64748b;margin-bottom:14px;line-height:1.5">Your area may not have dedicated pet wash facilities nearby. Try searching Google Maps for groomers or truck stops with pet wash kiosks.</div>' +
+    '<div style="font-size:0.8rem;color:#64748b;margin-bottom:14px;line-height:1.5">' + _emptyBody + '</div>' +
     '<a href="' + mapsUrl + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:var(--accent,#0d9488);color:#fff;text-decoration:none;border-radius:12px;padding:11px 20px;font-size:0.86rem;font-weight:700;margin-bottom:10px;">📍 Search Google Maps</a>' +
     '<br><a href="https://www.google.com/maps/search/Love\'s+Travel+Stop+pet+wash+near+me" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:var(--c-bg);border:1.5px solid var(--c-border);color:var(--c-muted);text-decoration:none;border-radius:10px;padding:9px 16px;font-size:0.8rem;font-weight:600;margin-top:6px;">🚛 Find Love\'s Pet Wash Kiosks</a>' +
     '</div>';
@@ -4034,7 +4042,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v343';
+const APP_VERSION = 'v344';
 const WHATS_NEW = {
     'v334': '🗺️ Route search along your travel route.',
     'v335': '🐄 Tractor Supply locations now included in pet wash search. Route-mile display fix. Security & performance improvements.',
@@ -4348,7 +4356,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=343').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=344').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
