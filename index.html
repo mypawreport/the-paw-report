@@ -1962,7 +1962,10 @@ function initGoogleSignIn() {
   });
 }
 
+let googleAuthInFlight = false;
 async function handleGoogleCredential(response) {
+  if (googleAuthInFlight) return;
+  googleAuthInFlight = true;
   try {
     const res = await fetch(`${AUTH_API}/authGoogleSignIn`, {
       method: 'POST',
@@ -1981,6 +1984,8 @@ async function handleGoogleCredential(response) {
     await onLoggedIn();
   } catch (e) {
     showAuthError(e.message || 'Google sign-in failed. Please try again.');
+  } finally {
+    googleAuthInFlight = false;
   }
 }
 
@@ -2112,12 +2117,18 @@ function toggleAuthMode() {
   document.getElementById('auth-icon').textContent = isSignUpMode ? '🐾' : '🔐';
   document.getElementById('auth-error').style.display = 'none';
 }
+let authSubmitInFlight = false;
 async function submitAuth() {
+  // Guard against double-submit (e.g. some Android/Samsung keyboards fire
+  // the Enter keydown event twice for one tap) — without this, two
+  // concurrent sign-ins can race and one silently wipes the other's session.
+  if (authSubmitInFlight) return;
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
   const name = document.getElementById('auth-name').value.trim();
   if (!email || !password) { showAuthError('Please enter your email and password.'); return; }
   if (isSignUpMode && !name) { showAuthError('Please enter your name.'); return; }
+  authSubmitInFlight = true;
   const btn = document.getElementById('auth-btn');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>' + (isSignUpMode ? 'Creating…' : 'Signing in…');
   document.getElementById('auth-error').style.display = 'none';
@@ -2127,7 +2138,7 @@ async function submitAuth() {
     currentUser = await authMe();
     await onLoggedIn();
   } catch(e) { showAuthError(e.message || 'Something went wrong.'); }
-  finally { btn.disabled = false; btn.textContent = isSignUpMode ? 'Create Account' : 'Sign In'; }
+  finally { btn.disabled = false; btn.textContent = isSignUpMode ? 'Create Account' : 'Sign In'; authSubmitInFlight = false; }
 }
 function showAuthError(msg) { const el = document.getElementById('auth-error'); el.textContent = msg; el.style.display = 'block'; }
 async function onLoggedIn() {
@@ -4076,8 +4087,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v347';
+const APP_VERSION = 'v348';
 const WHATS_NEW = {
+    'v348': '🔐 Fixed a bug where signing in on some tablets could immediately sign you back out.',
     'v347': '🔐 You can now stay signed in on all your devices at once! New “Sign Out of ALL Devices” option in Profile.',
     'v334': '🗺️ Route search along your travel route.',
     'v335': '🐄 Tractor Supply locations now included in pet wash search. Route-mile display fix. Security & performance improvements.',
@@ -4391,7 +4403,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=347').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=348').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
