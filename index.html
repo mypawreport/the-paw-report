@@ -1341,6 +1341,7 @@
 
       <!-- Sign out -->
       <button class="btn btn-secondary" onclick="logout()" style="margin-top:4px;font-size:0.85rem;padding:11px;color:#ef4444;border-color:#fecaca;">🚪 Sign Out</button>
+      <button class="btn btn-secondary" onclick="logoutAll()" style="margin-top:6px;font-size:0.85rem;padding:11px;color:#ef4444;border-color:#fecaca;">🌐 Sign Out of ALL Devices</button>
 
     </div>
 
@@ -2721,6 +2722,39 @@ async function doLogout() {
   try { await authLogout(); } catch(_) {}
   currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
 }
+async function authLogoutAll() {
+  const token = localStorage.getItem(LS_TOKEN);
+  localStorage.removeItem(LS_TOKEN);
+  localStorage.removeItem(LS_CUR_USER);
+  if (token) {
+    try { await fetch(`${AUTH_API}/authLogoutAll`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token }) }); } catch(_){}
+  }
+}
+function logoutAll() {
+  var existing = document.getElementById('logout-confirm-modal');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'logout-confirm-modal';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;width:100%;max-width:320px;text-align:center;';
+  box.innerHTML = `
+    <div style="font-size:2rem;margin-bottom:8px;">🌐</div>
+    <div style="font-weight:800;font-size:1rem;color:var(--c-slate);margin-bottom:6px;">Sign Out Everywhere?</div>
+    <div style="font-size:0.82rem;color:#64748b;margin-bottom:20px;">This signs you out on ALL devices — phone, tablet, and web. You'll need to sign back in on each one.</div>
+    <button onclick="doLogoutAll()" style="width:100%;padding:11px;border:none;border-radius:10px;background:#ef4444;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:8px;">Yes, Sign Out of All Devices</button>
+    <button onclick="document.getElementById('logout-confirm-modal').remove()" style="width:100%;padding:11px;border:1.5px solid #e2e8f0;border-radius:10px;background:var(--c-bg);color:var(--c-muted);font-weight:600;font-size:0.9rem;cursor:pointer;">Cancel</button>
+  `;
+  overlay.appendChild(box);
+  overlay.onclick = function(e){ if(e.target===overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
+}
+async function doLogoutAll() {
+  var overlay = document.getElementById('logout-confirm-modal');
+  if (overlay) overlay.remove();
+  try { await authLogoutAll(); } catch(_) {}
+  currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
+}
 let setupCoat = 'medium', setupFace = 'normal';
 function selectSetupSize(size, el) { setupSize = size; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
 function selectSetupCoat(coat, el) { setupCoat = coat; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
@@ -4042,8 +4076,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v346';
+const APP_VERSION = 'v347';
 const WHATS_NEW = {
+    'v347': '🔐 You can now stay signed in on all your devices at once! New “Sign Out of ALL Devices” option in Profile.',
     'v334': '🗺️ Route search along your travel route.',
     'v335': '🐄 Tractor Supply locations now included in pet wash search. Route-mile display fix. Security & performance improvements.',
     'v333': '📍 Pet wash search now covers 50 miles (was 25), better filtering for rural areas, and updated empty message.',
@@ -4356,7 +4391,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=346').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=347').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
