@@ -3447,17 +3447,22 @@ function updatePawUI(d) {
   });
   // Walk reminder check
   checkWalkReminder();
-  // Sync weather data to Android widget via deep-link intent (works in TWA)
+  // Sync weather data to Android widget via deep-link intent — but ONLY when
+  // running inside the native TWA (referrer starts with android-app://).
+  // In a plain browser (esp. Samsung Internet) the unhandled pawreport://
+  // scheme kicks the user out to the Play Store listing on EVERY report run.
   try {
-    const _g = Math.round(d.groundTempF || 0);
-    const _a = Math.round(d.airTempF || 0);
-    const _r = encodeURIComponent(d.rating || '');
-    const _e = encodeURIComponent(d.emoji || '🐾');
-    const _iframe = document.createElement('iframe');
-    _iframe.style.display = 'none';
-    _iframe.src = 'pawreport://setweather?ground=' + _g + '&air=' + _a + '&rating=' + _r + '&emoji=' + _e;
-    document.body.appendChild(_iframe);
-    setTimeout(() => { try { document.body.removeChild(_iframe); } catch(e){} }, 1000);
+    if (/^android-app:\/\//.test(document.referrer || '')) {
+      const _g = Math.round(d.groundTempF || 0);
+      const _a = Math.round(d.airTempF || 0);
+      const _r = encodeURIComponent(d.rating || '');
+      const _e = encodeURIComponent(d.emoji || '🐾');
+      const _iframe = document.createElement('iframe');
+      _iframe.style.display = 'none';
+      _iframe.src = 'pawreport://setweather?ground=' + _g + '&air=' + _a + '&rating=' + _r + '&emoji=' + _e;
+      document.body.appendChild(_iframe);
+      setTimeout(() => { try { document.body.removeChild(_iframe); } catch(e){} }, 1000);
+    }
   } catch(e) {}
 }
 async function fetchPawAndUpdate(lat, lon) {
@@ -4087,8 +4092,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v348';
+const APP_VERSION = 'v349';
 const WHATS_NEW = {
+    'v349': '📱 Fixed: running a report in a web browser no longer jumps you to the Play Store.',
     'v348': '🔐 Fixed a bug where signing in on some tablets could immediately sign you back out.',
     'v347': '🔐 You can now stay signed in on all your devices at once! New “Sign Out of ALL Devices” option in Profile.',
     'v334': '🗺️ Route search along your travel route.',
@@ -4403,7 +4409,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=348').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=349').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
