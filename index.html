@@ -3198,12 +3198,21 @@ function applyPawUIWithSurface(d) {
   // Shade toggle: surface keeps only a sliver of the solar component (stored subsurface
   // heat radiating back) — asphalt holds the most, grass in shade essentially none.
   // Full sun: per-surface retention factor as before.
+  const nonShadedFactor = SURFACE_SOLAR_FACTOR[currentSurface] !== undefined ? SURFACE_SOLAR_FACTOR[currentSurface] : 1.0;
   const factor = isShaded
     ? (SHADED_SOLAR_FACTOR[effectiveSurface()] !== undefined ? SHADED_SOLAR_FACTOR[effectiveSurface()] : 0.10)
-    : (SURFACE_SOLAR_FACTOR[currentSurface] !== undefined ? SURFACE_SOLAR_FACTOR[currentSurface] : 1.0);
-  // Small residual for shaded surfaces (ground in shade runs slightly above air temp)
+    : nonShadedFactor;
+  // Small residual for shaded surfaces (ground in shade runs slightly above air temp
+  // on a day with real solar gain to store). BUT on overcast/no-sun days there's no
+  // heat to have stored, so this residual must never push shade ABOVE the same
+  // surface's full-sun reading — clamp it (v351 fix; was showing Shade hotter than
+  // Asphalt when cloud cover was ~100%).
   const residual = (isShaded || factor === 0) ? 2 : 0;
-  const adjustedGround = Math.round(airTemp + (solarComponent * factor) + residual);
+  let adjustedGround = Math.round(airTemp + (solarComponent * factor) + residual);
+  if (isShaded) {
+    const fullSunAdjusted = Math.round(airTemp + (solarComponent * nonShadedFactor));
+    adjustedGround = Math.min(adjustedGround, fullSunAdjusted);
+  }
   const adjusted = { ...d, groundTempF: adjustedGround, _isAdjusted: true };
   // Recalculate rating based on adjusted temp
   adjusted.rating = getRatingFromTemp(adjustedGround, currentPetSize, currentCoatType, currentFaceShape);
@@ -4082,8 +4091,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v350';
+const APP_VERSION = 'v351';
 const WHATS_NEW = {
+    'v351': '🌳 Fixed: Shade temp could show higher than full sun on overcast days.',
     'v350': '📱 Fixed the report screen jumping to Play Store or restarting the app.',
     'v349': '📱 Fixed: running a report in a web browser no longer jumps you to the Play Store.',
     'v348': '🔐 Fixed a bug where signing in on some tablets could immediately sign you back out.',
@@ -4400,7 +4410,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=350').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=351').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
