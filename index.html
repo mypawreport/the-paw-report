@@ -1543,6 +1543,29 @@ async function getPlayBillingService() {
   }
 }
 
+// ---- Native Android widget tier sync (v352) ----
+// The widget is Gold-only, but its gate broke in v350: the pawreport://settier deep-link
+// was removed along with the setweather push (the "kicks me out when I run the report"
+// bug), leaving the widget's stored tier stuck at its default — so ALL tiers got widget
+// data. This restores the tier sync, SAFELY this time:
+//   - Only fires inside the Android TWA (document.referrer starts with android-app://).
+//     In a regular browser a custom-scheme navigation redirects to the Play Store
+//     listing (Samsung Internet) — that was the original bug. DO NOT remove this gate.
+//   - Only fires when the tier VALUE actually changes (deduped via localStorage), never
+//     on every report run or app open — so it cannot stack LauncherActivity repeatedly.
+// The native side (LauncherActivity.handleDeepLink, "settier") already knows how to
+// receive this; app v5.3.1+ adds launchMode="singleTask" so even the rare fire is smooth.
+function syncTierToAndroid(tier) {
+  try {
+    if (!document.referrer || document.referrer.indexOf('android-app://') !== 0) return;
+    if (!tier) return;
+    var KEY = 'paw_tier_synced';
+    if (localStorage.getItem(KEY) === tier) return;
+    localStorage.setItem(KEY, tier);
+    window.location.href = 'pawreport://settier?tier=' + encodeURIComponent(tier);
+  } catch (_) {}
+}
+
 // Handle subscription via Google Play Billing (Android TWA)
 async function handlePlayBillingSubscribe(tier, billing) {
   const sku = PLAY_BILLING_SKUS[tier]?.[billing];
@@ -1590,6 +1613,7 @@ async function handlePlayBillingSubscribe(tier, billing) {
       localStorage.setItem('paw_sub_period', verifyData.period);
       localStorage.setItem('paw_sub_start', new Date().toISOString());
       currentTier = verifyData.tier;
+      syncTierToAndroid(verifyData.tier); // v352: unlock/lock the native widget immediately
 
       if (currentUser) {
         const existing = getPrefs(currentUser.id) || {};
@@ -1766,6 +1790,7 @@ function handleCheckoutReturn() {
     localStorage.setItem('paw_sub_period', period || 'monthly');
     localStorage.setItem('paw_sub_start', new Date().toISOString());
     currentTier = tier;
+    syncTierToAndroid(tier); // v352: unlock/lock the native widget immediately
     window.history.replaceState({}, '', window.location.pathname);
     const tierName = tier.charAt(0).toUpperCase() + tier.slice(1);
     // Update prefs and persist tier to paw_users store
@@ -2166,6 +2191,8 @@ async function onLoggedIn() {
     currentUser.tier = currentTier;
     localStorage.setItem(LS_CUR_USER, JSON.stringify(currentUser));
   }
+  // v352: push resolved tier to the native Android widget (no-op outside the TWA)
+  syncTierToAndroid(currentTier || 'free');
   updateUserBar();
   renderAvatar();
   if (!userPrefs) {
@@ -2731,7 +2758,7 @@ async function doLogout() {
   var overlay = document.getElementById('logout-confirm-modal');
   if (overlay) overlay.remove();
   try { await authLogout(); } catch(_) {}
-  currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
+  currentUser = null; userPrefs = null; syncTierToAndroid('free'); stopTracking(); showScreen('auth');
 }
 async function authLogoutAll() {
   const token = localStorage.getItem(LS_TOKEN);
@@ -2764,7 +2791,7 @@ async function doLogoutAll() {
   var overlay = document.getElementById('logout-confirm-modal');
   if (overlay) overlay.remove();
   try { await authLogoutAll(); } catch(_) {}
-  currentUser = null; userPrefs = null; stopTracking(); showScreen('auth');
+  currentUser = null; userPrefs = null; syncTierToAndroid('free'); stopTracking(); showScreen('auth');
 }
 let setupCoat = 'medium', setupFace = 'normal';
 function selectSetupSize(size, el) { setupSize = size; el.closest('.size-selector').querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
@@ -4091,8 +4118,9 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v351';
+const APP_VERSION = 'v352';
 const WHATS_NEW = {
+    'v352': '🔒' + ' Fixed: the home screen widget is now correctly Gold-only (membership sync restored).',
     'v351': '🌳 Fixed: Shade temp could show higher than full sun on overcast days.',
     'v350': '📱 Fixed the report screen jumping to Play Store or restarting the app.',
     'v349': '📱 Fixed: running a report in a web browser no longer jumps you to the Play Store.',
@@ -4410,7 +4438,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=351').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=352').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
