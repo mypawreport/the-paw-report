@@ -1471,7 +1471,8 @@ const LIFETIME_CODES = {
   'PAW-SLV-I6ZD9T': { name: 'Daughter Silver', tier: 'silver' },
   'PAW-GOLD-RSQ31G': { name: 'Gold Lifetime', tier: 'gold' },
   'PAW-GOLD-APRKY': { name: 'April Kentucky', tier: 'gold' },
-  'PAW-JSS-8WK4GQ': { name: 'Jesse', tier: 'gold' }
+  'PAW-JSS-8WK4GQ': { name: 'Jesse', tier: 'gold' },
+  'PAW-SLV-JHMIKK': { name: 'Trina', tier: 'silver' }
 };
 // Single-use lifetime codes — validated server-side, one redemption only
 const SINGLE_USE_LIFETIME_CODES = {
@@ -4118,7 +4119,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v352';
+const APP_VERSION = 'v353';
 const WHATS_NEW = {
     'v352': '🔒' + ' Fixed: the home screen widget is now correctly Gold-only (membership sync restored).',
     'v351': '🌳 Fixed: Shade temp could show higher than full sun on overcast days.',
@@ -4438,7 +4439,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=352').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=353').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
