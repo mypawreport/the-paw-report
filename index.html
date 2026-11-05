@@ -1734,6 +1734,31 @@ function selectBilling(b, el) {
 async function handleSubscribe(tier, billing) {
   const btn = event.target.closest('button');
   if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Opening checkout…'; }
+
+  // ── v354: sell through Google Play Billing inside the Android app ──────────
+  // Play's payments policy requires digital goods/subscriptions to use Play Billing
+  // when the app is distributed on Play. Stripe stays for the web version, and is the
+  // safety net if a Play product isn't configured yet — so no sale is ever lost.
+  const _pbSku = PLAY_BILLING_SKUS[tier] && PLAY_BILLING_SKUS[tier][billing];
+  if (_pbSku && await isPlayBillingAvailable()) {
+    if (btn) btn.innerHTML = '<span class="spinner"></span>Opening Google Play…';
+    try {
+      await handlePlayBillingSubscribe(tier, billing);
+      return; // success: purchase verified, tier activated, toast shown
+    } catch (pbErr) {
+      const _msg = (pbErr && pbErr.message) || '';
+      const _configIssue = /not available|product details|Invalid subscription/i.test(_msg);
+      if (!_configIssue) {
+        // User cancelled or the purchase outright failed — say so, never charge elsewhere.
+        renderTierDisplay();
+        showToast('⚠️ Purchase not completed. Please try again.');
+        return;
+      }
+      console.warn('[PAW] Play Billing product unavailable, falling back to web checkout:', _msg);
+      if (btn) btn.innerHTML = '<span class="spinner"></span>Opening checkout…';
+    }
+  }
+
   try {
     const referralCode = (document.getElementById('paywall-referral')?.value || document.getElementById('setup-referral')?.value || '').trim().toUpperCase();
     const referralApplied = referralCode.startsWith('PAW-') && referralCode.length >= 8;
@@ -4119,7 +4144,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v353';
+const APP_VERSION = 'v354';
 const WHATS_NEW = {
     'v352': '🔒' + ' Fixed: the home screen widget is now correctly Gold-only (membership sync restored).',
     'v351': '🌳 Fixed: Shade temp could show higher than full sun on overcast days.',
@@ -4439,7 +4464,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=353').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=354').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
