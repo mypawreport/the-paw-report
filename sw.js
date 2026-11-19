@@ -1,4 +1,4 @@
-const CACHE_NAME = 'paw-report-v355';
+const CACHE_NAME = 'paw-report-v356';
 const ASSETS = [
   'https://mypawreport.github.io/the-paw-report/',
   'https://mypawreport.github.io/the-paw-report/index.html',
@@ -44,11 +44,29 @@ self.addEventListener('fetch', event => {
   // already installed. Now: always try the network first (so deploys reach users
   // immediately while online), and only fall back to the cached copy if the network
   // request fails (offline support).
+  // v356: only cache COMPLETE downloads. A dropped connection mid-download used to
+  // cache a truncated index.html, which then replayed as a half-rendered screen
+  // (header visible, everything below blank, no tab bar) on every offline/weak-signal
+  // load. HTML is now verified to end with </html> before it is allowed into the cache.
   event.respondWith(
     fetch(event.request, { cache: 'no-store' }).then(function(response) {
-      const copy = response.clone();
-      caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, copy).catch(() => {}); });
-      return response;
+      if (!response || !response.ok) return response;
+      var ct = response.headers.get('content-type') || '';
+      var isHTML = ct.indexOf('text/html') !== -1 || /\/(index\.html)?$/.test(event.request.url);
+      if (!isHTML) {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, copy).catch(() => {}); });
+        return response;
+      }
+      return response.clone().text().then(function(body) {
+        if (body.trimEnd().toLowerCase().endsWith('</html>')) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, copy).catch(() => {}); });
+        } else {
+          console.warn('[PAW SW] Truncated HTML response — NOT cached');
+        }
+        return response;
+      }).catch(function() { return response; });
     }).catch(function() {
       return caches.match(event.request);
     })
