@@ -4145,7 +4145,7 @@ function stopTracking() {
   const _st=document.getElementById('status-text'); if(_st) _st.textContent='Report stopped';
 }
 // What's New toast
-const APP_VERSION = 'v355';
+const APP_VERSION = 'v356';
 const WHATS_NEW = {
     'v352': '🔒' + ' Fixed: the home screen widget is now correctly Gold-only (membership sync restored).',
     'v351': '🌳 Fixed: Shade temp could show higher than full sun on overcast days.',
@@ -4465,7 +4465,7 @@ function agreeDisclaimer() {
 }
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/the-paw-report/sw.js?v=355').then(function(reg) {
+    navigator.serviceWorker.register('/the-paw-report/sw.js?v=356').then(function(reg) {
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }).catch(function() {});
   });
